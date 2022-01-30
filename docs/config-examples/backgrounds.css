@@ -1,0 +1,81 @@
+/* CSS examples for View backgrounds
+ * Not to be used as-is, just a selection of ideas that you can adapt.
+ */
+
+/* Note: these haven't been tested when used with darkmode.css - some
+   modifications probably needed. */
+
+/*** 1. Plain colors for each view ***/
+/* For nicer colors, find someone with a better graphic skills than me :-) */
+
+#view_week {
+	background-color:#e9bbd2;
+}
+
+#view_year {
+	background-color:#a2e6a2;
+}
+
+/* Depending on your desktop, you may also want to set the scrollbar
+   background. I find this useful in XFCE, but not on the Gemini.
+   (For some reason, "transparent" doesn't seem to work here.) */
+
+#view_week scrollbar trough {
+	background-color:#d5abc0;
+}
+
+#view_year scrollbar trough {
+	background-color:#94d294;
+}
+
+
+/*** 2. Textured background ***/
+
+#view_year, #view_week {
+	background-image:url("my_texture.jpg"); /* Provide image filename here */
+	background-repeat:repeat;
+}
+
+
+/*** 3. Centered logo ***/
+
+#view_year, #view_week {
+	background-image:url("my_logo.svg"); /* Provide image filename here */
+	background-size:auto 90%;
+	background-position:center;
+	background-repeat:no-repeat;
+}
+
+/* Typically, you'd use a faint version of the logo so the UI is
+ * readable on top of it. However, for complex layering you can
+ * also add alpha-channel variable transparency to the upper
+ * elements. Example below...
+ */
+
+#weekview_titlearea, .weekview_day {
+	background-color:rgba(255,255,255,0.93);
+}
+
+#weekview_fold {
+	background-image:linear-gradient(90deg, rgba(255,255,255,0.93) 0%, rgba(136,136,136,0.96) 35%, rgba(0,0,0,1) 50%, rgba(136,136,136,0.96) 65%, rgba(255,255,255,0.93) 100%);
+}
+
+#yearview_labelyear, #yearview_gridcorner, .yearview_day_label, .yearview_month_label, .yearview_emptycell, .yearview_daycell, #yearview_labeldate, #yearview_datecontent {
+	background-color:rgba(255,255,255,0.93);
+}
+
+.yearview_day_sat, .yearview_day_sun {
+	background-color:rgba(170,170,170,0.93);
+}
+
+.yearview_pastday {
+	background-color:rgba(230,230,230,0.85);
+}
+
+.yearview_pastday.yearview_day_sat, .yearview_pastday.yearview_day_sun {
+	background-color:rgba(187,187,187,0.93);
+}
+
+.yearview_today {
+	background-color:rgba(0,187,187,0.93);
+}

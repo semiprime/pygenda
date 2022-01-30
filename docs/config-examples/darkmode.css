@@ -1,0 +1,144 @@
+/* Colour changes for "dark mode" (just a demo, minimally tested) */
+/* NOTE: If you copy this to a different location, you might also need to
+   change the URLs in the "background-image" elements (or copy the files). */
+
+/* Global */
+
+#view_loading {
+	background-color:black;
+	color:#999;
+}
+
+scrollbar trough {
+	background-color:#444;
+}
+
+
+/* Week View */
+
+#view_week {
+	background-color:black;
+	color:#eee;
+}
+
+#weekview_titlearea {
+	color:#eee;
+	border-color:#eee;
+}
+
+#weekview_fold {
+	background-image:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(160,160,160,0.9) 35%, rgba(230,230,230,1) 50%, rgba(160,160,160,0.9) 65%, rgba(0,0,0,0) 100%);
+}
+
+.weekview_day {
+	border-color:#888;
+}
+
+.weekview_labelday {
+	background-color:#333;
+	color:#eee;
+}
+
+.weekview_today .weekview_labelday {
+	background-color:#088;
+	color:black;
+}
+
+.weekview_pastday .weekview_labelday {
+	color:#aaa;
+}
+
+.weekview_daytext, .weekview_marker {
+	color:#eee;
+}
+
+.weekview_cursor {
+	background-color:#b00;
+}
+
+
+/* Year View */
+
+#view_year {
+	background-color:black;
+	color:#eee;
+}
+
+#yearview_labelyear {
+	background-color:black;
+}
+
+.yearview_day_label, .yearview_month_label {
+	background-color:black;
+}
+
+.yearview_emptycell {
+	background-color:#111;
+	border-right-color:#222;
+	border-bottom-color:#222;
+}
+
+.yearview_daycell {
+	background-color:black;
+	border-color:#eee;
+}
+
+.yearview_leftofdaycell {
+	border-right-color:#eee;
+}
+
+.yearview_abovedaycell {
+	border-bottom-color:#eee;
+}
+
+.yearview_day_sat, .yearview_day_sun {
+	background-color:#555;
+}
+
+.yearview_cursor {
+	background-image:linear-gradient(90deg, #eee 9%, transparent 9%, transparent 91%, #eee 91%), linear-gradient(#eee 8%, transparent 8%, transparent 92%, #eee 92%);
+}
+
+.yearview_today {
+	background-color:#088;
+}
+
+.yearview_pastday {
+	background-color:#0b0b0b;
+}
+
+.yearview_pastday.yearview_day_sat, .yearview_pastday.yearview_day_sun {
+	background-color:#444;
+}
+
+.yearview_entry_cursor {
+	background-color:#b00;
+}
+
+.yearview_entry_single.yearview_cursor, .yearview_entry_repeated_day.yearview_cursor, .yearview_entry_repeated_hour.yearview_cursor, .yearview_entry_repeated_minute.yearview_cursor, .yearview_entry_repeated_second.yearview_cursor {
+	background-image:url("../../pygenda/css/disc.svg"), linear-gradient(90deg, #eee 9%, transparent 9%, transparent 91%, #eee 91%), linear-gradient(#eee 8%, transparent 8%, transparent 92%, #eee 92%);
+}
+
+.yearview_entry_repeated_month.yearview_cursor, .yearview_entry_repeated_week.yearview_cursor {
+	background-image:url("../../pygenda/css/loop.svg"), linear-gradient(90deg, #eee 9%, transparent 9%, transparent 91%, #eee 91%), linear-gradient(#eee 8%, transparent 8%, transparent 92%, #eee 92%);
+}
+
+.yearview_entry_repeated_year.yearview_cursor {
+	background-image:url("../../pygenda/css/star.svg"), linear-gradient(90deg, #eee 9%, transparent 9%, transparent 91%, #eee 91%), linear-gradient(#eee 8%, transparent 8%, transparent 92%, #eee 92%);
+}
+
+.yearview_entry_single.yearview_entry_repeated_month.yearview_cursor, .yearview_entry_single.yearview_entry_repeated_week.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_month.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_week.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_month.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_week.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_month.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_week.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_month.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_week.yearview_cursor {
+	background-image:url("../../pygenda/css/disc+loop.svg"), linear-gradient(90deg, #eee 9%, transparent 9%, transparent 91%, #eee 91%), linear-gradient(#eee 8%, transparent 8%, transparent 92%, #eee 92%);
+}
+
+.yearview_entry_single.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_year.yearview_cursor {
+	background-image:url("../../pygenda/css/disc+star.svg"), linear-gradient(90deg, #eee 9%, transparent 9%, transparent 91%, #eee 91%), linear-gradient(#eee 8%, transparent 8%, transparent 92%, #eee 92%);
+}
+
+.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor {
+	background-image:url("../../pygenda/css/loop+star.svg"), linear-gradient(90deg, #eee 9%, transparent 9%, transparent 91%, #eee 91%), linear-gradient(#eee 8%, transparent 8%, transparent 92%, #eee 92%);
+}
+
+.yearview_entry_single.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_single.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor {
+	background-image:url("../../pygenda/css/disc+loop+star.svg"), linear-gradient(90deg, #eee 9%, transparent 9%, transparent 91%, #eee 91%), linear-gradient(#eee 8%, transparent 8%, transparent 92%, #eee 92%);
+}

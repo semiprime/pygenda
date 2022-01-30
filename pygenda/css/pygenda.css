@@ -1,0 +1,406 @@
+/*****************************
+  pygenda.css
+  Copyright (C) 2022 Matthew Lewis
+
+  This file is part of Pygenda.
+
+  Pygenda is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, version 3.
+
+  Pygenda is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Pygenda. If not, see <https://www.gnu.org/licenses/>.
+******************************/
+
+/* Global */
+
+scrollbar {
+	border:0;
+}
+
+.softbutton {
+	min-width:5em;
+}
+
+.view, #view_loading {
+	min-width:600px;
+	min-height:300px;
+}
+
+#view_loading spinner {
+	min-width:32px;
+}
+
+
+/* Week View */
+
+#view_week {
+	background-color:white;
+}
+
+#weekview_titlearea {
+	padding:3px;
+	color:black;
+	border-style:none none solid none;
+	border-color:black;
+	border-width:2px;
+}
+
+#weekview_labelmonth {
+	font-family:'DejaVu Sans Condensed';
+	font-size:12pt;
+	font-weight:bold;
+}
+
+#weekview_labelweek {
+	font-family:'DejaVu Sans';
+	font-size:9pt;
+}
+
+#weekview_fold {
+	min-width:12px;
+	background-color:transparent;
+	background-image:linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(136,136,136,0.8) 35%, rgba(0,0,0,1) 50%, rgba(136,136,136,0.8) 65%, rgba(255,255,255,0) 100%);
+}
+
+.weekview_day {
+	border-style:none none solid none;
+	border-color:#888;
+	border-width:1px;
+}
+
+.weekview_day2, .weekview_day6 {
+	border-style:none;
+}
+
+.weekview_labelday {
+	background-color:rgba(190,190,190,0.8);
+	color:black;
+	font-family:'DejaVu Sans Condensed';
+	font-size:10pt;
+	font-weight:bold;
+	min-width:4em;
+}
+
+.weekview_today .weekview_labelday {
+	background-color:rgba(0,170,170,0.8);
+}
+
+.weekview_pastday .weekview_labelday {
+	color:#555;
+}
+
+.weekview_daytext {
+	padding:4px;
+	color:black;
+	font-family:'DejaVu Sans';
+	font-size:9pt;
+	font-weight:normal;
+}
+
+.weekview_marker {
+	color:black;
+	padding-left:1.5px;
+	padding-right:1.5px;
+	margin-right:0.2em;
+}
+
+.weekview_cursor {
+	color:white;
+	background-color:black;
+	border-radius:4px;
+}
+
+
+/* Year View */
+
+#view_year {
+	color:black;
+	background-color:white;
+}
+
+#yearview_labelyear {
+	font-family:'DejaVu Sans';
+	font-size:14pt;
+	font-weight:bold;
+}
+
+.yearview_day_label, .yearview_month_label {
+	font-weight:bold;
+}
+
+.yearview_month_label {
+	padding-right:1px;
+}
+
+.yearview_emptycell {
+	background-color:rgba(210,210,210,0.4);
+	border-right:solid #ddd 1px;
+	border-bottom:solid #ddd 1px;
+}
+
+.yearview_daycell {
+	font-family:'DejaVu Sans Condensed';
+	font-size:8pt;
+	background-color:rgba(255,255,255,0.7);
+	border-right:solid black 1px;
+	border-bottom:solid black 1px;
+	padding:1px;
+}
+
+.yearview_leftofdaycell {
+	border-right:solid black 1px;
+}
+
+.yearview_month_label.yearview_leftofdaycell {
+	padding-right:0;
+}
+
+.yearview_abovedaycell {
+	border-bottom:solid black 1px;
+}
+
+.yearview_day_sat, .yearview_day_sun {
+	background-color:rgba(160,160,160,0.7);
+}
+
+.yearview_cursor {
+	background-image:linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
+}
+
+.yearview_today {
+	background-color:#0aa;
+}
+
+.yearview_pastday {
+	background-color:rgba(235,235,235,0.5);
+}
+
+.yearview_pastday.yearview_day_sat, .yearview_pastday.yearview_day_sun {
+	background-color:rgba(160,160,160,0.5);
+}
+
+#yearview_labeldate {
+	font-family:'DejaVu Sans Condensed';
+	font-size:11pt;
+	font-weight:bold;
+	padding-right:0.8ex;
+}
+
+#yearview_datecontent {
+	font-size:11pt;
+	font-family:'DejaVu Sans';
+}
+
+#yearview_datecontent_scroller {
+	border:0;
+}
+
+.yearview_marker {
+	padding-left:1.5px;
+	padding-right:1.5px;
+	margin-right:0.2em;
+}
+
+.yearview_entry_cursor {
+	color:rgba(255,255,255,0.93);
+	background-color:black;
+	border-radius:4px;
+}
+
+.yearview_entry_single, .yearview_entry_repeated_day, .yearview_entry_repeated_hour, .yearview_entry_repeated_minute, .yearview_entry_repeated_second {
+	background-image:url("disc.svg");
+	background-size:100% auto;
+	background-position:center;
+	background-repeat:no-repeat;
+}
+
+.yearview_entry_single.yearview_cursor, .yearview_entry_repeated_day.yearview_cursor, .yearview_entry_repeated_hour.yearview_cursor, .yearview_entry_repeated_minute.yearview_cursor, .yearview_entry_repeated_second.yearview_cursor {
+	background-image:url("disc.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
+}
+
+.yearview_entry_repeated_month, .yearview_entry_repeated_week {
+	background-image:url("loop.svg");
+	background-size:100% auto;
+	background-position:center;
+	background-repeat:no-repeat;
+}
+
+.yearview_entry_repeated_month.yearview_cursor, .yearview_entry_repeated_week.yearview_cursor {
+	background-image:url("loop.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
+}
+
+.yearview_entry_repeated_year {
+	background-image:url("star.svg");
+	background-size:100% auto;
+	background-position:center;
+	background-repeat:no-repeat;
+}
+
+.yearview_entry_repeated_year.yearview_cursor {
+	background-image:url("star.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
+}
+
+.yearview_entry_single.yearview_entry_repeated_month, .yearview_entry_single.yearview_entry_repeated_week, .yearview_entry_repeated_day.yearview_entry_repeated_month, .yearview_entry_repeated_day.yearview_entry_repeated_week, .yearview_entry_repeated_hour.yearview_entry_repeated_month, .yearview_entry_repeated_hour.yearview_entry_repeated_week, .yearview_entry_repeated_minute.yearview_entry_repeated_month, .yearview_entry_repeated_minute.yearview_entry_repeated_week, .yearview_entry_repeated_second.yearview_entry_repeated_month, .yearview_entry_repeated_second.yearview_entry_repeated_week {
+	background-image:url("disc+loop.svg");
+	background-size:100% auto;
+	background-position:center;
+	background-repeat:no-repeat;
+}
+
+.yearview_entry_single.yearview_entry_repeated_month.yearview_cursor, .yearview_entry_single.yearview_entry_repeated_week.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_month.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_week.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_month.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_week.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_month.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_week.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_month.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_week.yearview_cursor {
+	background-image:url("disc+loop.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
+}
+
+.yearview_entry_single.yearview_entry_repeated_year, .yearview_entry_repeated_day.yearview_entry_repeated_year, .yearview_entry_repeated_hour.yearview_entry_repeated_year, .yearview_entry_repeated_minute.yearview_entry_repeated_year, .yearview_entry_repeated_second.yearview_entry_repeated_year {
+	background-image:url("disc+star.svg");
+	background-size:100% auto;
+	background-position:center;
+	background-repeat:no-repeat;
+}
+
+.yearview_entry_single.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_year.yearview_cursor {
+	background-image:url("disc+star.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
+}
+
+.yearview_entry_repeated_month.yearview_entry_repeated_year, .yearview_entry_repeated_week.yearview_entry_repeated_year {
+	background-image:url("loop+star.svg");
+	background-size:100% auto;
+	background-position:center;
+	background-repeat:no-repeat;
+}
+
+.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor {
+	background-image:url("loop+star.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
+}
+
+.yearview_entry_single.yearview_entry_repeated_month.yearview_entry_repeated_year, .yearview_entry_single.yearview_entry_repeated_week.yearview_entry_repeated_year, .yearview_entry_repeated_day.yearview_entry_repeated_month.yearview_entry_repeated_year, .yearview_entry_repeated_day.yearview_entry_repeated_week.yearview_entry_repeated_year, .yearview_entry_repeated_hour.yearview_entry_repeated_month.yearview_entry_repeated_year, .yearview_entry_repeated_hour.yearview_entry_repeated_week.yearview_entry_repeated_year, .yearview_entry_repeated_minute.yearview_entry_repeated_month.yearview_entry_repeated_year, .yearview_entry_repeated_minute.yearview_entry_repeated_week.yearview_entry_repeated_year, .yearview_entry_repeated_second.yearview_entry_repeated_month.yearview_entry_repeated_year, .yearview_entry_repeated_second.yearview_entry_repeated_week.yearview_entry_repeated_year {
+	background-image:url("disc+loop+star.svg");
+	background-size:100% auto;
+	background-position:center;
+	background-repeat:no-repeat;
+}
+
+.yearview_entry_single.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_single.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor {
+	background-image:url("disc+loop+star.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
+}
+
+
+/* Entries */
+
+.cancelled {
+	color:gray;
+	text-decoration:line-through;
+}
+
+.tentative {
+	color:gray;
+}
+
+.confirmed {
+	font-weight:bold;
+	/* font-style:italic; */
+	/* text-decoration:underline; */
+}
+
+
+/* Dialogs */
+
+entry, spinbutton, date_entry, time_entry, duration_entry {
+	min-height:1.8em;
+}
+
+date_entry, time_entry, duration_entry {
+	background-color:white;
+	border:solid #888 1px;
+	border-radius:3px;
+}
+
+date_entry > *, time_entry > *, duration_entry > * {
+	background:transparent;
+	border:none;
+}
+
+date_entry > label, time_entry > label, duration_entry > label {
+	padding-bottom:0.4ex;
+}
+
+checkbutton {
+	min-height:30px;
+}
+
+checkbutton check {
+	min-height:17px;
+	min-width:17px;
+}
+
+/* Make focus more visible (useful for keyboard navigation) */
+radio, check, buttonbox > button, .dialogbutton, combobox button, spinbutton, switch, date_entry, time_entry, duration_entry {
+	border-width:1px;
+	padding:1px;
+}
+
+radio:focus, check:focus, buttonbox > button:focus, .dialogbutton:focus, combobox button:focus, spinbutton:focus, switch:focus, notebook:focus tab:checked, .focus {
+	border-color:#398ee7;
+	border-width:2px;
+	padding:0px;
+}
+
+/* We removed padding from dialog button; to compensate add to inner label */
+.dialogbutton > label {
+	padding-right:0.6em;
+	padding-left:0.6em;
+}
+
+/* Remove button transitions - can cause needless redraws */
+buttonbox > button, .dialogbutton {
+	transition-duration:0s;
+	transition-delay:0s;
+}
+
+.textentry {
+	border-width:1px;
+	padding:1px 5px;
+}
+
+.textentry:focus {
+	border-color:#398ee7;
+	border-width:2px;
+	padding:0px 4px;
+}
+
+/* Tabs need a bit more formatting */
+tab {
+	padding-left:11px;
+	padding-right:11px;
+}
+
+/* This selects the tab with focus */
+notebook:focus tab:checked {
+	border-style:solid;
+	padding-left:10px;
+	padding-right:10px;
+}
+
+.llabel {
+	min-height:30px;
+	padding-right:0.4ex;
+	padding-left:0.4ex;
+}
+
+/* This is to prevent visibility of transition when dialog is redisplayed */
+entry {
+	transition-duration:0s;
+	transition-delay:0s;
+}
+
+.dialog_error {
+	background-color:#e33;
+	transition-duration:0.15s;
+	transition-delay:0s;
+}

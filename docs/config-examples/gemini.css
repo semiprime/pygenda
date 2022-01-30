@@ -1,0 +1,125 @@
+/* Remove transition animations - they make Gemini feel slow */
+* {
+	transition-duration:0s;
+	transition-delay:0s;
+}
+
+
+/* GUI size increases for Gemini's small screen */
+
+menubar, button {
+	font-size:15pt;
+}
+
+dialog {
+	font-size:15pt;
+}
+
+scrollbar.vertical, scrollbar.vertical slider, scrollbar button {
+	min-width:14px;
+}
+
+scrollbar.horizontal, scrollbar.horizontal slider, scrollbar button {
+	min-height:14px;
+}
+
+scrollbar trough {
+	background-color:#f0f0f0;
+}
+
+scrollbar slider {
+	background-color:#c0c0c0;
+	border-radius:0;
+}
+
+
+/* Week View */
+
+#weekview_titlearea {
+	border-width:3px;
+}
+
+#weekview_labelmonth {
+	font-size:21pt;
+}
+
+#weekview_labelweek {
+	font-size:13pt;
+}
+
+.weekview_labelday {
+	font-size:18pt;
+	min-width:2.95em;
+}
+
+.weekview_daytext {
+	font-size:15pt;
+}
+
+
+/* Year View */
+
+#yearview_labelyear {
+	font-size:18pt;
+	padding:2px;
+}
+
+#yearview_labeldate {
+	font-size:15pt;
+	padding:2px;
+}
+
+#yearview_datecontent {
+	font-size:15pt;
+}
+
+
+/* Dialogs */
+
+entry, spinbutton, date_entry, time_entry, duration_entry {
+	min-height:1.6em;
+}
+
+/* Make buttons bigger (for easier touchscreen use) */
+buttonbox > button {
+	padding:5px;
+}
+
+buttonbox > button:focus {
+	padding:4px;
+}
+
+checkbutton {
+	min-height:32px;
+}
+
+check {
+	min-height:24px;
+	min-width:24px;
+}
+
+radio, check {
+	border-style:solid;
+	border-width:0px;
+	padding:2px;
+}
+
+radio {
+	border-radius:8px;
+}
+
+check {
+	border-radius:4px;
+}
+
+radio:focus, check:focus {
+	border-color:#398ee7;
+	border-width:2px;
+	padding:0px;
+}
+
+.llabel {
+	min-height:32px;
+	padding-right:0.3ex;
+	padding-left:0.3ex;
+}

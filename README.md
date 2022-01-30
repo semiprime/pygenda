@@ -1,0 +1,129 @@
+Pygenda
+=======
+Pygenda is a calendar/agenda application written in Python3/GTK3 and
+designed for "PDA" devices such as Planet Computers' Gemini. The user
+interface is inspired by patterns in the Agenda programs on the Psion
+Series 3 and Series 5 range of PDAs.
+
+**WARNING: This is in-development code, released as a preview for
+developers. It will probably corrupt your data.**
+
+There are currently **lots of missing/incomplete features** as well as
+**bugs**. For a list of known issues, see: docs/known_issues.md
+
+Source code
+-----------
+Source is available at: https://github.com/semiprime/pygenda
+
+License
+-------
+Pygenda is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation, version 3.
+
+Pygenda is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+for more details.
+
+You should have received a copy of the GNU General Public License along
+with Pygenda (see COPYING file). If not, see <https://www.gnu.org/licenses/>.
+
+Run/install
+-----------
+(See note about dependencies below.)
+
+To run without installing, cd to the root pygenda directory, and do:
+
+	python3 -m pygenda
+
+(If you want to run this way using a graphical launcher, set the
+working directory in the launcher settings, and use the above command.)
+
+Better: install the python module with (for example)...
+
+	./setup.py install --user
+
+(You can uninstall the module with `pip3 uninstall pygenda`.)
+
+NOTE: Gemian (Debian port for Gemini PDA) doesn't install the Python module
+dependencies. I recommend installing these dependencies manually - see
+below. The reason for this appears to be old pip/setuptools on Gemian.
+You can upgrade these using `pip3 install --upgrade [pip|setuptools]`,
+but that won't fix the install because pip3 tries to get a version of
+PyGObject that requires a more-recent-than-installed version of glib.
+
+Then you can run from anywhere with:
+
+	python3 -m pygenda
+
+There are a few command-line options, which you can view using:
+
+	python3 -m pygenda --help
+
+For more complete settings, see "Configuration", below.
+
+Dependencies
+------------
+Python3. Version >=3.5 (because Gemini's "Gemian" Linux provides Python 3.5).
+
+* Install on Debian/Gemian: `sudo apt install python3`
+
+GTK+3
+
+* Install on Debian: `sudo apt install gtk+3`
+
+Python3 modules: PyGObject3 (for gi), icalendar, python-dateutil
+
+* Install on Debian: `sudo apt install python3-gi python3-icalendar python3-dateutil`
+* Or install them using pip3: `pip3 install pygobject icalendar python-dateutil`
+
+That should be enough to start Pygenda, but if you want to use a
+CalDAV server (recommended for real use) there are some extra
+dependencies. See setup details in: docs/CalDAV.md
+
+Configuration
+-------------
+Configuration settings go in file: `~/.config/pygenda/pygenda.ini`
+
+Custom CSS goes in: `~/.config/pygenda/pygenda.css`
+
+More information: docs/config-examples/README.md
+
+Quick config on Gemini/other handhelds
+--------------------------------------
+If you're running Pygenda on a Gemini or similar PDA, the default font
+sizes will probably not be appropriate for the screen size. To fix
+this, use the custom CSS provided in docs/config-examples/gemini.css.
+The easiest way to do this is to import the gemini.css file from your
+own ~/.config/pygenda/pygenda.css file, by adding the line:
+
+	@import "PATH_TO_GEMINI_CSS_FILE";
+
+You can then add your own custom CSS after this. (This way, if you
+git pull an update to the Pygenda source, then you'll automatically
+get any new css rules included in the new version.)
+
+The "startup/maximized" and "startup/fullscreen" options are also
+useful for devices with small screens. See "Configuation" above.
+
+Usage
+-----
+See: docs/Usage.md
+
+Calendar data storage - a CalDAV server is recommended
+------------------------------------------------------
+Calendar data can be stored as an ICS file, or via a CalDAV server.
+The ICS file is the default, because it works without configuration,
+but a CalDAV server is recommended for real use.
+
+For CalDAV configuration, see: docs/CalDAV.md
+
+The default ICS file is created in `~/.config/pygenda/pygenda.ics`
+but you can change this from the command line or config file.
+
+Alternatives
+------------
+If you want to compare the "competition", the Gemian people also have
+an in-development agenda-like app designed for the Gemini/Cosmo.
+Details at https://gemian.thinkglobally.org/#Calendar
