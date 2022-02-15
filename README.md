@@ -105,7 +105,17 @@ git pull an update to the Pygenda source, then you'll automatically
 get any new css rules included in the new version.)
 
 The "startup/maximized" and "startup/fullscreen" options are also
-useful for devices with small screens. See "Configuation" above.
+useful for devices with small screens. See "Configuration" above.
+
+Desktop/panel/menu launchers
+----------------------------
+A sample `pygenda.desktop` file is provided in docs/config-examples/.
+This should help adding launch icons to the desktop menu/panels etc.
+For example, to add Pygenda to the desktop menu, copy (or create a
+link to) the pygenda.desktop file in the `/usr/share/applications/` or
+`~/.local/share/applications/` directory; to add a launcher to the
+LXQt panel, edit the `~/.config/lxqt/panel.conf` file and add a line
+in the [quicklaunch] section (& restart LXQt).
 
 Usage
 -----
