@@ -587,9 +587,9 @@ class RepeatInfo:
 
 		dt_st = event['DTSTART'].dt
 		if rrule['FREQ'][0]=='MONTHLY' and dt_st.day>28:
-			raise ValueError('Unsupported MONTHLY (day>28) {} in RRULE'.format(dt_st))
+			raise RepeatUnsupportedError('Unsupported MONTHLY (day>28) {} in RRULE'.format(dt_st))
 		if rrule['FREQ'][0]=='YEARLY' and dt_st.month==2 and dt_st.day==29:
-			raise ValueError('Unsupported YEARLY (29/2) {} in RRULE'.format(dt_st))
+			raise RepeatUnsupportedError('Unsupported YEARLY (29/2) {} in RRULE'.format(dt_st))
 
 		self._set_freq(rrule)
 		if 'EXDATE' in event:
@@ -606,33 +606,33 @@ class RepeatInfo:
 		freq = rrule['FREQ'][0]
 		interval = int(rrule['INTERVAL'][0]) if 'INTERVAL' in rrule else 1
 		if 'BYDAY' in rrule and rrule['BYDAY'][0] not in self.DAY_ABBR:
-			raise ValueError('Unsupported BYDAY {} in RRULE'.format(rrule['BYDAY']))
+			raise RepeatUnsupportedError('Unsupported BYDAY {} in RRULE'.format(rrule['BYDAY']))
 		if 'BYMONTH' in rrule and len(rrule['BYMONTH'])>1:
-			raise ValueError('Unsupported multi-BYMONTH {} in RRULE'.format(rrule['BYMONTH']))
+			raise RepeatUnsupportedError('Unsupported multi-BYMONTH {} in RRULE'.format(rrule['BYMONTH']))
 		if 'BYYEARDAY' in rrule:
-			raise ValueError('Unsupported BYYEARDAY in RRULE')
+			raise RepeatUnsupportedError('Unsupported BYYEARDAY in RRULE')
 		if 'BYMONTHDAY' in rrule:
 			if (freq!='YEARLY' or 'BYMONTH' not in rrule):
-				raise ValueError('Unsupported BYMONTHDAY in RRULE (not YEARLY/BYMONTH)')
+				raise RepeatUnsupportedError('Unsupported BYMONTHDAY in RRULE (not YEARLY/BYMONTH)')
 			# If we get here, it's YEARLY/BYMONTH/BYMONTHDAY
 			if len(rrule['BYMONTH'])>1:
-				raise ValueError('Unsupported BYMONTHDAY, multi-BYMONTH in RRULE')
+				raise RepeatUnsupportedError('Unsupported BYMONTHDAY, multi-BYMONTH in RRULE')
 			if len(rrule['BYMONTHDAY'])>1:
-				raise ValueError('Unsupported multi-BYMONTHDAY in RRULE')
+				raise RepeatUnsupportedError('Unsupported multi-BYMONTHDAY in RRULE')
 			bmd_day = int(rrule['BYMONTHDAY'][0])
 			bmd_month = int(rrule['BYMONTH'][0])
 			if bmd_day!=self.start.day or bmd_month!=self.start.month:
-				raise ValueError('Unsupported YEARLY/BYMONTH/BYMONTHDAY != DTSTART in RRULE')
+				raise RepeatUnsupportedError('Unsupported YEARLY/BYMONTH/BYMONTHDAY != DTSTART in RRULE')
 		if 'BYSETPOS' in rrule:
-			raise ValueError('Unsupported BYSETPOS in RRULE')
+			raise RepeatUnsupportedError('Unsupported BYSETPOS in RRULE')
 		if 'BYHOUR' in rrule:
-			raise ValueError('Unsupported BYHOUR in RRULE')
+			raise RepeatUnsupportedError('Unsupported BYHOUR in RRULE')
 		if 'BYMINUTE' in rrule:
-			raise ValueError('Unsupported BYMINUTE in RRULE')
+			raise RepeatUnsupportedError('Unsupported BYMINUTE in RRULE')
 		if 'BYSECOND' in rrule:
-			raise ValueError('Unsupported BYSECOND in RRULE')
+			raise RepeatUnsupportedError('Unsupported BYSECOND in RRULE')
 		if 'BYWEEKNO' in rrule:
-			raise ValueError('Unsupported BYWEEKNO in RRULE')
+			raise RepeatUnsupportedError('Unsupported BYWEEKNO in RRULE')
 		if freq=='YEARLY':
 			self._set_yearly(interval)
 		elif freq=='MONTHLY':
@@ -646,7 +646,7 @@ class RepeatInfo:
 		elif freq=='MINUTELY':
 			self._set_minutely(interval)
 		else: # unrecognised freq - skip entry
-			raise ValueError('Unknown FREQ {:s} in RRULE'.format(freq))
+			raise RepeatUnsupportedError('Unknown FREQ {:s} in RRULE'.format(freq))
 
 
 	def _set_yearly(self, interval:int) -> None:
@@ -792,7 +792,7 @@ class RepeatInfo:
 		count = rrule['COUNT'][0] if 'COUNT' in rrule else None
 		if count is not None:
 			if self.exdates is not None:
-				raise ValueError('Unsupported COUNT & EXDATE') # !! fix me
+				raise RepeatUnsupportedError('Unsupported COUNT & EXDATE') # !! fix me
 			if isinstance(self.delta, list):
 				di,md = divmod(count-1, len(self.delta))
 				last_by_count = self.start
@@ -823,6 +823,11 @@ class RepeatInfo:
 		if self.start_in_rng is not None and isinstance(self.delta, list):
 			return RepeatIter_multidelta(self)
 		return RepeatIter_simpledelta(self)
+
+
+# Exception used to indicate need to used fallback repeat calculation
+class RepeatUnsupportedError(Exception):
+	pass
 
 
 class RepeatIter_simpledelta:
@@ -946,7 +951,7 @@ def repeats_in_range(ev:iEvent, start:dt_date, stop:dt_date) -> list:
 	# dates start to stop.
 	try:
 		r_info = RepeatInfo(ev, start, stop)
-	except ValueError as err:
+	except RepeatUnsupportedError as err:
 		# RepeatInfo doesn't handle this type of repeat.
 		# Fall back to using rrule - more complete, but slower for simple repeats
 		print('Notice: Fallback to unoptimised repeat for "{:s}" ({:s})'.format(ev['SUMMARY'],str(err)), file=stderr)
