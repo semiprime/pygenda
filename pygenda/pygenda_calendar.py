@@ -605,6 +605,8 @@ class RepeatInfo:
 		# Called during construction.
 		freq = rrule['FREQ'][0]
 		interval = int(rrule['INTERVAL'][0]) if 'INTERVAL' in rrule else 1
+		if interval <= 0: # Protect against corrupt data giving infinite loops
+			raise ValueError('Zero interval for repeat')
 		if 'BYDAY' in rrule and rrule['BYDAY'][0] not in self.DAY_ABBR:
 			raise RepeatUnsupportedError('Unsupported BYDAY {} in RRULE'.format(rrule['BYDAY']))
 		if 'BYMONTH' in rrule and len(rrule['BYMONTH'])>1:
