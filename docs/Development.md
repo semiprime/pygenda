@@ -62,6 +62,7 @@ Checklist for releases
 * Regenerate .po and .mo localisation files (see above)
 * Check at least one non-English language
 * Check any ics files in validator, eg https://icalendar.org/validator.html
+* Run test_repeats.py unit tests.
 * Check repeats in test02_repeats.ics displayed correctly
 * Check darkmode & backgrounds CSS still work
 * Check start_week_day!=Monday still works (all views)
@@ -69,6 +70,7 @@ Checklist for releases
 
 Checking repeats
 ----------------
+In addition to test_repeats.py unit tests...
 Repeated entry display can be checked by hand (plan to automate later) by
 enabling checking in repeats_in_range() method (file pygenda_calendar.py)
 and skipping through the test02_repeats.ics file. (Try Year View.)

@@ -199,7 +199,7 @@ Testing
 
 * Need some sort of testing after big updates. Either automated or protocol.
 
-* Need automated testing of different repeat types & edge cases
+* Need to expand repeats testing (test_repeats.py) to include exdates.
 
 * Need to test with corrupt iCal files. (Including when files become
   corrupt while the program is running.) Use a fuzzer?
