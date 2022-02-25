@@ -46,6 +46,13 @@ def datetime_to_time(dt:date):
 		return False
 
 
+def date_to_datetime(dt:date) -> datetime:
+	# Return datetime from dt argument. Set time to midnight if no time.
+	if isinstance(dt, datetime):
+		return dt
+	return datetime(dt.year,dt.month,dt.day)
+
+
 def start_end_dts_event(event:iCal.Event) -> Tuple[date,date]:
 	# Return start & end time of an event.
 	# End time calculated from duration if needed; is None if no end/duration.

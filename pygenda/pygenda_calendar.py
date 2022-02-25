@@ -36,7 +36,7 @@ from typing import Optional
 
 # Pygenda components
 from .pygenda_config import Config
-from .pygenda_util import dt_lt, dt_lte, datetime_to_date
+from .pygenda_util import dt_lt, dt_lte, datetime_to_date, date_to_datetime
 from .pygenda_entryinfo import EntryInfo
 
 
@@ -645,6 +645,8 @@ class RepeatInfo:
 			self._set_hourly(interval)
 		elif freq=='MINUTELY':
 			self._set_minutely(interval)
+		elif freq=='SECONDLY':
+			self._set_secondly(interval)
 		else: # unrecognised freq - skip entry
 			raise RepeatUnsupportedError('Unknown FREQ {:s} in RRULE'.format(freq))
 
@@ -706,11 +708,19 @@ class RepeatInfo:
 	def _set_hourly(self, interval:int) -> None:
 		# Called on construction if a simple hourly repeat
 		self.delta = timedelta(hours=interval)
+		self.start = date_to_datetime(self.start)
 
 
 	def _set_minutely(self, interval:int) -> None:
 		# Called on construction if a simple minutely repeat
 		self.delta = timedelta(minutes=interval)
+		self.start = date_to_datetime(self.start)
+
+
+	def _set_secondly(self, interval:int) -> None:
+		# Called on construction if a simple secondly repeat
+		self.delta = timedelta(seconds=interval)
+		self.start = date_to_datetime(self.start)
 
 
 	def _set_exdates(self, exdate) -> None:
@@ -727,13 +737,17 @@ class RepeatInfo:
 
 	def _set_start_in_rng(self, start:dt_date) -> None:
 		# Set start date within given range (that is, on/after 'start')
+		# Note: 'start' argument must be a date, not a datetime (good enough for Week View etc)
 		self.start_in_rng = self.start
 		if isinstance(self.delta,list):
 			self.delta_index = 0
 		if start is not None:
 			# We try to jump to first entry in range
 			# First compute d, distance from the range
-			d = start - datetime_to_date(self.start)
+			if isinstance(self.start, dt_datetime):
+				d = date_to_datetime(start) - self.start
+			else: # start & self.start are dates, not datetimes
+				d = start - self.start
 			if isinstance(self.delta,list):
 				if d>timedelta(0): # start provided was after first repeat, so inc
 					# Want to do as much as possible in one increment
@@ -921,10 +935,10 @@ def repeats_in_range_with_rrstr(ev:iEvent, start:dt_date, stop:dt_date) -> list:
 	hastime = isinstance(dt,dt_datetime)
 	exd = 'EXDATE' in ev
 	rr = rrulestr(rrstr,dtstart=dt,forceset=exd)
-	st = dt_datetime.combine(start, dt_time()) # set time to midnight
-	sp = dt_datetime.combine(stop, dt_time())
+	st = date_to_datetime(start)
+	sp = date_to_datetime(stop)
 	if hastime:
-		# Could add tzinfo to combine() calls above, but this allows Python<3.6
+		# Could add tzinfo to date_to_datetime calls, but this allows Python<3.6
 		st = st.replace(tzinfo=dt.tzinfo)
 		sp = sp.replace(tzinfo=dt.tzinfo)
 	sp -= timedelta(milliseconds=1)
@@ -948,7 +962,9 @@ def repeats_in_range_with_rrstr(ev:iEvent, start:dt_date, stop:dt_date) -> list:
 
 def repeats_in_range(ev:iEvent, start:dt_date, stop:dt_date) -> list:
 	# Given a repeating event ev, return list of occurrences from
-	# dates start to stop.
+	# dates start to stop. N.B. start/stop must be dates, not datetimes.
+	if isinstance(start,dt_datetime) or isinstance(stop,dt_datetime):
+		raise TypeError('Start/stop must be dates, not datetimes')
 	try:
 		r_info = RepeatInfo(ev, start, stop)
 	except RepeatUnsupportedError as err:
