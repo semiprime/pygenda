@@ -899,7 +899,15 @@ def merge_repeating_entries_sort(target:list, ev:iEvent, start:dt_date, stop:dt_
 	# Given a sorted list of occurrences, 'target', and a single
 	# repeating event 'ev', splice the repeats of ev from 'start'
 	# to 'stop' into 'target', keeping it sorted.
-	ev_reps = repeats_in_range(ev, start, stop)
+	# !! A potential spot for optimisation?
+	try:
+		ev_reps = repeats_in_range(ev, start, stop)
+	except ValueError as err:
+		print('Warning: {:s} - ignoring repeat'.format(str(err)), file=stderr)
+		dt_st = ev['DTSTART'].dt
+		if dt_lt(dt_st,start) or dt_lte(stop,dt_st):
+			return
+		ev_reps = [dt_st]
 	i,j = 0,0
 	end_i = len(target)
 	end_j = len(ev_reps)
