@@ -30,7 +30,7 @@ from icalendar import cal as iCal
 from datetime import date as dt_date, timedelta
 
 from .pygenda_gui import GUI, EntryDialogController
-from .pygenda_util import datetime_to_time, datetime_to_date, format_time, format_compact_date, format_compact_time, format_compact_datetime
+from .pygenda_util import datetime_to_time, datetime_to_date, date_to_datetime, format_time, format_compact_date, format_compact_time, format_compact_datetime, dt_lte
 
 
 # Base class for pygenda Views (Week View, Year View, etc.)
@@ -148,8 +148,8 @@ class View:
 
 	@staticmethod
 	def entry_endtime(dt_st:dt_date, dt_end:dt_date, frame_text:bool) -> str:
-		# Returns endttime in format suitable for displaying in entry.
-		if not dt_end or dt_st==dt_end:
+		# Returns end time in format suitable for displaying in entry.
+		if not dt_end or dt_lte(dt_end, dt_st):
 			return ''
 		if type(dt_st) is dt_date and type(dt_end) is dt_date:
 			end_date = dt_end-timedelta(1)
@@ -157,14 +157,15 @@ class View:
 				return ''
 			t_str = format_compact_date(end_date, dt_st.year!=end_date.year)
 		else:
+			# At least one of dt_st,st_end is a datetime
+			# => consider them *both* as datetimes
 			st_date = datetime_to_date(dt_st)
-			end_date = datetime_to_date(dt_end)
+			dt_end = date_to_datetime(dt_end)
+			end_date = datetime_to_date(dt_end-timedelta(milliseconds=1))
 			if st_date == end_date:
 				t_str = format_compact_time(dt_end)
-			elif datetime_to_time(end_date)!=False:
-				t_str = format_compact_datetime(dt_end, st_date.year!=end_date.year)
 			else:
-				t_str = format_compact_date(dt_end, st_date.year!=end_date.year)
+				t_str = format_compact_datetime(dt_end, st_date.year!=end_date.year)
 		if frame_text and t_str:
 			t_str = u' (→{:s})'.format(t_str)
 		return t_str
