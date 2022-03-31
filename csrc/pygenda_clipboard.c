@@ -1,7 +1,8 @@
 // pygenda_clipboard.c
 //
 // Small C library to interface Pygenda with GTK clipboard.
-// Allows agenda entries to be copied to the clipboard.
+// Allows Pygenda entries to be copied to the clipboard.
+// Note: Pasting is done in the Python code (pygenda_gui.py).
 //
 // Copyright (C) 2022 Matthew Lewis
 //
@@ -45,7 +46,7 @@ GtkTargetEntry target_array[] = {
 #define LEN_TARGET_ARRAY (sizeof(target_array)/sizeof(GtkTargetEntry))
 
 // We store pointers to our data here:
-// Assume this are zero initialised
+// Assume this is zero initialised
 char *selectionStr[LEN_SELECTION_DATA];
 
 // Callback - called when data is requested
