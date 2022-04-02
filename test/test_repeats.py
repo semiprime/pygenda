@@ -22,8 +22,11 @@
 
 import unittest
 from datetime import datetime, date, timedelta
+from dateutil import tz
 import icalendar
 from dateutil.rrule import rrulestr
+from copy import deepcopy
+from sys import version_info as python_version
 
 # Add '..' to path, so this can be run from test directory
 import sys
@@ -34,7 +37,8 @@ from pygenda.pygenda_calendar import repeats_in_range
 
 
 class TestRepeats(unittest.TestCase):
-	maxDiff = None
+	maxDiff = None # show unlimited chars when showing diffs
+	LOCAL_TZ = tz.tzfile('/etc/localtime')
 
 	def test_yearly_basic(self) -> None:
 		# Create simple yearly repeating event
@@ -165,6 +169,28 @@ class TestRepeats(unittest.TestCase):
 		self.check_count_rrule(event, date(1970,1,1), date(1975,1,1), 1)
 
 
+	def test_yearly_timezone(self) -> None:
+		# Create timed yearly repeating event with timezone
+		tz_SAM = tz.gettz('Pacific/Samoa') # UTC-11
+		self.assertTrue(tz_SAM) # check not None
+		event = self.create_event(
+			'Event {}'.format(sys._getframe().f_code.co_name),
+			datetime(1960,12,31,23,16,4,tzinfo=tz_SAM),
+			rrule = {'FREQ':['YEARLY']})
+
+		# Test null periods
+		self.check_count(event, date(1950,1,1), date(1960,1,1), 0)
+		self.check_count(event, date(1960,1,1), date(1960,12,31), 0)
+		# NB timezone means event occurs 1961-01-01 UCT (for most people)
+		self.check_count(event, date(1960,1,1), date(1961,1,1), 0)
+		self.check_count(event, date(1961,1,2), date(1962,1,1), 0)
+
+		# Test non-null periods
+		self.check_count(event, date(1961,1,1), date(1961,1,7), 1)
+		self.check_count(event, date(2023,1,1), date(2024,1,1), 1)
+		self.check_count(event, date(3066,1,1), date(3066,1,7), 1)
+
+
 	def test_monthly_basic(self) -> None:
 		# Create simple monthly repeating event
 		event = self.create_event(
@@ -282,6 +308,58 @@ class TestRepeats(unittest.TestCase):
 		self.check_count_rrule(event, date(1970,1,1), date(1990,1,1), 18)
 
 
+	def test_monthly_timezone_until(self) -> None:
+		# Create timed monthly repeating event with timezone
+		tz_SY = tz.gettz('Australia/Sydney')
+		self.assertTrue(tz_SY) # check not None
+		event = self.create_event(
+			'Event {}'.format(sys._getframe().f_code.co_name),
+			datetime(2023,1,30,17,33,tzinfo=tz_SY),
+			rrule = {'FREQ':['MONTHLY'],'UNTIL':[datetime(2030,7,30,17,33,tzinfo=tz_SY)]})
+
+		# Test null periods
+		self.check_count(event, date(2022,1,1), date(2023,1,1), 0)
+		self.check_count(event, date(2023,1,1), date(2023,1,30), 0)
+		self.check_count(event, date(2030,7,31), date(2031,1,1), 0)
+		self.check_count(event, date(2023,1,31), date(2023,2,6), 0)
+
+		# Test non-null periods
+		self.check_count(event, date(2023,1,1), date(2023,1,31), 1)
+		self.check_count(event, date(2023,1,1), date(2024,1,1), 11)
+		self.check_count(event, date(2030,1,1), date(2031,1,1), 6)
+		self.check_count(event, date(2030,1,1), date(2030,7,30), 5)
+		self.check_count(event, date(2030,1,1), date(2030,7,31), 6)
+
+
+	def test_monthly_timezone_until_movesday(self) -> None:
+		# Create timed monthly repeating event with timezone.
+		# Set timezone far west & late in day, so for most local
+		# timezones it is shifted into the next day.
+		tz_AN = tz.gettz('America/Anchorage')
+		self.assertTrue(tz_AN) # check not None
+		event = self.create_event(
+			'Event {}'.format(sys._getframe().f_code.co_name),
+			datetime(2023,1,30,23,18,tzinfo=tz_AN),
+			rrule = {'FREQ':['MONTHLY'],'UNTIL':[datetime(2030,7,30,23,18,tzinfo=tz_AN)]})
+
+		# Test null periods
+		self.check_count(event, date(2022,1,1), date(2023,1,1), 0)
+		self.check_count(event, date(2023,1,1), date(2023,1,30), 0)
+		self.check_count(event, date(2023,1,1), date(2023,1,31), 0)
+		self.check_count(event, date(2023,2,1), date(2023,2,7), 0)
+		self.check_count(event, date(2030,8,1), date(2032,1,1), 0)
+
+		# Test non-null periods
+		self.check_count(event, date(2023,1,1), date(2023,2,1), 1)
+		self.check_count(event, date(2023,1,1), date(2024,1,1), 11)
+		self.check_count(event, date(2029,7,31), date(2029,8,1), 1) # next day
+		self.check_count(event, date(2030,7,31), date(2031,1,1), 1) # last occ
+		self.check_count(event, date(2030,1,1), date(2031,1,1), 6)
+		self.check_count(event, date(2030,1,1), date(2030,7,30), 5)
+		self.check_count(event, date(2030,1,1), date(2030,7,31), 5)
+		self.check_count(event, date(2030,1,1), date(2030,8,1), 6)
+
+
 	def test_weekly_basic(self) -> None:
 		# Create simple weekly repeating event
 		event = self.create_event(
@@ -378,6 +456,29 @@ class TestRepeats(unittest.TestCase):
 		self.check_count_rrule(event, date(2031,11,11), date(2033,5,15), 78)
 
 
+	def test_weekly_timezone_until(self) -> None:
+		# Create timed weekly repeating event with timezone
+		tz_NY = tz.gettz('America/New_York')
+		self.assertTrue(tz_NY) # check not None
+		event = self.create_event(
+			'Event {}'.format(sys._getframe().f_code.co_name),
+			datetime(2020,2,15,11,13,tzinfo=tz_NY),
+			rrule = {'FREQ':['WEEKLY'],'UNTIL':[datetime(2022,7,16,11,19,tzinfo=tz_NY)]})
+
+		# Test null periods
+		self.check_count(event, date(2019,1,1), date(2020,2,15), 0)
+		self.check_count(event, date(2019,1,1), date(2020,2,15), 0)
+		self.check_count(event, date(2019,1,1), date(2020,2,15), 0)
+		self.check_count(event, date(2022,7,17), date(2022,9,1), 0)
+
+		# Test non-null periods
+		self.check_count(event, date(2020,1,1), date(2020,2,16), 1)
+		self.check_count(event, date(2020,1,1), date(2020,3,1), 3)
+		self.check_count_rrule(event, date(2020,1,1), date(2021,1,1), 46)
+		self.check_count_rrule(event, date(2021,1,1), date(2022,1,1), 52)
+		self.check_count_rrule(event, date(2022,1,1), date(2023,1,1), 29)
+
+
 	def test_daily_basic(self) -> None:
 		# Create simple daily repeating event
 		event = self.create_event(
@@ -470,6 +571,23 @@ class TestRepeats(unittest.TestCase):
 		self.check_count_rrule(event, date(2018,1,1), date(2023,1,1), 92)
 
 
+	def test_daily_timezone(self) -> None:
+		# Create timed daily repeating event with timezone
+		tz_MAD = tz.gettz('Europe/Madrid')
+		self.assertTrue(tz_MAD) # check not None
+		event = self.create_event(
+			'Event {}'.format(sys._getframe().f_code.co_name),
+			datetime(2014,10,11,10,45,tzinfo=tz_MAD),
+			rrule = {'FREQ':['DAILY']})
+
+		# Test null periods
+		self.check_count(event, date(2013,1,1), date(2014,10,11), 0)
+
+		# Test non-null periods
+		self.check_count(event, date(2013,1,1), date(2014,10,12), 1)
+		self.check_count_rrule(event, date(2014,1,1), date(2015,1,1), 82)
+
+
 	def test_hourly_basic(self) -> None:
 		# Create simple hourly repeating event (with a start time)
 		event = self.create_event(
@@ -506,7 +624,7 @@ class TestRepeats(unittest.TestCase):
 		# Create hourly repeating event with interval>1
 		event = self.create_event(
 			'Event {}'.format(sys._getframe().f_code.co_name),
-			datetime(2010,10,30,17,57), # start time 17:57
+			datetime(2010,10,30,17,57), # time 17:57, day before clocks go back
 			rrule = {'FREQ':['HOURLY'], 'INTERVAL':[5]})
 
 		# Test null periods
@@ -514,9 +632,11 @@ class TestRepeats(unittest.TestCase):
 		self.check_count(event, date(2009,1,1), date(2010,1,1), 0)
 
 		# Test non-null periods
-		self.check_count_rrule(event, date(2010,1,1), date(2011,1,1), 299)
-		self.check_count_rrule(event, date(2010,10,31), date(2010,11,1), 5)
-		self.check_count_rrule(event, date(2010,10,31), date(2010,11,2), 9)
+		self.check_count_rrule(event, date(2010,10,30), date(2010,10,31), 2)
+		self.check_count_rrule(event, date(2010,10,31), date(2010,11,1), 5, summertime_weirdness=True)
+		self.check_count_rrule(event, date(2010,10,31), date(2010,11,2), 10, summertime_weirdness=True)
+		self.check_count_rrule(event, date(2010,11,1), date(2010,11,2), 5)
+		self.check_count_rrule(event, date(2010,1,1), date(2011,1,1), 300, summertime_weirdness=True)
 
 
 	def test_hourly_interval_untimed(self) -> None:
@@ -653,7 +773,7 @@ class TestRepeats(unittest.TestCase):
 		event = self.create_event(
 			'Event {}'.format(sys._getframe().f_code.co_name),
 			datetime(2024,3,22,6,38,4), # Time 6:38:04
-			rrule = {'FREQ':['MINUTELY'], 'INTERVAL':[1567], 'UNTIL':[datetime(2024,8,19,10,23,51)]}) # Last occ: 2024-08-18 08:37:04
+			rrule = {'FREQ':['MINUTELY'], 'INTERVAL':[1567], 'UNTIL':[datetime(2024,8,19,10,23,51)]})
 
 		# Test null periods
 		self.check_count(event, date(2022,1,1), date(2024,3,22), 0)
@@ -685,7 +805,9 @@ class TestRepeats(unittest.TestCase):
 		self.check_count_rrule(event, date(2017,8,31), date(2017,9,1), 60*5+14)
 		self.check_count_rrule(event, date(2017,9,1), date(2017,9,2), 60*60*24)
 		self.check_count_rrule(event, date(2017,9,1), date(2017,9,3), 60*60*48)
-		# Don't check rrule here because it's so slow:
+		# Test daylight-saving change (25hrs in last Sunday of October):
+		self.check_count_rrule(event, date(2017,10,29), date(2017,10,30), 60*60*25, summertime_weirdness=True)
+		# Don't use check_count_rrule() here because it's so slow:
 		self.check_count(event, date(2017,12,31), date(2018,1,2), 60*60*48)
 
 
@@ -705,7 +827,7 @@ class TestRepeats(unittest.TestCase):
 		self.check_count_rrule(event, date(1924,2,1), date(1924,3,1), 60*60*24)
 		self.check_count_rrule(event, date(1924,2,29), date(1924,3,1), 60*60*24)
 		self.check_count_rrule(event, date(1924,3,2), date(1924,3,4), 60*60*48)
-		# Don't check rrule here because it's so slow:
+		# Don't use check_count_rrule() here because it's so slow:
 		self.check_count(event, date(2137,6,12), date(2137,6,14), 60*60*48)
 
 
@@ -726,7 +848,7 @@ class TestRepeats(unittest.TestCase):
 		self.check_count_rrule(event, date(2022,2,22), date(2022,2,23), 3)
 		self.check_count_rrule(event, date(2022,2,1), date(2022,2,23), 3)
 		self.check_count_rrule(event, date(2022,2,1), date(2022,2,24), 42)
-		self.check_count_rrule(event, date(2034,1,1), date(2035,1,1), 14193)
+		self.check_count_rrule(event, date(2034,1,1), date(2035,1,1), 14193, summertime_weirdness=True)
 
 
 	def test_secondly_interval_count(self) -> None:
@@ -755,19 +877,23 @@ class TestRepeats(unittest.TestCase):
 		# Create secondly repeating event with repeat-until
 		event = self.create_event(
 			'Event {}'.format(sys._getframe().f_code.co_name),
-			datetime(2029,1,5,13,13,58), # Time 13:13:58
-			rrule = {'FREQ':['SECONDLY'], 'INTERVAL':[127], 'UNTIL':[datetime(2031,4,29,22,41,36)]})
+			datetime(2019,1,5,13,13,58), # Time 13:13:58
+			rrule = {'FREQ':['SECONDLY'], 'INTERVAL':[127], 'UNTIL':[datetime(2021,4,29,22,41,36)]})
 
 		# Test null periods
-		self.check_count(event, date(2029,1,1), date(2029,1,5), 0)
-		self.check_count(event, date(2031,4,30), date(2032,1,1), 0)
-		self.check_count(event, date(2030,2,28), date(2030,2,28), 0)
+		self.check_count(event, date(2019,1,1), date(2019,1,5), 0)
+		self.check_count(event, date(2021,4,30), date(2022,1,1), 0)
+		self.check_count(event, date(2020,2,28), date(2020,2,28), 0)
+		self.check_count(event, date(2021,4,30), date(2021,5,1), 0)
 
 		# Test non-null periods
-		self.check_count(event, date(2029,1,1), date(2029,1,6), 306)
-		self.check_count_rrule(event, date(2029,1,1), date(2030,1,1), 245219)
-		self.check_count_rrule(event, date(2030,1,1), date(2031,1,1), 248315)
-		self.check_count_rrule(event, date(2031,1,1), date(2032,1,1), 80921)
+		self.check_count(event, date(2019,1,1), date(2019,1,6), 306)
+		self.check_count_rrule(event, date(2019,1,1), date(2020,1,1), 245219, summertime_weirdness=True)
+		self.check_count_rrule(event, date(2020,1,1), date(2021,1,1), 248995, summertime_weirdness=True)#leap yr
+		self.check_count_rrule(event, date(2021,1,1), date(2021,1,2), 681)
+		self.check_count_rrule(event, date(2019,3,31), date(2019,4,1), 652) # Clocks go fwd
+		self.check_count_rrule(event, date(2021,4,29), date(2021,4,30), 643) # Last day
+		self.check_count_rrule(event, date(2021,1,1), date(2022,1,1), 80892) # Includes clocks going fwd
 
 
 	# Helper methods
@@ -791,7 +917,7 @@ class TestRepeats(unittest.TestCase):
 		self.assertEqual(len(from_reps_in_rng), expected)
 
 
-	def check_count_rrule(self, event:icalendar.Event, dt_st:date, dt_end:date, expected:int) -> None:
+	def check_count_rrule(self, event:icalendar.Event, dt_st:date, dt_end:date, expected:int, summertime_weirdness:bool=False) -> None:
 		# Helper function checks number of repeats in given period
 		# and also uses dateutil.rrule to test exact date/datetimes
 		self.assertTrue((dt_end-dt_st)>=timedelta(0)) # consistency check range
@@ -801,19 +927,68 @@ class TestRepeats(unittest.TestCase):
 		self.assertEqual(len(from_reps_in_rng), expected)
 
 		# Then check using rrule to make sure repeat dates/times as expected
-		rrstr = event['RRULE'].to_ical().decode('utf-8')
-		event_st = event['DTSTART'].dt
-		timed_event = isinstance(event_st, datetime) or event['RRULE']['FREQ'][0] in ['HOURLY','MINUTELY','SECONDLY']
+		ev_rr = deepcopy(event['RRULE']) # Deep copy so can change elements
+		event_st = deepcopy(event['DTSTART'].dt)
+		timed_event = isinstance(event_st, datetime)
+
+		if timed_event and 'UNTIL' in ev_rr:
+			# Need to specify UNTIL value in UTC
+			until = ev_rr['UNTIL'][0]
+			if isinstance(until,datetime) and until.tzinfo is None:
+				until = until.replace(tzinfo=self.LOCAL_TZ)
+			if isinstance(until,datetime):
+				until = until.astimezone(tz.gettz('UTC')) # Convert to UTC
+				ev_rr['UNTIL'][0] = until
+
+		rrstr = ev_rr.to_ical().decode('utf-8')
+		hr_min_sec_rep = event['RRULE']['FREQ'][0] in ['HOURLY','MINUTELY','SECONDLY']
+		if hr_min_sec_rep and not timed_event:
+			# Start time needs to be a datetime - set to midnight
+			event_st = datetime(event_st.year,event_st.month,event_st.day)
+			timed_event = True
+		if timed_event and event_st.tzinfo is None:
+			event_st = event_st.replace(tzinfo=self.LOCAL_TZ)
+		if hr_min_sec_rep:
+			# We might need to handle things like summer time starting.
+			# So we work in UTC and then convert back later.
+			event_tz = event_st.tzinfo # save timezone
+			event_st = event_st.astimezone(tz.gettz('UTC'))
 		rr = rrulestr(rrstr, dtstart=event_st)
 		# Convert date limits to datetimes limits for rrule
 		dt_st_for_rrule = datetime(dt_st.year, dt_st.month, dt_st.day)
 		dt_end_for_rrule = datetime(dt_end.year, dt_end.month, dt_end.day) - timedelta(microseconds=1)
+		if timed_event:
+			dt_st_for_rrule = dt_st_for_rrule.astimezone(self.LOCAL_TZ) if dt_st_for_rrule.tzinfo else dt_st_for_rrule.replace(tzinfo=self.LOCAL_TZ)
+			dt_end_for_rrule = dt_end_for_rrule.astimezone(self.LOCAL_TZ) if dt_end_for_rrule.tzinfo else dt_end_for_rrule.replace(tzinfo=self.LOCAL_TZ)
 
 		from_rrule = rr.between(after=dt_st_for_rrule, before=dt_end_for_rrule, inc=True)
+
+		if hr_min_sec_rep:
+			# Convert rrule result back to original timezone
+			from_rrule = [d.astimezone(event_tz) if d.tzinfo else d.replace(tzinfo=event_tz) for d in from_rrule]
 		if not timed_event:
 			from_rrule = [d.date() for d in from_rrule] # convert datetimes to dates
 
-		self.assertEqual(from_reps_in_rng, from_rrule)
+		if summertime_weirdness:
+			# Some instances occur in ambiguous summer time changeover zone
+			# (can have, e.g. two 01:30 in one day when clocks go back).
+			# Time comparison returns False for these (even if fold is good).
+			# So try a different comparison method.
+			# First test difference between dates is always zero
+			delta_list =[from_reps_in_rng[i]-from_rrule[i] for i in range(len(from_reps_in_rng))]
+			self.assertEqual(delta_list, [timedelta(0)]*len(from_rrule))
+			# Then test timezones are same for each list
+			tz_list = [from_reps_in_rng[i].tzinfo for i in range(len(from_reps_in_rng))]
+			self.assertEqual(tz_list, [event_tz]*len(from_rrule))
+			# Then test "fold" values are same for each list.
+			# Fold was only introduced in Python 3.6.
+			if python_version >= (3,6):
+				fold_list_rir = [from_reps_in_rng[i].fold for i in range(len(from_reps_in_rng))]
+				fold_list_rr = [from_rrule[i].fold for i in range(len(from_rrule))]
+				self.assertEqual(fold_list_rir, fold_list_rr)
+		else:
+			# Normal case - can just compare dates
+			self.assertEqual(from_reps_in_rng, from_rrule)
 
 
 # Run all tests if this file is executed as main

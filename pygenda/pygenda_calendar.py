@@ -33,10 +33,11 @@ import stat
 from time import monotonic as time_monotonic
 import tempfile
 from typing import Optional
+from copy import deepcopy
 
 # Pygenda components
 from .pygenda_config import Config
-from .pygenda_util import dt_lt, dt_lte, datetime_to_date, date_to_datetime
+from .pygenda_util import dt_lt, dt_lte, datetime_to_date, date_to_datetime, LOCAL_TZ
 from .pygenda_entryinfo import EntryInfo
 
 
@@ -572,11 +573,24 @@ class CalendarConnectorCalDAV(CalendarConnector):
 #
 class RepeatInfo:
 	DAY_ABBR = ('MO','TU','WE','TH','FR','SA','SU')
+	SUBDAY_REPEATS = ('HOURLY','MINUTELY','SECONDLY')
 
 	def __init__(self, event:iEvent, start:dt_date, stop:dt_date):
 		# Note: start argument is INclusive, stop is EXclusive
 		rrule = event['RRULE']
-		self.start = event['DTSTART'].dt
+		self.subday_rpt = rrule['FREQ'][0] in self.SUBDAY_REPEATS
+		self.timed_rpt = self.subday_rpt or isinstance(event['DTSTART'].dt,dt_datetime)
+		if self.timed_rpt:
+			# Make sure time and timezone are set
+			self.start = date_to_datetime(event['DTSTART'].dt, True)
+			if self.subday_rpt:
+				# Need to do calculations in UTC (e.g. for summer time changes)
+				self.start = self.start.astimezone(timezone.utc)
+			start = date_to_datetime(start, True).astimezone(timezone.utc)
+			stop = date_to_datetime(stop, True).astimezone(timezone.utc)
+		else:
+			self.start = event['DTSTART'].dt
+
 		# Quickly eliminate some out-of-range cases
 		if stop is not None and dt_lte(stop, self.start):
 			self.start_in_rng = None
@@ -585,11 +599,10 @@ class RepeatInfo:
 			self.start_in_rng = None
 			return
 
-		dt_st = event['DTSTART'].dt
-		if rrule['FREQ'][0]=='MONTHLY' and dt_st.day>28:
-			raise RepeatUnsupportedError('Unsupported MONTHLY (day>28) {} in RRULE'.format(dt_st))
-		if rrule['FREQ'][0]=='YEARLY' and dt_st.month==2 and dt_st.day==29:
-			raise RepeatUnsupportedError('Unsupported YEARLY (29/2) {} in RRULE'.format(dt_st))
+		if rrule['FREQ'][0]=='MONTHLY' and self.start.day>28:
+			raise RepeatUnsupportedError('Unsupported MONTHLY (day>28) {} in RRULE'.format(self.start))
+		if rrule['FREQ'][0]=='YEARLY' and self.start.month==2 and self.start.day==29:
+			raise RepeatUnsupportedError('Unsupported YEARLY (29/2) {} in RRULE'.format(self.start))
 
 		self._set_freq(rrule)
 		if 'EXDATE' in event:
@@ -710,19 +723,16 @@ class RepeatInfo:
 	def _set_hourly(self, interval:int) -> None:
 		# Called on construction if a simple hourly repeat
 		self.delta = timedelta(hours=interval)
-		self.start = date_to_datetime(self.start)
 
 
 	def _set_minutely(self, interval:int) -> None:
 		# Called on construction if a simple minutely repeat
 		self.delta = timedelta(minutes=interval)
-		self.start = date_to_datetime(self.start)
 
 
 	def _set_secondly(self, interval:int) -> None:
 		# Called on construction if a simple secondly repeat
 		self.delta = timedelta(seconds=interval)
-		self.start = date_to_datetime(self.start)
 
 
 	def _set_exdates(self, exdate) -> None:
@@ -739,17 +749,14 @@ class RepeatInfo:
 
 	def _set_start_in_rng(self, start:dt_date) -> None:
 		# Set start date within given range (that is, on/after 'start')
-		# Note: 'start' argument must be a date, not a datetime (good enough for Week View etc)
-		self.start_in_rng = self.start
+		# N.B. At this point 'start' may be a date or datetime (matching timed_rpt)
+		self.start_in_rng = self.start # first occurence of event
 		if isinstance(self.delta,list):
 			self.delta_index = 0
 		if start is not None:
 			# We try to jump to first entry in range
 			# First compute d, distance from the range
-			if isinstance(self.start, dt_datetime):
-				d = date_to_datetime(start) - self.start
-			else: # start & self.start are dates, not datetimes
-				d = start - self.start
+			d = start - self.start
 			if isinstance(self.delta,list):
 				if d>timedelta(0): # start provided was after first repeat, so inc
 					# Want to do as much as possible in one increment
@@ -771,11 +778,6 @@ class RepeatInfo:
 					else:
 						# self.delta is a relativedelta
 						sst = self.start
-						try:
-							# If we have tzinfo, get rid to make relativedelta
-							sst = sst.replace(tzinfo=None)
-						except TypeError:
-							pass
 						d = relativedelta(start, sst)
 						if self.delta.years>0:
 							s = round(d.years/self.delta.years)
@@ -797,13 +799,18 @@ class RepeatInfo:
 		# Internally RepeatInfo class will use an exclusive stop, so:
 		#   - Name it stop_exc for clarity
 		#   - Take care when using 'UNTIL'
+		# N.B. At this point 'stop' may be a date or datetime (matching timed_rpt)
 		until = rrule['UNTIL'][0] if 'UNTIL' in rrule else None
+		if self.timed_rpt and until:
+			until = date_to_datetime(until, True).astimezone(timezone.utc)
 		if until is None or (stop is not None and dt_lte(stop, until)):
+			# Repeats go beyond stop date - just use stop parameter
+			# if timed entry, make stop include timezone
 			self.stop_exc = stop
 		elif isinstance(until, dt_datetime):
-			self.stop_exc = until+timedelta(milliseconds=1)
+			self.stop_exc = until + timedelta(milliseconds=1)
 		else:
-			# dt_datetime is a date only
+			# until is a date only
 			self.stop_exc = dt_datetime.combine(until,dt_time(microsecond=1))
 		count = rrule['COUNT'][0] if 'COUNT' in rrule else None
 		if count is not None:
@@ -868,6 +875,8 @@ class RepeatIter_simpledelta:
 			self.dt += self.rinfo.delta
 			if not self.rinfo.is_exdate(self.dt):
 				break
+		if self.rinfo.subday_rpt:
+			r = r.astimezone(LOCAL_TZ)
 		return r
 
 
@@ -892,6 +901,8 @@ class RepeatIter_multidelta(RepeatIter_simpledelta):
 			self.i = (self.i+1)%len(self.rinfo.delta)
 			if not self.rinfo.is_exdate(self.dt):
 				break
+		if self.rinfo.subday_rpt:
+			r = r.astimezone(_LOCAL_TZ)
 		return r
 
 
@@ -940,24 +951,49 @@ def repeats_in_range_with_rrstr(ev:iEvent, start:dt_date, stop:dt_date) -> list:
 	# when quick methods can't be used.
 	# Repeats are super clunky.
 	# Can caching results help?
-	rrstr = ev['RRULE'].to_ical().decode('utf-8')
 	dt = ev['DTSTART'].dt
-	hastime = isinstance(dt,dt_datetime)
+	rr_for_str = ev['RRULE'] # reference to rrule
+	is_hr_min_sec = rr_for_str['FREQ'][0] in RepeatInfo.SUBDAY_REPEATS
+	is_timed = is_hr_min_sec or isinstance(dt,dt_datetime)
+	until_set = False
+	if is_timed:
+		dt = date_to_datetime(dt,True) # Ensure timed & with timezone
+		if 'UNTIL' in rr_for_str:
+			# Make sure until is timed with timezone
+			until = date_to_datetime(rr_for_str['UNTIL'][0],True)
+			until = until.astimezone(timezone.utc) # rrulestr needs UTC
+			rr_for_str = deepcopy(rr_for_str) # So we don't modify the event
+			rr_for_str['UNTIL'][0] = until
+			until_set = True
+	if is_hr_min_sec:
+		# We get rrule to do calculations in UTC, so summer time changes
+		# don't cause errors. We'll convert back to local time later.
+		dt = dt.astimezone(timezone.utc)
+	rrstr = rr_for_str.to_ical().decode('utf-8')
+	# Hacky workaround because in some package/version combinations,
+	# icalendar.to_ical(), returned UNTIL value lacks timezone 'Z'.
+	if until_set:
+		i_until_st = rrstr.find('UNTIL=')+6
+		i_until_end = rrstr.find(';', i_until_st)
+		if i_until_end == -1:
+			i_until_end = len(rrstr)
+		i_until_z = rrstr.find('Z', i_until_st)
+		if i_until_z == -1 or i_until_z > i_until_end:
+			rrstr = rrstr[:i_until_end] + 'Z' + rrstr[i_until_end:]
 	exd = 'EXDATE' in ev
 	rr = rrulestr(rrstr,dtstart=dt,forceset=exd)
-	st = date_to_datetime(start)
-	sp = date_to_datetime(stop)
-	if hastime:
-		# Could add tzinfo to date_to_datetime calls, but this allows Python<3.6
-		st = st.replace(tzinfo=dt.tzinfo)
-		sp = sp.replace(tzinfo=dt.tzinfo)
+	st = date_to_datetime(start, is_timed)
+	sp = date_to_datetime(stop, is_timed)
 	sp -= timedelta(milliseconds=1)
 	ret = rr.between(after=st,before=sp,inc=True)
-	if not hastime:
+	if not is_timed:
 		ret = [d.date() for d in ret]
+	elif is_hr_min_sec:
+		# After doing calculations in UTC, convert results to local time
+		ret = [d.astimezone(LOCAL_TZ) for d in ret]
 	if exd:
 		exdate_list = [ev['EXDATE'][i].dts[j] for i in range(len(ev['EXDATE'])) for j in range(len(ev['EXDATE'][i].dts))] if isinstance(ev['EXDATE'], list) else ev['EXDATE'].dts
-		if hastime:
+		if is_timed:
 			for de in exdate_list:
 				if isinstance(de.dt,dt_datetime):
 					ret = [d for d in ret if d!=de.dt]

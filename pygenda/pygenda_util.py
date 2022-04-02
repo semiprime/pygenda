@@ -22,7 +22,8 @@
 
 from calendar import day_abbr,month_abbr
 from icalendar import cal as iCal
-from datetime import date, time, datetime, timedelta
+from datetime import date, time, datetime, timedelta, tzinfo
+from dateutil import tz as du_tz
 import locale
 from typing import Tuple
 
@@ -46,11 +47,21 @@ def datetime_to_time(dt:date):
 		return False
 
 
-def date_to_datetime(dt:date) -> datetime:
+# For many repeat types, we need to have a timezone that is "aware" of
+# summer time changes to make correct, e.g. hourly, calculations
+# !! I'm pretty sure this will break compatibility with Windows...
+# !! (Maybe use tzlocal module: https://github.com/regebro/tzlocal)
+LOCAL_TZ = du_tz.tzfile('/etc/localtime')
+
+
+def date_to_datetime(dt:date, tz:tzinfo=None) -> datetime:
 	# Return datetime from dt argument. Set time to midnight if no time.
-	if isinstance(dt, datetime):
-		return dt
-	return datetime(dt.year,dt.month,dt.day)
+	# If tz parameter is not None/False, and dt has no timezone, add tz (True -> add local timezone)
+	# Hence this function can be used to guarantee we have datetime with a timezone
+	dt_ret= dt if isinstance(dt,datetime) else datetime(dt.year,dt.month,dt.day)
+	if tz and dt_ret.tzinfo is None:
+		dt_ret = dt_ret.replace(tzinfo=LOCAL_TZ if tz is True else tz)
+	return dt_ret
 
 
 def start_end_dts_event(event:iCal.Event) -> Tuple[date,date]:
@@ -70,7 +81,10 @@ def start_end_dts_occ(occ:Tuple[iCal.Event,date]) -> Tuple[date,date]:
 	# Return start & end time of an occurrence (an (event,date[time]) pair)
 	start = occ[1]
 	if 'DTEND' in occ[0]:
-		d = start - occ[0]['DTSTART'].dt
+		root_dt = occ[0]['DTSTART'].dt
+		if isinstance(start, datetime):
+			root_dt = date_to_datetime(root_dt,start.tzinfo)
+		d = start - root_dt
 		end = occ[0]['DTEND'].dt + d
 	elif 'DURATION' in occ[0]:
 		end = start + occ[0]['DURATION'].dt
