@@ -102,7 +102,7 @@ class View:
 		lab.set_halign(Gtk.Align.END)
 		lab.set_valign(Gtk.Align.START)
 		if datetime_to_time(dt_st)!=False:
-			mark = format_time(dt_st)
+			mark = format_time(dt_st, True)
 		elif type(ev) is iCal.Todo:
 			mark = BULLET_TODO
 		elif 'DTEND' in ev:
@@ -155,7 +155,7 @@ class View:
 			end_date = dt_end-timedelta(1)
 			if dt_st>=end_date:
 				return ''
-			t_str = format_compact_date(end_date, dt_st.year!=end_date.year)
+			t_str = format_compact_date(end_date, dt_st.year!=end_date.year, True)
 		else:
 			# At least one of dt_st,st_end is a datetime
 			# => consider them *both* as datetimes
@@ -163,9 +163,9 @@ class View:
 			dt_end = date_to_datetime(dt_end)
 			end_date = datetime_to_date(dt_end-timedelta(milliseconds=1))
 			if st_date == end_date:
-				t_str = format_compact_time(dt_end)
+				t_str = format_compact_time(dt_end, True)
 			else:
-				t_str = format_compact_datetime(dt_end, st_date.year!=end_date.year)
+				t_str = format_compact_datetime(dt_end, st_date.year!=end_date.year, True)
 		if frame_text and t_str:
 			t_str = u' (→{:s})'.format(t_str)
 		return t_str

@@ -93,9 +93,12 @@ def start_end_dts_occ(occ:Tuple[iCal.Event,date]) -> Tuple[date,date]:
 	return start,end
 
 
-def format_time(dt) -> str:
+def format_time(dt, aslocal:bool=False) -> str:
 	# Return time as string, formatted according to app config settings.
 	# Argument 'dt' can be a time or a datetime.
+	# If aslocal is True, convert time to local device time before formatting.
+	if aslocal and dt.tzinfo:
+		dt = dt.astimezone()
 	if Config.get_bool('global','24hr'):
 		fmt = '{hr:02d}{hs:s}{min:02d}'
 		return fmt.format(hr=dt.hour, min=dt.minute, hs=Config.get('global','time_sep'))
@@ -104,10 +107,13 @@ def format_time(dt) -> str:
 		return fmt.format(hr=(dt.hour-1)%12+1, min=dt.minute, ampm = 'pm' if dt.hour>11 else 'am', hs=Config.get('global','time_sep'))
 
 
-def format_compact_time(dt) -> str:
+def format_compact_time(dt, aslocal:bool=False) -> str:
 	# Return time as string, according to app config settings.
 	# Compact if 12hr set & minutes=0: e.g. '1pm' rather than '1:00pm'
 	# Argument 'dt' can be a time or a datetime.
+	# If aslocal is True, convert time to local device time before formatting.
+	if aslocal and dt.tzinfo:
+		dt = dt.astimezone()
 	if Config.get_bool('global','24hr'):
 		fmt = '{hr:02d}{hs:s}{min:02d}'
 		return fmt.format(hr=dt.hour, min=dt.minute, hs=Config.get('global','time_sep'))
@@ -119,8 +125,11 @@ def format_compact_time(dt) -> str:
 		return fmt.format(hr=(dt.hour-1)%12+1, min=dt.minute, ampm = 'pm' if dt.hour>11 else 'am', hs=Config.get('global','time_sep'))
 
 
-def format_compact_date(dt:date, show_year:bool) -> str:
+def format_compact_date(dt:date, show_year:bool, aslocal:bool=False) -> str:
 	# Return date as string, with abbreviated day/month names.
+	# If aslocal is True, convert time to local device time before formatting.
+	if aslocal and isinstance(dt,datetime) and dt.tzinfo:
+		dt = dt.astimezone()
 	if show_year:
 		fmt = '{day:s} {date:d} {mon:s}, {yr:d}'
 	else:
@@ -128,8 +137,11 @@ def format_compact_date(dt:date, show_year:bool) -> str:
 	return fmt.format(day=day_abbr[dt.weekday()], date=dt.day, mon=month_abbr[dt.month], yr=dt.year)
 
 
-def format_compact_datetime(dt:datetime, show_year:bool) -> str:
+def format_compact_datetime(dt:datetime, show_year:bool, aslocal:bool=False) -> str:
 	# Return datetime as string, with abbreviated day/month names, compact time.
+	# If aslocal is True, convert time to local device time before formatting.
+	if aslocal and isinstance(dt,datetime) and dt.tzinfo:
+		dt = dt.astimezone()
 	if show_year:
 		fmt = '{day:s} {date:d} {mon:s}, {yr:d}, {tm:s}'
 	else:
