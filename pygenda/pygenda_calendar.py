@@ -890,7 +890,7 @@ class RepeatIter_multidelta(RepeatIter_simpledelta):
 		self.i = rinfo.delta_index
 
 	def __next__(self) -> dt_date:
-		# Return date/dattime for next occurence in range.
+		# Return date/datetime for next occurence in range.
 		# Excluded dates are taken into account.
 		# Raises StopIteration at end of occurence list.
 		if self.dt is None or dt_lte(self.rinfo.stop_exc,self.dt):
@@ -902,7 +902,7 @@ class RepeatIter_multidelta(RepeatIter_simpledelta):
 			if not self.rinfo.is_exdate(self.dt):
 				break
 		if self.rinfo.subday_rpt:
-			r = r.astimezone(_LOCAL_TZ)
+			r = r.astimezone(LOCAL_TZ)
 		return r
 
 
