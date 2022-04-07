@@ -27,6 +27,7 @@ import icalendar
 from dateutil.rrule import rrulestr
 from copy import deepcopy
 from sys import version_info as python_version
+from tzlocal import get_localzone
 
 # Add '..' to path, so this can be run from test directory
 import sys
@@ -38,7 +39,10 @@ from pygenda.pygenda_calendar import repeats_in_range
 
 class TestRepeats(unittest.TestCase):
 	maxDiff = None # show unlimited chars when showing diffs
-	LOCAL_TZ = tz.tzfile('/etc/localtime')
+	LOCAL_TZ = get_localzone()
+	if not hasattr(LOCAL_TZ,'unwrap_shim') and hasattr(LOCAL_TZ,'zone'):
+		# Old tzlocal API, so need to create tzinfo object
+		LOCAL_TZ = tz.gettz(LOCAL_TZ.zone)
 
 	def test_yearly_basic(self) -> None:
 		# Create simple yearly repeating event
@@ -633,10 +637,10 @@ class TestRepeats(unittest.TestCase):
 
 		# Test non-null periods
 		self.check_count_rrule(event, date(2010,10,30), date(2010,10,31), 2)
-		self.check_count_rrule(event, date(2010,10,31), date(2010,11,1), 5, summertime_weirdness=True)
-		self.check_count_rrule(event, date(2010,10,31), date(2010,11,2), 10, summertime_weirdness=True)
+		self.check_count_rrule(event, date(2010,10,31), date(2010,11,1), 5)
+		self.check_count_rrule(event, date(2010,10,31), date(2010,11,2), 10)
 		self.check_count_rrule(event, date(2010,11,1), date(2010,11,2), 5)
-		self.check_count_rrule(event, date(2010,1,1), date(2011,1,1), 300, summertime_weirdness=True)
+		self.check_count_rrule(event, date(2010,1,1), date(2011,1,1), 300)
 
 
 	def test_hourly_interval_untimed(self) -> None:
@@ -806,7 +810,7 @@ class TestRepeats(unittest.TestCase):
 		self.check_count_rrule(event, date(2017,9,1), date(2017,9,2), 60*60*24)
 		self.check_count_rrule(event, date(2017,9,1), date(2017,9,3), 60*60*48)
 		# Test daylight-saving change (25hrs in last Sunday of October):
-		self.check_count_rrule(event, date(2017,10,29), date(2017,10,30), 60*60*25, summertime_weirdness=True)
+		self.check_count_rrule(event, date(2017,10,29), date(2017,10,30), 60*60*25)
 		# Don't use check_count_rrule() here because it's so slow:
 		self.check_count(event, date(2017,12,31), date(2018,1,2), 60*60*48)
 
@@ -848,7 +852,7 @@ class TestRepeats(unittest.TestCase):
 		self.check_count_rrule(event, date(2022,2,22), date(2022,2,23), 3)
 		self.check_count_rrule(event, date(2022,2,1), date(2022,2,23), 3)
 		self.check_count_rrule(event, date(2022,2,1), date(2022,2,24), 42)
-		self.check_count_rrule(event, date(2034,1,1), date(2035,1,1), 14193, summertime_weirdness=True)
+		self.check_count_rrule(event, date(2034,1,1), date(2035,1,1), 14193)
 
 
 	def test_secondly_interval_count(self) -> None:
@@ -888,8 +892,8 @@ class TestRepeats(unittest.TestCase):
 
 		# Test non-null periods
 		self.check_count(event, date(2019,1,1), date(2019,1,6), 306)
-		self.check_count_rrule(event, date(2019,1,1), date(2020,1,1), 245219, summertime_weirdness=True)
-		self.check_count_rrule(event, date(2020,1,1), date(2021,1,1), 248995, summertime_weirdness=True)#leap yr
+		self.check_count_rrule(event, date(2019,1,1), date(2020,1,1), 245219)
+		self.check_count_rrule(event, date(2020,1,1), date(2021,1,1), 248995) #leap yr
 		self.check_count_rrule(event, date(2021,1,1), date(2021,1,2), 681)
 		self.check_count_rrule(event, date(2019,3,31), date(2019,4,1), 652) # Clocks go fwd
 		self.check_count_rrule(event, date(2021,4,29), date(2021,4,30), 643) # Last day
@@ -917,7 +921,7 @@ class TestRepeats(unittest.TestCase):
 		self.assertEqual(len(from_reps_in_rng), expected)
 
 
-	def check_count_rrule(self, event:icalendar.Event, dt_st:date, dt_end:date, expected:int, summertime_weirdness:bool=False) -> None:
+	def check_count_rrule(self, event:icalendar.Event, dt_st:date, dt_end:date, expected:int) -> None:
 		# Helper function checks number of repeats in given period
 		# and also uses dateutil.rrule to test exact date/datetimes
 		self.assertTrue((dt_end-dt_st)>=timedelta(0)) # consistency check range
@@ -969,26 +973,7 @@ class TestRepeats(unittest.TestCase):
 		if not timed_event:
 			from_rrule = [d.date() for d in from_rrule] # convert datetimes to dates
 
-		if summertime_weirdness:
-			# Some instances occur in ambiguous summer time changeover zone
-			# (can have, e.g. two 01:30 in one day when clocks go back).
-			# Time comparison returns False for these (even if fold is good).
-			# So try a different comparison method.
-			# First test difference between dates is always zero
-			delta_list =[from_reps_in_rng[i]-from_rrule[i] for i in range(len(from_reps_in_rng))]
-			self.assertEqual(delta_list, [timedelta(0)]*len(from_rrule))
-			# Then test timezones are same for each list
-			tz_list = [from_reps_in_rng[i].tzinfo for i in range(len(from_reps_in_rng))]
-			self.assertEqual(tz_list, [event_tz]*len(from_rrule))
-			# Then test "fold" values are same for each list.
-			# Fold was only introduced in Python 3.6.
-			if python_version >= (3,6):
-				fold_list_rir = [from_reps_in_rng[i].fold for i in range(len(from_reps_in_rng))]
-				fold_list_rr = [from_rrule[i].fold for i in range(len(from_rrule))]
-				self.assertEqual(fold_list_rir, fold_list_rr)
-		else:
-			# Normal case - can just compare dates
-			self.assertEqual(from_reps_in_rng, from_rrule)
+		self.assertEqual(from_reps_in_rng, from_rrule)
 
 
 # Run all tests if this file is executed as main

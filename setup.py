@@ -76,6 +76,7 @@ setup(
 		"PyGObject",
 		"python-dateutil",
 		"icalendar",
+		"tzlocal",
 	],
 	classifiers = [
 		"Development Status :: 2 - Pre-Alpha",

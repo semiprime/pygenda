@@ -73,10 +73,16 @@ GTK+3
 
 * Install on Debian: `sudo apt install gtk+3`
 
-Python3 modules: PyGObject3 (for gi), icalendar, python-dateutil
+Python3 modules: PyGObject3 (for gi), icalendar, python-dateutil, tzlocal
 
-* Install on Debian: `sudo apt install python3-gi python3-icalendar python3-dateutil`
-* Or install them using pip3: `pip3 install pygobject icalendar python-dateutil`
+* Install on Debian: `sudo apt install python3-gi python3-icalendar python3-dateutil python3-tzlocal`
+* Or install them using pip3: `pip3 install pygobject icalendar python-dateutil tzlocal`
+
+Note: When I tested on Gemian on the Gemini, pip3 installed tzlocal
+version 2.1, which did not work (although versions 1 to 4 worked on a
+Linux laptop). If you get errors like "No such file or directory:
+'getprop'" at startup, try installing a different version of tzlocal
+with either apt or pip3 (v1.x should work on Gemian with Python 3.5).
 
 That should be enough to start Pygenda, but if you want to use a
 CalDAV server (recommended for real use) there are some extra

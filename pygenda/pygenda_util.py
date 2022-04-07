@@ -24,6 +24,7 @@ from calendar import day_abbr,month_abbr
 from icalendar import cal as iCal
 from datetime import date, time, datetime, timedelta, tzinfo
 from dateutil import tz as du_tz
+from tzlocal import get_localzone
 import locale
 from typing import Tuple
 
@@ -49,9 +50,12 @@ def datetime_to_time(dt:date):
 
 # For many repeat types, we need to have a timezone that is "aware" of
 # summer time changes to make correct, e.g. hourly, calculations
-# !! I'm pretty sure this will break compatibility with Windows...
-# !! (Maybe use tzlocal module: https://github.com/regebro/tzlocal)
-LOCAL_TZ = du_tz.tzfile('/etc/localtime')
+LOCAL_TZ = get_localzone()
+if not hasattr(LOCAL_TZ,'unwrap_shim') and hasattr(LOCAL_TZ,'zone'):
+	# Old tzlocal API, so need to create tzinfo object
+	LOCAL_TZ = du_tz.gettz(LOCAL_TZ.zone)
+# Alternative for Linuxes:
+#LOCAL_TZ = du_tz.tzfile('/etc/localtime')
 
 
 def date_to_datetime(dt:date, tz:tzinfo=None) -> datetime:
