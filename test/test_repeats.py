@@ -21,7 +21,7 @@
 #
 
 import unittest
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, time, timedelta
 from dateutil import tz
 import icalendar
 from dateutil.rrule import rrulestr
@@ -35,6 +35,11 @@ sys.path.append('..')
 
 # Import the module we want to test...
 from pygenda.pygenda_calendar import repeats_in_range
+
+
+# Set this to True to skip some slow tests.
+# Do NOT set this when checking releases!
+QUICK_TEST = False
 
 
 class TestRepeats(unittest.TestCase):
@@ -190,9 +195,9 @@ class TestRepeats(unittest.TestCase):
 		self.check_count(event, date(1961,1,2), date(1962,1,1), 0)
 
 		# Test non-null periods
-		self.check_count(event, date(1961,1,1), date(1961,1,7), 1)
-		self.check_count(event, date(2023,1,1), date(2024,1,1), 1)
-		self.check_count(event, date(3066,1,1), date(3066,1,7), 1)
+		self.check_count_rrule(event, date(1961,1,1), date(1961,1,7), 1)
+		self.check_count_rrule(event, date(2023,1,1), date(2024,1,1), 1)
+		self.check_count_rrule(event, date(3066,1,1), date(3066,1,7), 1)
 
 
 	def test_monthly_basic(self) -> None:
@@ -328,11 +333,11 @@ class TestRepeats(unittest.TestCase):
 		self.check_count(event, date(2023,1,31), date(2023,2,6), 0)
 
 		# Test non-null periods
-		self.check_count(event, date(2023,1,1), date(2023,1,31), 1)
-		self.check_count(event, date(2023,1,1), date(2024,1,1), 11)
-		self.check_count(event, date(2030,1,1), date(2031,1,1), 6)
-		self.check_count(event, date(2030,1,1), date(2030,7,30), 5)
-		self.check_count(event, date(2030,1,1), date(2030,7,31), 6)
+		self.check_count_rrule(event, date(2023,1,1), date(2023,1,31), 1)
+		self.check_count_rrule(event, date(2023,1,1), date(2024,1,1), 11)
+		self.check_count_rrule(event, date(2030,1,1), date(2031,1,1), 6)
+		self.check_count_rrule(event, date(2030,1,1), date(2030,7,30), 5)
+		self.check_count_rrule(event, date(2030,1,1), date(2030,7,31), 6)
 
 
 	def test_monthly_timezone_until_movesday(self) -> None:
@@ -354,14 +359,14 @@ class TestRepeats(unittest.TestCase):
 		self.check_count(event, date(2030,8,1), date(2032,1,1), 0)
 
 		# Test non-null periods
-		self.check_count(event, date(2023,1,1), date(2023,2,1), 1)
-		self.check_count(event, date(2023,1,1), date(2024,1,1), 11)
-		self.check_count(event, date(2029,7,31), date(2029,8,1), 1) # next day
-		self.check_count(event, date(2030,7,31), date(2031,1,1), 1) # last occ
-		self.check_count(event, date(2030,1,1), date(2031,1,1), 6)
-		self.check_count(event, date(2030,1,1), date(2030,7,30), 5)
-		self.check_count(event, date(2030,1,1), date(2030,7,31), 5)
-		self.check_count(event, date(2030,1,1), date(2030,8,1), 6)
+		self.check_count_rrule(event, date(2023,1,1), date(2023,2,1), 1)
+		self.check_count_rrule(event, date(2023,1,1), date(2024,1,1), 11)
+		self.check_count_rrule(event, date(2029,7,31), date(2029,8,1), 1) # next day
+		self.check_count_rrule(event, date(2030,7,31), date(2031,1,1), 1) # last occ
+		self.check_count_rrule(event, date(2030,1,1), date(2031,1,1), 6)
+		self.check_count_rrule(event, date(2030,1,1), date(2030,7,30), 5)
+		self.check_count_rrule(event, date(2030,1,1), date(2030,7,31), 5)
+		self.check_count_rrule(event, date(2030,1,1), date(2030,8,1), 6)
 
 
 	def test_weekly_basic(self) -> None:
@@ -476,11 +481,54 @@ class TestRepeats(unittest.TestCase):
 		self.check_count(event, date(2022,7,17), date(2022,9,1), 0)
 
 		# Test non-null periods
-		self.check_count(event, date(2020,1,1), date(2020,2,16), 1)
-		self.check_count(event, date(2020,1,1), date(2020,3,1), 3)
+		self.check_count_rrule(event, date(2020,1,1), date(2020,2,16), 1)
+		self.check_count_rrule(event, date(2020,1,1), date(2020,3,1), 3)
 		self.check_count_rrule(event, date(2020,1,1), date(2021,1,1), 46)
 		self.check_count_rrule(event, date(2021,1,1), date(2022,1,1), 52)
 		self.check_count_rrule(event, date(2022,1,1), date(2023,1,1), 29)
+
+
+	def test_weekly_twice(self) -> None:
+		# Create twice weekly repeating event on Tuesday & Thursday
+		event = self.create_event(
+			'Event {}'.format(sys._getframe().f_code.co_name),
+			datetime(2023,4,25,19,15),
+			rrule = {'FREQ':['WEEKLY'], 'BYDAY':['TU','TH']})
+
+		# Test null periods
+		self.check_count(event, date(2022,1,1), date(2023,1,1), 0)
+		self.check_count(event, date(2023,1,1), date(2023,4,25), 0)
+		self.check_count(event, date(2023,4,26), date(2023,4,27), 0)
+		self.check_count(event, date(2023,4,28), date(2023,5,2), 0)
+
+		# Test non-null periods
+		self.check_count_rrule(event, date(2023,4,24), date(2023,5,1), 2)
+		self.check_count_rrule(event, date(2023,4,1), date(2023,5,1), 2)
+		self.check_count_rrule(event, date(2023,1,1), date(2024,1,1), 72)
+		self.check_count_rrule(event, date(2024,1,1), date(2025,1,1), 105)
+
+
+	def test_weekly_thrice_exdate(self) -> None:
+		# Create thrice biweekly repeating event with exception dates
+		event = self.create_event(
+			'Event {}'.format(sys._getframe().f_code.co_name),
+			datetime(2024,2,15),
+			rrule = {'FREQ':['WEEKLY'], 'INTERVAL':[2], 'BYDAY':['TH','SA','SU']},
+			exdates = {date(2024,12,19),date(2024,5,16),date(2024,9,26),date(2024,9,28),date(2024,9,29),date(2024,11,23)} # Note May 16th wouldn't occur anyway
+			)
+
+		# Test null periods
+		self.check_count(event, date(2023,1,1), date(2024,1,1), 0)
+		self.check_count(event, date(2024,1,1), date(2024,2,15), 0)
+		self.check_count(event, date(2024,2,16), date(2024,2,17), 0)
+		self.check_count(event, date(2024,2,19), date(2024,2,29), 0)
+
+		# Test non-null periods
+		self.check_count_rrule(event, date(2024,2,12), date(2024,2,19), 3)
+		self.check_count_rrule(event, date(2024,2,26), date(2024,3,4), 3)
+		self.check_count_rrule(event, date(2024,2,1), date(2024,3,1), 4)
+		self.check_count_rrule(event, date(2024,1,1), date(2025,1,1), 64)
+		self.check_count_rrule(event, date(2025,1,1), date(2026,1,1), 78)
 
 
 	def test_daily_basic(self) -> None:
@@ -588,7 +636,7 @@ class TestRepeats(unittest.TestCase):
 		self.check_count(event, date(2013,1,1), date(2014,10,11), 0)
 
 		# Test non-null periods
-		self.check_count(event, date(2013,1,1), date(2014,10,12), 1)
+		self.check_count_rrule(event, date(2013,1,1), date(2014,10,12), 1)
 		self.check_count_rrule(event, date(2014,1,1), date(2015,1,1), 82)
 
 
@@ -808,8 +856,11 @@ class TestRepeats(unittest.TestCase):
 		self.check_count_rrule(event, date(2017,1,24), date(2017,9,1), 60*5+14)
 		self.check_count_rrule(event, date(2017,8,31), date(2017,9,1), 60*5+14)
 		self.check_count_rrule(event, date(2017,9,1), date(2017,9,2), 60*60*24)
+		if QUICK_TEST:
+			return
 		self.check_count_rrule(event, date(2017,9,1), date(2017,9,3), 60*60*48)
 		# Test daylight-saving change (25hrs in last Sunday of October):
+		# This is slow, but important to test that it's correct
 		self.check_count_rrule(event, date(2017,10,29), date(2017,10,30), 60*60*25)
 		# Don't use check_count_rrule() here because it's so slow:
 		self.check_count(event, date(2017,12,31), date(2018,1,2), 60*60*48)
@@ -829,6 +880,8 @@ class TestRepeats(unittest.TestCase):
 
 		# Test non-null periods
 		self.check_count_rrule(event, date(1924,2,1), date(1924,3,1), 60*60*24)
+		if QUICK_TEST:
+			return
 		self.check_count_rrule(event, date(1924,2,29), date(1924,3,1), 60*60*24)
 		self.check_count_rrule(event, date(1924,3,2), date(1924,3,4), 60*60*48)
 		# Don't use check_count_rrule() here because it's so slow:
@@ -846,12 +899,14 @@ class TestRepeats(unittest.TestCase):
 		self.check_count(event, date(1463,1,1), date(1464,1,1), 0)
 		self.check_count(event, date(2022,2,2), date(2022,2,22), 0)
 		self.check_count(event, date(2022,2,22), date(2022,2,22), 0)
-		self.check_count_rrule(event, date(2034,1,1), date(2034,1,1), 0)
+		self.check_count(event, date(2034,1,1), date(2034,1,1), 0)
 
 		# Test non-null period counts
 		self.check_count_rrule(event, date(2022,2,22), date(2022,2,23), 3)
 		self.check_count_rrule(event, date(2022,2,1), date(2022,2,23), 3)
 		self.check_count_rrule(event, date(2022,2,1), date(2022,2,24), 42)
+		if QUICK_TEST:
+			return
 		self.check_count_rrule(event, date(2034,1,1), date(2035,1,1), 14193)
 
 
@@ -869,6 +924,8 @@ class TestRepeats(unittest.TestCase):
 
 		# Test non-null periods
 		self.check_count_rrule(event, date(2021,1,1), date(2027,1,1), 1582)
+		if QUICK_TEST:
+			return
 		self.check_count_rrule(event, date(2021,1,1), date(2022,1,1), 181)
 		self.check_count_rrule(event, date(2022,1,1), date(2023,1,1), 345)
 		self.check_count_rrule(event, date(2023,1,1), date(2024,1,1), 346)
@@ -891,8 +948,10 @@ class TestRepeats(unittest.TestCase):
 		self.check_count(event, date(2021,4,30), date(2021,5,1), 0)
 
 		# Test non-null periods
-		self.check_count(event, date(2019,1,1), date(2019,1,6), 306)
+		self.check_count_rrule(event, date(2019,1,1), date(2019,1,6), 306)
 		self.check_count_rrule(event, date(2019,1,1), date(2020,1,1), 245219)
+		if QUICK_TEST:
+			return
 		self.check_count_rrule(event, date(2020,1,1), date(2021,1,1), 248995) #leap yr
 		self.check_count_rrule(event, date(2021,1,1), date(2021,1,2), 681)
 		self.check_count_rrule(event, date(2019,3,31), date(2019,4,1), 652) # Clocks go fwd
@@ -902,7 +961,7 @@ class TestRepeats(unittest.TestCase):
 
 	# Helper methods
 	@staticmethod
-	def create_event(summary:str, dt_st:date, dt_end=None, rrule=None) -> icalendar.Event:
+	def create_event(summary:str, dt_st:date, dt_end=None, rrule=None, exdates=None) -> icalendar.Event:
 		# Helper function to create a repeating event
 		event = icalendar.Event()
 		event.add('SUMMARY', summary)
@@ -911,6 +970,8 @@ class TestRepeats(unittest.TestCase):
 			event.add('DT_END', dt_end)
 		if rrule is not None:
 			event.add('RRULE', rrule)
+		if exdates is not None:
+			event.add('EXDATE', exdates)
 		return event
 
 
@@ -957,7 +1018,11 @@ class TestRepeats(unittest.TestCase):
 			# So we work in UTC and then convert back later.
 			event_tz = event_st.tzinfo # save timezone
 			event_st = event_st.astimezone(tz.gettz('UTC'))
-		rr = rrulestr(rrstr, dtstart=event_st)
+		rr = rrulestr(rrstr, dtstart=event_st, forceset=True)
+		if 'EXDATE' in event:
+			for exd in event['EXDATE'].dts:
+				exdt = datetime.combine(exd.dt, time(tzinfo=self.LOCAL_TZ))
+				rr.exdate(exdt)
 		# Convert date limits to datetimes limits for rrule
 		dt_st_for_rrule = datetime(dt_st.year, dt_st.month, dt_st.day)
 		dt_end_for_rrule = datetime(dt_end.year, dt_end.month, dt_end.day) - timedelta(microseconds=1)

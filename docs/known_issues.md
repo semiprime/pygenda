@@ -182,7 +182,7 @@ Cosmetic
 * Year View: Pixel missing in grid lines at top-left corner
 
 * On Gemini, shows "no access" icons in instead of "minus" icons (e.g. in
-  spin buttons of entry dialog).
+  spin buttons of entry dialog) - Gemian bug?
 
 * Year view is slow to redraw on Gemini, so get black rectangles when
   e.g. closing dialogs.
@@ -197,9 +197,8 @@ Testing
 * Need to test that iCal files/data can be read by other applications and
   Pygenda can read files/data from other applications.
 
-* Need some sort of testing after big updates. Either automated or protocol.
-
-* Need to expand repeats testing (test_repeats.py) to include exdates.
+* Need to expand unit testing (currently just test_repeats.py) and other
+  tests (currently just manually checking a few test*.ics files).
 
 * Need to test with corrupt iCal files. (Including when files become
   corrupt while the program is running.) Use a fuzzer?
