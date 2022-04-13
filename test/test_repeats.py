@@ -233,13 +233,39 @@ class TestRepeats(unittest.TestCase):
 		self.check_count_rrule(event, date(2010,1,1), date(2010,2,1), 1)
 
 
-	def test_monthly_timed(self) -> None:
+	def test_monthly_timed_exdate(self) -> None:
+		# Create timed monthly repeating event
+		# (with the potential to fall on a leap-day)
+		event = self.create_event(
+			'Event {}'.format(sys._getframe().f_code.co_name),
+			datetime(1998,3,28,12,3), # time 12:03
+			rrule = {'FREQ':['MONTHLY']},
+			exdates = {datetime(2063,7,28,12,3), date(2065,7,28)})
+
+		# Test null periods
+		self.check_count(event, date(1997,1,1), date(1998,3,28), 0)
+		self.check_count(event, date(1998,3,29), date(1998,4,28), 0)
+		self.check_count(event, date(2046,12,29), date(2047,1,28), 0)
+
+		# Test non-null periods
+		self.check_count_rrule(event, date(1998,1,1), date(1999,1,1), 10)
+		self.check_count_rrule(event, date(1999,1,1), date(2000,1,1), 12)
+		self.check_count_rrule(event, date(2000,1,1), date(2001,1,1), 12)
+		self.check_count_rrule(event, date(2001,1,1), date(2002,1,1), 12)
+		self.check_count_rrule(event, date(2063,1,1), date(2064,1,1), 11)
+		self.check_count_rrule(event, date(2065,1,1), date(2066,1,1), 11)
+		self.check_count_rrule(event, date(2100,1,1), date(2101,1,1), 12)
+		self.check_count_rrule(event, date(2112,1,1), date(2113,1,1), 12)
+
+
+	def test_monthly_timed_29th_exdate(self) -> None:
 		# Create timed monthly repeating event
 		# (with the potential to fall on a leap-day)
 		event = self.create_event(
 			'Event {}'.format(sys._getframe().f_code.co_name),
 			datetime(1998,3,29,12,3), # time 12:03
-			rrule = {'FREQ':['MONTHLY']})
+			rrule = {'FREQ':['MONTHLY']},
+			exdates = {datetime(2063,7,29,12,3), date(2065,7,29)})
 
 		# Test null periods
 		self.check_count(event, date(1997,1,1), date(1998,3,29), 0)
@@ -251,6 +277,8 @@ class TestRepeats(unittest.TestCase):
 		self.check_count_rrule(event, date(1999,1,1), date(2000,1,1), 11)
 		self.check_count_rrule(event, date(2000,1,1), date(2001,1,1), 12)
 		self.check_count_rrule(event, date(2001,1,1), date(2002,1,1), 11)
+		self.check_count_rrule(event, date(2063,1,1), date(2064,1,1), 10)
+		self.check_count_rrule(event, date(2065,1,1), date(2066,1,1), 10)
 		self.check_count_rrule(event, date(2100,1,1), date(2101,1,1), 11)
 		self.check_count_rrule(event, date(2112,1,1), date(2113,1,1), 12)
 
@@ -971,7 +999,8 @@ class TestRepeats(unittest.TestCase):
 		if rrule is not None:
 			event.add('RRULE', rrule)
 		if exdates is not None:
-			event.add('EXDATE', exdates)
+			for exd in exdates:
+				event.add('EXDATE', exd)
 		return event
 
 
@@ -1019,9 +1048,18 @@ class TestRepeats(unittest.TestCase):
 			event_tz = event_st.tzinfo # save timezone
 			event_st = event_st.astimezone(tz.gettz('UTC'))
 		rr = rrulestr(rrstr, dtstart=event_st, forceset=True)
-		if 'EXDATE' in event:
-			for exd in event['EXDATE'].dts:
-				exdt = datetime.combine(exd.dt, time(tzinfo=self.LOCAL_TZ))
+		if 'EXDATE' in event and timed_event:
+			if isinstance(event['EXDATE'],list):
+				exdtlist = [ d for dlist in event['EXDATE'] for d in dlist.dts ]
+			else:
+				exdtlist = event['EXDATE'].dts
+			for exd in exdtlist:
+				if isinstance(exd.dt,datetime):
+					exdt = exd.dt
+				else:
+					exdt = datetime.combine(exd.dt, event_st.time())
+				if exdt.tzinfo is None:
+					exdt = exdt.replace(tzinfo=self.LOCAL_TZ)
 				rr.exdate(exdt)
 		# Convert date limits to datetimes limits for rrule
 		dt_st_for_rrule = datetime(dt_st.year, dt_st.month, dt_st.day)

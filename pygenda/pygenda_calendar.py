@@ -295,10 +295,10 @@ class Calendar:
 
 		# Add exception date/times
 		if e_inf.rep_exceptions:
-			e_prm = {'VALUE':'DATE'} # ? Bug in icalendar 4.0.9 means we need to add VALUE parameter
+			d_prm = {'VALUE':'DATE'} # ? Bug in icalendar 4.0.9 means we need to add VALUE parameter
 			# Adding multiple EXDATE fields seems to be most compatible
 			for rex in e_inf.rep_exceptions:
-				ev.add('EXDATE', rex, parameters=e_prm)
+				ev.add('EXDATE', rex, parameters=None if isinstance(rex,dt_datetime) else d_prm)
 
 		# For repeats, spec says DTSTART should correspond to RRULE
 		# https://icalendar.org/iCalendar-RFC-5545/3-8-5-3-recurrence-rule.html
@@ -739,12 +739,16 @@ class RepeatInfo:
 		# Initialise object's exdates variable, given an exdate structure.
 		# exdate argument is in format of exdate from an ical event, it
 		# might be a list, or might not...
+		if self.timed_rpt:
+			conv = lambda x:date_to_datetime(x.dt,True) if isinstance (x.dt,dt_datetime) else x.dt
+		else:
+			conv = lambda x:x.dt
 		if isinstance(exdate,list):
 			l = [dl.dts for dl in exdate]
-			self.exdates = sorted(set([datetime_to_date(t[i].dt) for t in l for i in range(len(t))]))
+			self.exdates = set([conv(t[i]) for t in l for i in range(len(t))])
 		else:
 			l = exdate.dts
-			self.exdates = sorted(set([datetime_to_date(t.dt) for t in l]))
+			self.exdates = set([conv(t) for t in l])
 
 
 	def _set_start_in_rng(self, start:dt_date) -> None:
@@ -831,14 +835,18 @@ class RepeatInfo:
 
 
 	def is_exdate(self, dt:dt_date) -> bool:
-		# Returns True if dt is in exdates, False otherwise.
-		# Special case: if dt is a datetime, returns True if date
-		# component is in exdates.
+		# Returns True if dt is an excluded date, False otherwise.
 		if self.exdates is None:
 			return False
-		if isinstance(dt,dt_datetime) and dt.date() in self.exdates:
+		if dt in self.exdates:
 			return True
-		return dt in self.exdates
+		# RFC-5545 is not very clear here - just says exclude 'any start
+		# DATE-TIME values specified by "EXDATE" properties' (Sec 3.8.5.1).
+		# What about DATE values if entry has a start time?
+		# Examining other applications, have decided: if dt is a datetime,
+		# and repeat is daily/weekly/monthly/yearly, return True if date
+		# component is in exdates.
+		return self.timed_rpt and not self.subday_rpt and dt.date() in self.exdates
 
 
 	def __iter__(self) -> 'RepeatIter_simpledelta':
@@ -992,17 +1000,20 @@ def repeats_in_range_with_rrstr(ev:iEvent, start:dt_date, stop:dt_date) -> list:
 		# After doing calculations in UTC, convert results to local time
 		ret = [d.astimezone(LOCAL_TZ) for d in ret]
 	if exd:
-		exdate_list = [ev['EXDATE'][i].dts[j] for i in range(len(ev['EXDATE'])) for j in range(len(ev['EXDATE'][i].dts))] if isinstance(ev['EXDATE'], list) else ev['EXDATE'].dts
-		if is_timed:
-			for de in exdate_list:
-				if isinstance(de.dt,dt_datetime):
-					ret = [d for d in ret if d!=de.dt]
-				else:
-					ret = [d for d in ret if d.date()!=de.dt]
+		if isinstance(ev['EXDATE'], list):
+			exdate_list = [ev['EXDATE'][i].dts[j] for i in range(len(ev['EXDATE'])) for j in range(len(ev['EXDATE'][i].dts))]
 		else:
-			for de in exdate_list:
-				if not isinstance(de.dt,dt_datetime):
-					ret = [d for d in ret if d!=de.dt]
+			exdate_list = ev['EXDATE'].dts
+		for de in exdate_list:
+			dedt = de.dt
+			if is_timed:
+				if isinstance(dedt, dt_datetime):
+					dedt = date_to_datetime(dedt, True)
+					ret = [d for d in ret if d!=dedt]
+				else:
+					ret = [d for d in ret if d.date()!=dedt]
+			else:
+				ret = [d for d in ret if d!=dedt]
 	return ret
 
 

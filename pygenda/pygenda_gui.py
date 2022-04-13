@@ -1583,8 +1583,25 @@ class EntryDialogController:
 					count = cls.get_repeat_occurrences()
 				else:
 					until = cls.wid_rep_enddt.get_date_or_none()
-			ei.set_repeat_info(reptype, interval=inter, count=count, until=until, bymonthday=bymonthday, byday=byday, except_list=cls.exception_list)
+			ei.set_repeat_info(reptype, interval=inter, count=count, until=until, bymonthday=bymonthday, byday=byday, except_list=cls._get_exceptions_list_for_type())
 		return ei
+
+
+	@classmethod
+	def _get_exceptions_list_for_type(cls) -> Optional[list]:
+		# Return exceptions list transformed to match entry.
+		# E.g. if a timed entry, return timed exceptions.
+		if len(cls.exception_list)==0:
+			return None
+		if cls.wid_timed_buttons[1].get_active():
+			# Include the time in exclusions for timed entries.
+			# This seems to be the most correct interpretation of
+			# RFC-5545, Sec 3.8.5.1. (However, when reading exdates
+			# we'll try to be more generous for wider compatibility.)
+			tm = cls.wid_time.get_time_or_none()
+			if tm is not None:
+				return [ dt_datetime.combine(dt,tm) for dt in cls.exception_list]
+		return cls.exception_list
 
 
 	@classmethod
