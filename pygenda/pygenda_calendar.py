@@ -164,12 +164,9 @@ class Calendar:
 			ev.add('DURATION', exev['DURATION'])
 		elif ex_dt_start and 'DTEND' in exev:
 			ex_dt_end = exev['DTEND'].dt
-			if isinstance(ex_dt_start,dt_datetime) and (ex_dt_start.tzinfo is None or ex_dt_end.tzinfo is None):
-				# If one tzinfo is None, make both None, so subtraction work
-				ex_dt_start = ex_dt_start.replace(tzinfo=None)
-				ex_dt_end = ex_dt_end.replace(tzinfo=None)
-			dur = ex_dt_end - ex_dt_start
-			ev.add('DTEND', new_dt_start + dur)
+			delta = new_dt_start - ex_dt_start
+			new_dt_end = ex_dt_end + delta
+			ev.add('DTEND', new_dt_end)
 		if 'LOCATION' in exev:
 			ev.add('LOCATION', exev['LOCATION'])
 		cls.calConnector.add_entry(ev) # Write to store
