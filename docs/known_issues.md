@@ -130,6 +130,18 @@ Medium
 * "Today" marked in views is not updated if day changes (e.g. midnight
   crossover, switch on device in new day, device time(zone) changed).
 
+* For calendars saved in .ics file. Copy/pasting an entry with a timezone
+  to a date with a different DST, time displayed (local time) is an hour
+  off. This fixes itself if Pygenda is restarted (so .ics file is re-read).
+  Probable cause: In new_entry_from_example(), tzinfo of event includes
+  timezone name ('Europe/London' etc) and utc offset. When new time is
+  calculated it uses utc offset, but stores the timezone name. Hence
+  initial display is incorrect, but when event is re-parsed it uses
+  the timezone name and re-does calculation of utc offset, so time
+  is now correct. This doesn't happen with CalDAV server, because in
+  CalendarConnectorCalDAV::add_entry() it re-creates a new ics entry
+  and (crucially) parses it, which gives the correct time.
+
 Minor
 -----
 (Note: minor bugs can still be irritating!)
