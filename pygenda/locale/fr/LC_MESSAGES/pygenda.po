@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-28 22:44+0100\n"
+"POT-Creation-Date: 2022-04-25 19:37+0200\n"
 "PO-Revision-Date: 2022-01-28 22:44+0100\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
@@ -84,15 +84,15 @@ msgstr "Modifier l’entrée"
 msgid "None"
 msgstr "Rien"
 
-#: pygenda_gui.py:1780
+#: pygenda_gui.py:1797
 msgid "Exception dates"
 msgstr "Dates omises"
 
-#: pygenda_gui.py:1797
+#: pygenda_gui.py:1814
 msgid "Add date"
 msgstr "Ajouter date"
 
-#: pygenda_gui.py:1818
+#: pygenda_gui.py:1835
 msgid "Remove date(s)"
 msgstr "Retirer date(s)"
 
