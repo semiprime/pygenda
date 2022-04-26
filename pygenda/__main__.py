@@ -27,5 +27,5 @@ from .pygenda_calendar import Calendar
 
 
 if __name__=="__main__":
-	GUI.init()
-	GUI.main()
+    GUI.init()
+    GUI.main()
