@@ -74,6 +74,20 @@ scrollbar slider {
 }
 
 
+/* Todo View */
+
+.todoview_title {
+	font-size:16pt;
+}
+
+.todoview_items {
+	font-size:15pt;
+}
+
+.todoview_list {
+	min-width:400px;
+}
+
 /* Dialogs */
 
 entry, spinbutton, date_entry, time_entry, duration_entry {

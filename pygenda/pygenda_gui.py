@@ -55,7 +55,7 @@ class GUI:
     _CSS_FILE_APP = '{:s}/css/pygenda.css'.format(ospath.dirname(__file__))
     _CSS_FILE_USER = GLib.get_user_config_dir() + '/pygenda/pygenda.css'
     _LOCALE_DIR = '{:s}/locale/'.format(ospath.dirname(__file__))
-    _VIEWS = ('Week','Year') # Order gives order in menus
+    _VIEWS = ('Week','Year','Todo') # Order gives order in menus
     SPINBUTTON_INC_KEY = (Gdk.KEY_plus,Gdk.KEY_greater)
     SPINBUTTON_DEC_KEY = (Gdk.KEY_minus,Gdk.KEY_less)
     STYLE_ERR = 'dialog_error'

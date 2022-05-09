@@ -291,6 +291,36 @@ scrollbar {
 }
 
 
+/* Todo View */
+
+.todoview_title {
+	font-family:'DejaVu Sans';
+	font-size:11pt;
+	font-weight:bold;
+}
+
+.todoview_list {
+	/* make lists half width of view-1, so two to-do lists fit nicely */
+	min-width:299px;
+}
+
+.todoview_list:not(:first-child) {
+	border-left:solid #888 1px;
+	}
+
+.todoview_items {
+	padding:4px;
+	font-family:'DejaVu Sans';
+	font-size:10pt;
+}
+
+.todoview_marker {
+	padding-left:1.5px;
+	padding-right:1.5px;
+	margin-right:0.2em;
+}
+
+
 /* Entries */
 
 .cancelled {

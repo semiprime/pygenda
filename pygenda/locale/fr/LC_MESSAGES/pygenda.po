@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-25 19:37+0200\n"
+"POT-Creation-Date: 2022-05-09 19:19+0200\n"
 "PO-Revision-Date: 2022-01-28 22:44+0100\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
@@ -95,6 +95,18 @@ msgstr "Ajouter date"
 #: pygenda_gui.py:1835
 msgid "Remove date(s)"
 msgstr "Retirer date(s)"
+
+#: pygenda_view_todo.py:41
+msgid "To-do"
+msgstr "À faire"
+
+#: pygenda_view_todo.py:47
+msgid "_Todo View"
+msgstr "Mode À _faire"
+
+#: pygenda_view_todo.py:52
+msgid "todo_view_accel"
+msgstr "f"
 
 #: pygenda_view_week.py:58
 msgid "_Week View"

@@ -16,6 +16,10 @@
 	background-color:#a2e6a2;
 }
 
+#view_todo {
+	background-color:#b2b2e6;
+}
+
 /* Depending on your desktop, you may also want to set the scrollbar
    background. I find this useful in XFCE, but not on the Gemini.
    (For some reason, "transparent" doesn't seem to work here.) */
@@ -28,10 +32,14 @@
 	background-color:#94d294;
 }
 
+#view_todo scrollbar trough {
+	background-color:#c0c0f4;
+}
+
 
 /*** 2. Textured background ***/
 
-#view_year, #view_week {
+#view_year, #view_week, #view_todo {
 	background-image:url("my_texture.jpg"); /* Provide image filename here */
 	background-repeat:repeat;
 }
@@ -39,7 +47,7 @@
 
 /*** 3. Centered logo ***/
 
-#view_year, #view_week {
+#view_year, #view_week, #view_todo {
 	background-image:url("my_logo.svg"); /* Provide image filename here */
 	background-size:auto 90%;
 	background-position:center;
@@ -52,7 +60,7 @@
  * elements. Example below...
  */
 
-#weekview_titlearea, .weekview_day {
+#weekview_titlearea, .weekview_day, #view_todo>* {
 	background-color:rgba(255,255,255,0.93);
 }
 

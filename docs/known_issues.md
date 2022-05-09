@@ -12,12 +12,13 @@ of any sort.
 
 Major
 -----
-* Missing views: day, list, to-do, busy
+* Missing views: Day, List, Busy
+
+* Todo View is in very early development. There is no ability to edit
+  to-do items, or to display them in other views.
 
 * Alarms are not implemented (note: a separate server should handle
   the actual alarm notifications)
-
-* To-dos are not implemented
 
 * Many entry elements are not implemented (details, attendees etc.)
 

@@ -4,6 +4,11 @@
 
 /* Global */
 
+#view_week, #view_year, #view_todo {
+	background-color:black;
+	color:#eee;
+}
+
 #view_loading {
 	background-color:black;
 	color:#999;
@@ -15,11 +20,6 @@ scrollbar trough {
 
 
 /* Week View */
-
-#view_week {
-	background-color:black;
-	color:#eee;
-}
 
 #weekview_titlearea {
 	color:#eee;
@@ -58,11 +58,6 @@ scrollbar trough {
 
 
 /* Year View */
-
-#view_year {
-	background-color:black;
-	color:#eee;
-}
 
 #yearview_labelyear {
 	background-color:black;

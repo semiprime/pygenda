@@ -61,6 +61,7 @@ class CalendarConnector:
 class Calendar:
     _entry_norep_list_sorted = None
     _entry_rep_list = None
+    _todo_list = None
 
     @classmethod
     def init(cls) -> None:
@@ -362,7 +363,7 @@ class Calendar:
         # Re-build _entry_norep_list_sorted, if it has been cleared (==None)
         if cls._entry_norep_list_sorted is None:
             # Get events with no repeat rule
-            evs = cls.calConnector.cal.walk('vEvent')
+            evs = cls.calConnector.cal.walk('VEVENT')
             cls._entry_norep_list_sorted = [e for e in evs if 'RRULE' not in e]
             cls._entry_norep_list_sorted.sort()
 
@@ -373,7 +374,7 @@ class Calendar:
         # Possible optimisation: sort most -> least frequent
         # (so don't get last one inserting loads into array) 
         if cls._entry_rep_list is None:
-            evs = cls.calConnector.cal.walk('vEvent')
+            evs = cls.calConnector.cal.walk('VEVENT')
             cls._entry_rep_list = [e for e in evs if 'RRULE' in e]
 
 
@@ -410,6 +411,21 @@ class Calendar:
             for e in cls._entry_rep_list:
                 merge_repeating_entries_sort(ret_list,e,start,stop)
         return ret_list
+
+
+    @classmethod
+    def _update_todo_list(cls) -> None:
+        # Re-build _todo_list, if it has been cleared (==None)
+        if cls._todo_list is None:
+            # Get events with no repeat rule
+            cls._todo_list = cls.calConnector.cal.walk('VTODO')
+
+
+    @classmethod
+    def todo_list(cls) -> list:
+        # Return list of "todo"s
+        cls._update_todo_list()
+        return cls._todo_list
 
 
 #
@@ -519,9 +535,14 @@ class CalendarConnectorCalDAV(CalendarConnector):
         for ev in events:
             # Each icalendar_instance is a calendar containing the event.
             # We want to extract the event itself, so walk() & take the first.
-            vevent = ev.icalendar_instance.walk('vEvent')[0]
+            vevent = ev.icalendar_instance.walk('VEVENT')[0]
             vevent.__conn_event = ev # Sneakily add ev, for rapid access later
             self.cal.add_component(vevent)
+        # ... and todos
+        todos = self.calendar.todos()
+        for td in todos:
+            vtodo = td.icalendar_instance.walk('VTODO')[0]
+            self.cal.add_component(vtodo)
 
 
     def add_entry(self, event:iEvent) -> None:
@@ -537,7 +558,7 @@ class CalendarConnectorCalDAV(CalendarConnector):
 
         # Save to local store
         # Add embedded event, so we can modify & save directly
-        newevent = conn_event.icalendar_instance.walk('vEvent')[0]
+        newevent = conn_event.icalendar_instance.walk('VEVENT')[0]
         newevent.__conn_event = conn_event
         self.cal.add_component(newevent)
 
