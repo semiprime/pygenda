@@ -169,45 +169,24 @@ def start_of_week(dt:date) -> int:
 
 def dt_lte(dt_a:date, dt_b:date) -> bool:
     # Return True if dt_a <= dt_b
-    # dt_a and dt_b can be dates/datetimes independently
-    return _dt_lte_common(dt_a, dt_b, True)
+    # dt_a and dt_b can be dates/datetimes independently.
+    # The main purpose of this function is to sort events for display.
+    # Hence if comparing a date to a datetime, take date as midnight
+    # at start of day in local timezone.
+    if isinstance(dt_a,datetime) or isinstance(dt_b,datetime):
+        return date_to_datetime(dt_a,True) <= date_to_datetime(dt_b,True)
+    return dt_a <= dt_b
 
 
 def dt_lt(dt_a:date, dt_b:date) -> bool:
     # Return True if dt_a < dt_b
-    # dt_a and dt_b can be dates/datetimes independently
-    return _dt_lte_common(dt_a, dt_b, False)
-
-
-def _dt_lte_common(dt_a:date, dt_b:date, equality:bool) -> bool:
-    # If one has timezone info, both need it for comparison
-    try:
-        if dt_a.tzinfo is None:
-            if dt_b.tzinfo is not None:
-                dt_a = dt_a.replace(tzinfo=dt_b.tzinfo)
-        else:
-            if dt_b.tzinfo is None:
-                dt_b = dt_b.replace(tzinfo=dt_a.tzinfo)
-    except AttributeError:
-        pass
- 
-    # Now compare
-    try:
-        # These will succeed if both are dates or both are datetime
-        if equality:
-            return dt_a <= dt_b 
-        else:
-            return dt_a < dt_b
-    except TypeError:
-        try:
-            eq = (dt_a == dt_b.date()) # try a is date
-            # If eq then a is *start* of day when b occurs
-            return eq or (dt_a < dt_b.date())
-        except AttributeError:
-            eq = (dt_a.date() == dt_b) # so b is date
-            # If eq then b is *start* of day when a occurs
-            return False if eq else (dt_a.date() < dt_b)
-    return False # shouldn't reach here
+    # dt_a and dt_b can be dates/datetimes independently.
+    # The main purpose of this function is to sort events for display.
+    # Hence if comparing a date to a datetime, take date as midnight
+    # at start of day in local timezone.
+    if isinstance(dt_a,datetime) or isinstance(dt_b,datetime):
+        return date_to_datetime(dt_a,True) < date_to_datetime(dt_b,True)
+    return dt_a < dt_b
 
 
 # We want to be able to sort events/todos by datetime
