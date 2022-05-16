@@ -33,7 +33,7 @@ from os import path as ospath
 from sys import stderr
 import signal
 import ctypes
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 
 # for internationalisation/localisation
 import locale
@@ -64,6 +64,29 @@ class GUI:
     cursor_idx_in_date = 0 # cursor index within date
     today_toggle_date = None
     today_toggle_idx = 0
+
+    views = []
+    view_widgets = [] # type: List[Gtk.Widget]
+    _view_idx = 0 # take first view as default
+
+    _lib_clip = None
+
+    _builder = Gtk.Builder()
+    _window = None # type: Gtk.Window
+    _is_fullscreen = False
+    _box_view_cont = None # type: Gtk.Box
+    _eventbox = Gtk.EventBox()
+
+    date_order = ''
+    date_formatting_numeric = ''
+    date_formatting_text = ''
+    date_formatting_text_noyear = ''
+    date_formatting_textabb = ''
+    date_formatting_textabb_noyear = ''
+
+    # For startup
+    _starting_cal = True
+    _loading_indicator = None
 
     Config.set_defaults('global',{
         'language': '', # use OS language
@@ -96,7 +119,6 @@ class GUI:
         cls._init_locale()
 
         # Construct GUI from GTK Builder XML glade file
-        cls._builder = Gtk.Builder()
         cls._builder.add_from_file(cls._GLADE_FILE)
 
         cls._window = cls._builder.get_object('window_main')
@@ -213,7 +235,6 @@ class GUI:
         # First, initialise calendar connector.
         # Do this outside main thread, so UI remains active/responsive.
         ci_cancel = Gio.Cancellable.new()
-        cls._starting_cal = True
         if 'run_in_thread' in dir(Gio.Task):
             # Preferred way to run in separate thread.
             task = Gio.Task.new(cancellable=ci_cancel, callback=cls.init_cal_callback)
@@ -253,14 +274,12 @@ class GUI:
 
         cls._init_views()
 
-        cls._view_idx = 0 # take first view as default
         vw = Config.get('startup','view')
         if vw:
             for ii in range(len(GUI._VIEWS)):
                 if GUI._VIEWS[ii].lower() == vw:
                     cls._view_idx = ii
                     break
-        cls._eventbox = Gtk.EventBox()
         cls._box_view_cont.pack_start(cls._eventbox, True, True, 0)
         cls._box_view_cont.reorder_child(cls._eventbox, view_pos)
         cls._eventbox.add(cls.view_widgets[cls._view_idx])
@@ -301,10 +320,9 @@ class GUI:
         # Load clipboard helper library if available, or set to None
         try:
             libclip_file = '{:s}/libpygenda_clipboard.so'.format(ospath.dirname(__file__))
-            cls.lib_clip = ctypes.CDLL(libclip_file)
+            cls._lib_clip = ctypes.CDLL(libclip_file)
         except:
             print('Warning: Failed to load clipboard library', file=stderr)
-            cls.lib_clip = None
 
 
     @classmethod
@@ -350,8 +368,6 @@ class GUI:
     def _init_views(cls) -> None:
         # Get new Gtk Widgets for views.
         # Add view switching options to menu.
-        cls.views = []
-        cls.view_widgets = []
         for v in GUI._VIEWS:
             m = import_module('.pygenda_view_{:s}'.format(v.lower()),package='pygenda')
             cls.views.append(getattr(m, 'View_{:s}'.format(v)))
@@ -606,7 +622,7 @@ class GUI:
         # Handler to implement "cut" from GUI, e.g. cut clicked in menu
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en and 'SUMMARY' in en:
-            if cls.lib_clip is None:
+            if cls._lib_clip is None:
                 # Don't do fallback - might lead to unexpected data loss
                 print('Warning: No clipboard library, cut not available', file=stderr)
             elif 'RRULE' in en: # repeating entry
@@ -619,7 +635,7 @@ class GUI:
             else:
                 txtbuf = bytes(en['SUMMARY'], 'utf-8')
                 calbuf = en.to_ical()
-                cls.lib_clip.set_cb(ctypes.create_string_buffer(txtbuf),ctypes.create_string_buffer(calbuf))
+                cls._lib_clip.set_cb(ctypes.create_string_buffer(txtbuf),ctypes.create_string_buffer(calbuf))
                 Calendar.delete_entry(en)
                 cls.view_redraw(True)
 
@@ -629,7 +645,7 @@ class GUI:
         # Handler to implement "copy" from GUI, e.g. copy clicked in menu
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en and 'SUMMARY' in en:
-            if cls.lib_clip is None:
+            if cls._lib_clip is None:
                 print('Warning: No clipboard library, fallback to text copy', file=stderr)
                 cb = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
                 txt = en['SUMMARY']
@@ -637,7 +653,7 @@ class GUI:
             else:
                 txtbuf = bytes(en['SUMMARY'], 'utf-8')
                 calbuf = en.to_ical()
-                cls.lib_clip.set_cb(ctypes.create_string_buffer(txtbuf),ctypes.create_string_buffer(calbuf))
+                cls._lib_clip.set_cb(ctypes.create_string_buffer(txtbuf),ctypes.create_string_buffer(calbuf))
 
 
     @classmethod
@@ -776,6 +792,65 @@ class EntryDialogController:
     TAB_DETAILS = 3
     TAB_COUNT = 4
 
+    dialog = None  # type: Gtk.Dialog
+    wid_desc = None # type: Gtk.Entry
+    _wid_desc_changed_handler = 0
+    wid_date = None # type: WidgetDate
+    wid_tabs = None # type: Gtk.Notebook
+
+    # _empty_desc_allowed has three possible values:
+    #   None - empty desc allowed in dialog (signals delete entry)
+    #   True - empty desc allowed, but can turn False!
+    #   False - empty desc not allowed in dialog (e.g. new entry)
+    _empty_desc_allowed = None # type: Optional[bool]
+
+    wid_timed_buttons = None # type: Gtk.Box
+    # Create widgets for entry time & duration fields
+    wid_time = WidgetTime(dt_time(hour=9))
+    wid_dur = WidgetDuration(timedelta())
+    wid_endtime = WidgetTime(dt_time(hour=9))
+    revs_timedur = None
+    revs_allday = None
+    wid_allday_count = None # type: Gtk.SpinButton
+    _tmdur_handler_time = 0
+    _tmdur_handler_dur = 0
+    _tmdur_handler_endtime = 0
+
+    wid_rep_type = None # type: Gtk.ComboBox
+    revs_repeat = None
+    revs_rep_monthdays = None
+    revs_rep_weekdays = None
+    revs_rep_monthweekdays = None
+    wid_rep_interval = None # type: Gtk.SpinButton
+    wid_rep_forever = None # type: Gtk.CheckButton
+    wid_repbymonthday = None # type: Gtk.ComboBox
+    wid_repbyweekday_day = None # type: Gtk.ComboBox
+    wid_repbyweekday_ord = None # type: Gtk.ComboBox
+    wid_rep_occs = None # type: Gtk.SpinButton
+    wid_rep_enddt = None # type: WidgetDate
+    revs_rep_ends = None
+    rep_occs_determines_end = True
+    _rep_handler_date = 0
+    _rep_handler_time = 0
+    _rep_handler_type = 0
+    _rep_handler_mday = 0
+    _rep_handler_wdayday = 0
+    _rep_handler_wdayord = 0
+    _rep_handler_inter = 0
+    _rep_handler_occs = 0
+    _rep_handler_enddt = 0
+    _lab_rep_exceptions = None # type: Gtk.Label
+    repbymonthday_initialized = False
+    repbyweekday_initialized = False
+    dur_determines_end = False
+    exception_list = [] # type: List[dt_date]
+
+    wid_alarmset = None # type: Gtk.Switch
+
+    wid_status = None # type: Gtk.ComboBox
+    wid_location = None # type: Gtk.Entry
+
+
     @classmethod
     def init(cls):
         # Initialiser for singleton class.
@@ -801,14 +876,7 @@ class EntryDialogController:
         cls._init_repeatfields()
         cls._init_alarmfields()
         cls._init_detailfields()
-        # Also need to init alarm & detail fields
         cls._init_navigation()
-
-        # cls._empty_desc_allowed has three possible values:
-        #   None - empty desc allowed in dialog (signals delete entry)
-        #   True - empty desc allowed, but can turn False!
-        #   False - empty desc not allowed in dialog (e.g. new entry)
-        cls._empty_desc_allowed = None
 
 
     @classmethod
@@ -817,11 +885,7 @@ class EntryDialogController:
         # Called on app startup.
         cls.wid_timed_buttons = GUI._builder.get_object('radiobuttons_istimed').get_children()
 
-        # Create widgets for entry time & duration fields
-        cls.wid_time = WidgetTime(dt_time(hour=9))
-        cls.wid_dur = WidgetDuration(timedelta())
-        cls.wid_endtime = WidgetTime(dt_time(hour=9))
-        # Add to dialog
+        # Add entry time & duration widgets to dialog
         wid_reveal_tm_e = GUI._builder.get_object('revealer_time_e')
         tbox = wid_reveal_tm_e.get_child() # should be a GtkBox
         tbox.add(cls.wid_time)
@@ -871,7 +935,6 @@ class EntryDialogController:
         rbox.show_all()
         cls.revs_rep_ends = cls._revealers_from_ids('revealer_repeat_until_l', 'revealer_repeat_until_e')
 
-        cls.rep_occs_determines_end = True
         cls._rep_handler_date = cls.wid_date.connect('changed', cls._repend_changed,0)
         cls._rep_handler_time = cls.wid_time.connect('changed', cls._repend_changed,0)
         cls._rep_handler_type = cls.wid_rep_type.connect('changed', cls._repend_changed,0)
