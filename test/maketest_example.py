@@ -26,9 +26,14 @@ YEAR = datetime.now().year
 STAMPDATE = '{}0101T000000'.format(YEAR)
 uid = 1234567
 
-def print_vevent(desc, date, time=None, endtime=None, daycount=None, repeat=None, repeat_count=0, status=None):
+def print_stamp_uid():
     global uid
+    print('DTSTAMP;VALUE=DATE-TIME:{}Z'.format(STAMPDATE), end='\r\n')
+    print('UID:Pygenda-{:08d}'.format(uid), end='\r\n')
+    uid += 1
 
+
+def print_vevent(desc, date, time=None, endtime=None, daycount=None, repeat=None, repeat_count=0, status=None):
     if isinstance(date, str):
         date = datetime.strptime(date,'%Y-%m-%d').date()
     print('BEGIN:VEVENT', end='\r\n')
@@ -46,8 +51,7 @@ def print_vevent(desc, date, time=None, endtime=None, daycount=None, repeat=None
         if daycount is not None:
             enddate = date+timedelta(days=daycount)
             print('DTEND;VALUE=DATE:{:04d}{:02d}{:02d}'.format(enddate.year, enddate.month, enddate.day), end='\r\n')
-    print('DTSTAMP;VALUE=DATE-TIME:{}Z'.format(STAMPDATE), end='\r\n')
-    print('UID:Pygenda-{:08d}'.format(uid), end='\r\n')
+    print_stamp_uid()
     if repeat=='YEARLY':
         print('RRULE:FREQ=YEARLY;INTERVAL=1{:s}'.format('' if repeat_count==0 else ';COUNT={:d}'.format(repeat_count)), end='\r\n')
     elif repeat=='WEEKLY':
@@ -57,47 +61,47 @@ def print_vevent(desc, date, time=None, endtime=None, daycount=None, repeat=None
     if status is not None:
         print('STATUS:{:s}'.format(status.upper()), end='\r\n')
     print('END:VEVENT', end='\r\n')
-    uid += 1
+
+
+def print_vtodo(desc, date=None):
+    print('BEGIN:VTODO', end='\r\n')
+    print('SUMMARY:{:s}'.format(desc), end='\r\n')
+    if date is not None:
+        if isinstance(date, str):
+            date = date.strptime(date,'%Y-%m-%d').date()
+        print('DTSTART;VALUE=DATE:{:04d}{:02d}{:02d}'.format(date.year, date.month, date.day), end='\r\n')
+    print_stamp_uid()
+    print('END:VTODO', end='\r\n')
 
 
 def print_daylight_saving_changes():
-    global uid
     print('BEGIN:VEVENT', end='\r\n')
     print('SUMMARY:Clocks go forward', end='\r\n')
     print('DTSTART;VALUE=DATE-TIME:20000326T010000', end='\r\n')
-    print('DTSTAMP;VALUE=DATE-TIME:{}'.format(STAMPDATE), end='\r\n')
-    print('UID:Pygenda-{:08d}'.format(uid), end='\r\n')
+    print_stamp_uid()
     print('RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3', end='\r\n')
     print('END:VEVENT', end='\r\n')
-    uid += 1
     print('BEGIN:VEVENT', end='\r\n')
     print('SUMMARY:Clocks go back', end='\r\n')
     print('DTSTART;VALUE=DATE-TIME:20001029T010000', end='\r\n')
-    print('DTSTAMP;VALUE=DATE-TIME:{}'.format(STAMPDATE), end='\r\n')
-    print('UID:Pygenda-{:08d}'.format(uid), end='\r\n')
+    print_stamp_uid()
     print('RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10', end='\r\n')
     print('END:VEVENT', end='\r\n')
-    uid += 1
 
 
 def print_thanksgiving():
-    global uid
     print('BEGIN:VEVENT', end='\r\n')
     print('SUMMARY:Thanksgiving (US)', end='\r\n')
     print('DTSTART;VALUE=DATE:19421126', end='\r\n')
-    print('DTSTAMP;VALUE=DATE-TIME:{}'.format(STAMPDATE), end='\r\n')
-    print('UID:Pygenda-{:08d}'.format(uid), end='\r\n')
+    print_stamp_uid()
     print('RRULE:FREQ=YEARLY;BYDAY=4TH;BYMONTH=11', end='\r\n')
     print('END:VEVENT', end='\r\n')
-    uid += 1
     print('BEGIN:VEVENT', end='\r\n')
     print('SUMMARY:Thanksgiving (Canada)', end='\r\n')
     print('DTSTART;VALUE=DATE:19571014', end='\r\n')
-    print('DTSTAMP;VALUE=DATE-TIME:{}'.format(STAMPDATE), end='\r\n')
-    print('UID:Pygenda-{:08d}'.format(uid), end='\r\n')
+    print_stamp_uid()
     print('RRULE:FREQ=YEARLY;BYDAY=2MO;BYMONTH=10', end='\r\n')
     print('END:VEVENT', end='\r\n')
-    uid += 1
 
 
 print('BEGIN:VCALENDAR', end='\r\n')
@@ -198,5 +202,10 @@ print_vevent('Fly to Barcelona', '{:04d}-07-{:02d}'.format(YEAR, 24-day_offset2)
 print_vevent('Off work', '{:04d}-07-{:02d}'.format(YEAR, 23-day_offset2), daycount=15)
 print_vevent('Back to UK', '{:04d}-{:02d}-{:02d}'.format(YEAR, 8 if day_offset2<5 else 7, (5 if day_offset2<5 else 36)-day_offset2))
 print_vevent('Spanish class', '{:04d}-05-{:02d}'.format(YEAR, 12-day_offset2), time='19:30', repeat='WEEKLY', repeat_count=11)
+
+# Some to-dos
+print_vtodo('Book flu vaccinations')
+print_vtodo('Renew domain names')
+print_vtodo('Phone bank')
 
 print('END:VCALENDAR', end='\r\n')

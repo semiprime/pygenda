@@ -154,6 +154,7 @@ class View_Todo(View):
                         new_list_content.add(row)
             new_list_content.get_style_context().add_class('todoview_items')
             cls._list_container[i].add(new_list_content)
+            cls._list_container[i].show_all()
 
 
     @staticmethod
