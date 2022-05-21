@@ -232,7 +232,6 @@ class View_Week(View):
                 mark_label = Gtk.Label()
                 ctx = mark_label.get_style_context()
                 ctx.add_class('weekview_marker')
-                mark_label.set_text(u' ') # en-space char
                 mark_label.set_halign(Gtk.Align.START) # else cursor fills line
                 cls._day_rows[i].add(mark_label)
             dt = dt_nxt
@@ -300,7 +299,7 @@ class View_Week(View):
     @classmethod
     def get_cursor_entry(cls) -> iCal.Event:
         # Returns entry at cursor position, or None if cursor not on entry.
-        # Called from cursor_edit_entry().
+        # Called from cursor_edit_entry() & delete_request().
         dy = day_in_week(GUI.cursor_date)
         if cls._day_ent_count[dy]==0:
             return None

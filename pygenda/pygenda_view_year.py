@@ -320,7 +320,7 @@ class View_Year(View):
     @classmethod
     def get_cursor_entry(cls) -> iCal.Event:
         # Returns entry at cursor position, or None if cursor not on entry.
-        # Called from cursor_edit_entry().
+        # Called from cursor_edit_entry() & delete_request().
         if cls._date_content_count == 0:
             return None
         return cls._visible_occurrences[GUI.cursor_idx_in_date][0]
