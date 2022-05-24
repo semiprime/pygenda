@@ -694,7 +694,7 @@ class GUI:
             l_template = _('Delete all repeats:\n"{:s}"?')
         else:
             l_template = _('Delete entry:\n"{:s}"?')
-        lab = Gtk.Label(l_template.format(en['SUMMARY'] if 'SUMMARY' in en else 'UNNAMED'))
+        lab = Gtk.Label(l_template.format(en['SUMMARY'] if 'SUMMARY' in en else u' ')) # narrow space
         if (not dialog or not lab): # Sanity check
             raise NameError('Dialog Delete creation failure')
         dialog.set_resizable(False)
