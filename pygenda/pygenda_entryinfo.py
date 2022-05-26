@@ -36,7 +36,11 @@ class EntryInfo:
     rep_bymonthday = None
     rep_exceptions = None
 
-    def __init__(self, desc:str=None, start_dt:dt_date=None, end_dt:dt_date=None, duration:timedelta=None, status:str=None, location:str=None):
+    TYPE_EVENT=0
+    TYPE_TODO=1
+
+    def __init__(self, type:int=TYPE_EVENT, desc:str=None, start_dt:dt_date=None, end_dt:dt_date=None, duration:timedelta=None, status:str=None, location:str=None):
+        self.type = type
         self.desc = '' if desc is None else desc
         self.start_dt = start_dt # date or datetime
         self.set_end_dt(end_dt)

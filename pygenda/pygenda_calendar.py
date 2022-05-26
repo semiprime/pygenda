@@ -20,7 +20,7 @@
 # along with Pygenda. If not, see <https://www.gnu.org/licenses/>.
 
 
-from icalendar import Calendar as iCalendar, Event as iEvent, vRecur
+from icalendar import Calendar as iCalendar, Event as iEvent, Todo as iTodo, vRecur
 from datetime import timedelta, datetime as dt_datetime, time as dt_time, date as dt_date, timezone
 from dateutil.relativedelta import relativedelta
 from dateutil.rrule import rrulestr
@@ -32,7 +32,7 @@ from os import stat as os_stat, chmod as os_chmod, rename as os_rename, path as 
 import stat
 from time import monotonic as time_monotonic
 import tempfile
-from typing import Optional
+from typing import Optional, Union
 from copy import deepcopy
 
 # Pygenda components
@@ -44,17 +44,17 @@ from .pygenda_entryinfo import EntryInfo
 # Interface base class to connect to different data sources.
 # Used by Calendar class (below).
 class CalendarConnector:
-    def add_entry(self, event:iEvent) -> None:
+    def add_entry(self, entry:Union[iEvent,iTodo]) -> None:
         # Add a new entry component to the calendar data and store it.
         print('Warning: Add entry not implemented', file=stderr)
 
-    def update_entry(self, event:iEvent) -> None:
+    def update_entry(self, entry:Union[iEvent,iTodo]) -> None:
         # Update an entry component in the calendar data and store it.
-        print('Warning: Update not implemented', file=stderr)
+        print('Warning: Update entry not implemented', file=stderr)
 
-    def delete_entry(self, event:iEvent) -> None:
+    def delete_entry(self, entry:Union[iEvent,iTodo]) -> None:
         # Delete entry component to the calendar data and remove from store.
-        print('Warning: Delete not implemented', file=stderr)
+        print('Warning: Delete entry not implemented', file=stderr)
 
 
 # Singleton class for calendar data access/manipulation
@@ -110,135 +110,159 @@ class Calendar:
 
     @classmethod
     def new_entry(cls, e_inf:EntryInfo) -> None:
-        # Add a new iCal entry with content from event info object
-        ev = iEvent()
-        ev.add('UID', Calendar.gen_uid()) # Required
+        # Add a new iCal entry with content from entry info object
+        if e_inf.type==EntryInfo.TYPE_EVENT:
+            en = iEvent()
+        elif e_inf.type==EntryInfo.TYPE_TODO:
+            en = iTodo()
+            cls._todo_list = None # Clear todo cache as modified
+        else:
+            raise ValueError('Unrecognized entry type')
+        en.add('UID', Calendar.gen_uid()) # Required
         # DateTime utcnow() function doesn't include TZ, so use now(tz.utc)
         utcnow = dt_datetime.now(timezone.utc)
-        ev.add('DTSTAMP', utcnow) # Required
-        ev.add('CREATED', utcnow) # Optional
-        ev.add('SUMMARY', e_inf.desc)
-        ev.add('DTSTART', e_inf.start_dt)
-        cls._event_add_end_dur_from_info(ev,e_inf)
+        en.add('DTSTAMP', utcnow) # Required
+        en.add('CREATED', utcnow) # Optional
+        en.add('SUMMARY', e_inf.desc)
 
-        # Repeats
-        if e_inf.rep_type is not None and e_inf.rep_inter>0:
-            cls._event_add_repeat_from_info(ev,e_inf)
-            cls._entry_rep_list = None # Clear rep cache as modified
-        else:
-            cls._entry_norep_list_sorted = None # Clear norep cache as modified
+        if e_inf.start_dt is not None:
+            en.add('DTSTART', e_inf.start_dt)
+            cls._event_add_end_dur_from_info(en, e_inf)
+            # Repeats - only add these if entry has a date(time)
+            if e_inf.rep_type is not None and e_inf.rep_inter>0:
+                cls._event_add_repeat_from_info(en, e_inf)
+                cls._entry_rep_list = None # Clear rep cache as modified
+            else:
+                cls._entry_norep_list_sorted = None # Clear norep cache, mod'd
 
-        cls._event_set_status_from_info(ev, e_inf)
-        cls._event_set_location_from_info(ev, e_inf)
+        cls._event_set_status_from_info(en, e_inf)
+        cls._event_set_location_from_info(en, e_inf)
 
-        cls.calConnector.add_entry(ev) # Write to store
+        cls.calConnector.add_entry(en) # Write to store
 
 
     @classmethod
-    def new_entry_from_example(cls, exev:iEvent, dt_start:dt_date=None) -> None:
+    def new_entry_from_example(cls, exen:Union[iEvent,iTodo], e_type:int=None, dt_start:dt_date=None) -> None:
         # Add a new iCal entry to store given an iEvent as a "template".
         # Replace UID, timestamp etc. to make it a new event.
-        # Potentially override exev's date/time with a new one.
+        # Potentially change type of entry to e_type.
+        # Potentially override exen's date/time with a new dt_start.
         # Use to implement pasting events into new days/timeslots.
-        ev = iEvent()
-        ev.add('UID', Calendar.gen_uid()) # Required
+        if e_type==EntryInfo.TYPE_EVENT or (e_type is None and isinstance(exen,iEvent)):
+            en = iEvent()
+        elif e_type==EntryInfo.TYPE_TODO or (e_type is None and isinstance(exen,iTodo)):
+            en = iTodo()
+        else:
+            raise ValueError('Unrecognized iCal entry type')
+        en.add('UID', Calendar.gen_uid()) # Required
         utcnow = dt_datetime.now(timezone.utc)
-        ev.add('DTSTAMP', utcnow) # Required
+        en.add('DTSTAMP', utcnow) # Required
         # Since it has a new UID, we consider it a new entry
-        ev.add('CREATED', utcnow) # Optional
-        summ = exev['SUMMARY'] if 'SUMMARY' in exev else None
+        en.add('CREATED', utcnow) # Optional
+        summ = exen['SUMMARY'] if 'SUMMARY' in exen else None
         if not summ:
             summ = 'New entry' # fallback summary
-        ev.add('SUMMARY', summ)
-        ex_dt_start = exev['DTSTART'].dt if 'DTSTART' in exev else None
-        if dt_start:
-            if ex_dt_start:
-                new_dt_start = ex_dt_start.replace(year=dt_start.year,month=dt_start.month,day=dt_start.day)
+        en.add('SUMMARY', summ)
+        new_dt_start = None
+        if isinstance(en,iEvent):
+            ex_dt_start = exen['DTSTART'].dt if 'DTSTART' in exen else None
+            if dt_start:
+                if ex_dt_start:
+                    new_dt_start = ex_dt_start.replace(year=dt_start.year,month=dt_start.month,day=dt_start.day)
+                else:
+                    new_dt_start = dt_start
+            elif ex_dt_start:
+                new_dt_start = ex_dt_start
             else:
-                new_dt_start = dt_start
-        elif ex_dt_start:
-            new_dt_start = ex_dt_start
-        else:
-            raise ValueError('Entry has no date/time')
-        ev.add('DTSTART', new_dt_start)
-        if 'DURATION' in exev:
-            ev.add('DURATION', exev['DURATION'])
-        elif ex_dt_start and 'DTEND' in exev:
-            ex_dt_end = exev['DTEND'].dt
-            delta = new_dt_start - ex_dt_start
-            new_dt_end = ex_dt_end + delta
-            ev.add('DTEND', new_dt_end)
-        if 'LOCATION' in exev:
-            ev.add('LOCATION', exev['LOCATION'])
-        cls.calConnector.add_entry(ev) # Write to store
-        cls._entry_norep_list_sorted = None # Clear norep cache as modified
+                raise ValueError('Event has no date/time')
+            en.add('DTSTART', new_dt_start)
+            if 'DURATION' in exen:
+                en.add('DURATION', exen['DURATION'])
+            elif ex_dt_start and 'DTEND' in exen:
+                ex_dt_end = exen['DTEND'].dt
+                delta = new_dt_start - ex_dt_start
+                new_dt_end = ex_dt_end + delta
+                en.add('DTEND', new_dt_end)
+        if 'LOCATION' in exen:
+            en.add('LOCATION', exen['LOCATION'])
+        cls.calConnector.add_entry(en) # Write to store
+        if new_dt_start is not None:
+            cls._entry_norep_list_sorted = None # Clear norep cache as modified
+        if isinstance(en,iTodo):
+            cls._todo_list = None # Clear todo cache as modified
 
 
     @classmethod
-    def update_entry(cls, ev:iEvent, e_inf:EntryInfo) -> None:
-        # Update event using details from EntryInfo e_inf.
+    def update_entry(cls, en:Union[iEvent,iTodo], e_inf:EntryInfo) -> None:
+        # Update entry using details from EntryInfo e_inf.
         clear_rep = False
         clear_norep = False
 
-        if 'UID' not in ev:
-            ev.add('UID', Calendar.gen_uid()) # Should be present
+        if 'UID' not in en:
+            en.add('UID', Calendar.gen_uid()) # Should be present
         # DateTime utcnow() function doesn't include TZ, so use now(tz.utc)
         utcnow =  dt_datetime.now(timezone.utc)
         try:
-            ev['DTSTAMP'].dt = utcnow
+            en['DTSTAMP'].dt = utcnow
         except KeyError:
             # Entry had no DTSTAMP (note: DTSTAMP required by icalendar spec)
-            ev.add('DTSTAMP', utcnow)
+            en.add('DTSTAMP', utcnow)
         try:
-            ev['LAST-MODIFIED'].dt = utcnow
+            en['LAST-MODIFIED'].dt = utcnow
         except KeyError:
             # Entry had no LAST-MODIFIED - add one
-            ev.add('LAST-MODIFIED', utcnow)
+            en.add('LAST-MODIFIED', utcnow)
         try:
-            ev['SUMMARY'] = e_inf.desc
+            en['SUMMARY'] = e_inf.desc
         except KeyError:
             # Entry had no SUMMARY
-            ev.add('SUMMARY', e_inf.desc)
+            en.add('SUMMARY', e_inf.desc)
 
         # DTSTART - delete & re-add so type (DATE vs. DATE-TIME) is correct
         # (Also, Q: if comparing DTSTARTs with different TZs, how does != work?)
-        if 'DTSTART' in ev:
-            del(ev['DTSTART'])
-        ev.add('DTSTART', e_inf.start_dt)
+        had_date = 'DTSTART' in en
+        if had_date:
+            del(en['DTSTART'])
+        if e_inf.start_dt is not None:
+            en.add('DTSTART', e_inf.start_dt)
 
         # Duration or Endtime - first delete existing
-        if 'DURATION' in ev:
-            del(ev['DURATION'])
-        if 'DTEND' in ev:
-            del(ev['DTEND'])
+        if 'DURATION' in en:
+            del(en['DURATION'])
+        if 'DTEND' in en:
+            del(en['DTEND'])
         # Then add new end time/duration (if needed)
-        cls._event_add_end_dur_from_info(ev,e_inf)
+        cls._event_add_end_dur_from_info(en, e_inf)
 
         # Repeats (including exception dates)
-        if 'RRULE' in ev:
-            del(ev['RRULE'])
+        if 'RRULE' in en:
+            del(en['RRULE'])
             clear_rep = True
-        else:
+        elif had_date:
+            # Previously had start time, but no repeats
             clear_norep = True
-        if 'EXDATE' in ev:
-            del(ev['EXDATE'])
+        if 'EXDATE' in en:
+            del(en['EXDATE'])
         if e_inf.rep_type is not None and e_inf.rep_inter>0:
-            cls._event_add_repeat_from_info(ev,e_inf)
+            cls._event_add_repeat_from_info(en, e_inf)
             clear_rep = True
-        else:
+        elif e_inf.start_dt is not None:
+            # Now has start time, but no repeats
             clear_norep = True
 
         # Other properties: status (cancelled, tentative, etc.), location
-        cls._event_set_status_from_info(ev, e_inf)
-        cls._event_set_location_from_info(ev, e_inf)
+        cls._event_set_status_from_info(en, e_inf)
+        cls._event_set_location_from_info(en, e_inf)
 
         # This needs optimising - some cases cause too much cache flushing !!
         if clear_norep:
             cls._entry_norep_list_sorted = None
         if clear_rep:
             cls._entry_rep_list = None
+        if e_inf.type==EntryInfo.TYPE_TODO or isinstance(en, iTodo):
+            cls._todo_list = None
 
-        cls.calConnector.update_entry(ev) # Write to store
+        cls.calConnector.update_entry(en) # Write to store
 
 
     @staticmethod
@@ -335,14 +359,17 @@ class Calendar:
 
 
     @classmethod
-    def delete_entry(cls, event:iEvent) -> None:
-        # Delete given event.
+    def delete_entry(cls, entry:Union[iEvent,iTodo]) -> None:
+        # Delete given entry.
         # Need to clear cache containing the entry...
-        if 'RRULE' in event:
-            cls._entry_rep_list = None
-        else:
-            cls._entry_norep_list_sorted = None
-        cls.calConnector.delete_entry(event)
+        if 'DTSTART' in entry:
+            if 'RRULE' in entry:
+                cls._entry_rep_list = None
+            else:
+                cls._entry_norep_list_sorted = None
+        if type(entry)==iTodo:
+            cls._todo_list = None
+        cls.calConnector.delete_entry(entry)
 
 
     @classmethod
@@ -424,6 +451,7 @@ class Calendar:
     @classmethod
     def todo_list(cls) -> list:
         # Return list of "todo"s
+        # !! Not sure if we need to track list - to review later when/if there is filtering
         cls._update_todo_list()
         return cls._todo_list
 
@@ -479,21 +507,21 @@ class CalendarConnectorICSfile(CalendarConnector):
         os_rename(temp_filename, realfile)
 
 
-    def add_entry(self, event:iEvent) -> None:
+    def add_entry(self, entry:Union[iEvent,iTodo]) -> None:
         # Add a new entry component to the file data and write file.
-        self.cal.add_component(event)
+        self.cal.add_component(entry)
         self._save_file()
 
 
-    def update_entry(self, event:iEvent) -> None:
-        # event is a component of the file data, so it's already updated.
+    def update_entry(self, entry:Union[iEvent,iTodo]) -> None:
+        # entry is a component of the file data, so it's already updated.
         # We just need to write the file data.
         self._save_file()
 
 
-    def delete_entry(self, event:iEvent) -> None:
+    def delete_entry(self, entry:Union[iEvent,iTodo]) -> None:
         # Delete entry component to the file data and write file.
-        self.cal.subcomponents.remove(event)
+        self.cal.subcomponents.remove(entry)
         self._save_file()
 
 
@@ -536,20 +564,21 @@ class CalendarConnectorCalDAV(CalendarConnector):
             # Each icalendar_instance is a calendar containing the event.
             # We want to extract the event itself, so walk() & take the first.
             vevent = ev.icalendar_instance.walk('VEVENT')[0]
-            vevent.__conn_event = ev # Sneakily add ev, for rapid access later
+            vevent.__conn_entry = ev # Sneakily add ev, for rapid access later
             self.cal.add_component(vevent)
         # ... and todos
         todos = self.calendar.todos()
         for td in todos:
             vtodo = td.icalendar_instance.walk('VTODO')[0]
+            vtodo.__conn_entry = td # Sneakily add td, for rapid access later
             self.cal.add_component(vtodo)
 
 
-    def add_entry(self, event:iEvent) -> None:
+    def add_entry(self, entry:Union[iEvent,iTodo]) -> None:
         # Create a new entry component on the server, and locally.
-        vcstr = 'BEGIN:VCALENDAR\r\n{:s}END:VCALENDAR\r\n'.format(event.to_ical().decode()) # !! Should we specify encoding for decode()?
+        vcstr = 'BEGIN:VCALENDAR\r\n{:s}END:VCALENDAR\r\n'.format(entry.to_ical().decode()) # !! Should we specify encoding for decode()?
         try:
-            conn_event = self.calendar.save_event(vcstr)
+            conn_entry = self.calendar.save_event(vcstr)
         except Exception as excep:
             # !! While code is in development, just exit on failure.
             # May change to something "friendlier" later...
@@ -557,16 +586,16 @@ class CalendarConnectorCalDAV(CalendarConnector):
             exit(-1)
 
         # Save to local store
-        # Add embedded event, so we can modify & save directly
-        newevent = conn_event.icalendar_instance.walk('VEVENT')[0]
-        newevent.__conn_event = conn_event
-        self.cal.add_component(newevent)
+        # Add embedded entry, so we can modify & save directly
+        newentry = conn_entry.icalendar_instance.walk()[1]
+        newentry.__conn_entry = conn_entry
+        self.cal.add_component(newentry)
 
 
-    def update_entry(self, event:iEvent) -> None:
-        # Event struct has been modified, so can just send update to server.
+    def update_entry(self, entry:Union[iEvent,iTodo]) -> None:
+        # Entry struct has been modified, so can just send update to server.
         try:
-            event.__conn_event.save() # Write to server
+            entry.__conn_entry.save() # Write to server
         except Exception as excep:
             # !! While code is in development, just exit on failure.
             # May change to something "friendlier" later...
@@ -574,16 +603,16 @@ class CalendarConnectorCalDAV(CalendarConnector):
             exit(-1)
 
 
-    def delete_entry(self, event:iEvent) -> None:
+    def delete_entry(self, entry:Union[iEvent,iTodo]) -> None:
         # Delete entry component from server and in local copy.
         try:
-            event.__conn_event.delete() # delete from server
+            entry.__conn_entry.delete() # delete from server
         except Exception as excep:
             # !! While code is in development, just exit on failure.
             # May change to something "friendlier" later...
             print('Error deleting entry on CalDAV server. Message: {:s}'.format(str(excep)), file=stderr)
             exit(-1)
-        self.cal.subcomponents.remove(event) # delete local copy
+        self.cal.subcomponents.remove(entry) # delete local copy
 
 
 #
