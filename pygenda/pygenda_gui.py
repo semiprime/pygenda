@@ -27,7 +27,7 @@ from gi.repository import Gtk, Gdk, GLib, Gio
 from datetime import date as dt_date, time as dt_time, datetime as dt_datetime, timedelta
 from dateutil import rrule as du_rrule
 from dateutil.relativedelta import relativedelta
-from icalendar import Event as iEvent
+from icalendar import Calendar as iCalendar, Event as iEvent
 from importlib import import_module
 from os import path as ospath
 from sys import stderr
@@ -664,9 +664,9 @@ class GUI:
         # First, we try requesting a 'text/calendar' type from the clipboard
         sdat = cb.wait_for_contents(Gdk.Atom.intern('text/calendar', False))
         try:
-            events = iEvent.from_ical(sdat.get_data())
-            ev = events.walk('VEVENT')[0]
-            Calendar.new_entry_from_example(ev, dt_start=cls.cursor_date)
+            ical = iCalendar.from_ical(sdat.get_data())
+            en = ical.walk()[0]
+            cls.views[cls._view_idx].new_entry_from_example(en)
             cls.view_redraw(True)
             return
         except:
@@ -678,8 +678,8 @@ class GUI:
             txt = txt.strip()
             txt = txt.replace('\n',' ')
             txt = txt.replace('\t',' ')
-            # Open a New Entry dialog with description initialised as txt
-            GLib.idle_add(EntryDialogController.newentry,txt)
+            # What type of entry is created will depend on view, so call current view paste fn
+            cls.views[cls._view_idx].paste_text(txt)
 
 
     @classmethod

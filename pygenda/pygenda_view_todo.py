@@ -25,9 +25,9 @@ gi_require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GLib
 from gi.repository.Pango import WrapMode as PWrapMode
 
-from icalendar import cal as iCal, Todo as iTodo
+from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
 from locale import gettext as _
-from typing import Optional
+from typing import Optional, Union
 
 # pygenda components
 from .pygenda_view import View
@@ -122,6 +122,20 @@ class View_Todo(View):
         # Returns entry at cursor position, or None if cursor not on entry.
         # Called from cursor_edit_entry().
         return None
+
+
+    @classmethod
+    def new_entry_from_example(cls, en:Union[iEvent,iTodo]) -> None:
+        # Creates new entry based on entry en. Used for pasting entries.
+        # Type of entry depends on View (e.g. Todo View -> to-do item).
+        print('Paste entry')
+
+
+    @classmethod
+    def paste_text(cls, txt:str) -> None:
+        # Handle pasting of text in Todo view.
+        # Open a New Todo dialog with description initialised as txt
+        print('Paste text')
 
 
     @classmethod

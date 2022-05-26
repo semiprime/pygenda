@@ -26,11 +26,14 @@ gi_require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GLib
 from gi.repository.Pango import WrapMode as PWrapMode
 
-from icalendar import cal as iCal
+from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
 from datetime import date as dt_date, timedelta
+from typing import Union
 
 from .pygenda_gui import GUI, EntryDialogController
 from .pygenda_util import datetime_to_time, datetime_to_date, date_to_datetime, format_time, format_compact_date, format_compact_time, format_compact_datetime, dt_lte
+from .pygenda_calendar import Calendar
+from .pygenda_entryinfo import EntryInfo
 
 
 # Base class for pygenda Views (Week View, Year View, etc.)
@@ -88,6 +91,21 @@ class View:
             EntryDialogController.newentry()
         else:
             EntryDialogController.editentry(en)
+
+
+    @classmethod
+    def new_entry_from_example(cls, en:Union[iEvent,iTodo]) -> None:
+        # Creates new entry based on entry en. Used for pasting entries.
+        # Type of entry depends on View (e.g. Todo View -> to-do item).
+        # Default implementation used for Week and Year Views.
+        Calendar.new_entry_from_example(en, e_type=EntryInfo.TYPE_EVENT, dt_start=GUI.cursor_date)
+
+
+    @classmethod
+    def paste_text(cls, txt:str) -> None:
+        # Handle pasting of text in Week/Year views.
+        # Open a New Entry dialog with description initialised as txt
+        GLib.idle_add(EntryDialogController.newentry, txt)
 
 
     @staticmethod
