@@ -58,7 +58,8 @@ Checklist for releases
 * Run `mypy .` in source directory, check any new messages
 * If any new dependencies are required, add them to setup.py
 * Check setup.py install works & the installed module runs correctly
-* Check copy/cut/paste works, including e.g. time of entry, multi-day entries
+* Check copy/cut/paste works, including e.g. time of entry, multi-day entries,
+  todo pasted as entry & vice-versa, text pasted
 * Regenerate .po and .mo localisation files (see above)
 * Check at least one non-English language
 * Check any ics files in validator, eg https://icalendar.org/validator.html

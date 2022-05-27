@@ -27,7 +27,7 @@ from gi.repository import Gtk, Gdk, GLib, Gio
 from datetime import date as dt_date, time as dt_time, datetime as dt_datetime, timedelta
 from dateutil import rrule as du_rrule
 from dateutil.relativedelta import relativedelta
-from icalendar import Calendar as iCalendar, Event as iEvent
+from icalendar import Calendar as iCalendar, Event as iEvent, Todo as iTodo
 from importlib import import_module
 from os import path as ospath
 from sys import stderr
@@ -145,6 +145,7 @@ class GUI:
             'menuitem_copy': cls.copy_request,
             'menuitem_paste': cls.paste_request,
             'menuitem_newentry': cls.event_newentry,
+            'menuitem_newtodo': cls.event_newtodo,
             'menuitem_edittime': cls.event_edittime,
             'menuitem_editrepeats': cls.event_editrepeats,
             'menuitem_editalarm': cls.event_editalarm,
@@ -247,6 +248,7 @@ class GUI:
         cls._init_clipboard()
         cls._init_date_format()
         EntryDialogController.init()
+        TodoDialogController.init()
 
         # If date set from command line, jump there now
         if Config.date:
@@ -569,6 +571,11 @@ class GUI:
     def event_newentry(cls, *args) -> None:
         # Callback for new entry signal (menu, softbutton)
         EntryDialogController.newentry()
+
+    @classmethod
+    def event_newtodo(cls, *args) -> None:
+        # Callback for new todo signal (menu, softbutton)
+        TodoDialogController.newtodo()
 
     @classmethod
     def event_edittime(cls, *args) -> None:
@@ -1958,3 +1965,76 @@ class ExceptionsDialogController:
     def _sort_func(row1:Gtk.ListBoxRow, row2:Gtk.ListBoxRow) -> int:
         # Used as sort function for listbox.
         return row1.get_child().compare(row2.get_child())
+
+
+# Singleton class to manage Todo dialog
+class TodoDialogController:
+    dialog = None # type: Gtk.Dialog
+    wid_desc = None # type: Gtk.Entry
+
+    @classmethod
+    def init(cls):
+        # Initialiser for singleton class.
+        # Called from GUI init_stage2().
+
+        # Get some references to dialog elements in glade
+        cls.dialog = GUI._builder.get_object('dialog_todo')
+        if (not cls.dialog): # Sanity check
+            raise NameError('Dialog Todo not found')
+
+        cls.wid_desc = GUI._builder.get_object('todo_desc')
+
+
+    @classmethod
+    def newtodo(cls, txt:str=None) -> None:
+        # Called to implement "new todo" from GUI, e.g. button
+        cls.dialog.set_title(_('New To-do'))
+        response,ei = cls._do_todo_dialog(txt=txt)
+        if response==Gtk.ResponseType.OK and ei.desc:
+            Calendar.new_entry(ei)
+            GUI.view_redraw(True)
+
+
+    @classmethod
+    def edittodo(cls, en:iTodo) -> None:
+        # Called to implement "edit todo" from GUI
+        cls.dialog.set_title(_('Edit To-do'))
+        response,ei = cls._do_todo_dialog(entry=en)
+        if response==Gtk.ResponseType.OK:
+            if ei.desc:
+                Calendar.update_entry(en, ei)
+                GUI.view_redraw(True)
+            else: # Description text has been deleted in dialog
+                GUI.dialog_deleteentry(en)
+
+
+    @classmethod
+    def _do_todo_dialog(cls, txt:str=None, entry:iTodo=None) -> Tuple[int,EntryInfo]:
+        # Do the core work displaying todo dialog and extracting result.
+        if entry is not None:
+            # existing entry - take values
+            cls.wid_desc.set_text(entry['SUMMARY'] if 'SUMMARY' in entry else'')
+            cls.wid_desc.grab_focus()
+        elif txt is None:
+            cls.wid_desc.set_text('') # clear text
+        else:
+            cls.wid_desc.set_text(txt)
+            cls.wid_desc.set_position(len(txt))
+        cls.wid_desc.grab_focus_without_selecting()
+
+        try:
+            while True:
+                response = cls.dialog.run()
+                break
+        finally:
+            cls.dialog.hide()
+
+        return response,cls._get_entryinfo()
+
+
+    @classmethod
+    def _get_entryinfo(cls) -> EntryInfo:
+        # Decipher entry fields and return info as an EntryInfo object.
+        desc = cls.wid_desc.get_text()
+        ei = EntryInfo(type=EntryInfo.TYPE_TODO, desc=desc)
+        return ei

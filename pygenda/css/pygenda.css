@@ -320,6 +320,13 @@ scrollbar {
 	padding-left:1.5px;
 	padding-right:1.5px;
 	margin-right:0.2em;
+	min-width:1ex;
+}
+
+.todoview_cursor {
+	color:white;
+	background-color:black;
+	border-radius:4px;
 }
 
 
@@ -398,6 +405,7 @@ buttonbox > button, .dialogbutton {
 .textentry {
 	border-width:1px;
 	padding:1px 5px;
+	min-width:15em;
 }
 
 .textentry:focus {
