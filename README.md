@@ -2,14 +2,16 @@ Pygenda
 =======
 Pygenda is a calendar/agenda application written in Python3/GTK3 and
 designed for "PDA" devices such as Planet Computers' Gemini. The user
-interface is inspired by patterns in the Agenda programs on the Psion
-Series 3 and Series 5 range of PDAs.
+interface is inspired by the Agenda programs on the Psion Series 3 and
+Series 5 range of PDAs.
 
 **WARNING: This is in-development code, released as a preview for
 developers. It will probably corrupt your data.**
 
 There are currently **lots of missing/incomplete features** as well as
 **bugs**. For a list of known issues, see: docs/known_issues.md
+
+Video (from March 2021): https://www.youtube.com/watch?v=QjHcgeRudMo
 
 Source code
 -----------
