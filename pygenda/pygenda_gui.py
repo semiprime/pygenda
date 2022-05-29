@@ -859,7 +859,7 @@ class EntryDialogController:
 
 
     @classmethod
-    def init(cls):
+    def init(cls) -> None:
         # Initialiser for singleton class.
         # Called from GUI init_stage2().
 
@@ -1973,7 +1973,7 @@ class TodoDialogController:
     wid_desc = None # type: Gtk.Entry
 
     @classmethod
-    def init(cls):
+    def init(cls) -> None:
         # Initialiser for singleton class.
         # Called from GUI init_stage2().
 

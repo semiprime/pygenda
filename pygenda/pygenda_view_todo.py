@@ -280,6 +280,8 @@ class View_Todo(View):
 
     @classmethod
     def _get_cursor_ctx(cls, c_list:int, c_i_in_list:int) -> Gtk.StyleContext:
+        # Returns a StyleContext object for to-do cursor coordinates
+        # c_list & c_i_in_list
         lst = cls._list_container[c_list].get_child().get_child()
         item = lst.get_children()[c_i_in_list]
         if cls._item_counts[c_list]==0:
