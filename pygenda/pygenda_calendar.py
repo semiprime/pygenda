@@ -137,17 +137,22 @@ class Calendar:
 
         cls._event_set_status_from_info(en, e_inf)
         cls._event_set_location_from_info(en, e_inf)
+        if e_inf.categories:
+            # Convert to list - to work around bug passing set to old icalendar
+            en.add('CATEGORIES', list(e_inf.categories))
 
         cls.calConnector.add_entry(en) # Write to store
 
 
     @classmethod
-    def new_entry_from_example(cls, exen:Union[iEvent,iTodo], e_type:int=None, dt_start:dt_date=None) -> None:
+    def new_entry_from_example(cls, exen:Union[iEvent,iTodo], e_type:int=None, dt_start:dt_date=None, e_cats:Union[list,bool,None]=True) -> None:
         # Add a new iCal entry to store given an iEvent as a "template".
         # Replace UID, timestamp etc. to make it a new event.
         # Potentially change type of entry to e_type.
         # Potentially override exen's date/time with a new dt_start.
-        # Use to implement pasting events into new days/timeslots.
+        # Potentially set categories (e_cats==True: "Use exen categories",
+        #   False/None: "no categories", list[str]: "Use these categories").
+        # Used to implement pasting events into new days/timeslots.
         if e_type==EntryInfo.TYPE_EVENT or (e_type is None and isinstance(exen,iEvent)):
             en = iEvent()
         elif e_type==EntryInfo.TYPE_TODO or (e_type is None and isinstance(exen,iTodo)):
@@ -185,6 +190,12 @@ class Calendar:
                 en.add('DTEND', new_dt_end)
         if 'LOCATION' in exen:
             en.add('LOCATION', exen['LOCATION'])
+        if e_cats is True:
+            if 'CATEGORIES' in exen:
+                en.add('CATEGORIES', exen['CATEGORIES'])
+        elif e_cats:
+            # Convert to list - to work around bug passing set to old icalendar
+            en.add('CATEGORIES', list(e_cats))
         cls.calConnector.add_entry(en) # Write to store
         if new_dt_start is not None:
             cls._entry_norep_list_sorted = None # Clear norep cache as modified
@@ -217,6 +228,12 @@ class Calendar:
         except KeyError:
             # Entry had no SUMMARY
             en.add('SUMMARY', e_inf.desc)
+
+        if 'CATEGORIES' in en:
+            del(en['CATEGORIES'])
+        if e_inf.categories:
+            # Convert to list - to work around bug passing set to old icalendar
+            en.add('CATEGORIES', list(e_inf.categories))
 
         # DTSTART - delete & re-add so type (DATE vs. DATE-TIME) is correct
         # (Also, Q: if comparing DTSTARTs with different TZs, how does != work?)

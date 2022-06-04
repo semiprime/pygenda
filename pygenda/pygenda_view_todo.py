@@ -79,6 +79,7 @@ class View_Todo(View):
         i = 0
         cls._list_titles = []
         cls._list_filters = []
+        cls._list_default_cats = []
         while True:
             try:
                 title = Config.get('todo_view','list{}_title'.format(i))
@@ -90,9 +91,20 @@ class View_Todo(View):
                 filt = None
             cls._list_titles.append(title)
             cls._list_filters.append(filt)
+            cls._list_default_cats.append(cls._default_cats_from_filter(filt))
             i += 1
         cls._list_count = i
         cls._item_counts = [0]*cls._list_count
+
+
+    @staticmethod
+    def _default_cats_from_filter(filt:Optional[str]) -> Optional[list]:
+        # Return list of categories that will match given filter string.
+        # For now this is quite simple, but in the future it may support
+        # more complex filters (e.g. project1 AND this_week).
+        if not filt or filt=='UNCATEGORIZED':
+            return None
+        return [filt]
 
 
     @classmethod
@@ -157,14 +169,16 @@ class View_Todo(View):
     def new_entry_from_example(cls, en:Union[iEvent,iTodo]) -> None:
         # Creates new entry based on entry en. Used for pasting entries.
         # Type of entry depends on View (e.g. Todo View -> to-do item).
-        Calendar.new_entry_from_example(en, e_type=EntryInfo.TYPE_TODO)
+        cats = cls._list_default_cats[cls._cursor_list]
+        Calendar.new_entry_from_example(en, e_type=EntryInfo.TYPE_TODO, e_cats=cats)
 
 
     @classmethod
     def paste_text(cls, txt:str) -> None:
         # Handle pasting of text in Todo view.
-        # Open a New Todo dialog with description initialised as txt
-        GLib.idle_add(TodoDialogController.newtodo, txt)
+        # Open a New Todo dialog with description initialised as txt,
+        # and to-do list set from current cursor position.
+        GLib.idle_add(lambda x: TodoDialogController.newtodo(txt=x, list_idx=cls._cursor_list), txt)
 
 
     @classmethod
@@ -302,7 +316,7 @@ class View_Todo(View):
             # If it's a character key, take as first of new todo
             # !! Bug: only works for ASCII characters
             if ev.state & (Gdk.ModifierType.CONTROL_MASK|Gdk.ModifierType.MOD1_MASK)==0 and Gdk.KEY_exclam <= ev.keyval <= Gdk.KEY_asciitilde:
-                GLib.idle_add(TodoDialogController.newtodo,chr(ev.keyval))
+                GLib.idle_add(lambda x: TodoDialogController.newtodo(txt=x, list_idx=cls._cursor_list), chr(ev.keyval))
 
 
     @classmethod
@@ -349,6 +363,6 @@ class View_Todo(View):
         # Assigned to the 'Enter' key.
         en = cls.get_cursor_entry()
         if en is None:
-            TodoDialogController.newtodo()
+            TodoDialogController.newtodo(list_idx=cls._cursor_list)
         else:
-            TodoDialogController.edittodo(en)
+            TodoDialogController.edittodo(en, list_idx=cls._cursor_list)

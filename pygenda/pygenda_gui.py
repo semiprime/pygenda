@@ -248,7 +248,6 @@ class GUI:
         cls._init_clipboard()
         cls._init_date_format()
         EntryDialogController.init()
-        TodoDialogController.init()
 
         # If date set from command line, jump there now
         if Config.date:
@@ -275,6 +274,7 @@ class GUI:
             return
 
         cls._init_views()
+        TodoDialogController.init() # Need to do this after Todo View init
 
         vw = Config.get('startup','view')
         if vw:
@@ -405,7 +405,7 @@ class GUI:
     @classmethod
     def _init_comboboxes(cls) -> None:
         # Connect ComboBox events to handlers for extra features.
-        for cb_id in ('combo_repeat_type','combo_bydaymonth','combo_byday_ord','combo_byday_day','combo_status'):
+        for cb_id in ('combo_repeat_type','combo_bydaymonth','combo_byday_ord','combo_byday_day','combo_status','combo_todo_lists'):
             cb = cls._builder.get_object(cb_id)
             cb.connect('key-press-event', cls._combobox_keypress)
 
@@ -789,6 +789,17 @@ class GUI:
         # Temporary callback - delete me !!!!
         # Placeholder until we decide what fourth button does
         print('Button clicked {}'.format(args[0]))
+
+
+    @classmethod
+    def todo_titles_default_cats(cls) -> Tuple[list,list]:
+        # Return titles and default categories of todo lists
+        try:
+            todo_idx = cls._VIEWS.index('Todo')
+        except ValueError:
+            return [], []
+        tdv = cls.views[todo_idx]
+        return tdv._list_titles, tdv._list_default_cats
 
 
 # Singleton class to manage Entry dialog
@@ -1971,10 +1982,12 @@ class ExceptionsDialogController:
 class TodoDialogController:
     dialog = None # type: Gtk.Dialog
     wid_desc = None # type: Gtk.Entry
+    wid_todolists = None # type: Gtk.ComboBoxText
+    list_default_cats = None # type: list
 
     @classmethod
     def init(cls) -> None:
-        # Initialiser for singleton class.
+        # Initialiser for TodoDialogController singleton class.
         # Called from GUI init_stage2().
 
         # Get some references to dialog elements in glade
@@ -1983,23 +1996,33 @@ class TodoDialogController:
             raise NameError('Dialog Todo not found')
 
         cls.wid_desc = GUI._builder.get_object('todo_desc')
+        cls._init_todolists()
 
 
     @classmethod
-    def newtodo(cls, txt:str=None) -> None:
+    def _init_todolists(cls) -> None:
+        # Get reference to todo-list combobox & initialise its entries
+        cls.wid_todolists = GUI._builder.get_object('combo_todo_lists')
+        todo_titles, cls.list_default_cats = GUI.todo_titles_default_cats()
+        for t in todo_titles:
+            cls.wid_todolists.append_text(t)
+
+
+    @classmethod
+    def newtodo(cls, txt:str=None, list_idx:int=0) -> None:
         # Called to implement "new todo" from GUI, e.g. button
         cls.dialog.set_title(_('New To-do'))
-        response,ei = cls._do_todo_dialog(txt=txt)
+        response,ei = cls._do_todo_dialog(txt=txt, list_idx=list_idx)
         if response==Gtk.ResponseType.OK and ei.desc:
             Calendar.new_entry(ei)
             GUI.view_redraw(True)
 
 
     @classmethod
-    def edittodo(cls, en:iTodo) -> None:
+    def edittodo(cls, en:iTodo, list_idx:int=0) -> None:
         # Called to implement "edit todo" from GUI
         cls.dialog.set_title(_('Edit To-do'))
-        response,ei = cls._do_todo_dialog(entry=en)
+        response,ei = cls._do_todo_dialog(entry=en, list_idx=list_idx)
         if response==Gtk.ResponseType.OK:
             if ei.desc:
                 Calendar.update_entry(en, ei)
@@ -2009,7 +2032,7 @@ class TodoDialogController:
 
 
     @classmethod
-    def _do_todo_dialog(cls, txt:str=None, entry:iTodo=None) -> Tuple[int,EntryInfo]:
+    def _do_todo_dialog(cls, txt:str=None, entry:iTodo=None, list_idx:int=0) -> Tuple[int,EntryInfo]:
         # Do the core work displaying todo dialog and extracting result.
         if entry is not None:
             # existing entry - take values
@@ -2020,6 +2043,7 @@ class TodoDialogController:
         else:
             cls.wid_desc.set_text(txt)
             cls.wid_desc.set_position(len(txt))
+        cls.wid_todolists.set_active(list_idx)
         cls.wid_desc.grab_focus_without_selecting()
 
         try:
@@ -2037,4 +2061,6 @@ class TodoDialogController:
         # Decipher entry fields and return info as an EntryInfo object.
         desc = cls.wid_desc.get_text()
         ei = EntryInfo(type=EntryInfo.TYPE_TODO, desc=desc)
+        list_idx = cls.wid_todolists.get_active()
+        ei.set_categories(cls.list_default_cats[list_idx])
         return ei

@@ -22,8 +22,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-27 21:09+0200\n"
-"PO-Revision-Date: 2022-05-27 21:09+0200\n"
+"POT-Creation-Date: 2022-06-04 10:43+0200\n"
+"PO-Revision-Date: 2022-06-04 10:43+0200\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -72,35 +72,35 @@ msgstr ""
 "publiée en avant-première pour les développeurs/euses. Elle corrompra "
 "probablement vos données."
 
-#: pygenda_gui.py:1380 pygenda.glade:462
+#: pygenda_gui.py:1391 pygenda.glade:462
 msgid "New Entry"
 msgstr "Nouvelle\nentrée"
 
-#: pygenda_gui.py:1397
+#: pygenda_gui.py:1408
 msgid "Edit Entry"
 msgstr "Modifier entrée"
 
-#: pygenda_gui.py:1616 pygenda.glade:1145 pygenda.glade:1477 pygenda.glade:1660
+#: pygenda_gui.py:1627 pygenda.glade:1145 pygenda.glade:1477 pygenda.glade:1660
 msgid "None"
 msgstr "Rien"
 
-#: pygenda_gui.py:1867
+#: pygenda_gui.py:1878
 msgid "Exception dates"
 msgstr "Dates omises"
 
-#: pygenda_gui.py:1884
+#: pygenda_gui.py:1895
 msgid "Add date"
 msgstr "Ajouter date"
 
-#: pygenda_gui.py:1905
+#: pygenda_gui.py:1916
 msgid "Remove date(s)"
 msgstr "Retirer date(s)"
 
-#: pygenda_gui.py:1991
+#: pygenda_gui.py:2014
 msgid "New To-do"
 msgstr "Nouvelle tâche"
 
-#: pygenda_gui.py:2001
+#: pygenda_gui.py:2024
 msgid "Edit To-do"
 msgstr "Modifier tâche"
 
@@ -431,3 +431,7 @@ msgstr ""
 #: pygenda.glade:1696
 msgid "Details"
 msgstr "Détails"
+
+#: pygenda.glade:1817
+msgid "To-do list:"
+msgstr "Liste:"

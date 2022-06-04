@@ -14,9 +14,10 @@ Major
 -----
 * Missing views: Day, List, Busy
 
-* Todo View is in early development. Only the description of a to-do
-  item can be set, there is no way to organise them, and navigation
-  is incomplete (e.g. doesn't scroll with cursor, no mouse support).
+* Todo View is in early development. Only the description and list
+  of a to-do item can be set; navigation is incomplete (e.g. doesn't
+  scroll with cursor, no mouse support), and there is no way to sort
+  lists (e.g. by priority, due date).
 
 * Alarms are not implemented (note: a separate server should handle
   the actual alarm notifications)

@@ -1775,12 +1775,12 @@ long description, attendees…</property>
 					</packing>
 				</child>
 				<child>
-					<!-- n-columns=2 n-rows=1 -->
+					<!-- n-columns=2 n-rows=2 -->
 					<object class="GtkGrid">
 						<property name="visible">True</property>
 						<property name="can-focus">False</property>
 						<child>
-							<object class="GtkLabel" id="label_tododesc">
+							<object class="GtkLabel">
 								<property name="visible">True</property>
 								<property name="can-focus">False</property>
 								<property name="halign">end</property>
@@ -1807,6 +1807,32 @@ long description, attendees…</property>
 							<packing>
 								<property name="left-attach">1</property>
 								<property name="top-attach">0</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="halign">end</property>
+								<property name="label" translatable="yes">To-do list:</property>
+								<style>
+									<class name="llabel"/>
+								</style>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">1</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkComboBoxText" id="combo_todo_lists">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="halign">start</property>
+							</object>
+							<packing>
+								<property name="left-attach">1</property>
+								<property name="top-attach">1</property>
 							</packing>
 						</child>
 					</object>

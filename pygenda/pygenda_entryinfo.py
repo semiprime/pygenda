@@ -35,6 +35,7 @@ class EntryInfo:
     rep_byday = None
     rep_bymonthday = None
     rep_exceptions = None
+    categories = None
 
     TYPE_EVENT=0
     TYPE_TODO=1
@@ -81,3 +82,11 @@ class EntryInfo:
         self.rep_byday = byday # e.g. '-1MO' = last Monday
         self.rep_bymonthday = bymonthday # e.g. '-2' = second to last day
         self.rep_exceptions = except_list
+
+
+    def set_categories(self, catlist:list) -> None:
+        # Set categories for this entry (make it a set, so no repeats)
+        if catlist:
+            self.categories = set(catlist)
+        else:
+            self.categories = None
