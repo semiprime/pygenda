@@ -278,6 +278,7 @@ class View_Todo(View):
             ctx.add_class(cls.CURSOR_STYLE)
         cls._last_cursor_list = cls._cursor_list
         cls._last_cursor_idx_in_list = cls._cursor_idx_in_list
+        cls._scroll_to_cursor()
 
 
     @classmethod
@@ -303,6 +304,49 @@ class View_Todo(View):
         else:
             ci = item.get_children()[0]
         return ci.get_style_context()
+
+
+    @classmethod
+    def _scroll_to_cursor(cls) -> None:
+        # If required, scroll view elements so that cursor is visible.
+        # Note: On first call view is not yet drawn, so calculation is not
+        # correct. However, since don't need to scroll, behaviour is right.
+        list_width = cls._list_container[0].get_allocated_width() # homogeneous
+        view_width = cls._topboxscroll.get_allocated_width()
+        maxv = cls._cursor_list*list_width # left edge of list at left of view
+        minv = (cls._cursor_list+1)*list_width-view_width # rt edge @ rt of view
+        adj = cls._topboxscroll.get_hadjustment()
+        cur = adj.get_value()
+        if minv > maxv:
+            minv = maxv # If list is wider than view, then show left edge
+        if cur > maxv:
+            adj.set_value(maxv)
+        elif cur < minv:
+            adj.set_value(minv)
+
+        # Now the vertical scrolling...
+        list_scroller = cls._list_container[cls._cursor_list]
+        list_box = list_scroller.get_child().get_child()
+        list_item_wids = list_box.get_children()
+        maxv = list_box.get_spacing()*cls._cursor_idx_in_list
+        for i in range(cls._cursor_idx_in_list):
+            maxv += list_item_wids[i].get_allocated_height()
+        minv = maxv + list_item_wids[cls._cursor_idx_in_list].get_allocated_height()
+        minv -= list_scroller.get_allocated_height()
+        # Take into account padding/margin etc.
+        ctx = list_box.get_style_context()
+        pad = ctx.get_padding(Gtk.StateFlags.NORMAL)
+        bord = ctx.get_border(Gtk.StateFlags.NORMAL)
+        marg = ctx.get_margin(Gtk.StateFlags.NORMAL)
+        minv += pad.top + bord.top + marg.top + pad.bottom
+        if minv > maxv:
+            minv = maxv # If item is taller than view, then show top
+        adj = list_scroller.get_vadjustment()
+        cur = adj.get_value()
+        if cur > maxv:
+            adj.set_value(maxv)
+        elif cur < minv:
+            adj.set_value(minv)
 
 
     @classmethod
