@@ -9,7 +9,7 @@ Series 5 range of PDAs.
 developers. It will probably corrupt your data.**
 
 There are currently **lots of missing/incomplete features** as well as
-**bugs**. For a list of known issues, see: docs/known_issues.md
+**bugs**. For a list of known issues, see: [known_issues.md](docs/known_issues.md)
 
 Video (from March 2021): https://www.youtube.com/watch?v=QjHcgeRudMo
 
@@ -88,7 +88,7 @@ with either apt or pip3 (v1.x should work on Gemian with Python 3.5).
 
 That should be enough to start Pygenda, but if you want to use a
 CalDAV server (recommended for real use) there are some extra
-dependencies. See setup details in: docs/CalDAV.md
+dependencies. See setup details in: [CalDAV.md](docs/CalDAV.md)
 
 Configuration
 -------------
@@ -96,7 +96,7 @@ Configuration settings go in file: `~/.config/pygenda/pygenda.ini`
 
 Custom CSS goes in: `~/.config/pygenda/pygenda.css`
 
-More information: docs/config-examples/README.md
+More information: [docs/config-examples/README.md](docs/config-examples/README.md)
 
 Quick config on Gemini/other handhelds
 --------------------------------------
@@ -127,7 +127,7 @@ in the [quicklaunch] section (& restart LXQt).
 
 Usage
 -----
-See: docs/Usage.md
+See: [Usage.md](docs/Usage.md)
 
 Calendar data storage - a CalDAV server is recommended
 ------------------------------------------------------
@@ -135,7 +135,7 @@ Calendar data can be stored as an ICS file, or via a CalDAV server.
 The ICS file is the default, because it works without configuration,
 but a CalDAV server is recommended for real use.
 
-For CalDAV configuration, see: docs/CalDAV.md
+For CalDAV configuration, see: [CalDAV.md](docs/CalDAV.md)
 
 The default ICS file is created in `~/.config/pygenda/pygenda.ics`
 but you can change this from the command line or config file.

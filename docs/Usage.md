@@ -32,3 +32,5 @@ Usage is intended to be intuitive, but a few things are worth noting:
   a bit fiddly). The default CSS shows a star for yearly events, a
   purple circle for other repeating events, and a yellow disc for other
   events.
+
+* Hint: To convert To-dos into Events, or vice-versa, cut & paste them.
