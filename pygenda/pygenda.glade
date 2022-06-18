@@ -794,7 +794,7 @@
 	</object>
 	<object class="GtkDialog" id="dialog_entry">
 		<property name="can-focus">False</property>
-		<property name="title" translatable="no">Entry</property>
+		<property name="title">Entry</property>
 		<property name="modal">True</property>
 		<property name="destroy-with-parent">True</property>
 		<property name="type-hint">dialog</property>
@@ -1723,7 +1723,7 @@ long description, attendees…</property>
 	</object>
 	<object class="GtkDialog" id="dialog_todo">
 		<property name="can-focus">False</property>
-		<property name="title" translatable="no">To-do</property>
+		<property name="title">To-do</property>
 		<property name="modal">True</property>
 		<property name="destroy-with-parent">True</property>
 		<property name="type-hint">dialog</property>
@@ -1775,7 +1775,7 @@ long description, attendees…</property>
 					</packing>
 				</child>
 				<child>
-					<!-- n-columns=2 n-rows=2 -->
+					<!-- n-columns=2 n-rows=3 -->
 					<object class="GtkGrid">
 						<property name="visible">True</property>
 						<property name="can-focus">False</property>
@@ -1825,7 +1825,7 @@ long description, attendees…</property>
 							</packing>
 						</child>
 						<child>
-							<object class="GtkComboBoxText" id="combo_todo_lists">
+							<object class="GtkComboBoxText" id="combo_todo_list">
 								<property name="visible">True</property>
 								<property name="can-focus">False</property>
 								<property name="halign">start</property>
@@ -1833,6 +1833,45 @@ long description, attendees…</property>
 							<packing>
 								<property name="left-attach">1</property>
 								<property name="top-attach">1</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="halign">end</property>
+								<property name="label" translatable="yes">Priority:</property>
+								<style>
+									<class name="llabel"/>
+								</style>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">2</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkComboBoxText" id="combo_todo_priority">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="halign">start</property>
+								<property name="active">0</property>
+								<items>
+									<item translatable="yes">None</item>
+									<item translatable="yes">1 (Highest)</item>
+									<item>2</item>
+									<item>3</item>
+									<item>4</item>
+									<item>5</item>
+									<item>6</item>
+									<item>7</item>
+									<item>8</item>
+									<item translatable="yes">9 (Lowest)</item>
+								</items>
+							</object>
+							<packing>
+								<property name="left-attach">1</property>
+								<property name="top-attach">2</property>
 							</packing>
 						</child>
 					</object>

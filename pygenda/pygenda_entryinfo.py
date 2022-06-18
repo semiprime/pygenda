@@ -36,6 +36,7 @@ class EntryInfo:
     rep_bymonthday = None
     rep_exceptions = None
     categories = None
+    priority = None
 
     TYPE_EVENT=0
     TYPE_TODO=1
@@ -90,3 +91,8 @@ class EntryInfo:
             self.categories = set(catlist)
         else:
             self.categories = None
+
+
+    def set_priority(self, pri:Optional[int]) -> None:
+        # Set priority for this entry
+        self.priority = pri if pri and 0<pri<=9 else None

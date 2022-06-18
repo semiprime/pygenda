@@ -405,7 +405,7 @@ class GUI:
     @classmethod
     def _init_comboboxes(cls) -> None:
         # Connect ComboBox events to handlers for extra features.
-        for cb_id in ('combo_repeat_type','combo_bydaymonth','combo_byday_ord','combo_byday_day','combo_status','combo_todo_lists'):
+        for cb_id in ('combo_repeat_type','combo_bydaymonth','combo_byday_ord','combo_byday_day','combo_status','combo_todo_list','combo_todo_priority'):
             cb = cls._builder.get_object(cb_id)
             cb.connect('key-press-event', cls._combobox_keypress)
 
@@ -1982,7 +1982,8 @@ class ExceptionsDialogController:
 class TodoDialogController:
     dialog = None # type: Gtk.Dialog
     wid_desc = None # type: Gtk.Entry
-    wid_todolists = None # type: Gtk.ComboBoxText
+    wid_todolist = None # type: Gtk.ComboBoxText
+    wid_priority = None # type: Gtk.ComboBoxText
     list_default_cats = None # type: list
 
     @classmethod
@@ -1997,15 +1998,16 @@ class TodoDialogController:
 
         cls.wid_desc = GUI._builder.get_object('todo_desc')
         cls._init_todolists()
+        cls.wid_priority = GUI._builder.get_object('combo_todo_priority')
 
 
     @classmethod
     def _init_todolists(cls) -> None:
         # Get reference to todo-list combobox & initialise its entries
-        cls.wid_todolists = GUI._builder.get_object('combo_todo_lists')
+        cls.wid_todolist = GUI._builder.get_object('combo_todo_list')
         todo_titles, cls.list_default_cats = GUI.todo_titles_default_cats()
         for t in todo_titles:
-            cls.wid_todolists.append_text(t)
+            cls.wid_todolist.append_text(t)
 
 
     @classmethod
@@ -2034,16 +2036,20 @@ class TodoDialogController:
     @classmethod
     def _do_todo_dialog(cls, txt:str=None, entry:iTodo=None, list_idx:int=0) -> Tuple[int,EntryInfo]:
         # Do the core work displaying todo dialog and extracting result.
+        cls.wid_priority.set_active(0)
         if entry is not None:
             # existing entry - take values
             cls.wid_desc.set_text(entry['SUMMARY'] if 'SUMMARY' in entry else'')
             cls.wid_desc.grab_focus()
+            if 'PRIORITY' in entry:
+                p = int(entry['PRIORITY'])
+                cls.wid_priority.set_active(p if 1<=p<=9 else 0)
         elif txt is None:
             cls.wid_desc.set_text('') # clear text
         else:
             cls.wid_desc.set_text(txt)
             cls.wid_desc.set_position(len(txt))
-        cls.wid_todolists.set_active(list_idx)
+        cls.wid_todolist.set_active(list_idx)
         cls.wid_desc.grab_focus_without_selecting()
 
         try:
@@ -2061,6 +2067,7 @@ class TodoDialogController:
         # Decipher entry fields and return info as an EntryInfo object.
         desc = cls.wid_desc.get_text()
         ei = EntryInfo(type=EntryInfo.TYPE_TODO, desc=desc)
-        list_idx = cls.wid_todolists.get_active()
+        list_idx = cls.wid_todolist.get_active()
         ei.set_categories(cls.list_default_cats[list_idx])
+        ei.set_priority(cls.wid_priority.get_active())
         return ei

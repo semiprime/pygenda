@@ -200,7 +200,8 @@ class View_Todo(View):
             for td in todos:
                 if cls._todo_matches_filter(td, cls._list_filters[i]):
                     row = Gtk.Box()
-                    mark_label = Gtk.Label(u'•')
+                    # Potential markers: ①-0x245f ➀-0x277f ❶-0x2775 ➊-0x2789
+                    mark_label = Gtk.Label(chr(0x2789+td['PRIORITY']) if 'PRIORITY' in td else u'•')
                     mark_label.set_halign(Gtk.Align.END)
                     mark_label.set_valign(Gtk.Align.START)
                     ctx = mark_label.get_style_context()

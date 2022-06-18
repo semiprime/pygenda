@@ -140,6 +140,8 @@ class Calendar:
         if e_inf.categories:
             # Convert to list - to work around bug passing set to old icalendar
             en.add('CATEGORIES', list(e_inf.categories))
+        if e_inf.priority:
+            en.add('PRIORITY', e_inf.priority)
 
         cls.calConnector.add_entry(en) # Write to store
 
@@ -196,6 +198,8 @@ class Calendar:
         elif e_cats:
             # Convert to list - to work around bug passing set to old icalendar
             en.add('CATEGORIES', list(e_cats))
+        if 'PRIORITY' in exen:
+            en.add('PRIORITY', exen['PRIORITY'])
         cls.calConnector.add_entry(en) # Write to store
         if new_dt_start is not None:
             cls._entry_norep_list_sorted = None # Clear norep cache as modified
@@ -234,6 +238,10 @@ class Calendar:
         if e_inf.categories:
             # Convert to list - to work around bug passing set to old icalendar
             en.add('CATEGORIES', list(e_inf.categories))
+        if 'PRIORITY' in en:
+            del(en['PRIORITY'])
+        if e_inf.priority:
+            en.add('PRIORITY', e_inf.priority)
 
         # DTSTART - delete & re-add so type (DATE vs. DATE-TIME) is correct
         # (Also, Q: if comparing DTSTARTs with different TZs, how does != work?)
@@ -461,8 +469,15 @@ class Calendar:
     def _update_todo_list(cls) -> None:
         # Re-build _todo_list, if it has been cleared (==None)
         if cls._todo_list is None:
-            # Get events with no repeat rule
+            # Get events with no repeat rule & sort
             cls._todo_list = cls.calConnector.cal.walk('VTODO')
+            cls._todo_list.sort(key=cls._todo_sortindex_priority)
+
+
+    @staticmethod
+    def _todo_sortindex_priority(t:iTodo) -> int:
+        # Return sort key(s) used to sort todos by priority
+        return t['PRIORITY'] if 'PRIORITY' in t else 10
 
 
     @classmethod

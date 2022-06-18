@@ -22,8 +22,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-04 10:43+0200\n"
-"PO-Revision-Date: 2022-06-04 10:43+0200\n"
+"POT-Creation-Date: 2022-06-17 22:43+0200\n"
+"PO-Revision-Date: 2022-06-17 22:43+0200\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -81,6 +81,7 @@ msgid "Edit Entry"
 msgstr "Modifier entrée"
 
 #: pygenda_gui.py:1627 pygenda.glade:1145 pygenda.glade:1477 pygenda.glade:1660
+#: pygenda.glade:1860
 msgid "None"
 msgstr "Rien"
 
@@ -96,11 +97,11 @@ msgstr "Ajouter date"
 msgid "Remove date(s)"
 msgstr "Retirer date(s)"
 
-#: pygenda_gui.py:2014
+#: pygenda_gui.py:2016
 msgid "New To-do"
 msgstr "Nouvelle tâche"
 
-#: pygenda_gui.py:2024
+#: pygenda_gui.py:2026
 msgid "Edit To-do"
 msgstr "Modifier tâche"
 
@@ -435,3 +436,15 @@ msgstr "Détails"
 #: pygenda.glade:1817
 msgid "To-do list:"
 msgstr "Liste:"
+
+#: pygenda.glade:1843
+msgid "Priority:"
+msgstr "Priorité:"
+
+#: pygenda.glade:1861
+msgid "1 (Highest)"
+msgstr "1 (la plus haute)"
+
+#: pygenda.glade:1869
+msgid "9 (Lowest)"
+msgstr "9 (la plus basse)"

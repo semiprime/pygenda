@@ -114,7 +114,7 @@ class View:
         # Used to display entries in Week and Year views.
         BULLET = u'•'
         BULLET_ALLDAY = u'‣'
-        BULLET_TODO = u'Ⓣ'
+        BULLET_TODO = u'🅣' # alternative:Ⓣ
 
         lab = Gtk.Label()
         lab.set_halign(Gtk.Align.END)

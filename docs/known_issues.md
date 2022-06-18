@@ -14,14 +14,13 @@ Major
 -----
 * Missing views: Day, List, Busy
 
-* Todo View is in early development. Only the description and list of
-  a to-do item can be set, sorting of lists is random, there is no
-  touchscreen navigation, etc...
-
 * Alarms are not implemented (note: a separate server should handle
   the actual alarm notifications)
 
-* Many entry elements are not implemented (details, attendees etc.)
+* Many event properties are not implemented (details, attendees etc.)
+
+* Many todo item properties are not implemented (due date, status etc.)
+  and they can only be sorted by priority
 
 * Repeated entries UI missing many elements (more complete repeat by
   BYMONTHDAY, BYSETPOS, Monday & Wednesday every week, extra dates,
@@ -65,6 +64,11 @@ Medium
 ------
 * No "Zoom" function (is this even needed with a decent modern display?)
 
+* Todo View navigation needs work: touchscreen not supported, and
+  left/right can make cursor jump up and down
+
+* Todo items cannot be shown in Week or Year views
+
 * When deleting a repeated entry, all are deleted. Should offer option
   of deleting this one (better, also offer delete all from, all before...)
 
@@ -89,6 +93,9 @@ Medium
   halted), Pygenda just exits. Unclear what the best course is. To review
   later. (In "delete event" scenario, an error message & event remains
   probably good behaviour.)
+
+* Ctrl+z does not work to undo in text entry fields. (Surprisingly, GTK3
+  does not take care of this. Need to wait for GTK4? Port to QT??)
 
 * Copying/cutting entries doesn't work on all platforms. This functionality
   relies on a small C library, due to limits of Python GObject module.
