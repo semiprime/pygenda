@@ -23,7 +23,7 @@ msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-17 22:43+0200\n"
-"PO-Revision-Date: 2022-06-17 22:43+0200\n"
+"PO-Revision-Date: 2022-06-19 09:08+0200\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -227,15 +227,15 @@ msgstr "Zoom"
 
 #: pygenda.glade:858 pygenda.glade:1787
 msgid "Description:"
-msgstr "Description:"
+msgstr "Description :"
 
 #: pygenda.glade:889
 msgid "Date:"
-msgstr "Date:"
+msgstr "Date :"
 
 #: pygenda.glade:913
 msgid "Timed entry:"
-msgstr "Entrée avec heure:"
+msgstr "Entrée avec heure :"
 
 #: pygenda.glade:929
 msgid "No"
@@ -251,19 +251,19 @@ msgstr "Journée"
 
 #: pygenda.glade:993
 msgid "Start time:"
-msgstr "Commencer à:"
+msgstr "Commencer à :"
 
 #: pygenda.glade:1009
 msgid "Duration:"
-msgstr "Durée:"
+msgstr "Durée :"
 
 #: pygenda.glade:1025
 msgid "End time:"
-msgstr "Heure de fin:"
+msgstr "Heure de fin :"
 
 #: pygenda.glade:1071
 msgid "Days:"
-msgstr "Jours:"
+msgstr "Jours :"
 
 #: pygenda.glade:1112
 msgid "Time"
@@ -271,7 +271,7 @@ msgstr "Heure"
 
 #: pygenda.glade:1127
 msgid "Repeats:"
-msgstr "Répétition:"
+msgstr "Répétition :"
 
 #: pygenda.glade:1146
 msgid "Yearly"
@@ -299,7 +299,7 @@ msgstr "Quotidienne"
 
 #: pygenda.glade:1167
 msgid "Repeat on:"
-msgstr "Répéter le:"
+msgstr "Répéter le :"
 
 #: pygenda.glade:1196
 msgid "Last day"
@@ -371,23 +371,23 @@ msgstr "5e au dernier"
 
 #: pygenda.glade:1286
 msgid "Period:"
-msgstr "Période:"
+msgstr "Période :"
 
 #: pygenda.glade:1302
 msgid "Repeat Forever:"
-msgstr "Répéter à jamais:"
+msgstr "Répéter à jamais :"
 
 #: pygenda.glade:1328
 msgid "Occurrences:"
-msgstr "Occurrences:"
+msgstr "Occurrences :"
 
 #: pygenda.glade:1344
 msgid "Until:"
-msgstr "Jusqu’à:"
+msgstr "Jusqu’à :"
 
 #: pygenda.glade:1369
 msgid "Exceptions:"
-msgstr "Dates omises:"
+msgstr "Dates omises :"
 
 #: pygenda.glade:1529
 msgid "Repeats"
@@ -395,7 +395,7 @@ msgstr "Répétitions"
 
 #: pygenda.glade:1546
 msgid "Alarm set:"
-msgstr "Alarme réglée:"
+msgstr "Alarme réglée :"
 
 #: pygenda.glade:1595
 msgid "Alarm"
@@ -403,11 +403,11 @@ msgstr "Alarme"
 
 #: pygenda.glade:1612
 msgid "Location:"
-msgstr "Lieu:"
+msgstr "Lieu :"
 
 #: pygenda.glade:1642
 msgid "Status:"
-msgstr "Statut:"
+msgstr "Statut :"
 
 #: pygenda.glade:1661
 msgid "Tentative"
@@ -426,7 +426,7 @@ msgid ""
 "Details will go here:\n"
 "long description, attendees…"
 msgstr ""
-"Les détails seront ici:\n"
+"Les détails seront ici :\n"
 "description détaillée, partipants…"
 
 #: pygenda.glade:1696
@@ -435,11 +435,11 @@ msgstr "Détails"
 
 #: pygenda.glade:1817
 msgid "To-do list:"
-msgstr "Liste:"
+msgstr "Liste :"
 
 #: pygenda.glade:1843
 msgid "Priority:"
-msgstr "Priorité:"
+msgstr "Priorité :"
 
 #: pygenda.glade:1861
 msgid "1 (Highest)"
