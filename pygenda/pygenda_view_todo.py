@@ -178,7 +178,14 @@ class View_Todo(View):
         # Handle pasting of text in Todo view.
         # Open a New Todo dialog with description initialised as txt,
         # and to-do list set from current cursor position.
-        GLib.idle_add(lambda x: TodoDialogController.newtodo(txt=x, list_idx=cls._cursor_list), txt)
+        GLib.idle_add(lambda x: TodoDialogController.newtodo(txt=x, list_idx=cls.cursor_todo_list()), txt)
+
+
+    @classmethod
+    def cursor_todo_list(cls) -> int:
+        # Returns index of todo list with cursor.
+        # Used by "new todo" etc to initialise dialog with focused todo list.
+        return cls._cursor_list
 
 
     @classmethod
@@ -361,7 +368,7 @@ class View_Todo(View):
             # If it's a character key, take as first of new todo
             # !! Bug: only works for ASCII characters
             if ev.state & (Gdk.ModifierType.CONTROL_MASK|Gdk.ModifierType.MOD1_MASK)==0 and Gdk.KEY_exclam <= ev.keyval <= Gdk.KEY_asciitilde:
-                GLib.idle_add(lambda x: TodoDialogController.newtodo(txt=x, list_idx=cls._cursor_list), chr(ev.keyval))
+                GLib.idle_add(lambda x: TodoDialogController.newtodo(txt=x, list_idx=cls.cursor_todo_list()), chr(ev.keyval))
 
 
     @classmethod
@@ -408,6 +415,6 @@ class View_Todo(View):
         # Assigned to the 'Enter' key.
         en = cls.get_cursor_entry()
         if en is None:
-            TodoDialogController.newtodo(list_idx=cls._cursor_list)
+            TodoDialogController.newtodo(list_idx=cls.cursor_todo_list())
         else:
-            TodoDialogController.edittodo(en, list_idx=cls._cursor_list)
+            TodoDialogController.edittodo(en, list_idx=cls.cursor_todo_list())

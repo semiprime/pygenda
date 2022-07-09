@@ -28,7 +28,7 @@ from gi.repository.Pango import WrapMode as PWrapMode
 
 from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
 from datetime import date as dt_date, timedelta
-from typing import Union
+from typing import Optional, Union
 
 from .pygenda_gui import GUI, EntryDialogController
 from .pygenda_util import datetime_to_time, datetime_to_date, date_to_datetime, format_time, format_compact_date, format_compact_time, format_compact_datetime, dt_lte
@@ -82,54 +82,32 @@ class View:
 
 
     @classmethod
-    def cursor_edit_entry(cls) -> None:
-        # Opens an entry edit dialog for the entry at the cursor,
-        # or to create a new entry if the cursor is not on entry.
-        # Assigned to the 'Enter' key in Week and Year views.
-        en = cls.get_cursor_entry()
-        if en is None:
-            EntryDialogController.newentry()
-        else:
-            EntryDialogController.editentry(en)
-
-
-    @classmethod
     def new_entry_from_example(cls, en:Union[iEvent,iTodo]) -> None:
         # Creates new entry based on entry en. Used for pasting entries.
-        # Type of entry depends on View (e.g. Todo View -> to-do item).
-        # Default implementation used for Week and Year Views.
-        Calendar.new_entry_from_example(en, e_type=EntryInfo.TYPE_EVENT, dt_start=GUI.cursor_date)
+        # Type of entry should depend on View (e.g. Todo View -> to-do item).
+        # Default implementation does nothing.
+        pass
 
 
     @classmethod
     def paste_text(cls, txt:str) -> None:
-        # Handle pasting of text in Week/Year views.
-        # Open a New Entry dialog with description initialised as txt
-        GLib.idle_add(EntryDialogController.newentry, txt)
+        # Handle pasting of text.
+        # Default implementation does nothing.
+        pass
 
 
-    @staticmethod
-    def marker_label(ev:iCal.Event, dt_st:dt_date) -> Gtk.Label:
-        # Returns bullet or entry time suitable for marking entries.
-        # Used to display entries in Week and Year views.
-        BULLET = u'•'
-        BULLET_ALLDAY = u'‣'
-        BULLET_TODO = u'🅣' # alternative:Ⓣ
+    @classmethod
+    def cursor_date(cls) -> Optional[dt_date]:
+        # Returns date (maybe datetime in the future) with cursor.
+        # Default implementation: cursor not on date.
+        return None
 
-        lab = Gtk.Label()
-        lab.set_halign(Gtk.Align.END)
-        lab.set_valign(Gtk.Align.START)
-        if datetime_to_time(dt_st)!=False:
-            mark = format_time(dt_st, True)
-        elif type(ev) is iCal.Todo:
-            mark = BULLET_TODO
-        elif 'DTEND' in ev:
-            mark = BULLET_ALLDAY
-        else:
-            mark = BULLET
-        lab.set_text(mark)
 
-        return lab
+    @classmethod
+    def cursor_todo_list(cls) -> Optional[int]:
+        # returns index of todo list with cursor
+        # Default implementation: cursor not on todo list.
+        return None
 
 
     @staticmethod
@@ -269,3 +247,71 @@ class View:
         # Used when redrawing Year view, might be used for other views.
         for c in ctx.list_classes():
             ctx.remove_class(c)
+
+
+class View_DayUnit_Base(View):
+    # Used as base class for Day & Year views
+    @classmethod
+    def new_entry_from_example(cls, en:Union[iEvent,iTodo]) -> None:
+        # Creates new entry based on entry en. Used for pasting entries.
+        # Implementation for Week and Year Views - makes an event.
+        Calendar.new_entry_from_example(en, e_type=EntryInfo.TYPE_EVENT, dt_start=GUI.cursor_date)
+
+
+    @classmethod
+    def paste_text(cls, txt:str) -> None:
+        # Handle pasting of text in Week/Year views.
+        # Open a New Entry dialog with description initialised as txt
+        date = cls.cursor_date()
+        GLib.idle_add(EntryDialogController.newentry, txt, date)
+
+
+    @classmethod
+    def cursor_date(cls) -> Optional[dt_date]:
+        # Returns date(time) with cursor.
+        # Default implementation: cursor not on date.
+        return GUI.cursor_date
+
+
+    @classmethod
+    def cursor_edit_entry(cls) -> None:
+        # Opens an entry edit dialog for the entry at the cursor,
+        # or to create a new entry if the cursor is not on entry.
+        # Assigned to the 'Enter' key in Week and Year views.
+        en = cls.get_cursor_entry()
+        if en is None:
+            date = cls.cursor_date()
+            EntryDialogController.newentry(date=date)
+        else:
+            EntryDialogController.editentry(en)
+
+
+    @classmethod
+    def get_cursor_entry(cls) -> Optional[iCal.Event]:
+        # Returns entry at cursor position, or None if cursor not on entry.
+        # Default: None. Derived classes will provided their implementations.
+        return None
+
+
+    @staticmethod
+    def marker_label(ev:iCal.Event, dt_st:dt_date) -> Gtk.Label:
+        # Returns bullet or entry time suitable for marking entries.
+        # Used to display entries in Week and Year views.
+        BULLET = u'•'
+        BULLET_ALLDAY = u'‣' # alternatives:❖⍟✪⦿❂
+        BULLET_TODO = u'🅣' # alternative:Ⓣ
+
+        lab = Gtk.Label()
+        lab.set_halign(Gtk.Align.END)
+        lab.set_valign(Gtk.Align.START)
+        if datetime_to_time(dt_st)!=False:
+            mark = format_time(dt_st, True)
+        elif type(ev) is iCal.Todo:
+            mark = BULLET_TODO
+        elif 'DTEND' in ev:
+            mark = BULLET_ALLDAY
+        else:
+            mark = BULLET
+        lab.set_text(mark)
+
+        return lab

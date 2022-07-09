@@ -570,12 +570,14 @@ class GUI:
     @classmethod
     def event_newentry(cls, *args) -> None:
         # Callback for new entry signal (menu, softbutton)
-        EntryDialogController.newentry()
+        date = cls.views[cls._view_idx].cursor_date()
+        EntryDialogController.newentry(date=date)
 
     @classmethod
     def event_newtodo(cls, *args) -> None:
         # Callback for new todo signal (menu, softbutton)
-        TodoDialogController.newtodo()
+        lst = cls.views[cls._view_idx].cursor_todo_list()
+        TodoDialogController.newtodo(list_idx=lst)
 
     @classmethod
     def event_edittime(cls, *args) -> None:
@@ -1386,11 +1388,11 @@ class EntryDialogController:
 
 
     @classmethod
-    def newentry(cls, txt:str=None) -> None:
+    def newentry(cls, txt:str=None, date:dt_date=None) -> None:
         # Called to implement "new entry" from GUI, e.g. button
         cls.dialog.set_title(_('New Entry'))
         cls._empty_desc_allowed = True # initially allowed, can switch to False
-        response,ei = cls._do_entry_dialog(txt=txt)
+        response,ei = cls._do_entry_dialog(txt=txt, date=date)
         if response==Gtk.ResponseType.OK and ei.desc:
             Calendar.new_entry(ei)
             if ei.rep_type is None:
@@ -1420,10 +1422,10 @@ class EntryDialogController:
 
 
     @classmethod
-    def _do_entry_dialog(cls, entry:iEvent=None, txt:str=None, subtab:int=None) -> Tuple[int,EntryInfo]:
+    def _do_entry_dialog(cls, entry:iEvent=None, txt:str=None, date:dt_date=None, subtab:int=None) -> Tuple[int,EntryInfo]:
         # Do the core work displaying entry dialog and extracting result.
         # Called from both newentry() and editentry().
-        cls._seed_fields(entry, txt)
+        cls._seed_fields(entry, txt, date)
 
         # Select visible subtab: time, repeats, alarms...
         cls.wid_tabs.set_current_page(0) # default
@@ -1453,7 +1455,7 @@ class EntryDialogController:
 
 
     @classmethod
-    def _seed_fields(cls, entry:iEvent, txt:Optional[str]) -> None:
+    def _seed_fields(cls, entry:iEvent, txt:Optional[str], date:Optional[dt_date]) -> None:
         # Initialise entry fields when dialog is opened.
         # Data optionally from an entry, or text used as summary.
         # !! This function is a horrible mess. Needs rationalising !!
@@ -1488,7 +1490,7 @@ class EntryDialogController:
                 cls.wid_desc.set_position(len(txt))
             cls.wid_desc.handler_unblock(cls._wid_desc_changed_handler)#unblock
             cls.wid_desc.grab_focus_without_selecting()
-            dt = GUI.cursor_date
+            dt = dt_date.today() if date is None else date
             tm = None
         else: # existing entry - take values
             cls.wid_desc.set_text(entry['SUMMARY'] if 'SUMMARY' in entry else '')
@@ -2011,7 +2013,7 @@ class TodoDialogController:
 
 
     @classmethod
-    def newtodo(cls, txt:str=None, list_idx:int=0) -> None:
+    def newtodo(cls, txt:str=None, list_idx:int=None) -> None:
         # Called to implement "new todo" from GUI, e.g. button
         cls.dialog.set_title(_('New To-do'))
         response,ei = cls._do_todo_dialog(txt=txt, list_idx=list_idx)
@@ -2021,7 +2023,7 @@ class TodoDialogController:
 
 
     @classmethod
-    def edittodo(cls, en:iTodo, list_idx:int=0) -> None:
+    def edittodo(cls, en:iTodo, list_idx:int=None) -> None:
         # Called to implement "edit todo" from GUI
         cls.dialog.set_title(_('Edit To-do'))
         response,ei = cls._do_todo_dialog(entry=en, list_idx=list_idx)
@@ -2034,8 +2036,10 @@ class TodoDialogController:
 
 
     @classmethod
-    def _do_todo_dialog(cls, txt:str=None, entry:iTodo=None, list_idx:int=0) -> Tuple[int,EntryInfo]:
+    def _do_todo_dialog(cls, txt:str=None, entry:iTodo=None, list_idx:Optional[int]=0) -> Tuple[int,EntryInfo]:
         # Do the core work displaying todo dialog and extracting result.
+        if list_idx==None: # View has not specified a default todo list
+            list_idx = 0
         cls.wid_priority.set_active(0)
         if entry is not None:
             # existing entry - take values

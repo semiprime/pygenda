@@ -31,7 +31,7 @@ from icalendar import cal as iCal
 from typing import Tuple
 
 # pygenda components
-from .pygenda_view import View
+from .pygenda_view import View_DayUnit_Base
 from .pygenda_gui import GUI, EntryDialogController
 from .pygenda_config import Config
 from .pygenda_calendar import Calendar
@@ -39,7 +39,7 @@ from .pygenda_util import start_end_dts_occ
 
 
 # Singleton class for Year View
-class View_Year(View):
+class View_Year(View_DayUnit_Base):
     Config.set_defaults('year_view',{})
     DAY_CLASS = [ 'yearview_day_{}'.format(s) for s in ['mon','tue','wed','thu','fri','sat','sun'] ]
     GRID_COLUMNS = 37
@@ -530,7 +530,8 @@ class View_Year(View):
         except KeyError:
             pass
         if ev.state & (Gdk.ModifierType.CONTROL_MASK|Gdk.ModifierType.MOD1_MASK)==0 and Gdk.KEY_exclam <= ev.keyval <= Gdk.KEY_asciitilde:
-            GLib.idle_add(EntryDialogController.newentry,chr(ev.keyval), priority=GLib.PRIORITY_HIGH_IDLE+30)
+            date = cls.cursor_date()
+            GLib.idle_add(EntryDialogController.newentry, chr(ev.keyval), date, priority=GLib.PRIORITY_HIGH_IDLE+30)
 
 
     @classmethod

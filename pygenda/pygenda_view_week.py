@@ -31,7 +31,7 @@ from locale import gettext as _
 from typing import Optional
 
 # pygenda components
-from .pygenda_view import View
+from .pygenda_view import View_DayUnit_Base
 from .pygenda_calendar import Calendar
 from .pygenda_config import Config
 from .pygenda_util import start_of_week, day_in_week, month_abbr, start_end_dts_occ, dt_lte
@@ -39,7 +39,7 @@ from .pygenda_gui import GUI, EntryDialogController
 
 
 # Singleton class for Week View
-class View_Week(View):
+class View_Week(View_DayUnit_Base):
     Config.set_defaults('week_view',{
         'pageleft_datepos': 'left',
         'pageright_datepos': 'right',
@@ -405,7 +405,8 @@ class View_Week(View):
             # If it's a character key, take as first of new entry
             # !! Bug: only works for ASCII characters
             if ev.state & (Gdk.ModifierType.CONTROL_MASK|Gdk.ModifierType.MOD1_MASK)==0 and Gdk.KEY_exclam <= ev.keyval <= Gdk.KEY_asciitilde:
-                GLib.idle_add(EntryDialogController.newentry,chr(ev.keyval))
+                date = cls.cursor_date()
+                GLib.idle_add(EntryDialogController.newentry, chr(ev.keyval), date)
 
 
     @classmethod
