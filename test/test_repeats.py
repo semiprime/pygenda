@@ -540,7 +540,7 @@ class TestRepeats(unittest.TestCase):
         # Create thrice biweekly repeating event with exception dates
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
-            datetime(2024,2,15),
+            date(2024,2,15),
             rrule = {'FREQ':['WEEKLY'], 'INTERVAL':[2], 'BYDAY':['TH','SA','SU']},
             exdates = {date(2024,12,19),date(2024,5,16),date(2024,9,26),date(2024,9,28),date(2024,9,29),date(2024,11,23)} # Note May 16th wouldn't occur anyway
             )
@@ -1048,19 +1048,27 @@ class TestRepeats(unittest.TestCase):
             event_tz = event_st.tzinfo # save timezone
             event_st = event_st.astimezone(tz.gettz('UTC'))
         rr = rrulestr(rrstr, dtstart=event_st, forceset=True)
-        if 'EXDATE' in event and timed_event:
+        if 'EXDATE' in event:
             if isinstance(event['EXDATE'],list):
                 exdtlist = [ d for dlist in event['EXDATE'] for d in dlist.dts ]
             else:
                 exdtlist = event['EXDATE'].dts
-            for exd in exdtlist:
-                if isinstance(exd.dt,datetime):
-                    exdt = exd.dt
-                else:
-                    exdt = datetime.combine(exd.dt, event_st.time())
-                if exdt.tzinfo is None:
-                    exdt = exdt.replace(tzinfo=self.LOCAL_TZ)
-                rr.exdate(exdt)
+            if timed_event:
+                for exd in exdtlist:
+                    if isinstance(exd.dt,datetime):
+                        exdt = exd.dt
+                    else:
+                        exdt = datetime.combine(exd.dt, event_st.time())
+                    if exdt.tzinfo is None:
+                        exdt = exdt.replace(tzinfo=self.LOCAL_TZ)
+                    rr.exdate(exdt)
+            else:
+                # Untimed, but rr.exdate() requires datetime objects
+                for exd in exdtlist:
+                    dt = exd.dt
+                    if not isinstance(dt,datetime):
+                        dt = datetime(dt.year,dt.month,dt.day)
+                    rr.exdate(dt)
         # Convert date limits to datetimes limits for rrule
         dt_st_for_rrule = datetime(dt_st.year, dt_st.month, dt_st.day)
         dt_end_for_rrule = datetime(dt_end.year, dt_end.month, dt_end.day) - timedelta(microseconds=1)
