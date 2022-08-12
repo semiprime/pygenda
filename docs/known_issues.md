@@ -118,7 +118,10 @@ Medium
   thoughts.)
 
 * Some repeat types are slow to calculate (fallback types, e.g. by day
-  in month).
+  in year - see messages on the console). Several options to speed
+  this up: custom iterators, or add "shortcuts" (e.g. if repeat is on
+  Wednesdays, but retrieving events for a Sunday, check early to skip
+  most of the calculations).
   Currently uses dateutil.rrule to calculate most complex repeats,
   see: https://dateutil.readthedocs.io/en/stable/rrule.html
   Check if using recurring-ical-events module could improve speed??

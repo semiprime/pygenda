@@ -35,6 +35,7 @@ import tempfile
 from typing import Optional, Union
 from copy import deepcopy
 from math import ceil
+from calendar import monthrange
 
 # Pygenda components
 from .pygenda_config import Config
@@ -655,33 +656,35 @@ class RepeatInfo:
     DAY_ABBR = ('MO','TU','WE','TH','FR','SA','SU')
     SUBDAY_REPEATS = ('HOURLY','MINUTELY','SECONDLY')
 
+    _isby_weekday_in_month = False
+    start_in_rng = None # type: dt_date
+
     def __init__(self, event:iEvent, start:dt_date, stop:dt_date):
         # Note: start argument is INclusive, stop is EXclusive
+        self.dtstart = event['DTSTART'].dt
         rrule = event['RRULE']
         self.subday_rpt = rrule['FREQ'][0] in self.SUBDAY_REPEATS
-        self.timed_rpt = self.subday_rpt or isinstance(event['DTSTART'].dt,dt_datetime)
+        self.timed_rpt = self.subday_rpt or isinstance(self.dtstart, dt_datetime)
         if self.timed_rpt:
             # Make sure time and timezone are set
-            self.start = date_to_datetime(event['DTSTART'].dt, True)
+            self.start = date_to_datetime(self.dtstart, True)
             if self.subday_rpt:
                 # Need to do calculations in UTC (e.g. for summer time changes)
                 self.start = self.start.astimezone(timezone.utc)
             start = date_to_datetime(start, True).astimezone(timezone.utc)
             stop = date_to_datetime(stop, True).astimezone(timezone.utc)
         else:
-            self.start = event['DTSTART'].dt
+            self.start = self.dtstart
 
         # Quickly eliminate some out-of-range cases
         if stop is not None and dt_lte(stop, self.start):
-            self.start_in_rng = None
+            # self.start_in_rng left with default value of None
             return
         if start is not None and 'UNTIL' in rrule and dt_lt(rrule['UNTIL'][0],start):
-            self.start_in_rng = None
+            # self.start_in_rng left with default value of None
             return
 
-        if rrule['FREQ'][0]=='MONTHLY' and self.start.day>28:
-            raise RepeatUnsupportedError('Unsupported MONTHLY (day>28) {} in RRULE'.format(self.start))
-        if rrule['FREQ'][0]=='YEARLY' and self.start.month==2 and self.start.day==29:
+        if rrule['FREQ'][0]=='YEARLY' and self.start.month==2 and self.start.day==29 and ('BYMONTH' not in rrule or 'BYDAY' not in rrule):
             raise RepeatUnsupportedError('Unsupported YEARLY (29/2) {} in RRULE'.format(self.start))
 
         self._set_freq(rrule)
@@ -689,7 +692,10 @@ class RepeatInfo:
             self._set_exdates(event['EXDATE'])
         else:
             self.exdates = None
-        self._set_start_in_rng(start)
+        if self._isby_weekday_in_month:
+            self._set_start_in_rng_byweekdayinmonth(start)
+        else:
+            self._set_start_in_rng(start)
         self._set_stop(rrule, stop)
 
 
@@ -700,10 +706,10 @@ class RepeatInfo:
         interval = int(rrule['INTERVAL'][0]) if 'INTERVAL' in rrule else 1
         if interval <= 0: # Protect against corrupt data giving infinite loops
             raise ValueError('Zero interval for repeat')
-        if 'BYDAY' in rrule and rrule['BYDAY'][0] not in self.DAY_ABBR:
-            raise RepeatUnsupportedError('Unsupported BYDAY {} in RRULE'.format(rrule['BYDAY']))
         if 'BYMONTH' in rrule and len(rrule['BYMONTH'])>1:
             raise RepeatUnsupportedError('Unsupported multi-BYMONTH {} in RRULE'.format(rrule['BYMONTH']))
+        if 'BYDAY' in rrule and freq not in {'YEARLY','MONTHLY','WEEKLY'}:
+            raise RepeatUnsupportedError('Unsupported BYDAY for {} repeat'.format(freq))
         if 'BYYEARDAY' in rrule:
             raise RepeatUnsupportedError('Unsupported BYYEARDAY in RRULE')
         if 'BYMONTHDAY' in rrule:
@@ -718,6 +724,7 @@ class RepeatInfo:
             bmd_month = int(rrule['BYMONTH'][0])
             if bmd_day!=self.start.day or bmd_month!=self.start.month:
                 raise RepeatUnsupportedError('Unsupported YEARLY/BYMONTH/BYMONTHDAY != DTSTART in RRULE')
+
         if 'BYSETPOS' in rrule:
             raise RepeatUnsupportedError('Unsupported BYSETPOS in RRULE')
         if 'BYHOUR' in rrule:
@@ -729,9 +736,9 @@ class RepeatInfo:
         if 'BYWEEKNO' in rrule:
             raise RepeatUnsupportedError('Unsupported BYWEEKNO in RRULE')
         if freq=='YEARLY':
-            self._set_yearly(interval)
+            self._set_yearly(rrule, interval)
         elif freq=='MONTHLY':
-            self._set_monthly(interval)
+            self._set_monthly(rrule, interval)
         elif freq=='WEEKLY':
             self._set_weekly(rrule, interval)
         elif freq=='DAILY':
@@ -746,14 +753,46 @@ class RepeatInfo:
             raise RepeatUnsupportedError('Unknown FREQ {:s} in RRULE'.format(freq))
 
 
-    def _set_yearly(self, interval:int) -> None:
+    def _set_yearly(self, rrule:vRecur, interval:int) -> None:
         # Called on construction if a simple yearly repeat
         self.delta = relativedelta(years=interval)
+        if 'BYDAY' in rrule:
+            if 'BYMONTH' not in rrule:
+                raise RepeatUnsupportedError('YEARLY repeat with BYDAY without BYMONTH')
+            bymonth = rrule['BYMONTH']
+            if len(bymonth)>1:
+                raise RepeatUnsupportedError('YEARLY repeat with multiple BYMONTH values')
+            if int(bymonth[0]) != self.dtstart.month:
+                raise RepeatUnsupportedError('YEARLY BYMONTH/BYDAY repeat with month not matching DTSTART')
+            self._set_byweekdayinmonth(rrule['BYDAY'])
 
 
-    def _set_monthly(self, interval:int) -> None:
+    def _set_monthly(self, rrule:vRecur, interval:int) -> None:
         # Called on construction if a simple monthly repeat
         self.delta = relativedelta(months=interval)
+        if 'BYDAY' in rrule:
+            self._set_byweekdayinmonth(rrule['BYDAY'])
+        elif self.start.day>28:
+            raise RepeatUnsupportedError('Unsupported MONTHLY (day>28) {} in RRULE'.format(self.start))
+
+
+    def _set_byweekdayinmonth(self, rrule_byday:list) -> None:
+        # Set variables for BYDAY rrule for "by weekday in month" repeats.
+        # E.g. '-1SU' -> last Sunday of month
+        if len(rrule_byday)!=1:
+            raise RepeatUnsupportedError('Unsupported multiple days in BYDAY in RRULE')
+        byday_rule = rrule_byday[0]
+        try:
+            self.byday_day = self.DAY_ABBR.index(byday_rule[-2:])
+            self.byday_idx = int(byday_rule[:-2])
+        except ValueError:
+            raise RepeatUnsupportedError('Unsupported BYDAY {} in MONTHLY/YEARLY repeat'.format(byday_rule))
+        if (self.byday_idx==0 or abs(self.byday_idx)>4):
+            raise RepeatUnsupportedError('Unsupported BYDAY {} in MONTHLY/YEARLY repeat'.format(byday_rule))
+        # Test to see if DTSTART matches RRULE
+        if self.firstday_to_byweekdayinmonth(self.dtstart.replace(day=1)) != self.dtstart:
+            raise RepeatUnsupportedError('Given start date does not match RRULE')
+        self._isby_weekday_in_month = True
 
 
     def _set_weekly(self, rrule:vRecur, interval:int) -> None:
@@ -763,7 +802,10 @@ class RepeatInfo:
         diw_from_st = 1<<self.start.weekday()
         if 'BYDAY' in rrule:
             for d in rrule['BYDAY']:
-                days_in_week |= 1<<self.DAY_ABBR.index(d)
+                try:
+                    days_in_week |= 1<<self.DAY_ABBR.index(d)
+                except ValueError:
+                     raise RepeatUnsupportedError('Unsupported WEEKLY/BYDAY {} in RRULE'.format(rrule['BYDAY']))
             if days_in_week and not days_in_week&diw_from_st:
                 # ?? Days are listed, but start day is not among them
                 # Ambiguous - raise error
@@ -861,8 +903,21 @@ class RepeatInfo:
                     self.start_in_rng += self.delta
 
 
+    def _set_start_in_rng_byweekdayinmonth(self, start:dt_date) -> None:
+        # Set start date within given range (so will be on/after 'dtstart')
+        # N.B. At this point 'start' may be a date or datetime (matching timed_rpt)
+        self.start_in_rng = self.start.replace(day=1) # first 1st of month for of event
+        if start is not None:
+            self._do_initial_jump(start.replace(day=1))
+            # After approximate jump, clear any extras.
+            while dt_lt(self.firstday_to_byweekdayinmonth(self.start_in_rng),start):
+                self.start_in_rng += self.delta
+            while self.is_exdate(self.firstday_to_byweekdayinmonth(self.start_in_rng)):
+                self.start_in_rng += self.delta
+
+
     def _do_initial_jump(self, target:dt_date) -> None:
-        # Used by _set_start_in_rng() function to initialise repeats.
+        # Used by _set_start_in_rng_***() functions to initialise repeats.
         # Updates self.start_in_rng to get close to target date/time based on
         # jumps of self.delta (which must be a timedelta or a relativedelta).
         d = target - self.start_in_rng
@@ -901,7 +956,10 @@ class RepeatInfo:
         if count is not None:
             if self.exdates is not None:
                 raise RepeatUnsupportedError('Unsupported COUNT & EXDATE') # !! fix me
-            if isinstance(self.delta, list):
+            if self._isby_weekday_in_month:
+                last_by_count = self.start.replace(day=1) + (self.delta*(count-1))
+                last_by_count = self.firstday_to_byweekdayinmonth(last_by_count)
+            elif isinstance(self.delta, list):
                 di,md = divmod(count-1, len(self.delta))
                 last_by_count = self.start
                 last_by_count += di*reduce(lambda x,y:x+y,self.delta) # sum()
@@ -930,8 +988,28 @@ class RepeatInfo:
         return self.timed_rpt and not self.subday_rpt and dt.date() in self.exdates
 
 
+    def firstday_to_byweekdayinmonth(self, dt:dt_date) -> dt_date:
+        # Function to map dt giving first day of the month to the
+        # "byday" repeat day (e.g. "last Sunday of the month").
+        # Assumes the byday has been set up in the class variables
+        # byday_idx and byday_day.
+        # *Precondition*: dt is 1st day of month where we want to get the date
+        if self.byday_idx>0:
+            retday = 1+(self.byday_day-dt.weekday())%7+(self.byday_idx-1)*7
+        else:
+            retday = monthrange(dt.year,dt.month)[1] # no of days in month
+            lastday_idx = (dt.weekday()+retday-1)%7 # daynumber of last day
+            delta = (self.byday_day-lastday_idx)%7
+            if delta!=0:
+                retday += delta-7
+            retday += (self.byday_idx+1)*7
+        return dt.replace(day=retday)
+
+
     def __iter__(self) -> 'RepeatIter_simpledelta':
         # Return an iterator for this RepeatInfo
+        if self._isby_weekday_in_month:
+            return RepeatIter_byweekdayinmonth(self)
         if self.start_in_rng is not None and isinstance(self.delta, list):
             return RepeatIter_multidelta(self)
         return RepeatIter_simpledelta(self)
@@ -993,6 +1071,32 @@ class RepeatIter_multidelta(RepeatIter_simpledelta):
         if self.rinfo.subday_rpt:
             r = r.astimezone(LOCAL_TZ)
         return r
+
+
+class RepeatIter_byweekdayinmonth(RepeatIter_simpledelta):
+    # Iterator class for RepeatInfo where the repeat is by weekday in month.
+    # E.g. first Saturday of every month; or last Friday in October.
+
+    def __init__(self, rinfo:RepeatInfo):
+        self.rinfo = rinfo
+        self.dt_toret = self.rinfo.firstday_to_byweekdayinmonth(rinfo.start_in_rng)
+        self.dt_ref = rinfo.start_in_rng
+
+    def __next__(self) -> dt_date:
+        # Return date/datetime for next occurence in range.
+        # Excluded dates are taken into account.
+        # Raises StopIteration at end of occurence list.
+        if self.dt_toret is None or dt_lte(self.rinfo.stop_exc, self.dt_toret):
+            raise StopIteration
+        ret = self.dt_toret
+        while True:
+            self.dt_ref += self.rinfo.delta
+            self.dt_toret = self.rinfo.firstday_to_byweekdayinmonth(self.dt_ref)
+            if not self.rinfo.is_exdate(self.dt_toret):
+                break
+        if self.rinfo.subday_rpt:
+            ret = ret.astimezone(LOCAL_TZ)
+        return ret
 
 
 def merge_repeating_entries_sort(target:list, ev:iEvent, start:dt_date, stop:dt_date) -> None:
