@@ -34,6 +34,7 @@ from time import monotonic as time_monotonic
 import tempfile
 from typing import Optional, Union
 from copy import deepcopy
+from math import ceil
 
 # Pygenda components
 from .pygenda_config import Config
@@ -831,48 +832,49 @@ class RepeatInfo:
 
 
     def _set_start_in_rng(self, start:dt_date) -> None:
-        # Set start date within given range (that is, on/after 'start')
+        # Set start date within given range (so will be on/after 'dtstart')
         # N.B. At this point 'start' may be a date or datetime (matching timed_rpt)
         self.start_in_rng = self.start # first occurence of event
-        if isinstance(self.delta,list):
+        if isinstance(self.delta, list):
             self.delta_index = 0
         if start is not None:
             # We try to jump to first entry in range
             # First compute d, distance from the range
-            d = start - self.start
-            if isinstance(self.delta,list):
+            if isinstance(self.delta, list):
+                # Note: lists of deltas only used (so far) for weekly repeats
+                d = start - self.start
                 if d>timedelta(0): # start provided was after first repeat, so inc
                     # Want to do as much as possible in one increment
                     per = reduce(lambda x,y:x+y,self.delta) # sum of delta
                     s = d//per
                     self.start_in_rng += per * s
                 # After approximate jump, clear any extras.
-                # Do this even if d<=0 to catch case when first dates excluded
                 i = 0
                 while dt_lt(self.start_in_rng,start) or self.is_exdate(self.start_in_rng):
                     self.start_in_rng += self.delta[i]
                     i = (i+1)%len(self.delta)
                 self.delta_index = i
-            else: # single delta, could be timedelta or relativedelta
-                if d>timedelta(0): # start provided was after first repeat, so inc
-                    # Want to do as much as possible in one increment
-                    if isinstance(self.delta,timedelta):
-                        s = round(d/self.delta)
-                    else:
-                        # self.delta is a relativedelta
-                        sst = self.start
-                        d = relativedelta(start, sst)
-                        if self.delta.years>0:
-                            s = round(d.years/self.delta.years)
-                        elif self.delta.months>0:
-                            s = round((d.years*12 + d.months)/self.delta.months)
-                        else:
-                            s = 1
-                    self.start_in_rng += self.delta * s
+            else: # single delta
+                self._do_initial_jump(start)
                 # After approximate jump, clear any extras.
-                # Do this even if d<=0 to catch case when first dates excluded
                 while dt_lt(self.start_in_rng,start) or self.is_exdate(self.start_in_rng):
                     self.start_in_rng += self.delta
+
+
+    def _do_initial_jump(self, target:dt_date) -> None:
+        # Used by _set_start_in_rng() function to initialise repeats.
+        # Updates self.start_in_rng to get close to target date/time based on
+        # jumps of self.delta (which must be a timedelta or a relativedelta).
+        d = target - self.start_in_rng
+        if d > timedelta(0): # start provided was after first repeat, so inc
+            # Want to do as much as possible in one increment
+            if isinstance(self.delta, timedelta):
+                s = ceil(d/self.delta)
+            else:
+                # self.delta is a relativedelta (=> yearly or monthly repeat)
+                d = relativedelta(target, self.start_in_rng)
+                s = ceil((d.years*12 + d.months)/(self.delta.years*12 + self.delta.months))
+            self.start_in_rng += self.delta * s
 
 
     def _set_stop(self, rrule:vRecur, stop:dt_date) -> None:

@@ -233,6 +233,69 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2010,1,1), date(2010,2,1), 1)
 
 
+    def test_monthly_biginterval(self) -> None:
+        # Create monthly repeating event with big interval not divisible by 12
+        event = self.create_event(
+            'Event {}'.format(sys._getframe().f_code.co_name),
+            date(1999,4,20),
+            rrule = {'FREQ':['MONTHLY'],'INTERVAL':[35]})
+
+        # Test null periods
+        self.check_count(event, date(1995,1,1), date(1999,1,1), 0)
+        self.check_count(event, date(1999,1,1), date(1999,4,20), 0)
+        self.check_count(event, date(1999,4,21), date(2000,1,1), 0)
+
+        # Test non-null periods
+        self.check_count_rrule(event, date(1999,4,20), date(1999,4,21), 1)
+        self.check_count_rrule(event, date(1999,1,1), date(2000,1,1), 1)
+        self.check_count_rrule(event, date(2000,1,1), date(2001,1,1), 0)
+        self.check_count_rrule(event, date(2001,1,1), date(2002,1,1), 0)
+        self.check_count_rrule(event, date(2002,1,1), date(2003,1,1), 1)
+        self.check_count_rrule(event, date(2002,3,20), date(2002,3,21), 1)
+        self.check_count_rrule(event, date(2003,1,1), date(2004,1,1), 0)
+        self.check_count_rrule(event, date(2004,1,1), date(2005,1,1), 0)
+        self.check_count_rrule(event, date(2005,1,1), date(2006,1,1), 1)
+        self.check_count_rrule(event, date(2005,2,20), date(2005,2,21), 1)
+        self.check_count_rrule(event, date(2006,1,1), date(2007,1,1), 0)
+        self.check_count_rrule(event, date(2007,1,1), date(2008,1,1), 0)
+        self.check_count_rrule(event, date(2008,1,1), date(2009,1,1), 1)
+        self.check_count_rrule(event, date(2008,1,20), date(2008,1,21), 1)
+        self.check_count_rrule(event, date(2009,1,1), date(2010,1,1), 0)
+        self.check_count_rrule(event, date(2010,1,1), date(2011,1,1), 1)
+        self.check_count_rrule(event, date(2010,12,20), date(2010,12,21), 1)
+
+
+    def test_monthly_biginterval_29th(self) -> None:
+        # Create monthly repeating event with big interval falling on 29th
+        event = self.create_event(
+            'Event {}'.format(sys._getframe().f_code.co_name),
+            date(1999,4,29),
+            rrule = {'FREQ':['MONTHLY'],'INTERVAL':[35]})
+
+        # Test null periods
+        self.check_count(event, date(1995,1,1), date(1999,1,1), 0)
+        self.check_count(event, date(1999,1,1), date(1999,4,29), 0)
+        self.check_count(event, date(1999,4,30), date(2000,1,1), 0)
+
+        # Test non-null periods
+        self.check_count_rrule(event, date(1999,4,29), date(1999,4,30), 1)
+        self.check_count_rrule(event, date(1999,1,1), date(2000,1,1), 1)
+        self.check_count_rrule(event, date(2000,1,1), date(2001,1,1), 0)
+        self.check_count_rrule(event, date(2001,1,1), date(2002,1,1), 0)
+        self.check_count_rrule(event, date(2002,1,1), date(2003,1,1), 1)
+        self.check_count_rrule(event, date(2002,3,29), date(2002,3,30), 1)
+        self.check_count_rrule(event, date(2003,1,1), date(2004,1,1), 0)
+        self.check_count_rrule(event, date(2004,1,1), date(2005,1,1), 0)
+        self.check_count_rrule(event, date(2005,1,1), date(2006,1,1), 0) # Feb
+        self.check_count_rrule(event, date(2006,1,1), date(2007,1,1), 0)
+        self.check_count_rrule(event, date(2007,1,1), date(2008,1,1), 0)
+        self.check_count_rrule(event, date(2008,1,1), date(2009,1,1), 1)
+        self.check_count_rrule(event, date(2008,1,29), date(2008,1,30), 1)
+        self.check_count_rrule(event, date(2009,1,1), date(2010,1,1), 0)
+        self.check_count_rrule(event, date(2010,1,1), date(2011,1,1), 1)
+        self.check_count_rrule(event, date(2010,12,29), date(2010,12,30), 1)
+
+
     def test_monthly_timed_exdate(self) -> None:
         # Create timed monthly repeating event
         # (with the potential to fall on a leap-day)
