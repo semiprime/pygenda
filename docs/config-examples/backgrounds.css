@@ -39,7 +39,7 @@
 
 /*** 2. Textured background ***/
 
-#view_year, #view_week, #view_todo {
+#view_year, #view_week, .todoview_list {
 	background-image:url("my_texture.jpg"); /* Provide image filename here */
 	background-repeat:repeat;
 }
@@ -47,11 +47,17 @@
 
 /*** 3. Centered logo ***/
 
-#view_year, #view_week, #view_todo {
+#view_year, #view_week, .todoview_list {
 	background-image:url("my_logo.svg"); /* Provide image filename here */
 	background-size:auto 90%;
 	background-position:center;
 	background-repeat:no-repeat;
+}
+
+/* If you want, use multiple images in Todo View using nth-child */
+.todoview_list:nth-child(2n+1) {
+	background-image:url("my_alt_logo.png"); /* Provide image filename here */
+	background-size:auto 80%;
 }
 
 /* Typically, you'd use a faint version of the logo so the UI is
@@ -60,7 +66,7 @@
  * elements. Example below...
  */
 
-#weekview_titlearea, .weekview_day, #view_todo>* {
+#weekview_titlearea, .weekview_day, .todoview_list>* {
 	background-color:rgba(255,255,255,0.93);
 }
 
