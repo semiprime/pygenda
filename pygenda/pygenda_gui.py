@@ -413,7 +413,7 @@ class GUI:
     @classmethod
     def _init_entryboxes(cls) -> None:
         # Connect Entry textbox events to handlers for extra features.
-        for eb_id in ('entry_dialogevent_desc','entry_dialogevent_location'):
+        for eb_id in ('entry_dialogevent_desc','entry_dialogevent_location','entry_dialogtodo_desc'):
             eb = cls._builder.get_object(eb_id)
             eb.connect('focus-out-event', cls._focusout_unhighlight)
 
