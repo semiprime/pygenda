@@ -189,10 +189,10 @@ class View_Todo(View):
 
 
     @classmethod
-    def redraw(cls, ev_changes:bool) -> None:
+    def redraw(cls, en_changes:bool) -> None:
         # Called when redraw required
-        # ev_changes: bool indicating if event display needs updating too
-        if not ev_changes:
+        # en_changes: bool indicating if displayed entries need updating too
+        if not en_changes:
             return
         cls._last_cursor_list = None
         cls._last_cursor_idx_in_list = None

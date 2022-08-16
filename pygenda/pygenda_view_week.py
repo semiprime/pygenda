@@ -35,7 +35,7 @@ from .pygenda_view import View_DayUnit_Base
 from .pygenda_calendar import Calendar
 from .pygenda_config import Config
 from .pygenda_util import start_of_week, day_in_week, month_abbr, start_end_dts_occ, dt_lte
-from .pygenda_gui import GUI, EntryDialogController
+from .pygenda_gui import GUI, EventDialogController
 
 
 # Singleton class for Week View
@@ -315,13 +315,13 @@ class View_Week(View_DayUnit_Base):
 
 
     @classmethod
-    def redraw(cls, ev_changes:bool) -> None:
+    def redraw(cls, en_changes:bool) -> None:
         # Called when redraw required.
-        # ev_changes: bool indicating if events need updating too
+        # en_changes: bool indicating if displayed entries need updating too
         if cls._week_viewed != start_of_week(GUI.cursor_date):
             cls._set_label_text()
-            ev_changes = True
-        if ev_changes:
+            en_changes = True
+        if en_changes:
             cls._set_entry_text()
         cls._show_cursor()
 
@@ -406,7 +406,7 @@ class View_Week(View_DayUnit_Base):
             # !! Bug: only works for ASCII characters
             if ev.state & (Gdk.ModifierType.CONTROL_MASK|Gdk.ModifierType.MOD1_MASK)==0 and Gdk.KEY_exclam <= ev.keyval <= Gdk.KEY_asciitilde:
                 date = cls.cursor_date()
-                GLib.idle_add(EntryDialogController.newentry, chr(ev.keyval), date)
+                GLib.idle_add(EventDialogController.newevent, chr(ev.keyval), date)
 
 
     @classmethod

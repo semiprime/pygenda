@@ -58,8 +58,8 @@ Checklist for releases
 * Run `mypy .` in source directory, check any new messages
 * If any new dependencies are required, add them to setup.py
 * Check setup.py install works & the installed module runs correctly
-* Check copy/cut/paste works, including e.g. time of entry, multi-day entries,
-  todo pasted as entry & vice-versa, text pasted
+* Check copy/cut/paste works, including e.g. time of event, multi-day events,
+  todo pasted as event & vice-versa, text pasted
 * Regenerate .po and .mo localisation files (see above)
 * Check at least one non-English language
 * Check any ics files in validator, eg https://icalendar.org/validator.html
@@ -72,7 +72,7 @@ Checklist for releases
 Checking repeats
 ----------------
 In addition to test_repeats.py unit tests...
-Repeated entry display can be checked by hand (plan to automate later) by
+Repeated event display can be checked by hand (plan to automate later) by
 enabling checking in repeats_in_range() method (file pygenda_calendar.py)
 and skipping through the test02_repeats.ics file. (Try Year View.)
 

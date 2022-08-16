@@ -32,7 +32,7 @@ from typing import Tuple
 
 # pygenda components
 from .pygenda_view import View_DayUnit_Base
-from .pygenda_gui import GUI, EntryDialogController
+from .pygenda_gui import GUI, EventDialogController
 from .pygenda_config import Config
 from .pygenda_calendar import Calendar
 from .pygenda_util import start_end_dts_occ
@@ -232,13 +232,13 @@ class View_Year(View_DayUnit_Base):
 
 
     @classmethod
-    def redraw(cls, ev_changes:bool) -> None:
+    def redraw(cls, en_changes:bool) -> None:
         # Called when redraw required.
-        # ev_changes: bool indicating if events need updating too
+        # en_changes: bool indicating if displayed entries need updating too
         if cls._year_viewed != GUI.cursor_date.year:
             cls._draw_year()
             cls._last_cursor = None
-            ev_changes = True
+            en_changes = True
         cls._show_cursor()
         cls._show_datelabel()
         # Queue delayed redraw of day content
@@ -249,7 +249,7 @@ class View_Year(View_DayUnit_Base):
             # Schedule idle to add datecontent
             # Priority below draw, so datelabel will be redrawn while moving
             GLib.idle_add(cls._show_datecontent,priority=GLib.PRIORITY_HIGH_IDLE+40)
-        if ev_changes:
+        if en_changes:
             GLib.idle_add(cls._show_gridcontent,priority=GLib.PRIORITY_HIGH_IDLE+35)
 
 
@@ -531,7 +531,7 @@ class View_Year(View_DayUnit_Base):
             pass
         if ev.state & (Gdk.ModifierType.CONTROL_MASK|Gdk.ModifierType.MOD1_MASK)==0 and Gdk.KEY_exclam <= ev.keyval <= Gdk.KEY_asciitilde:
             date = cls.cursor_date()
-            GLib.idle_add(EntryDialogController.newentry, chr(ev.keyval), date, priority=GLib.PRIORITY_HIGH_IDLE+30)
+            GLib.idle_add(EventDialogController.newevent, chr(ev.keyval), date, priority=GLib.PRIORITY_HIGH_IDLE+30)
 
 
     @classmethod

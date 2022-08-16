@@ -30,7 +30,7 @@ from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
 from datetime import date as dt_date, timedelta
 from typing import Optional, Union
 
-from .pygenda_gui import GUI, EntryDialogController
+from .pygenda_gui import GUI, EventDialogController
 from .pygenda_util import datetime_to_time, datetime_to_date, date_to_datetime, format_time, format_compact_date, format_compact_time, format_compact_datetime, dt_lte
 from .pygenda_calendar import Calendar
 from .pygenda_entryinfo import EntryInfo
@@ -68,9 +68,9 @@ class View:
 
 
     @classmethod
-    def redraw(cls, ev_changes:bool) -> None:
+    def redraw(cls, en_changes:bool) -> None:
         # Called when redraw required
-        # ev_changes: bool indicating if event display needs updating too
+        # en_changes: bool indicating if displayed entries need updating too
         pass
 
 
@@ -263,7 +263,7 @@ class View_DayUnit_Base(View):
         # Handle pasting of text in Week/Year views.
         # Open a New Entry dialog with description initialised as txt
         date = cls.cursor_date()
-        GLib.idle_add(EntryDialogController.newentry, txt, date)
+        GLib.idle_add(EventDialogController.newevent, txt, date)
 
 
     @classmethod
@@ -281,9 +281,9 @@ class View_DayUnit_Base(View):
         en = cls.get_cursor_entry()
         if en is None:
             date = cls.cursor_date()
-            EntryDialogController.newentry(date=date)
+            EventDialogController.newevent(date=date)
         else:
-            EntryDialogController.editentry(en)
+            EventDialogController.editevent(en)
 
 
     @classmethod

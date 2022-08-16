@@ -22,7 +22,7 @@ Major
 * Many todo item properties are not implemented (due date, status etc.)
   and they can only be sorted by priority
 
-* Repeated entries UI missing many elements (more complete repeat by
+* Repeated event UI missing many elements (more complete repeat by
   BYMONTHDAY, BYSETPOS, Monday & Wednesday every week, extra dates,
   hourly/minutely/secondly repeats).
   See: https://icalendar.org/iCalendar-RFC-5545/3-3-10-recurrence-rule.html
@@ -33,20 +33,20 @@ Major
   that are not part of the repeat run, and they are saved without
   problem, and not highlighted in UI as problematic in any way;
   dates can be added that are not visible because box doesn't scroll
-  to newly added date; entries can be made invisible (thus uneditable)
+  to newly added date; events can be made invisible (thus uneditable)
   by making all occurrences exceptions; keyboard navigation in menu
   is not intuitive.
 
-* Multi-day entries (i.e. that span multiple days) only displayed on
+* Multi-day events (i.e. that span multiple days) only displayed on
   first day. (Need to set a config, e.g. "next_day_crossover" for week
   view, year view.  If time goes beyond that, then also show in next
   day.)
 
-* Cutting repeating entries is not implemented. (Not sure how to do UI -
+* Cutting repeating events is not implemented. (Not sure how to do UI -
   probably need to bring up a dialog "Cut just this occurrence, or all
   repeats?". That then raises question about behaviour when copying
-  repeating entries, where currently just one occurrence is copied. See
-  also deleting repeated entries - currently all repeats are deleted.)
+  repeating events, where currently just one occurrence is copied. See
+  also deleting repeated events - currently all repeats are deleted.)
 
 * Creating/updating new entries in large calendars is unusably slow.
   (In tests, with .ics file, file writing is slow; with CalDAV server
@@ -69,7 +69,7 @@ Medium
 
 * Todo items cannot be shown in Week or Year views
 
-* When deleting a repeated entry, all are deleted. Should offer option
+* When deleting a repeated event, all are deleted. Should offer option
   of deleting this one (better, also offer delete all from, all before...)
 
 * No file manipulation: open, import, save-as, new file...
@@ -82,7 +82,7 @@ Medium
 * Only French & English translations are provided (and the French needs
   checking by a native speaker).
 
-* Setting number of days for "all day" entries could be friendlier
+* Setting number of days for "all day" events could be friendlier
   (e.g. show/set end date)
 
 * Timed events can't last more than 24 hours (need to augment duration widget)
@@ -127,22 +127,22 @@ Medium
   Check if using recurring-ical-events module could improve speed??
   See: https://pypi.org/project/recurring-ical-events/
 
-* Starting date of repeating entries is not always obvious to the user.
+* Starting date of repeating events is not always obvious to the user.
   For example, date 30th March, repeat on last day of month -> starts
   31st March, but change to 3rd-to-last day of month and it starts 28th
-  April. (Maybe this will be clearer when cursor moves to edited entry?)
+  April. (Maybe this will be clearer when cursor moves to edited event?)
 
 * If calendar data is updated externally while Pygenda is runing (e.g.
   another instance of Pygenda, or some other app, updates database)
   the changes are not detected/displayed.
 
-* In Entry dialog, repeats until/occurrences. Until date can be wrong if
+* In Event dialog, repeats until/occurrences. Until date can be wrong if
   occurrences very high; occurrences can be wrong if date in far future.
 
 * "Today" marked in views is not updated if day changes (e.g. midnight
   crossover, switch on device in new day, device time(zone) changed).
 
-* For calendars saved in .ics file. Copy/pasting an entry with a timezone
+* For calendars saved in .ics file. Copy/pasting an event with a timezone
   to a date with a different DST, time displayed (local time) is an hour
   off. This fixes itself if Pygenda is restarted (so .ics file is re-read).
   Probable cause: In new_entry_from_example(), tzinfo of event includes
@@ -158,7 +158,7 @@ Minor
 -----
 (Note: minor bugs can still be irritating!)
 
-* After creating/editing an entry, cursor not always on that entry
+* After creating/editing an event, cursor not always on that event
 
 * Would be nice to be able to edit dates with a calendar interface
   (Like pressing tab in S5)
@@ -168,10 +168,10 @@ Minor
 * Ctrl+Left-Shift+X/C/V/N don't work on Gemini (UI eats keypress?)
   Workaround: Use Right-Shift.
 
-* Anniversary entry year (e.g. "20 years") not displayed (they're
+* Anniversary event year (e.g. "20 years") not displayed (they're
   just annual repeats). (Maybe add category "Anniversary"?)
 
-* Entry dialog needs some indication if tab contents are non-default
+* Event dialog needs some indication if tab contents are non-default
   (e.g. if there are repeats, alarms - maybe show a tick in the tab handle)
 
 * No user feedback for some actions (e.g. copy entry). Should flash or
@@ -198,22 +198,22 @@ Minor
 
 Cosmetic
 --------
-* If the first entry edited after starting Pygenda has multiple exception
-  dates, then it makes room for these in the Entry dialog Repeats tab.
-  This means that the Entry dialog is made wide, and stays that way
+* If the first event edited after starting Pygenda has multiple exception
+  dates, then it makes room for these in the Event dialog Repeats tab.
+  This means that the Event dialog is made wide, and stays that way
   until Pygenda is restarted.
 
 * Year View: Pixel missing in grid lines at top-left corner
 
 * On Gemini, shows "no access" icons in instead of "minus" icons (e.g. in
-  spin buttons of entry dialog) - Gemian bug?
+  spin buttons of Event dialog) - Gemian bug?
 
 * Year view is slow to redraw on Gemini, so get black rectangles when
   e.g. closing dialogs.
 
 * Startup spinner is a bit glitchy (visible for large calendars).
 
-* In Entry dialog, Repeats tab, "Repeat until" label doesn't seem to align
+* In Event dialog, Repeats tab, "Repeat until" label doesn't seem to align
   quite correctly with the field content.
 
 Testing

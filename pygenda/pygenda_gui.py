@@ -144,26 +144,26 @@ class GUI:
             'menuitem_cut': cls.cut_request,
             'menuitem_copy': cls.copy_request,
             'menuitem_paste': cls.paste_request,
-            'menuitem_newentry': cls.event_newentry,
-            'menuitem_newtodo': cls.event_newtodo,
-            'menuitem_edittime': cls.event_edittime,
-            'menuitem_editrepeats': cls.event_editrepeats,
-            'menuitem_editalarm': cls.event_editalarm,
-            'menuitem_editdetails': cls.event_editdetails,
-            'menuitem_stat_none': lambda a: cls.event_stat_toggle(None),
-            'menuitem_stat_confirmed': lambda a: cls.event_stat_toggle('CONFIRMED'),
-            'menuitem_stat_canceled': lambda a: cls.event_stat_toggle('CANCELLED'),
-            'menuitem_stat_tentative': lambda a: cls.event_stat_toggle('TENTATIVE'),
+            'menuitem_newentry': cls.handler_newentry,
+            'menuitem_newtodo': cls.handler_newtodo,
+            'menuitem_edittime': cls.handler_edittime,
+            'menuitem_editrepeats': cls.handler_editrepeats,
+            'menuitem_editalarm': cls.handler_editalarm,
+            'menuitem_editdetails': cls.handler_editdetails,
+            'menuitem_stat_none': lambda a: cls.handler_stat_toggle(None),
+            'menuitem_stat_confirmed': lambda a: cls.handler_stat_toggle('CONFIRMED'),
+            'menuitem_stat_canceled': lambda a: cls.handler_stat_toggle('CANCELLED'),
+            'menuitem_stat_tentative': lambda a: cls.handler_stat_toggle('TENTATIVE'),
             'menuitem_deleteentry': cls.delete_request,
             'menuitem_switchview': cls.switch_view,
             'menuitem_goto': cls.dialog_goto,
             'menuitem_fullscreen': cls.toggle_fullscreen,
             'menuitem_about': cls.dialog_about,
-            'button0_clicked': cls.event_newentry,
+            'button0_clicked': cls.handler_newentry,
             'button1_clicked': cls.switch_view,
             'button2_clicked': cls.dialog_goto,
             'button3_clicked': cls.debug, # zoom, to be decided/implemented
-            'exceptions_modify': EntryDialogController.dialog_repeat_exceptions
+            'exceptions_modify': EventDialogController.dialog_repeat_exceptions
             }
         cls._builder.connect_signals(HANDLERS)
 
@@ -247,7 +247,7 @@ class GUI:
         # Initialise some things in main thread while calendar loading
         cls._init_clipboard()
         cls._init_date_format()
-        EntryDialogController.init()
+        EventDialogController.init()
 
         # If date set from command line, jump there now
         if Config.date:
@@ -393,8 +393,8 @@ class GUI:
     @classmethod
     def _init_spinbuttons(cls) -> None:
         # Connect spinbutton keypress event to handler for extra features.
-        # All spinbuttons are part of the Entry dialog, so this could go
-        # in the EntryDialogController class. However, in theory spinbuttons
+        # All spinbuttons are part of the Event dialog, so this could go
+        # in the EventDialogController class. However, in theory spinbuttons
         # can be anywhere, so putting this in the general GUI class.
         for sb_id in ('allday_count','repeat_interval','repeat_occurrences'):
             sb = cls._builder.get_object(sb_id)
@@ -413,7 +413,7 @@ class GUI:
     @classmethod
     def _init_entryboxes(cls) -> None:
         # Connect Entry textbox events to handlers for extra features.
-        for eb_id in ('entry_desc','entry_location'):
+        for eb_id in ('entry_dialogevent_desc','entry_dialogevent_location'):
             eb = cls._builder.get_object(eb_id)
             eb.connect('focus-out-event', cls._focusout_unhighlight)
 
@@ -506,10 +506,10 @@ class GUI:
 
 
     @classmethod
-    def view_redraw(cls, ev_changes:bool=False) -> None:
+    def view_redraw(cls, en_changes:bool=False) -> None:
         # Redraw the currently active view.
-        # ev_changes: bool, True if events need updating too
-        cls.views[cls._view_idx].redraw(ev_changes)
+        # en_changes: bool, True if displayed entries need updating too
+        cls.views[cls._view_idx].redraw(en_changes)
 
 
     @classmethod
@@ -568,48 +568,48 @@ class GUI:
         Gtk.main_quit()
 
     @classmethod
-    def event_newentry(cls, *args) -> None:
+    def handler_newentry(cls, *args) -> None:
         # Callback for new entry signal (menu, softbutton)
         date = cls.views[cls._view_idx].cursor_date()
-        EntryDialogController.newentry(date=date)
+        EventDialogController.newevent(date=date)
 
     @classmethod
-    def event_newtodo(cls, *args) -> None:
+    def handler_newtodo(cls, *args) -> None:
         # Callback for new todo signal (menu, softbutton)
         lst = cls.views[cls._view_idx].cursor_todo_list()
         TodoDialogController.newtodo(list_idx=lst)
 
     @classmethod
-    def event_edittime(cls, *args) -> None:
-        # Callback for change-entry-time signal
+    def handler_edittime(cls, *args) -> None:
+        # Callback for change-entry-time signal (menu item)
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en:
-            EntryDialogController.editentry(en, EntryDialogController.TAB_TIME)
+            EventDialogController.editevent(en, EventDialogController.TAB_TIME)
 
     @classmethod
-    def event_editrepeats(cls, *args) -> None:
-        # Callback for change-entry-repeats signal
+    def handler_editrepeats(cls, *args) -> None:
+        # Callback for change-entry-repeats signal (menu item)
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en:
-            EntryDialogController.editentry(en, EntryDialogController.TAB_REPEATS)
+            EventDialogController.editevent(en, EventDialogController.TAB_REPEATS)
 
     @classmethod
-    def event_editalarm(cls, *args) -> None:
-        # Callback for change-entry-alarm signal
+    def handler_editalarm(cls, *args) -> None:
+        # Callback for change-entry-alarm signal (menu item)
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en:
-            EntryDialogController.editentry(en, EntryDialogController.TAB_ALARM)
+            EventDialogController.editevent(en, EventDialogController.TAB_ALARM)
 
     @classmethod
-    def event_editdetails(cls, *args) -> None:
-        # Callback for change-entry-details signal
+    def handler_editdetails(cls, *args) -> None:
+        # Callback for change-entry-details signal (menu item)
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en:
-            EntryDialogController.editentry(en, EntryDialogController.TAB_DETAILS)
+            EventDialogController.editevent(en, EventDialogController.TAB_DETAILS)
 
 
     @classmethod
-    def event_stat_toggle(cls, stat:Optional[str]) -> None:
+    def handler_stat_toggle(cls, stat:Optional[str]) -> None:
         # Handle signals from menu to change current entry's status.
         # Paramenter stat is None or text string for status (eg 'CONFIRMED').
         en = cls.views[cls._view_idx].get_cursor_entry()
@@ -804,8 +804,8 @@ class GUI:
         return tdv._list_titles, tdv._list_default_cats
 
 
-# Singleton class to manage Entry dialog
-class EntryDialogController:
+# Singleton class to manage Event dialog (to create/edit Events)
+class EventDialogController:
     TAB_TIME = 0
     TAB_REPEATS = 1
     TAB_ALARM = 2
@@ -819,13 +819,13 @@ class EntryDialogController:
     wid_tabs = None # type: Gtk.Notebook
 
     # _empty_desc_allowed has three possible values:
-    #   None - empty desc allowed in dialog (signals delete entry)
+    #   None - empty desc allowed in dialog (signals delete event)
     #   True - empty desc allowed, but can turn False!
-    #   False - empty desc not allowed in dialog (e.g. new entry)
+    #   False - empty desc not allowed in dialog (e.g. new event)
     _empty_desc_allowed = None # type: Optional[bool]
 
     wid_timed_buttons = None # type: Gtk.Box
-    # Create widgets for entry time & duration fields
+    # Create widgets for time & duration fields
     wid_time = WidgetTime(dt_time(hour=9))
     wid_dur = WidgetDuration(timedelta())
     wid_endtime = WidgetTime(dt_time(hour=9))
@@ -877,16 +877,16 @@ class EntryDialogController:
         # Called from GUI init_stage2().
 
         # Get some references to dialog elements in glade
-        cls.dialog = GUI._builder.get_object('dialog_entry')
+        cls.dialog = GUI._builder.get_object('dialog_event')
         if (not cls.dialog): # Sanity check
-            raise NameError('Dialog Entry not found')
+            raise NameError('Dialog Event not found')
 
-        cls.wid_desc = GUI._builder.get_object('entry_desc')
+        cls.wid_desc = GUI._builder.get_object('entry_dialogevent_desc')
         cls._wid_desc_changed_handler = cls.wid_desc.connect('changed', cls._desc_changed)
-        wid_grid = GUI._builder.get_object('dialogentry_grid')
-        cls.wid_tabs = GUI._builder.get_object('entry_tabs')
+        wid_grid = GUI._builder.get_object('dialogevent_grid')
+        cls.wid_tabs = GUI._builder.get_object('dialogevent_tabs')
 
-        # Create & add date entry widget
+        # Create & add event date widget
         cls.wid_date = WidgetDate(GUI.cursor_date)
         wid_grid.attach(cls.wid_date, 1,1, 1,1)# Can we locate this another way?
         cls.wid_date.show_all()
@@ -901,11 +901,11 @@ class EntryDialogController:
 
     @classmethod
     def _init_timefields(cls) -> None:
-        # Initialise widgets etc in the Entry dialog under the "Time" tab.
+        # Initialise widgets etc in the Event dialog under the "Time" tab.
         # Called on app startup.
         cls.wid_timed_buttons = GUI._builder.get_object('radiobuttons_istimed').get_children()
 
-        # Add entry time & duration widgets to dialog
+        # Add time & duration widgets to dialog
         wid_reveal_tm_e = GUI._builder.get_object('revealer_time_e')
         tbox = wid_reveal_tm_e.get_child() # should be a GtkBox
         tbox.add(cls.wid_time)
@@ -932,7 +932,7 @@ class EntryDialogController:
 
     @classmethod
     def _init_repeatfields(cls) -> None:
-        # Initialise widgets etc in the Entry dialog under the "Repeats" tab.
+        # Initialise widgets etc in the Event dialog under the "Repeats" tab.
         # Called on app startup.
         cls.wid_rep_type = GUI._builder.get_object('combo_repeat_type')
         cls.revs_repeat = cls._revealers_from_ids('revealer_repeat_l','revealer_repeat_e')
@@ -980,17 +980,17 @@ class EntryDialogController:
 
     @classmethod
     def _init_alarmfields(cls) -> None:
-        # Initialise widgets etc in the Entry dialog under the "Alarm" tab.
+        # Initialise widgets etc in the Event dialog under the "Alarm" tab.
         # Called on app startup.
         cls.wid_alarmset = GUI._builder.get_object('alarm-set')
 
 
     @classmethod
     def _init_detailfields(cls) -> None:
-        # Initialise widgets etc in the Entry dialog under the "Details" tab.
+        # Initialise widgets etc in the Event dialog under the "Details" tab.
         # Called on app startup.
         cls.wid_status = GUI._builder.get_object('combo_status')
-        cls.wid_location = GUI._builder.get_object('entry_location')
+        cls.wid_location = GUI._builder.get_object('entry_dialogevent_location')
 
 
     @classmethod
@@ -1069,17 +1069,17 @@ class EntryDialogController:
 
     @classmethod
     def _desc_changed(cls, wid:Gtk.Entry) -> None:
-        # Callback. Called when entry description is changed by user.
+        # Callback. Called when event description is changed by user.
         # Flags that dialog state had been changed.
         # Removes error state styling if it is no longer needed.
         if cls.wid_desc.get_text(): # if desc field is non-empty
             cls._cancel_empty_desc_allowed()
-        cls._is_valid_entry(set_style=False) # remove error styles if present
+        cls._is_valid_event(set_style=False) # remove error styles if present
 
 
     @classmethod
     def _reptype_changed(cls, wid:Gtk.ComboBox) -> None:
-        # Callback. Called when entry repeat type is changed by user.
+        # Callback. Called when event repeat type is changed by user.
         # Reveals/hides relevant sub-options.
         # wid should be the repeat-type combobox
         st = wid.get_active()>0
@@ -1224,7 +1224,7 @@ class EntryDialogController:
             finally:
                 cls._unblock_tmdur_signals()
         cls._cancel_empty_desc_allowed()
-        cls._is_valid_entry(set_style=False) # remove error styles if present
+        cls._is_valid_event(set_style=False) # remove error styles if present
 
 
     @classmethod
@@ -1245,7 +1245,7 @@ class EntryDialogController:
         finally:
             cls._unblock_rep_occend_signals()
         cls._cancel_empty_desc_allowed()
-        cls._is_valid_entry(set_style=False) # remove error styles if present
+        cls._is_valid_event(set_style=False) # remove error styles if present
 
 
     @classmethod
@@ -1388,15 +1388,15 @@ class EntryDialogController:
 
 
     @classmethod
-    def newentry(cls, txt:str=None, date:dt_date=None) -> None:
-        # Called to implement "new entry" from GUI, e.g. button
+    def newevent(cls, txt:str=None, date:dt_date=None) -> None:
+        # Called to implement "new event" from GUI, e.g. menu
         cls.dialog.set_title(_('New Entry'))
         cls._empty_desc_allowed = True # initially allowed, can switch to False
-        response,ei = cls._do_entry_dialog(txt=txt, date=date)
+        response,ei = cls._do_event_dialog(txt=txt, date=date)
         if response==Gtk.ResponseType.OK and ei.desc:
             Calendar.new_entry(ei)
             if ei.rep_type is None:
-                # Jump to entry date (not repeating, so well-defined)
+                # Jump to event date (not repeating, so well-defined)
                 # !! This is a quick fix most common case. Need to fix:
                 #    - Multiple entries on one day - jump to correct
                 #    - Repeating entries (jump to visible/closest)
@@ -1405,27 +1405,27 @@ class EntryDialogController:
 
 
     @classmethod
-    def editentry(cls, en:iEvent, subtab:int=None) -> None:
-        # Called to implement "edit entry" from GUI
+    def editevent(cls, event:iEvent, subtab:int=None) -> None:
+        # Called to implement "edit event" from GUI
         cls.dialog.set_title(_('Edit Entry'))
         cls._empty_desc_allowed = None # empty desc always allowed (for delete)
-        response,ei = cls._do_entry_dialog(entry=en, subtab=subtab)
+        response,ei = cls._do_event_dialog(event=event, subtab=subtab)
         if response==Gtk.ResponseType.OK:
             if ei.desc:
-                Calendar.update_entry(en, ei)
+                Calendar.update_entry(event, ei)
                 if ei.rep_type is None:
-                    # Jump to entry date
+                    # Jump to event date
                     GUI.cursor_date = ei.get_start_date()
                 GUI.view_redraw(True)
             else: # Description text has been deleted in dialog
-                GUI.dialog_deleteentry(en)
+                GUI.dialog_deleteentry(event)
 
 
     @classmethod
-    def _do_entry_dialog(cls, entry:iEvent=None, txt:str=None, date:dt_date=None, subtab:int=None) -> Tuple[int,EntryInfo]:
-        # Do the core work displaying entry dialog and extracting result.
-        # Called from both newentry() and editentry().
-        cls._seed_fields(entry, txt, date)
+    def _do_event_dialog(cls, event:iEvent=None, txt:str=None, date:dt_date=None, subtab:int=None) -> Tuple[int,EntryInfo]:
+        # Do the core work displaying event dialog and extracting result.
+        # Called from both newevent() and editevent().
+        cls._seed_fields(event, txt, date)
 
         # Select visible subtab: time, repeats, alarms...
         cls.wid_tabs.set_current_page(0) # default
@@ -1442,7 +1442,7 @@ class EntryDialogController:
         try:
             while True:
                 response = cls.dialog.run()
-                if response!=Gtk.ResponseType.OK or cls._is_valid_entry(set_style=True):
+                if response!=Gtk.ResponseType.OK or cls._is_valid_event(set_style=True):
                     break
                 cls._cancel_empty_desc_allowed() # after OK, desc required
         finally:
@@ -1455,9 +1455,9 @@ class EntryDialogController:
 
 
     @classmethod
-    def _seed_fields(cls, entry:iEvent, txt:Optional[str], date:Optional[dt_date]) -> None:
-        # Initialise entry fields when dialog is opened.
-        # Data optionally from an entry, or text used as summary.
+    def _seed_fields(cls, event:iEvent, txt:Optional[str], date:Optional[dt_date]) -> None:
+        # Initialise fields when dialog is opened.
+        # Data optionally from an existing event, or text used as summary.
         # !! This function is a horrible mess. Needs rationalising !!
 
         # Set defaults
@@ -1478,8 +1478,8 @@ class EntryDialogController:
         cls.wid_location.set_text('')
         cls.wid_alarmset.set_active(False)
 
-        # Two cases: new entry or edit existing entry
-        if entry is None:
+        # Two cases: new event or edit existing event
+        if event is None:
             # Initialise decscription field
             # We don't want this to count as user interaction, so block signal
             cls.wid_desc.handler_block(cls._wid_desc_changed_handler)
@@ -1493,30 +1493,30 @@ class EntryDialogController:
             dt = dt_date.today() if date is None else date
             tm = None
         else: # existing entry - take values
-            cls.wid_desc.set_text(entry['SUMMARY'] if 'SUMMARY' in entry else '')
+            cls.wid_desc.set_text(event['SUMMARY'] if 'SUMMARY' in event else '')
             cls.wid_desc.grab_focus()
-            dt = entry['DTSTART'].dt
+            dt = event['DTSTART'].dt
             dttm = None
             if isinstance(dt,dt_datetime):
                 dttm = dt
                 dt = dttm.date()
                 tm = dttm.time()
-                if 'DTEND' in entry:
-                    end_dttm = entry['DTEND'].dt
+                if 'DTEND' in event:
+                    end_dttm = event['DTEND'].dt
                     if isinstance(end_dttm, dt_time):
                         end_dttm = dt_datetime.combine(dt,end_dttm)
                         if end_dttm<dttm:
                             end_dttm += timedelta(days=1)
-                elif 'DURATION' in entry:
-                    dur = entry['DURATION'].dt
+                elif 'DURATION' in event:
+                    dur = event['DURATION'].dt
             elif isinstance(dt,dt_date):
                 tm = None
-                if 'DTEND' in entry and isinstance(entry['DTEND'].dt, dt_date):
-                    end_dttm = entry['DTEND'].dt
+                if 'DTEND' in event and isinstance(event['DTEND'].dt, dt_date):
+                    end_dttm = event['DTEND'].dt
             else: # dt is neither a date nor a datetime
-                raise TypeError("Entry date of unexpected type")
-            if 'RRULE' in entry:
-                rrule = entry['RRULE']
+                raise TypeError("Event date of unexpected type")
+            if 'RRULE' in event:
+                rrule = event['RRULE']
                 rrfreq = rrule['FREQ'][0]
                 if rrfreq == 'MONTHLY' and 'BYDAY' in rrule:
                     cls.wid_rep_type.set_active_id('MONTHLY-WEEKDAY')
@@ -1550,11 +1550,11 @@ class EntryDialogController:
                         u = u.date()
                     cls.wid_rep_enddt.set_date(u if u>dt else dt)
                     cls.rep_occs_determines_end = False
-            if 'STATUS' in entry and entry['STATUS'] in ('TENTATIVE','CONFIRMED','CANCELLED'):
-                cls.wid_status.set_active_id(entry['STATUS'])
-            if 'LOCATION' in entry:
-                cls.wid_location.set_text(entry['LOCATION'])
-            if entry.walk('VALARM'):
+            if 'STATUS' in event and event['STATUS'] in ('TENTATIVE','CONFIRMED','CANCELLED'):
+                cls.wid_status.set_active_id(event['STATUS'])
+            if 'LOCATION' in event:
+                cls.wid_location.set_text(event['LOCATION'])
+            if event.walk('VALARM'):
                 cls.wid_alarmset.set_active(True)
 
         cls.wid_date.set_date(dt)
@@ -1588,24 +1588,24 @@ class EntryDialogController:
             cls.wid_dur.set_duration(dur)
             cls.wid_endtime.set_time(end_dttm.time())
 
-        cls._seed_rep_exception_list(entry)
+        cls._seed_rep_exception_list(event)
 
 
     @classmethod
-    def _seed_rep_exception_list(cls, entry:iEvent) -> None:
-        # Sets & displays repeat exception list from entry parameter.
+    def _seed_rep_exception_list(cls, event:iEvent) -> None:
+        # Sets & displays repeat exception list from event parameter.
         # Called from _seed_fields() when dialog is opened.
-        cls._set_rep_exception_list(entry)
+        cls._set_rep_exception_list(event)
         cls._set_label_rep_list()
 
 
     @classmethod
-    def _set_rep_exception_list(cls, entry:iEvent) -> None:
-        # Set cls.exception_list to list of exception dates for entry
+    def _set_rep_exception_list(cls, event:iEvent) -> None:
+        # Set cls.exception_list to list of exception dates for event
         cls.exception_list = []
-        if entry is None or 'RRULE' not in entry or 'EXDATE' not in entry:
+        if event is None or 'RRULE' not in event or 'EXDATE' not in event:
             return
-        exdate = entry['EXDATE']
+        exdate = event['EXDATE']
         if isinstance(exdate,list):
             # Create set => elements unique
             dtlist = set([datetime_to_date(t.dts[i].dt) for t in exdate for i in range(len(t.dts))])
@@ -1632,7 +1632,7 @@ class EntryDialogController:
 
     @classmethod
     def _get_entryinfo(cls) -> EntryInfo:
-        # Decipher entry fields and return info as an EntryInfo object.
+        # Decipher dialog fields and return info as an EntryInfo object.
         desc = cls.wid_desc.get_text()
         dt = cls.get_datetime_start()
         stat = cls.wid_status.get_active_id()
@@ -1672,8 +1672,8 @@ class EntryDialogController:
 
     @classmethod
     def _get_exceptions_list_for_type(cls) -> Optional[list]:
-        # Return exceptions list transformed to match entry.
-        # E.g. if a timed entry, return timed exceptions.
+        # Return exceptions list transformed to match event.
+        # E.g. if a timed event, return timed exceptions.
         if len(cls.exception_list)==0:
             return None
         if cls.wid_timed_buttons[1].get_active():
@@ -1688,13 +1688,13 @@ class EntryDialogController:
 
 
     @classmethod
-    def _is_valid_entry(cls, set_style:bool=False) -> bool:
-        # Function checks if entry dialog fields are valid.
+    def _is_valid_event(cls, set_style:bool=False) -> bool:
+        # Function checks if event dialog fields are valid.
         # Used when "OK" clicked in the dialog (so important!).
         # Returns True if all fields valid; False if *any* field is invalid.
-        # If an entry is invalid and set_style==True it also adds a
+        # If an event is invalid and set_style==True it also adds a
         # CSS class to the widget, so the error is visibly indicated.
-        # If the entry is valid then it removes the error style, so
+        # If the event is valid then it removes the error style, so
         # the error indication will disappear (regardless of set_style).
 
         ret = True
@@ -1787,7 +1787,7 @@ class EntryDialogController:
 
     @classmethod
     def _reset_err_style(cls) -> None:
-        # Remove 'dialog_error' style class from entry dialog widgets where
+        # Remove 'dialog_error' style class from event dialog widgets where
         # it might be set, so any visible indications of errors are removed.
         # Used, for example, when the dialog is reinitialised.
         for w in (cls.wid_desc, cls.wid_date, cls.wid_time, cls.wid_dur, cls.wid_endtime, cls.wid_rep_enddt, cls.wid_rep_occs):
@@ -1805,7 +1805,7 @@ class EntryDialogController:
         # Returns start date & time from dialog if time set; o/w just the date
         dt = cls.wid_date.get_date_or_none()
         if dt is not None and cls.wid_timed_buttons[1].get_active():
-            # timed entry
+            # timed event
             tm = cls.wid_time.get_time_or_none()
             if tm is not None:
                 dt = dt_datetime.combine(dt,tm)
@@ -1873,8 +1873,8 @@ class DateLabel(Gtk.Label):
 
 
 class ExceptionsDialogController:
-    # Dialog box to add/remove a repeating entry's "Exception dates".
-    # Called when +/- button is clicked in Entry Repeats tab.
+    # Dialog box to add/remove a repeating event's "Exception dates".
+    # Called when +/- button is clicked in Event Repeats tab.
 
     def __init__(self, ex_date_list:list, parent:Gtk.Window=None):
         self.dialog = Gtk.Dialog(title=_('Exception dates'), parent=parent,
@@ -1998,7 +1998,7 @@ class TodoDialogController:
         if (not cls.dialog): # Sanity check
             raise NameError('Dialog Todo not found')
 
-        cls.wid_desc = GUI._builder.get_object('todo_desc')
+        cls.wid_desc = GUI._builder.get_object('entry_dialogtodo_desc')
         cls._init_todolists()
         cls.wid_priority = GUI._builder.get_object('combo_todo_priority')
 
@@ -2014,7 +2014,7 @@ class TodoDialogController:
 
     @classmethod
     def newtodo(cls, txt:str=None, list_idx:int=None) -> None:
-        # Called to implement "new todo" from GUI, e.g. button
+        # Called to implement "new todo" from GUI, e.g. menu
         cls.dialog.set_title(_('New To-do'))
         response,ei = cls._do_todo_dialog(txt=txt, list_idx=list_idx)
         if response==Gtk.ResponseType.OK and ei.desc:
@@ -2023,30 +2023,30 @@ class TodoDialogController:
 
 
     @classmethod
-    def edittodo(cls, en:iTodo, list_idx:int=None) -> None:
+    def edittodo(cls, todo:iTodo, list_idx:int=None) -> None:
         # Called to implement "edit todo" from GUI
         cls.dialog.set_title(_('Edit To-do'))
-        response,ei = cls._do_todo_dialog(entry=en, list_idx=list_idx)
+        response,ei = cls._do_todo_dialog(todo=todo, list_idx=list_idx)
         if response==Gtk.ResponseType.OK:
             if ei.desc:
-                Calendar.update_entry(en, ei)
+                Calendar.update_entry(todo, ei)
                 GUI.view_redraw(True)
             else: # Description text has been deleted in dialog
-                GUI.dialog_deleteentry(en)
+                GUI.dialog_deleteentry(todo)
 
 
     @classmethod
-    def _do_todo_dialog(cls, txt:str=None, entry:iTodo=None, list_idx:Optional[int]=0) -> Tuple[int,EntryInfo]:
+    def _do_todo_dialog(cls, txt:str=None, todo:iTodo=None, list_idx:Optional[int]=0) -> Tuple[int,EntryInfo]:
         # Do the core work displaying todo dialog and extracting result.
         if list_idx==None: # View has not specified a default todo list
             list_idx = 0
         cls.wid_priority.set_active(0)
-        if entry is not None:
+        if todo is not None:
             # existing entry - take values
-            cls.wid_desc.set_text(entry['SUMMARY'] if 'SUMMARY' in entry else'')
+            cls.wid_desc.set_text(todo['SUMMARY'] if 'SUMMARY' in todo else'')
             cls.wid_desc.grab_focus()
-            if 'PRIORITY' in entry:
-                p = int(entry['PRIORITY'])
+            if 'PRIORITY' in todo:
+                p = int(todo['PRIORITY'])
                 cls.wid_priority.set_active(p if 1<=p<=9 else 0)
         elif txt is None:
             cls.wid_desc.set_text('') # clear text
