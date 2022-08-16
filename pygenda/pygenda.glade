@@ -179,9 +179,9 @@
 											<object class="GtkMenuItem">
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
-												<property name="label" translatable="yes">_New Entry…</property>
+												<property name="label" translatable="yes">_New Event…</property>
 												<property name="use-underline">True</property>
-												<signal name="activate" handler="menuitem_newentry" swapped="no"/>
+												<signal name="activate" handler="menuitem_newevent" swapped="no"/>
 												<accelerator key="n" signal="activate" modifiers="GDK_CONTROL_MASK"/>
 											</object>
 										</child>
@@ -459,7 +459,7 @@
 											<object class="GtkLabel">
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
-												<property name="label" translatable="yes">New Entry</property>
+												<property name="label" translatable="yes">New Event</property>
 												<property name="justify">center</property>
 											</object>
 										</child>
@@ -910,7 +910,7 @@
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
 												<property name="halign">end</property>
-												<property name="label" translatable="yes">Timed entry:</property>
+												<property name="label" translatable="yes">Timed event:</property>
 												<style>
 													<class name="llabel"/>
 												</style>

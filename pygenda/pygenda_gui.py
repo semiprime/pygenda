@@ -144,7 +144,7 @@ class GUI:
             'menuitem_cut': cls.cut_request,
             'menuitem_copy': cls.copy_request,
             'menuitem_paste': cls.paste_request,
-            'menuitem_newentry': cls.handler_newentry,
+            'menuitem_newevent': cls.handler_newevent,
             'menuitem_newtodo': cls.handler_newtodo,
             'menuitem_edittime': cls.handler_edittime,
             'menuitem_editrepeats': cls.handler_editrepeats,
@@ -159,7 +159,7 @@ class GUI:
             'menuitem_goto': cls.dialog_goto,
             'menuitem_fullscreen': cls.toggle_fullscreen,
             'menuitem_about': cls.dialog_about,
-            'button0_clicked': cls.handler_newentry,
+            'button0_clicked': cls.handler_newevent,
             'button1_clicked': cls.switch_view,
             'button2_clicked': cls.dialog_goto,
             'button3_clicked': cls.debug, # zoom, to be decided/implemented
@@ -568,14 +568,14 @@ class GUI:
         Gtk.main_quit()
 
     @classmethod
-    def handler_newentry(cls, *args) -> None:
-        # Callback for new entry signal (menu, softbutton)
+    def handler_newevent(cls, *args) -> None:
+        # Callback for new event signal (menu, softbutton)
         date = cls.views[cls._view_idx].cursor_date()
         EventDialogController.newevent(date=date)
 
     @classmethod
     def handler_newtodo(cls, *args) -> None:
-        # Callback for new todo signal (menu, softbutton)
+        # Callback for new todo signal (menu)
         lst = cls.views[cls._view_idx].cursor_todo_list()
         TodoDialogController.newtodo(list_idx=lst)
 
@@ -1390,7 +1390,7 @@ class EventDialogController:
     @classmethod
     def newevent(cls, txt:str=None, date:dt_date=None) -> None:
         # Called to implement "new event" from GUI, e.g. menu
-        cls.dialog.set_title(_('New Entry'))
+        cls.dialog.set_title(_('New Event'))
         cls._empty_desc_allowed = True # initially allowed, can switch to False
         response,ei = cls._do_event_dialog(txt=txt, date=date)
         if response==Gtk.ResponseType.OK and ei.desc:
@@ -1407,7 +1407,7 @@ class EventDialogController:
     @classmethod
     def editevent(cls, event:iEvent, subtab:int=None) -> None:
         # Called to implement "edit event" from GUI
-        cls.dialog.set_title(_('Edit Entry'))
+        cls.dialog.set_title(_('Edit Event'))
         cls._empty_desc_allowed = None # empty desc always allowed (for delete)
         response,ei = cls._do_event_dialog(event=event, subtab=subtab)
         if response==Gtk.ResponseType.OK:

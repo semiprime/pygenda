@@ -22,8 +22,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-17 22:43+0200\n"
-"PO-Revision-Date: 2022-06-19 09:08+0200\n"
+"POT-Creation-Date: 2022-08-16 22:30+0200\n"
+"PO-Revision-Date: 2022-08-16 22:30+0200\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -31,11 +31,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: pygenda_gui.py:695
+#: pygenda_gui.py:697
 msgid "Delete Entry"
 msgstr "Supprimer l’entrée"
 
-#: pygenda_gui.py:701
+#: pygenda_gui.py:703
 msgid ""
 "Delete all repeats:\n"
 "\"{:s}\"?"
@@ -43,7 +43,7 @@ msgstr ""
 "Supprimer toutes les entrées\n"
 "« {:s} » ?"
 
-#: pygenda_gui.py:703
+#: pygenda_gui.py:705
 msgid ""
 "Delete entry:\n"
 "\"{:s}\"?"
@@ -51,15 +51,15 @@ msgstr ""
 "Supprimer l’entrée\n"
 "« {:s} » ?"
 
-#: pygenda_gui.py:722 pygenda.glade:512
+#: pygenda_gui.py:724 pygenda.glade:512
 msgid "Go To"
 msgstr "Aller à"
 
-#: pygenda_gui.py:734
+#: pygenda_gui.py:736
 msgid "Go"
 msgstr "Y aller"
 
-#: pygenda_gui.py:770
+#: pygenda_gui.py:772
 msgid ""
 "A calendar/agenda application written in Python/GTK3. The UI is inspired by "
 "the Agenda programs on the Psion Series 3 and Series 5 PDAs.\n"
@@ -72,36 +72,36 @@ msgstr ""
 "publiée en avant-première pour les développeurs/euses. Elle corrompra "
 "probablement vos données."
 
-#: pygenda_gui.py:1391 pygenda.glade:462
-msgid "New Entry"
-msgstr "Nouvelle\nentrée"
+#: pygenda_gui.py:1393 pygenda.glade:462
+msgid "New Event"
+msgstr "Nouvel\névènement"
 
-#: pygenda_gui.py:1408
-msgid "Edit Entry"
-msgstr "Modifier entrée"
+#: pygenda_gui.py:1410
+msgid "Edit Event"
+msgstr "Modifier évènement"
 
-#: pygenda_gui.py:1627 pygenda.glade:1145 pygenda.glade:1477 pygenda.glade:1660
+#: pygenda_gui.py:1629 pygenda.glade:1145 pygenda.glade:1477 pygenda.glade:1660
 #: pygenda.glade:1860
 msgid "None"
 msgstr "Rien"
 
-#: pygenda_gui.py:1878
+#: pygenda_gui.py:1880
 msgid "Exception dates"
 msgstr "Dates omises"
 
-#: pygenda_gui.py:1895
+#: pygenda_gui.py:1897
 msgid "Add date"
 msgstr "Ajouter date"
 
-#: pygenda_gui.py:1916
+#: pygenda_gui.py:1918
 msgid "Remove date(s)"
 msgstr "Retirer date(s)"
 
-#: pygenda_gui.py:2016
+#: pygenda_gui.py:2018
 msgid "New To-do"
 msgstr "Nouvelle tâche"
 
-#: pygenda_gui.py:2026
+#: pygenda_gui.py:2028
 msgid "Edit To-do"
 msgstr "Modifier tâche"
 
@@ -154,8 +154,8 @@ msgid "E_ntry"
 msgstr "E_ntrée"
 
 #: pygenda.glade:182
-msgid "_New Entry…"
-msgstr "_Nouvelle entrée…"
+msgid "_New Event…"
+msgstr "_Nouvel évènement…"
 
 #: pygenda.glade:192
 msgid "New _To-do…"
@@ -234,8 +234,8 @@ msgid "Date:"
 msgstr "Date :"
 
 #: pygenda.glade:913
-msgid "Timed entry:"
-msgstr "Entrée avec heure :"
+msgid "Timed event:"
+msgstr "Avec heure :"
 
 #: pygenda.glade:929
 msgid "No"
