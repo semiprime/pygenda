@@ -769,7 +769,7 @@ class GUI:
         dialog.set_logo_icon_name('x-office-calendar')
         dialog.set_authors(('Matthew Lewis',))
         dialog.set_version('version {:s}'.format(__version__))
-        dialog.set_comments(_(u'A calendar/agenda application written in Python/GTK3. The UI is inspired by the Agenda programs on the Psion Series 3 and Series 5 PDAs.\nWARNING: This is in-development code, released as a preview for developers. It will probably corrupt your data.'))
+        dialog.set_comments(_(u'A calendar/agenda application written in Python/GTK3. The UI is inspired by the Agenda apps on the Psion Series 3 and Series 5 PDAs.\nWARNING: This is in-development code, released as a preview for developers. There will be bugs; please report them to: pygenda@semiprime.com.'))
         dialog.show_all()
         dialog.run()
         dialog.destroy()

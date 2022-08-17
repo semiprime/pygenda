@@ -6,10 +6,13 @@ interface is inspired by the Agenda programs on the Psion Series 3 and
 Series 5 range of PDAs.
 
 **WARNING: This is in-development code, released as a preview for
-developers. It will probably corrupt your data.**
+developers. The software is provided as-is, with no guarantees. You
+should back up any data or files used by Pygenda (e.g. iCal files
+or data stored on servers).**
 
 There are currently **lots of missing/incomplete features** as well as
-**bugs**. For a list of known issues, see: [known_issues.md](docs/known_issues.md)
+**bugs**. For a list of known issues, see: [known_issues.md](docs/known_issues.md).
+If you find any new bugs, please report them to: pygenda@semiprime.com.
 
 Video (from March 2021): https://www.youtube.com/watch?v=QjHcgeRudMo
 
