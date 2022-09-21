@@ -60,6 +60,7 @@ class GUI:
     SPINBUTTON_DEC_KEY = (Gdk.KEY_minus,Gdk.KEY_less)
     STYLE_ERR = 'dialog_error'
 
+    # !! Maybe move these to View class - more appropriate there?
     cursor_date = dt_date.today()
     cursor_idx_in_date = 0 # cursor index within date
     today_toggle_date = None
@@ -509,11 +510,11 @@ class GUI:
     def view_redraw(cls, en_changes:bool=False) -> None:
         # Redraw the currently active view.
         # en_changes: bool, True if displayed entries need updating too
-        cls.views[cls._view_idx].redraw(en_changes)
+        cls.views[cls._view_idx].redraw(en_changes=en_changes)
 
 
     @classmethod
-    def switch_view(cls, wid:Gtk.Widget, idx:int=None) -> None:
+    def switch_view(cls, wid:Gtk.Widget, idx:int=None, redraw:bool=True) -> None:
         # Callback from UI widget (e.g. menu, softbutton) to change view.
         # idx = index of new view (otherwise goes to next view in list)
         if idx is None:
@@ -526,7 +527,8 @@ class GUI:
         cls._eventbox.remove(cls._eventbox.get_child())
         new_view = cls.views[cls._view_idx]
         new_view.renew_display()
-        new_view.redraw(True)
+        if redraw:
+            new_view.redraw(en_changes=True)
         new_wid = cls.view_widgets[cls._view_idx]
         cls._eventbox.add(new_wid)
         new_wid.grab_focus()
@@ -534,14 +536,17 @@ class GUI:
 
 
     @classmethod
-    def cursor_set(cls, dt:dt_date, idx:int=None) -> None:
-        # Set current cursor date, and optionally the index within the date.
-        # Call redraw on view if required.
-        if dt != cls.cursor_date or (idx is not None and idx != cls.cursor_idx_in_date):
-            cls.cursor_date = dt
-            if idx is not None:
-                cls.cursor_idx_in_date = idx
-            cls.view_redraw(False)
+    def cursor_goto_date(cls, dt:dt_date) -> None:
+        # Call view to set current cursor date.
+        # If current view does not support setting date (e.g. Todo View)
+        # try next view etc., and make successful view active.
+        # (N.B.: Does not call redraw - caller needs to handle that.)
+        for i in range(cls._view_idx, cls._view_idx+len(cls.views)):
+            v = i%len(cls.views)
+            if cls.views[v].cursor_set_date(dt): # True if view can show date
+                if v != cls._view_idx:
+                    cls.switch_view(None, v, redraw=False)
+                break
 
 
     @classmethod
@@ -551,7 +556,7 @@ class GUI:
         cls.cursor_date += delta
         if idx is not None:
             cls.cursor_idx_in_date = idx
-        cls.view_redraw(False)
+        cls.view_redraw(en_changes=False)
 
 
     # Main
@@ -615,7 +620,7 @@ class GUI:
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en:
             Calendar.set_toggle_status_entry(en, stat)
-            cls.view_redraw(True)
+            cls.view_redraw(en_changes=True)
 
 
     @classmethod
@@ -646,7 +651,7 @@ class GUI:
                 calbuf = en.to_ical()
                 cls._lib_clip.set_cb(ctypes.create_string_buffer(txtbuf),ctypes.create_string_buffer(calbuf))
                 Calendar.delete_entry(en)
-                cls.view_redraw(True)
+                cls.view_redraw(en_changes=True)
 
 
     @classmethod
@@ -676,7 +681,7 @@ class GUI:
             ical = iCalendar.from_ical(sdat.get_data())
             en = ical.walk()[0]
             cls.views[cls._view_idx].new_entry_from_example(en)
-            cls.view_redraw(True)
+            cls.view_redraw(en_changes=True)
             return
         except:
             None
@@ -715,7 +720,7 @@ class GUI:
         dialog.destroy()
         if response == Gtk.ResponseType.APPLY:
             Calendar.delete_entry(en)
-            cls.view_redraw(True)
+            cls.view_redraw(en_changes=True)
 
 
     @classmethod
@@ -746,7 +751,8 @@ class GUI:
             # Date is invalid, add error styling
             wdate.get_style_context().add_class(GUI.STYLE_ERR)
         if response == Gtk.ResponseType.APPLY:
-            cls.cursor_set(dt)
+            cls.cursor_goto_date(dt)
+            cls.view_redraw(en_changes=False)
         dialog.destroy()
 
 
@@ -1401,7 +1407,7 @@ class EventDialogController:
                 #    - Multiple entries on one day - jump to correct
                 #    - Repeating entries (jump to visible/closest)
                 GUI.cursor_date = ei.get_start_date()
-            GUI.view_redraw(True)
+            GUI.view_redraw(en_changes=True)
 
 
     @classmethod
@@ -1416,7 +1422,7 @@ class EventDialogController:
                 if ei.rep_type is None:
                     # Jump to event date
                     GUI.cursor_date = ei.get_start_date()
-                GUI.view_redraw(True)
+                GUI.view_redraw(en_changes=True)
             else: # Description text has been deleted in dialog
                 GUI.dialog_deleteentry(event)
 
@@ -2019,7 +2025,7 @@ class TodoDialogController:
         response,ei = cls._do_todo_dialog(txt=txt, list_idx=list_idx)
         if response==Gtk.ResponseType.OK and ei.desc:
             Calendar.new_entry(ei)
-            GUI.view_redraw(True)
+            GUI.view_redraw(en_changes=True)
 
 
     @classmethod
@@ -2030,7 +2036,7 @@ class TodoDialogController:
         if response==Gtk.ResponseType.OK:
             if ei.desc:
                 Calendar.update_entry(todo, ei)
-                GUI.view_redraw(True)
+                GUI.view_redraw(en_changes=True)
             else: # Description text has been deleted in dialog
                 GUI.dialog_deleteentry(todo)
 

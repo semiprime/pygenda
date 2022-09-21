@@ -297,6 +297,15 @@ class View_Week(View_DayUnit_Base):
 
 
     @classmethod
+    def cursor_set_date(cls, dt:dt_date, idx:int=0) -> bool:
+        # Set current cursor date & index in date.
+        # Override default method & return True to indicate success.
+        GUI.cursor_date = dt
+        GUI.cursor_idx_in_date = idx
+        return True
+
+
+    @classmethod
     def get_cursor_entry(cls) -> iCal.Event:
         # Returns entry at cursor position, or None if cursor not on entry.
         # Called from cursor_edit_entry() & delete_request().
@@ -375,9 +384,11 @@ class View_Week(View_DayUnit_Base):
         if GUI.cursor_date != today:
             GUI.today_toggle_date = GUI.cursor_date
             GUI.today_toggle_idx = GUI.cursor_idx_in_date
-            GUI.cursor_set(today,0)
+            cls.cursor_set_date(today)
+            cls.redraw(en_changes=False)
         elif GUI.today_toggle_date is not None:
-            GUI.cursor_set(GUI.today_toggle_date,GUI.today_toggle_idx)
+            cls.cursor_set_date(GUI.today_toggle_date, idx=GUI.today_toggle_idx)
+            cls.redraw(en_changes=False)
 
 
     @classmethod
@@ -430,7 +441,14 @@ class View_Week(View_DayUnit_Base):
                 # We're not clicking in date label area, use y to calc entry
                 new_idx = cls.y_to_day_row(cls._day_rows[new_day], ev.y, cls._day_ent_count[new_day], cls._day_scroll[new_day])
 
-        GLib.idle_add(GUI.cursor_set, cls._day_index_to_date(new_day), new_idx)
+        GLib.idle_add(cls._jump_to_date, cls._day_index_to_date(new_day), new_idx)
+
+
+    @classmethod
+    def _jump_to_date(cls, dt:dt_date, idx:int) -> None:
+        # Idle callback to move cursor to given date, e.g. on click
+        cls.cursor_set_date(dt, idx=idx)
+        cls.redraw(en_changes=False)
 
 
     @classmethod

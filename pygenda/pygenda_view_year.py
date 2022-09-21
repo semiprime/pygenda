@@ -318,6 +318,18 @@ class View_Year(View_DayUnit_Base):
 
 
     @classmethod
+    def cursor_set_date(cls, dt:dt_date, idx:int=0, reset_target_col:bool=True) -> bool:
+        # Set current cursor date & index in date.
+        # Override default method so we can update state of target column.
+        # Return True to indicate view supports jumping to a date.
+        GUI.cursor_date = dt
+        GUI.cursor_idx_in_date = idx
+        if reset_target_col:
+            cls._target_col = None
+        return True
+
+
+    @classmethod
     def get_cursor_entry(cls) -> iCal.Event:
         # Returns entry at cursor position, or None if cursor not on entry.
         # Called from cursor_edit_entry() & delete_request().
@@ -427,7 +439,8 @@ class View_Year(View_DayUnit_Base):
             new_y = 11
             new_yr -= 1
         new_dt = cls._cell_to_date_clamped(cls._target_col, new_y, new_yr)
-        GUI.cursor_set(new_dt,0)
+        cls.cursor_set_date(new_dt, reset_target_col=False)
+        cls.redraw(en_changes=False)
         GUI.today_toggle_date = None
 
 
@@ -443,7 +456,8 @@ class View_Year(View_DayUnit_Base):
             new_y = 0
             new_yr += 1
         new_dt = cls._cell_to_date_clamped(cls._target_col, new_y, new_yr)
-        GUI.cursor_set(new_dt,0)
+        cls.cursor_set_date(new_dt, reset_target_col=False)
+        cls.redraw(en_changes=False)
         GUI.today_toggle_date = None
 
 
@@ -451,8 +465,8 @@ class View_Year(View_DayUnit_Base):
     def _cursor_move_stmon(cls) -> None:
         # Callback for user moving grid cursor to start of month.
         new_dt = GUI.cursor_date.replace(day=1)
-        GUI.cursor_set(new_dt,0)
-        cls._target_col = None
+        cls.cursor_set_date(new_dt, reset_target_col=True)
+        cls.redraw(en_changes=False)
         GUI.today_toggle_date = None
 
 
@@ -462,8 +476,8 @@ class View_Year(View_DayUnit_Base):
         dt = GUI.cursor_date
         lastday = calendar.monthrange(dt.year,dt.month)[1]
         new_dt = dt.replace(day=lastday)
-        GUI.cursor_set(new_dt,0)
-        cls._target_col = None
+        cls.cursor_set_date(new_dt, reset_target_col=True)
+        cls.redraw(en_changes=False)
         GUI.today_toggle_date = None
 
 
@@ -475,7 +489,8 @@ class View_Year(View_DayUnit_Base):
             cls._target_col = cls._date_to_cell(cur_dt)[0]
         new_yr = cur_dt.year+d
         new_dt = cls._cell_to_date_clamped(cls._target_col, cur_dt.month-1, new_yr)
-        GUI.cursor_set(new_dt,0)
+        cls.cursor_set_date(new_dt, reset_target_col=False)
+        cls.redraw(en_changes=False)
         GUI.today_toggle_date = None
 
 
@@ -486,11 +501,11 @@ class View_Year(View_DayUnit_Base):
         if GUI.cursor_date != today:
             GUI.today_toggle_date = GUI.cursor_date
             GUI.today_toggle_idx = GUI.cursor_idx_in_date
-            GUI.cursor_set(today,0)
-            cls._target_col = None
+            cls.cursor_set_date(today, reset_target_col=True)
+            cls.redraw(en_changes=False)
         elif GUI.today_toggle_date is not None:
-            GUI.cursor_set(GUI.today_toggle_date,GUI.today_toggle_idx)
-            cls._target_col = None
+            cls.cursor_set_date(GUI.today_toggle_date, idx=GUI.today_toggle_idx, reset_target_col=True)
+            cls.redraw(en_changes=False)
 
 
     @classmethod
@@ -558,8 +573,8 @@ class View_Year(View_DayUnit_Base):
     @classmethod
     def _jump_to_date(cls, dt:dt_date) -> None:
         # Idle callback to move grid cursor to given date, e.g. on click
-        GUI.cursor_set(dt,0)
-        cls._target_col = None
+        cls.cursor_set_date(dt, reset_target_col=True)
+        cls.redraw(en_changes=False)
 
 
     @staticmethod

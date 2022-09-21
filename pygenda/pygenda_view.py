@@ -97,6 +97,14 @@ class View:
 
 
     @classmethod
+    def cursor_set_date(cls, dt:dt_date) -> bool:
+        # Set cursor date & redraw if requested (with redraw parameter).
+        # Return True if can (False if can't) jump to date in this view.
+        # Default implementation does nothing & returns False.
+        return False
+
+
+    @classmethod
     def cursor_date(cls) -> Optional[dt_date]:
         # Returns date (maybe datetime in the future) with cursor.
         # Default implementation: cursor not on date.
