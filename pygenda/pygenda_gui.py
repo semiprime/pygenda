@@ -729,7 +729,7 @@ class GUI:
         dialog = Gtk.Dialog(title=_('Go To'), parent=cls._window,
             flags=Gtk.DialogFlags.MODAL|Gtk.DialogFlags.DESTROY_WITH_PARENT,
             buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CLOSE))
-        wdate = WidgetDate(cls.cursor_date)
+        wdate = WidgetDate(cls.views[cls._view_idx].cursor_date())
         if (not dialog or not wdate): # Allocation check
             raise NameError('Dialog Goto creation failure')
         wdate.connect('changed', GUI.check_date_fixed)
@@ -893,7 +893,7 @@ class EventDialogController:
         cls.wid_tabs = GUI._builder.get_object('dialogevent_tabs')
 
         # Create & add event date widget
-        cls.wid_date = WidgetDate(GUI.cursor_date)
+        cls.wid_date = WidgetDate()
         wid_grid.attach(cls.wid_date, 1,1, 1,1)# Can we locate this another way?
         cls.wid_date.show_all()
 
@@ -955,7 +955,7 @@ class EventDialogController:
         cls.wid_rep_forever.connect('toggled', cls._do_repeatforever_toggle)
 
         cls.wid_rep_occs = GUI._builder.get_object('repeat_occurrences')
-        cls.wid_rep_enddt = WidgetDate(GUI.cursor_date)
+        cls.wid_rep_enddt = WidgetDate()
         rbox = GUI._builder.get_object('revealer_repeat_until_e').get_child() # Should be a GtkBox
         rbox.add(cls.wid_rep_enddt)
         rbox.show_all()
@@ -1895,7 +1895,7 @@ class ExceptionsDialogController:
         self.dialog.get_content_area().add(content)
 
         # Date widget
-        self.wdate = WidgetDate(GUI.cursor_date)
+        self.wdate = WidgetDate()
         self.wdate.connect('changed', GUI.check_date_fixed)
         add_content.add(self.wdate)
 

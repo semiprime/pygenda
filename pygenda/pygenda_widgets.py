@@ -232,7 +232,8 @@ class WidgetDate(_WidgetDateTimeBase):
     __gtype_name__ = 'WidgetDate'
     SEPARATOR_KEYS = (Gdk.KEY_slash, Gdk.KEY_minus, Gdk.KEY_period)
 
-    def __init__(self, dt, *args, **kwds):
+    def __init__(self, dt:dt_date=None, *args, **kwds):
+        # Constructor. dt=None -> widget defaults to today.
         super().__init__(*args, **kwds)
 
         self.field_year = self._init_field_numeric(1,9999,zeropad=False)
@@ -268,8 +269,10 @@ class WidgetDate(_WidgetDateTimeBase):
         self._init_navigation() # So we can navigate among elements
 
 
-    def set_date(self, dt:dt_date) -> None:
-        # Set widget contents.
+    def set_date(self, dt:Optional[dt_date]) -> None:
+        # Set widget contents, dt=None -> today
+        if dt is None:
+            dt = dt_date.today()
         self.field_year.set_text(str(dt.year))
         self.field_month.set_text('{:02d}'.format(dt.month))
         self.field_day.set_text('{:02d}'.format(dt.day))
