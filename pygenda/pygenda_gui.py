@@ -1406,7 +1406,7 @@ class EventDialogController:
                 # !! This is a quick fix most common case. Need to fix:
                 #    - Multiple entries on one day - jump to correct
                 #    - Repeating entries (jump to visible/closest)
-                GUI.cursor_date = ei.get_start_date()
+                GUI.cursor_goto_date(ei.get_start_date())
             GUI.view_redraw(en_changes=True)
 
 
@@ -1421,7 +1421,7 @@ class EventDialogController:
                 Calendar.update_entry(event, ei)
                 if ei.rep_type is None:
                     # Jump to event date
-                    GUI.cursor_date = ei.get_start_date()
+                    GUI.cursor_goto_date(ei.get_start_date())
                 GUI.view_redraw(en_changes=True)
             else: # Description text has been deleted in dialog
                 GUI.dialog_deleteentry(event)
