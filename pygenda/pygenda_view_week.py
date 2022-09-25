@@ -31,7 +31,7 @@ from locale import gettext as _
 from typing import Optional
 
 # pygenda components
-from .pygenda_view import View_DayUnit_Base
+from .pygenda_view import View, View_DayUnit_Base
 from .pygenda_calendar import Calendar
 from .pygenda_config import Config
 from .pygenda_util import start_of_week, day_in_week, month_abbr, start_end_dts_occ, dt_lte
@@ -141,7 +141,7 @@ class View_Week(View_DayUnit_Base):
         # Sets date and month label text and style classes.
         # Called on view redraw.
         cls._last_cursor = None
-        dt = start_of_week(GUI.cursor_date)
+        dt = start_of_week(View._cursor_date)
         cls._week_viewed = dt
         dt_end = dt + timedelta(days=6)
         # Month label
@@ -191,7 +191,7 @@ class View_Week(View_DayUnit_Base):
         # Sets label text and style classes for event-displaying labels.
         # Called on view redraw.
         cls._last_cursor = None
-        dt = start_of_week(GUI.cursor_date)
+        dt = start_of_week(View._cursor_date)
         cls._visible_occurrences = Calendar.occurrence_list(dt, dt+timedelta(days=7))
         itr = iter(cls._visible_occurrences)
         try:
@@ -242,12 +242,12 @@ class View_Week(View_DayUnit_Base):
     def _show_cursor(cls) -> None:
         # Locates bullet/date corresponding to the current cursor and adds
         # 'weekview_cursor' class to it so cursor is visible via CSS styling.
-        dy = day_in_week(GUI.cursor_date)
+        dy = day_in_week(View._cursor_date)
         ecount = cls._day_ent_count[dy]
-        i = GUI.cursor_idx_in_date
+        i = View._cursor_idx_in_date
         if i < 0 or i >= ecount:
             i = max(0,ecount-1)
-            GUI.cursor_idx_in_date = i
+            View._cursor_idx_in_date = i
         cls._hide_cursor()
         row = cls._day_rows[dy].get_children()[i]
         if ecount==0:
@@ -300,8 +300,8 @@ class View_Week(View_DayUnit_Base):
     def cursor_set_date(cls, dt:dt_date, idx:int=0) -> bool:
         # Set current cursor date & index in date.
         # Override default method & return True to indicate success.
-        GUI.cursor_date = dt
-        GUI.cursor_idx_in_date = idx
+        View._cursor_date = dt
+        View._cursor_idx_in_date = idx
         return True
 
 
@@ -309,11 +309,11 @@ class View_Week(View_DayUnit_Base):
     def get_cursor_entry(cls) -> iCal.Event:
         # Returns entry at cursor position, or None if cursor not on entry.
         # Called from cursor_edit_entry() & delete_request().
-        dy = day_in_week(GUI.cursor_date)
+        dy = day_in_week(View._cursor_date)
         if cls._day_ent_count[dy]==0:
             return None
         i = sum(cls._day_ent_count[:dy])
-        i += GUI.cursor_idx_in_date
+        i += View._cursor_idx_in_date
         return cls._visible_occurrences[i][0]
 
 
@@ -327,7 +327,7 @@ class View_Week(View_DayUnit_Base):
     def redraw(cls, en_changes:bool) -> None:
         # Called when redraw required.
         # en_changes: bool indicating if displayed entries need updating too
-        if cls._week_viewed != start_of_week(GUI.cursor_date):
+        if cls._week_viewed != start_of_week(View._cursor_date):
             cls._set_label_text()
             en_changes = True
         if en_changes:
@@ -338,11 +338,11 @@ class View_Week(View_DayUnit_Base):
     @classmethod
     def _cursor_move_up(cls) -> None:
         # Callback for user moving cursor up.
-        GUI.cursor_idx_in_date -= 1
-        if GUI.cursor_idx_in_date < 0:
-            GUI.cursor_inc(timedelta(days=-1))
+        View._cursor_idx_in_date -= 1
+        if View._cursor_idx_in_date < 0:
+            cls.cursor_inc(timedelta(days=-1))
             # Leave idx_in_date as -1 since that signals last entry
-            GUI.today_toggle_date = None
+            View._today_toggle_date = None
         else:
             cls._show_cursor()
 
@@ -350,11 +350,11 @@ class View_Week(View_DayUnit_Base):
     @classmethod
     def _cursor_move_dn(cls) -> None:
         # Callback for user moving cursor down.
-        GUI.cursor_idx_in_date += 1
-        dy = day_in_week(GUI.cursor_date)
-        if GUI.cursor_idx_in_date >= cls._day_ent_count[dy]:
-            GUI.cursor_inc(timedelta(days=1), 0)
-            GUI.today_toggle_date = None
+        View._cursor_idx_in_date += 1
+        dy = day_in_week(View._cursor_date)
+        if View._cursor_idx_in_date >= cls._day_ent_count[dy]:
+            cls.cursor_inc(timedelta(days=1), 0)
+            View._today_toggle_date = None
         else:
             cls._show_cursor()
 
@@ -362,32 +362,32 @@ class View_Week(View_DayUnit_Base):
     @classmethod
     def _cursor_move_lt(cls) -> None:
         # Callback for user moving cursor left.
-        i = day_in_week(GUI.cursor_date)
+        i = day_in_week(View._cursor_date)
         d = -7 if i<3 else (-3 if i==3 else -4)
-        GUI.cursor_inc(timedelta(days=d), 0)
-        GUI.today_toggle_date = None
+        cls.cursor_inc(timedelta(days=d), 0)
+        View._today_toggle_date = None
 
 
     @classmethod
     def _cursor_move_rt(cls) -> None:
         # Callback for user moving cursor right.
-        i = day_in_week(GUI.cursor_date)
+        i = day_in_week(View._cursor_date)
         d = 4 if i<3 else 7
-        GUI.cursor_inc(timedelta(days=d), 0)
-        GUI.today_toggle_date = None
+        cls.cursor_inc(timedelta(days=d), 0)
+        View._today_toggle_date = None
 
 
     @classmethod
     def _cursor_move_today(cls) -> None:
         # Callback for user toggling cursor between today & another date
         today = dt_date.today()
-        if GUI.cursor_date != today:
-            GUI.today_toggle_date = GUI.cursor_date
-            GUI.today_toggle_idx = GUI.cursor_idx_in_date
+        if View._cursor_date != today:
+            View._today_toggle_date = View._cursor_date
+            View._today_toggle_idx = View._cursor_idx_in_date
             cls.cursor_set_date(today)
             cls.redraw(en_changes=False)
-        elif GUI.today_toggle_date is not None:
-            cls.cursor_set_date(GUI.today_toggle_date, idx=GUI.today_toggle_idx)
+        elif View._today_toggle_date is not None:
+            cls.cursor_set_date(View._today_toggle_date, idx=View._today_toggle_idx)
             cls.redraw(en_changes=False)
 
 

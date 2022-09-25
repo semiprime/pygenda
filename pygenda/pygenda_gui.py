@@ -60,12 +60,6 @@ class GUI:
     SPINBUTTON_DEC_KEY = (Gdk.KEY_minus,Gdk.KEY_less)
     STYLE_ERR = 'dialog_error'
 
-    # !! Maybe move these to View class - more appropriate there?
-    cursor_date = dt_date.today()
-    cursor_idx_in_date = 0 # cursor index within date
-    today_toggle_date = None
-    today_toggle_idx = 0
-
     views = []
     view_widgets = [] # type: List[Gtk.Widget]
     _view_idx = 0 # take first view as default
@@ -250,10 +244,6 @@ class GUI:
         cls._init_date_format()
         EventDialogController.init()
 
-        # If date set from command line, jump there now
-        if Config.date:
-            GUI.cursor_date = Config.date
-
         # Wait for calendar to finish initialising before doing views
         while cls._starting_cal:
             if Gtk.main_iteration_do(False):
@@ -277,12 +267,20 @@ class GUI:
         cls._init_views()
         TodoDialogController.init() # Need to do this after Todo View init
 
+        # If view set in config, set index
         vw = Config.get('startup','view')
         if vw:
             for ii in range(len(GUI._VIEWS)):
                 if GUI._VIEWS[ii].lower() == vw:
                     cls._view_idx = ii
                     break
+
+        # If date set from command line, jump there now
+        if Config.date:
+            for i in range(cls._view_idx, cls._view_idx+len(cls.views)):
+                if cls.views[i%len(cls.views)].cursor_set_date(Config.date):
+                    break
+
         cls._box_view_cont.pack_start(cls._eventbox, True, True, 0)
         cls._box_view_cont.reorder_child(cls._eventbox, view_pos)
         cls._eventbox.add(cls.view_widgets[cls._view_idx])
@@ -369,14 +367,14 @@ class GUI:
 
     @classmethod
     def _init_views(cls) -> None:
-        # Get new Gtk Widgets for views.
-        # Add view switching options to menu.
+        # Get Gtk Widgets for views; add view switching options to menu
         for v in GUI._VIEWS:
             m = import_module('.pygenda_view_{:s}'.format(v.lower()),package='pygenda')
             cls.views.append(getattr(m, 'View_{:s}'.format(v)))
             cls.view_widgets.append(cls.views[-1].init())
             cls.view_widgets[-1].get_style_context().add_class('view')
 
+        # Add views to menu, so the user can switch to them
         menu_views_list = cls._builder.get_object('menu_views_list')
         accel_gp = Gtk.AccelGroup()
         cls._window.add_accel_group(accel_gp)
@@ -547,16 +545,6 @@ class GUI:
                 if v != cls._view_idx:
                     cls.switch_view(None, v, redraw=False)
                 break
-
-
-    @classmethod
-    def cursor_inc(cls, delta:timedelta, idx:int=None) -> None:
-        # Add delta to current cursor date; optionally set index in date.
-        # Call redraw on view.
-        cls.cursor_date += delta
-        if idx is not None:
-            cls.cursor_idx_in_date = idx
-        cls.view_redraw(en_changes=False)
 
 
     # Main

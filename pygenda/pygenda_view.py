@@ -38,7 +38,13 @@ from .pygenda_entryinfo import EntryInfo
 
 # Base class for pygenda Views (Week View, Year View, etc.)
 class View:
-    # Provide default implementations of required methods.
+    # Provide shared variables & default implementations of required methods.
+
+    # Variables for cursor display/navigation
+    _cursor_date = dt_date.today()
+    _cursor_idx_in_date = 0 # cursor index within date
+    _today_toggle_date = None
+    _today_toggle_idx = 0
 
     @staticmethod
     def view_name() -> str:
@@ -94,6 +100,16 @@ class View:
         # Handle pasting of text.
         # Default implementation does nothing.
         pass
+
+
+    @classmethod
+    def cursor_inc(cls, delta:timedelta, idx:int=None) -> None:
+        # Add delta to current cursor date; optionally set index in date.
+        # Call redraw on view.
+        View._cursor_date += delta
+        if idx is not None:
+            View._cursor_idx_in_date = idx
+        cls.redraw(en_changes=False)
 
 
     @classmethod
@@ -259,11 +275,12 @@ class View:
 
 class View_DayUnit_Base(View):
     # Used as base class for Day & Year views
+
     @classmethod
     def new_entry_from_example(cls, en:Union[iEvent,iTodo]) -> None:
         # Creates new entry based on entry en. Used for pasting entries.
         # Implementation for Week and Year Views - makes an event.
-        Calendar.new_entry_from_example(en, e_type=EntryInfo.TYPE_EVENT, dt_start=GUI.cursor_date)
+        Calendar.new_entry_from_example(en, e_type=EntryInfo.TYPE_EVENT, dt_start=View._cursor_date)
 
 
     @classmethod
@@ -278,7 +295,7 @@ class View_DayUnit_Base(View):
     def cursor_date(cls) -> Optional[dt_date]:
         # Returns date(time) with cursor.
         # Default implementation: cursor not on date.
-        return GUI.cursor_date
+        return View._cursor_date
 
 
     @classmethod
