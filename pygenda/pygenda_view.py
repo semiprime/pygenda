@@ -114,7 +114,7 @@ class View:
 
     @classmethod
     def cursor_set_date(cls, dt:dt_date) -> bool:
-        # Set cursor date & redraw if requested (with redraw parameter).
+        # Set cursor date.
         # Return True if can (False if can't) jump to date in this view.
         # Default implementation does nothing & returns False.
         return False
@@ -175,7 +175,7 @@ class View:
             end_date = dt_end-timedelta(1)
             if dt_st>=end_date:
                 return ''
-            t_str = format_compact_date(end_date, dt_st.year!=end_date.year, True)
+            t_str = format_compact_date(end_date, dt_st.year!=end_date.year, True) # type:str
         else:
             # At least one of dt_st,st_end is a datetime
             # => consider them *both* as datetimes
