@@ -473,13 +473,16 @@ class Calendar:
         if cls._todo_list is None:
             # Get events with no repeat rule & sort
             cls._todo_list = cls.calConnector.cal.walk('VTODO')
+            # !! Should really sort elsewhere - in View??
             cls._todo_list.sort(key=cls._todo_sortindex_priority)
 
 
     @staticmethod
     def _todo_sortindex_priority(t:iTodo) -> int:
         # Return sort key(s) used to sort todos by priority
-        return t['PRIORITY'] if 'PRIORITY' in t else 10
+        key_pri = t['PRIORITY'] if 'PRIORITY' in t else 10
+        key_ctime = t['CREATED'].dt.timestamp() if 'CREATED' in t else 0
+        return key_pri, key_ctime
 
 
     @classmethod
