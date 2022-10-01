@@ -48,6 +48,8 @@ class View_Todo(View):
     _last_cursor_list = None
     _last_cursor_idx_in_list = None
     _list_items = None # type: list
+    _target_listidx = None
+    _target_todo = None
     CURSOR_STYLE = 'todoview_cursor'
 
     @staticmethod
@@ -170,7 +172,8 @@ class View_Todo(View):
         # Creates new entry based on entry en. Used for pasting entries.
         # Type of entry depends on View (e.g. Todo View -> to-do item).
         cats = cls._list_default_cats[cls._cursor_list]
-        Calendar.new_entry_from_example(en, e_type=EntryInfo.TYPE_TODO, e_cats=cats)
+        new_en = Calendar.new_entry_from_example(en, e_type=EntryInfo.TYPE_TODO, e_cats=cats)
+        cls.cursor_goto_todo(new_en, cls._cursor_list)
 
 
     @classmethod
@@ -186,6 +189,17 @@ class View_Todo(View):
         # Returns index of todo list with cursor.
         # Used by "new todo" etc to initialise dialog with focused todo list.
         return cls._cursor_list
+
+
+    @classmethod
+    def cursor_goto_todo(cls, todo:iTodo, list_idx:int) -> bool:
+        # Move cursor to given todo in given list.
+        # Return True to indicate this is possible in this view.
+        # Set targets, but don't move yet, since we want to redraw view
+        # & to use recalculated todo order to determine cursor position.
+        cls._target_listidx = list_idx
+        cls._target_todo = todo
+        return True
 
 
     @classmethod
@@ -206,6 +220,13 @@ class View_Todo(View):
             cls._list_items.append([])
             for td in todos:
                 if cls._todo_matches_filter(td, cls._list_filters[i]):
+                    if cls._target_todo is not None and cls._target_todo is td:
+                        cls._cursor_list = i
+                        cls._cursor_idx_in_list = count
+                        if i>=cls._target_listidx:
+                            # We've reached the target list, so go no further
+                            cls._target_listidx = None
+                            cls._target_todo = None
                     row = Gtk.Box()
                     # Potential markers: ①-0x245f ➀-0x277f ❶-0x2775 ➊-0x2789
                     mark_label = Gtk.Label(chr(0x2789+td['PRIORITY']) if 'PRIORITY' in td else u'•')
@@ -234,6 +255,9 @@ class View_Todo(View):
             new_list_content.get_style_context().add_class('todoview_items')
             cls._list_container[i].add(new_list_content)
             cls._list_container[i].show_all()
+        # Reset target (though in theory this should already be done)
+        cls._target_listidx = None
+        cls._target_todo = None
         cls._show_cursor()
 
 
@@ -286,7 +310,8 @@ class View_Todo(View):
             ctx.add_class(cls.CURSOR_STYLE)
         cls._last_cursor_list = cls._cursor_list
         cls._last_cursor_idx_in_list = cls._cursor_idx_in_list
-        cls._scroll_to_cursor()
+        # Add scroll call to idle, in case column widths not yet determined
+        GLib.idle_add(cls._scroll_to_cursor, priority=GLib.PRIORITY_HIGH_IDLE+30)
 
 
     @classmethod
@@ -317,8 +342,8 @@ class View_Todo(View):
     @classmethod
     def _scroll_to_cursor(cls) -> None:
         # If required, scroll view elements so that cursor is visible.
-        # Note: On first call view is not yet drawn, so calculation is not
-        # correct. However, since don't need to scroll, behaviour is right.
+        # Note: If view is not yet drawn, calculation not correct.
+        # Hence the first time, this should be called in idle so draw occurs.
         list_width = cls._list_container[0].get_allocated_width() # homogeneous
         view_width = cls._topboxscroll.get_allocated_width()
         maxv = cls._cursor_list*list_width # left edge of list at left of view

@@ -547,6 +547,20 @@ class GUI:
                 break
 
 
+    @classmethod
+    def cursor_goto_todo(cls, todo:iTodo, list_idx:int) -> None:
+        # Call view to move cursor to given todo in given todo list.
+        # If current view does not support setting todo, try
+        # the next view etc., and make successful view active.
+        # (N.B.: Does not call redraw - caller needs to handle that.)
+        for i in range(cls._view_idx, cls._view_idx+len(cls.views)):
+            v = i%len(cls.views)
+            if cls.views[v].cursor_goto_todo(todo, list_idx): # True if view can show date
+                if v != cls._view_idx:
+                    cls.switch_view(None, v, redraw=False)
+                break
+
+
     # Main
     @classmethod
     def main(cls) -> None:
@@ -2010,9 +2024,10 @@ class TodoDialogController:
     def newtodo(cls, txt:str=None, list_idx:int=None) -> None:
         # Called to implement "new todo" from GUI, e.g. menu
         cls.dialog.set_title(_('New To-do'))
-        response,ei = cls._do_todo_dialog(txt=txt, list_idx=list_idx)
+        response,ei,list_idx = cls._do_todo_dialog(txt=txt, list_idx=list_idx)
         if response==Gtk.ResponseType.OK and ei.desc:
-            Calendar.new_entry(ei)
+            td = Calendar.new_entry(ei)
+            GUI.cursor_goto_todo(td, list_idx)
             GUI.view_redraw(en_changes=True)
 
 
@@ -2020,17 +2035,18 @@ class TodoDialogController:
     def edittodo(cls, todo:iTodo, list_idx:int=None) -> None:
         # Called to implement "edit todo" from GUI
         cls.dialog.set_title(_('Edit To-do'))
-        response,ei = cls._do_todo_dialog(todo=todo, list_idx=list_idx)
+        response,ei,list_idx = cls._do_todo_dialog(todo=todo, list_idx=list_idx)
         if response==Gtk.ResponseType.OK:
             if ei.desc:
                 Calendar.update_entry(todo, ei)
+                GUI.cursor_goto_todo(todo, list_idx)
                 GUI.view_redraw(en_changes=True)
             else: # Description text has been deleted in dialog
                 GUI.dialog_deleteentry(todo)
 
 
     @classmethod
-    def _do_todo_dialog(cls, txt:str=None, todo:iTodo=None, list_idx:Optional[int]=0) -> Tuple[int,EntryInfo]:
+    def _do_todo_dialog(cls, txt:str=None, todo:iTodo=None, list_idx:Optional[int]=0) -> Tuple[int,EntryInfo,int]:
         # Do the core work displaying todo dialog and extracting result.
         if list_idx==None: # View has not specified a default todo list
             list_idx = 0
@@ -2057,7 +2073,7 @@ class TodoDialogController:
         finally:
             cls.dialog.hide()
 
-        return response,cls._get_entryinfo()
+        return response,cls._get_entryinfo(),cls.wid_todolist.get_active()
 
 
     @classmethod

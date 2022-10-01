@@ -46,9 +46,11 @@ from .pygenda_entryinfo import EntryInfo
 # Interface base class to connect to different data sources.
 # Used by Calendar class (below).
 class CalendarConnector:
-    def add_entry(self, entry:Union[iEvent,iTodo]) -> None:
+    def add_entry(self, entry:Union[iEvent,iTodo]) -> Union[iEvent,iTodo]:
         # Add a new entry component to the calendar data and store it.
+        # Return reference to new entry (possibly different to one passed in).
         print('Warning: Add entry not implemented', file=stderr)
+        return entry
 
     def update_entry(self, entry:Union[iEvent,iTodo]) -> None:
         # Update an entry component in the calendar data and store it.
@@ -111,8 +113,9 @@ class Calendar:
 
 
     @classmethod
-    def new_entry(cls, e_inf:EntryInfo) -> None:
+    def new_entry(cls, e_inf:EntryInfo) -> Union[iEvent,iTodo]:
         # Add a new iCal entry with content from entry info object
+        # Return a reference to the new entry.
         if e_inf.type==EntryInfo.TYPE_EVENT:
             en = iEvent()
         elif e_inf.type==EntryInfo.TYPE_TODO:
@@ -145,11 +148,12 @@ class Calendar:
         if e_inf.priority:
             en.add('PRIORITY', e_inf.priority)
 
-        cls.calConnector.add_entry(en) # Write to store
+        entry = cls.calConnector.add_entry(en) # Write to store
+        return entry
 
 
     @classmethod
-    def new_entry_from_example(cls, exen:Union[iEvent,iTodo], e_type:int=None, dt_start:dt_date=None, e_cats:Union[list,bool,None]=True) -> None:
+    def new_entry_from_example(cls, exen:Union[iEvent,iTodo], e_type:int=None, dt_start:dt_date=None, e_cats:Union[list,bool,None]=True)-> Union[iEvent,iTodo]:
         # Add a new iCal entry to store given an iEvent as a "template".
         # Replace UID, timestamp etc. to make it a new event.
         # Potentially change type of entry to e_type.
@@ -157,6 +161,7 @@ class Calendar:
         # Potentially set categories (e_cats==True: "Use exen categories",
         #   False/None: "no categories", list[str]: "Use these categories").
         # Used to implement pasting events into new days/timeslots.
+        # Return a reference to the new entry.
         if e_type==EntryInfo.TYPE_EVENT or (e_type is None and isinstance(exen,iEvent)):
             en = iEvent()
         elif e_type==EntryInfo.TYPE_TODO or (e_type is None and isinstance(exen,iTodo)):
@@ -202,11 +207,12 @@ class Calendar:
             en.add('CATEGORIES', list(e_cats))
         if 'PRIORITY' in exen:
             en.add('PRIORITY', exen['PRIORITY'])
-        cls.calConnector.add_entry(en) # Write to store
+        en = cls.calConnector.add_entry(en) # Write to store
         if new_dt_start is not None:
             cls._entry_norep_list_sorted = None # Clear norep cache as modified
         if isinstance(en,iTodo):
             cls._todo_list = None # Clear todo cache as modified
+        return en
 
 
     @classmethod
@@ -544,10 +550,11 @@ class CalendarConnectorICSfile(CalendarConnector):
         os_rename(temp_filename, realfile)
 
 
-    def add_entry(self, entry:Union[iEvent,iTodo]) -> None:
+    def add_entry(self, entry:Union[iEvent,iTodo]) -> Union[iEvent,iTodo]:
         # Add a new entry component to the file data and write file.
         self.cal.add_component(entry)
         self._save_file()
+        return entry
 
 
     def update_entry(self, entry:Union[iEvent,iTodo]) -> None:
@@ -611,11 +618,14 @@ class CalendarConnectorCalDAV(CalendarConnector):
             self.cal.add_component(vtodo)
 
 
-    def add_entry(self, entry:Union[iEvent,iTodo]) -> None:
+    def add_entry(self, entry:Union[iEvent,iTodo]) -> Union[iEvent,iTodo]:
         # Create a new entry component on the server, and locally.
         vcstr = 'BEGIN:VCALENDAR\r\n{:s}END:VCALENDAR\r\n'.format(entry.to_ical().decode()) # !! Should we specify encoding for decode()?
         try:
-            conn_entry = self.calendar.save_event(vcstr)
+            if isinstance(entry,iTodo):
+                conn_entry = self.calendar.save_todo(vcstr)
+            else: # an iEvent
+                conn_entry = self.calendar.save_event(vcstr)
         except Exception as excep:
             # !! While code is in development, just exit on failure.
             # May change to something "friendlier" later...
@@ -627,6 +637,7 @@ class CalendarConnectorCalDAV(CalendarConnector):
         newentry = conn_entry.icalendar_instance.walk()[1]
         newentry.__conn_entry = conn_entry
         self.cal.add_component(newentry)
+        return newentry
 
 
     def update_entry(self, entry:Union[iEvent,iTodo]) -> None:

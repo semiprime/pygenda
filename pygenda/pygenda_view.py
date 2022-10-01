@@ -134,6 +134,14 @@ class View:
         return None
 
 
+    @classmethod
+    def cursor_goto_todo(cls, todo:iTodo, list_idx:int) -> bool:
+        # Move cursor to given todo in given list.
+        # Return True if can (False if can't) jump to todo in this view.
+        # Default implementation does nothing & returns False.
+        return False
+
+
     @staticmethod
     def entry_text_label(ev:iCal.Event, dt_st:dt_date, dt_end:dt_date) -> Gtk.Label:
         # Returns a GtkLabel with entry summary + icons as content.
