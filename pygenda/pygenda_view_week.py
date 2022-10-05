@@ -46,7 +46,7 @@ class View_Week(View_DayUnit_Base):
     })
 
     _day_ent_count = [0]*7 # entry count for each day
-    _visible_occurrences = []
+    _day_entries = [[], [], [], [], [], [], []]
     _week_viewed = None # So view will be fully redrawn when needed
     _last_cursor = None
     _scroll_callback_id = None
@@ -192,15 +192,17 @@ class View_Week(View_DayUnit_Base):
         # Called on view redraw.
         cls._last_cursor = None
         dt = start_of_week(View._cursor_date)
-        cls._visible_occurrences = Calendar.occurrence_list(dt, dt+timedelta(days=7))
-        itr = iter(cls._visible_occurrences)
+        cls._day_entries = [[], [], [], [], [], [], []] # reset stored events
+        cls._day_ent_count = [0]*7
+        sorted_occurrences = Calendar.occurrence_list(dt, dt+timedelta(days=7))
+        itr = iter(sorted_occurrences)
         try:
             occ = next(itr)
         except StopIteration:
             occ = None
-        cls._day_ent_count = [0]*7 # we'll fill this in as we display
+        oneday = timedelta(days=1)
         for i in range(7):
-            dt_nxt = dt + timedelta(days=1)
+            dt_nxt = dt + oneday
             # Delete anything previously written to day v-box
             cls._day_rows[i].foreach(Gtk.Widget.destroy)
             while True:
@@ -210,19 +212,7 @@ class View_Week(View_DayUnit_Base):
                 if dt_lte(dt_nxt, occ_dt_sta):
                     # into next day so break this loop
                     break
-                row = Gtk.Box()
-                # Create entry mark (bullet or time) & add to row
-                mark_label = cls.marker_label(occ[0], occ_dt_sta)
-                ctx = mark_label.get_style_context()
-                ctx.add_class('weekview_marker') # add style for CSS
-                row.add(mark_label)
-
-                # Create entry content label & add to row
-                cont_label = cls.entry_text_label(occ[0],occ_dt_sta,occ_dt_end)
-                cont_label.set_hexpand(True) # Also sets hexpand_set to True
-                row.add(cont_label)
-                cls._day_rows[i].add(row)
-                cls._day_ent_count[i] += 1
+                cls._add_day_entry_row(occ[0], occ_dt_sta, occ_dt_end, i)
                 try:
                     occ = next(itr)
                 except StopIteration:
@@ -236,6 +226,26 @@ class View_Week(View_DayUnit_Base):
                 cls._day_rows[i].add(mark_label)
             dt = dt_nxt
             cls._day_rows[i].show_all()
+
+
+    @classmethod
+    def _add_day_entry_row(cls, ev:iCal.Event, dt_st:dt_date, dt_end:dt_date, dayidx:int) -> None:
+        # Add Gtk labels for event 'ev', occurrence at time/date from 'dt_st'
+        # to 'dt_end', in day 'dayidx' (e.g. 0=Monday if week starts Monday).
+        # Used when displaying week contents.
+        row = Gtk.Box()
+        # Create entry mark (bullet or time) & add to row
+        mark_label = cls.marker_label(ev, dt_st)
+        ctx = mark_label.get_style_context()
+        ctx.add_class('weekview_marker') # add style for CSS
+        row.add(mark_label)
+        # Create entry content label & add to row
+        cont_label = cls.entry_text_label(ev, dt_st, dt_end)
+        cont_label.set_hexpand(True) # Also sets hexpand_set to True
+        row.add(cont_label)
+        cls._day_rows[dayidx].add(row)
+        cls._day_entries[dayidx].append(ev)
+        cls._day_ent_count[dayidx] += 1
 
 
     @classmethod
@@ -312,9 +322,7 @@ class View_Week(View_DayUnit_Base):
         dy = day_in_week(View._cursor_date)
         if cls._day_ent_count[dy]==0:
             return None
-        i = sum(cls._day_ent_count[:dy])
-        i += View._cursor_idx_in_date
-        return cls._visible_occurrences[i][0]
+        return cls._day_entries[dy][View._cursor_idx_in_date]
 
 
     @classmethod
