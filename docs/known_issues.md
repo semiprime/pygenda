@@ -182,12 +182,6 @@ Minor
 * Menu items are not disabled when not relevant (e.g. cut/copy when cursor
   is not on an entry). (Maybe "fullscreen" could toggle on/off too?)
 
-* When changing from Week View to Year View, if cursor is on an event
-  that is out of view, then the view should scroll to show that event.
-  (Tried fixing by making cls.scroll_to_row() call at end of
-  \_show_entry_cursor() into an idle_add. Worked first time, but not
-  subsequent times.)
-
 * If using a .ics file and multiple instances edit the same file, data
   can be lost (note: using .ics file is not recommended => minor)
 

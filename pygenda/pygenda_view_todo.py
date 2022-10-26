@@ -50,6 +50,7 @@ class View_Todo(View):
     _list_items = None # type: list
     _target_listidx = None
     _target_todo = None
+    _scroll_to_cursor_required = False
     CURSOR_STYLE = 'todoview_cursor'
 
     @staticmethod
@@ -121,6 +122,7 @@ class View_Todo(View):
         list_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         list_hbox.set_homogeneous(True)
         cls._topboxscroll.add(list_hbox)
+        list_hbox.connect('draw', cls._pre_draw)
 
         # Now add vertical boxes for each list
         cls._list_container = []
@@ -311,7 +313,18 @@ class View_Todo(View):
         cls._last_cursor_list = cls._cursor_list
         cls._last_cursor_idx_in_list = cls._cursor_idx_in_list
         # Add scroll call to idle, in case column widths not yet determined
-        GLib.idle_add(cls._scroll_to_cursor, priority=GLib.PRIORITY_HIGH_IDLE+30)
+        cls._scroll_to_cursor_required = True
+
+
+    @classmethod
+    def _pre_draw(cls, wid:Gtk.Widget, _) -> None:
+        # Callback called on 'draw' event on date_content.
+        # Called before drawing date content.
+        # Used to scroll window when cursor has been moved (since we
+        # need to have calculated the layout to know where to scoll to).
+        if cls._scroll_to_cursor_required:
+            cls._scroll_to_cursor()
+            cls._scroll_to_cursor_required = False
 
 
     @classmethod
@@ -384,7 +397,7 @@ class View_Todo(View):
 
     @classmethod
     def keypress(cls, wid:Gtk.Widget, ev:Gdk.EventKey) -> None:
-        # Handle key press event in Week view.
+        # Handle key press event in Todo view.
         # Called (from GUI.keypress()) on keypress (or repeat) event
         try:
             f = cls._KEYMAP[ev.keyval]

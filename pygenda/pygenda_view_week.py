@@ -49,7 +49,7 @@ class View_Week(View_DayUnit_Base):
     _day_entries = [[], [], [], [], [], [], []]
     _week_viewed = None # So view will be fully redrawn when needed
     _last_cursor = None
-    _scroll_callback_id = None
+    _scroll_to_cursor_in_day = None
     CURSOR_STYLE = 'weekview_cursor'
 
     @staticmethod
@@ -125,6 +125,7 @@ class View_Week(View_DayUnit_Base):
             day_scroller.add(cls._day_rows[i])
             ctx = cls._day_rows[i].get_style_context()
             ctx.add_class('weekview_daytext')
+            cls._day_rows[i].connect('draw', cls._pre_datecontent_draw, i)
             day_box.pack_start(day_scroller, True, True, 0)
 
         # Attach elements to pages
@@ -267,25 +268,23 @@ class View_Week(View_DayUnit_Base):
         ctx = mk.get_style_context()
         ctx.add_class(cls.CURSOR_STYLE)
         cls._last_cursor = int(dy+8*i)
-        if cls._scroll_callback_id is not None:
-            # Cancel existing callback to prevent inconsistent scroll requests.
-            GLib.source_remove(cls._scroll_callback_id)
-            cls._scroll_callback_id = None
         if cls._day_ent_count[dy] > 0:
             # We may need to scroll content to show entry at cursor.
-            # Want this to happen after redraw, otherwise, can't access
-            # dimensions of elements needed to calculate scroll size (because
-            # they haven't been calculated). So delay scroll to after redraw.
-            # We save the returned id so the callback can be cancelled.
-            cls._scroll_callback_id = GLib.idle_add(cls._scroll_to_row, cls._day_rows[dy], i, cls._day_scroll[dy], priority=GLib.PRIORITY_HIGH_IDLE+30)
+            cls._day_rows[dy].queue_draw()
+            cls._scroll_to_cursor_in_day = dy # to be read in draw handler
+        else:
+            cls._scroll_to_cursor_in_day = None
 
 
     @classmethod
-    def _scroll_to_row(cls, rowbox:Gtk.Box, row:int, scroller:Gtk.ScrolledWindow) -> bool:
-        # Local version of scroll_to_row() that clears the id, then
-        # calls the parent class scroll_to_row() to do the work.
-        cls._scroll_callback_id = None
-        return cls.scroll_to_row(rowbox, row, scroller)
+    def _pre_datecontent_draw(cls, wid:Gtk.Widget, _, day:int) -> None:
+        # Callback called on 'draw' event on date_content.
+        # Called before drawing date content.
+        # Used to scroll window when cursor has been moved (since we
+        # need to have calculated the layout to know where to scoll to).
+        if cls._scroll_to_cursor_in_day == day:
+            cls.scroll_to_row(cls._day_rows[day], View._cursor_idx_in_date, cls._day_scroll[day])
+            cls._scroll_to_cursor_in_day = None
 
 
     @classmethod

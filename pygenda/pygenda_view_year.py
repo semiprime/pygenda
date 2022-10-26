@@ -52,6 +52,7 @@ class View_Year(View_DayUnit_Base):
     _visible_occurrences = None
     _show_datecontent_pending = False
     _date_content_count = 0
+    _scroll_to_cursor_required = False
 
     @staticmethod
     def view_name() -> str:
@@ -75,6 +76,7 @@ class View_Year(View_DayUnit_Base):
         cls._date_label = GUI._builder.get_object('year_datelabel')
         cls._date_content_scroll = GUI._builder.get_object('year_datecontent_scroll')
         cls._date_content = GUI._builder.get_object('year_datecontent')
+        cls._date_content.connect('draw', cls._pre_datecontent_draw)
         cls._draw_day_month_labels()
         cls._year_viewed = -1 # Indicates next redraw will draw year
         cls._init_keymap()
@@ -304,7 +306,18 @@ class View_Year(View_DayUnit_Base):
         ctx = mk.get_style_context()
         ctx.add_class(cls.ENTRY_CURSOR_STYLE)
         cls._last_entry_cursor = i
-        cls.scroll_to_row(cls._date_content, i, cls._date_content_scroll)
+        cls._scroll_to_cursor_required = True # to be read in draw handler
+
+
+    @classmethod
+    def _pre_datecontent_draw(cls, wid:Gtk.Widget, _) -> None:
+        # Callback called on 'draw' event on date_content.
+        # Called before drawing date content.
+        # Used to scroll window when cursor has been moved (since we
+        # need to have calculated the layout to know where to scoll to).
+        if cls._scroll_to_cursor_required:
+            cls.scroll_to_row(cls._date_content, View._cursor_idx_in_date, cls._date_content_scroll)
+            cls._scroll_to_cursor_required = False
 
 
     @classmethod
