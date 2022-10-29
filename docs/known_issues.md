@@ -158,7 +158,7 @@ Minor
 -----
 (Note: minor bugs can still be irritating!)
 
-* After creating/editing an event, cursor not always on that event
+* After creating/editing a repeating event, cursor not always on that event
 
 * Would be nice to be able to edit dates with a calendar interface
   (Like pressing tab in S5)

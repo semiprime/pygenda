@@ -27,7 +27,7 @@ from gi.repository import Gtk, Gdk, GLib
 from gi.repository.Pango import WrapMode as PWrapMode
 
 from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
-from datetime import date as dt_date, timedelta
+from datetime import date as dt_date, datetime as dt_datetime, timedelta
 from typing import Optional, Union
 
 from .pygenda_gui import GUI, EventDialogController
@@ -132,6 +132,14 @@ class View:
         # returns index of todo list with cursor
         # Default implementation: cursor not on todo list.
         return None
+
+
+    @classmethod
+    def cursor_goto_event(cls, ev:iEvent) -> bool:
+        # Move cursor to given event.
+        # Return True if can (False if can't) jump to todo in this view.
+        # Default implementation does nothing & returns False.
+        return False
 
 
     @classmethod
@@ -288,7 +296,8 @@ class View_DayUnit_Base(View):
     def new_entry_from_example(cls, en:Union[iEvent,iTodo]) -> None:
         # Creates new entry based on entry en. Used for pasting entries.
         # Implementation for Week and Year Views - makes an event.
-        Calendar.new_entry_from_example(en, e_type=EntryInfo.TYPE_EVENT, dt_start=View._cursor_date)
+        new_en = Calendar.new_entry_from_example(en, e_type=EntryInfo.TYPE_EVENT, dt_start=View._cursor_date)
+        cls.cursor_goto_event(new_en)
 
 
     @classmethod
@@ -324,6 +333,22 @@ class View_DayUnit_Base(View):
         # Returns entry at cursor position, or None if cursor not on entry.
         # Default: None. Derived classes will provided their implementations.
         return None
+
+
+    @classmethod
+    def cursor_goto_event(cls, ev:iEvent) -> bool:
+        # Move cursor to given event.
+        # Set target, so can jump on next redraw.
+        repeats = 'RRULE' in ev # Boolean
+        if not repeats:
+            # Move cursor to first day of event
+            # !! Need to make repeating case do something sensible
+            dt = ev['DTSTART'].dt
+            if isinstance(dt, dt_datetime):
+                dt = dt.date()
+            cls.cursor_set_date(dt)
+        cls._target_entry = ev # NB: week+year view classes have this variable
+        return True # Indicates success, so use this view
 
 
     # Bullets to use as markers in Week/Year views

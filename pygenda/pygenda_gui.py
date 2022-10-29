@@ -548,14 +548,28 @@ class GUI:
 
 
     @classmethod
+    def cursor_goto_event(cls, ev:iEvent) -> None:
+        # Call view to move cursor to given event.
+        # If current view does not support showing event (e.g. Todo View),
+        # try next view etc., and make successful view active.
+        # (N.B.: Does not call redraw - caller needs to handle that.)
+        for i in range(cls._view_idx, cls._view_idx+len(cls.views)):
+            v = i%len(cls.views)
+            if cls.views[v].cursor_goto_event(ev): # True if view can show event
+                if v != cls._view_idx:
+                    cls.switch_view(None, v, redraw=False)
+                break
+
+
+    @classmethod
     def cursor_goto_todo(cls, todo:iTodo, list_idx:int) -> None:
         # Call view to move cursor to given todo in given todo list.
-        # If current view does not support setting todo, try
+        # If current view does not support displaying todo, try
         # the next view etc., and make successful view active.
         # (N.B.: Does not call redraw - caller needs to handle that.)
         for i in range(cls._view_idx, cls._view_idx+len(cls.views)):
             v = i%len(cls.views)
-            if cls.views[v].cursor_goto_todo(todo, list_idx): # True if view can show date
+            if cls.views[v].cursor_goto_todo(todo, list_idx): # True if view can show todo
                 if v != cls._view_idx:
                     cls.switch_view(None, v, redraw=False)
                 break
@@ -1402,13 +1416,8 @@ class EventDialogController:
         cls._empty_desc_allowed = True # initially allowed, can switch to False
         response,ei = cls._do_event_dialog(txt=txt, date=date)
         if response==Gtk.ResponseType.OK and ei.desc:
-            Calendar.new_entry(ei)
-            if ei.rep_type is None:
-                # Jump to event date (not repeating, so well-defined)
-                # !! This is a quick fix most common case. Need to fix:
-                #    - Multiple entries on one day - jump to correct
-                #    - Repeating entries (jump to visible/closest)
-                GUI.cursor_goto_date(ei.get_start_date())
+            ev = Calendar.new_entry(ei)
+            GUI.cursor_goto_event(ev)
             GUI.view_redraw(en_changes=True)
 
 
@@ -1421,9 +1430,7 @@ class EventDialogController:
         if response==Gtk.ResponseType.OK:
             if ei.desc:
                 Calendar.update_entry(event, ei)
-                if ei.rep_type is None:
-                    # Jump to event date
-                    GUI.cursor_goto_date(ei.get_start_date())
+                GUI.cursor_goto_event(event)
                 GUI.view_redraw(en_changes=True)
             else: # Description text has been deleted in dialog
                 GUI.dialog_deleteentry(event)

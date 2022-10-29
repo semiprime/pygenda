@@ -53,6 +53,7 @@ class View_Year(View_DayUnit_Base):
     _show_datecontent_pending = False
     _date_content_count = 0
     _scroll_to_cursor_required = False
+    _target_entry = None
 
     @staticmethod
     def view_name() -> str:
@@ -284,11 +285,16 @@ class View_Year(View_DayUnit_Base):
             cont_label.set_hexpand(True) # Also sets hexpand_set to True
             row.add(cont_label)
             cls._date_content.add(row)
+            # See if we've hit the cursor target entry
+            if cls._target_entry is not None and cls._target_entry is occ[0]:
+                View._cursor_idx_in_date = r
+                cls._target_entry = None
             r += 1
         cls._date_content_count = r
         cls._date_content.show_all()
         cls._show_entry_cursor()
         cls._show_datecontent_pending = False
+        cls._target_entry = None # just in case - should be done already
 
 
     @classmethod

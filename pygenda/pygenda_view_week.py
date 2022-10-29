@@ -25,7 +25,7 @@ gi_require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GLib
 
 from calendar import day_abbr,month_name
-from datetime import time as dt_time, date as dt_date, timedelta
+from datetime import time as dt_time, date as dt_date, datetime as dt_datetime, timedelta
 from icalendar import cal as iCal
 from locale import gettext as _
 from typing import Optional
@@ -50,6 +50,7 @@ class View_Week(View_DayUnit_Base):
     _week_viewed = None # So view will be fully redrawn when needed
     _last_cursor = None
     _scroll_to_cursor_in_day = None
+    _target_entry = None
     CURSOR_STYLE = 'weekview_cursor'
 
     @staticmethod
@@ -213,6 +214,10 @@ class View_Week(View_DayUnit_Base):
                 if dt_lte(dt_nxt, occ_dt_sta):
                     # into next day so break this loop
                     break
+                # First, see if we've hit the cursor target entry
+                if cls._target_entry is not None and cls._target_entry is occ[0] and dt==View._cursor_date:
+                    View._cursor_idx_in_date = cls._day_ent_count[i]
+                    cls._target_entry = None
                 cls._add_day_entry_row(occ[0], occ_dt_sta, occ_dt_end, i)
                 try:
                     occ = next(itr)
@@ -227,6 +232,7 @@ class View_Week(View_DayUnit_Base):
                 cls._day_rows[i].add(mark_label)
             dt = dt_nxt
             cls._day_rows[i].show_all()
+        cls._target_entry = None # just in case - should be done already
 
 
     @classmethod
