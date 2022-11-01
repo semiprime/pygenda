@@ -139,6 +139,7 @@ class GUI:
             'menuitem_cut': cls.cut_request,
             'menuitem_copy': cls.copy_request,
             'menuitem_paste': cls.paste_request,
+            'menuitem_find': cls.handler_find,
             'menuitem_newevent': cls.handler_newevent,
             'menuitem_newtodo': cls.handler_newtodo,
             'menuitem_edittime': cls.handler_edittime,
@@ -243,6 +244,7 @@ class GUI:
         cls._init_clipboard()
         cls._init_date_format()
         EventDialogController.init()
+        FindController.init()
 
         # Wait for calendar to finish initialising before doing views
         while cls._starting_cal:
@@ -593,6 +595,11 @@ class GUI:
         # Callback for new event signal (menu, softbutton)
         date = cls.views[cls._view_idx].cursor_date()
         EventDialogController.newevent(date=date)
+
+    @classmethod
+    def handler_find(cls, *args) -> None:
+        # Callback for find signal (menu)
+        FindController.find()
 
     @classmethod
     def handler_newtodo(cls, *args) -> None:
@@ -2092,3 +2099,62 @@ class TodoDialogController:
         ei.set_categories(cls.list_default_cats[list_idx])
         ei.set_priority(cls.wid_priority.get_active())
         return ei
+
+
+# Singleton class to manage Find dialog
+class FindController:
+    dialog = None # type: Gtk.Dialog
+    find_text = None # type: Gtk.Entry
+
+    @classmethod
+    def init(cls) -> None:
+        # Initialiser for FindController singleton class.
+        # Called from GUI init_stage2().
+
+        # Get some references to dialog elements in glade
+        cls.dialog = GUI._builder.get_object('dialog_find')
+        cls.find_text = GUI._builder.get_object('dialog_find_text')
+        if (not cls.dialog or not cls.find_text): # Sanity check
+            raise NameError('Dialog Find not found')
+
+    @classmethod
+    def find(cls) -> None:
+        # Opens Find dialog and passes seach query to _find_results()
+        cls.find_text.grab_focus()
+        response = cls.dialog.run()
+        cls.dialog.hide()
+        if response==Gtk.ResponseType.OK and cls.find_text.get_text():
+            cls._find_results()
+
+
+    @classmethod
+    def _find_results(cls) -> None:
+        # Passes search query to Calendar and displays results in a dialog.
+        r_dialog = Gtk.Dialog(title=_('Find results'), parent=GUI._window,
+            flags=Gtk.DialogFlags.MODAL|Gtk.DialogFlags.DESTROY_WITH_PARENT,
+            buttons=(Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE))
+        r_dialog.set_icon_name('edit-find')
+        txt = cls.find_text.get_text()
+        res = Calendar.search(txt)
+        if not res:
+            r_dialog.get_content_area().add(Gtk.Label(_('No results found')))
+        else:
+            scroller = Gtk.ScrolledWindow()
+            scroller.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+            scroller.set_overlay_scrolling(False)
+            r_grid = Gtk.Grid()
+            scroller.get_style_context().add_class('find_results')
+            scroller.add(r_grid)
+            r_dialog.get_content_area().add(scroller)
+            i = 0
+            for en in res:
+                dt = en['DTSTART'].dt
+                l_dt = Gtk.Label(dt.strftime(GUI.date_formatting_numeric))
+                r_grid.attach(l_dt, 0, i, 1, 1)
+                l_sum = Gtk.Label(en['SUMMARY'])
+                l_sum.set_halign(Gtk.Align.START)
+                r_grid.attach(l_sum, 1, i, 1, 1)
+                i += 1
+        r_dialog.show_all()
+        r_dialog.run()
+        r_dialog.destroy()

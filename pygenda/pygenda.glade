@@ -41,6 +41,11 @@
 		<property name="step-increment">1</property>
 		<property name="page-increment">10</property>
 	</object>
+	<object class="GtkImage" id="image-find">
+		<property name="visible">True</property>
+		<property name="can-focus">False</property>
+		<property name="stock">gtk-find</property>
+	</object>
 	<object class="GtkApplicationWindow" id="window_main">
 		<property name="can-focus">False</property>
 		<property name="title">Pygenda</property>
@@ -159,6 +164,24 @@
 												<property name="use-stock">True</property>
 												<signal name="activate" handler="menuitem_paste" swapped="no"/>
 												<accelerator key="v" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+										<child>
+											<object class="GtkSeparatorMenuItem">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+											</object>
+										</child>
+										<child>
+											<object class="GtkImageMenuItem">
+												<property name="label" translatable="yes">_Find…</property>
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="use-underline">True</property>
+												<property name="image">image-find</property>
+												<property name="use-stock">False</property>
+												<signal name="activate" handler="menuitem_find" swapped="no"/>
+												<accelerator key="f" signal="activate" modifiers="GDK_CONTROL_MASK"/>
 											</object>
 										</child>
 									</object>
@@ -653,6 +676,7 @@
 			</packing>
 		</child>
 	</object>
+	<!-- n-columns=3 n-rows=4 -->
 	<object class="GtkGrid" id="view_year">
 		<property name="name">view_year</property>
 		<property name="visible">True</property>
@@ -1886,6 +1910,124 @@ long description, attendees…</property>
 		<action-widgets>
 			<action-widget response="-6">button-dialog-todo-cancel</action-widget>
 			<action-widget response="-5">button-dialog-todo-ok</action-widget>
+		</action-widgets>
+	</object>
+	<object class="GtkDialog" id="dialog_find">
+		<property name="can-focus">False</property>
+		<property name="title" translatable="yes">Find</property>
+		<property name="modal">True</property>
+		<property name="destroy-with-parent">True</property>
+		<property name="icon-name">edit-find</property>
+		<property name="type-hint">dialog</property>
+		<property name="transient-for">window_main</property>
+		<child internal-child="vbox">
+			<object class="GtkBox">
+				<property name="can-focus">False</property>
+				<property name="orientation">vertical</property>
+				<property name="spacing">2</property>
+				<child internal-child="action_area">
+					<object class="GtkButtonBox">
+						<property name="can-focus">False</property>
+						<property name="layout-style">end</property>
+						<child>
+							<object class="GtkButton" id="button-dialog-find-cancel">
+								<property name="label">gtk-cancel</property>
+								<property name="visible">True</property>
+								<property name="can-focus">True</property>
+								<property name="receives-default">True</property>
+								<property name="use-stock">True</property>
+							</object>
+							<packing>
+								<property name="expand">True</property>
+								<property name="fill">True</property>
+								<property name="position">0</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkButton" id="button-dialog-find-ok">
+								<property name="label">gtk-ok</property>
+								<property name="visible">True</property>
+								<property name="can-focus">True</property>
+								<property name="can-default">True</property>
+								<property name="has-default">True</property>
+								<property name="receives-default">True</property>
+								<property name="use-stock">True</property>
+							</object>
+							<packing>
+								<property name="expand">True</property>
+								<property name="fill">True</property>
+								<property name="position">1</property>
+							</packing>
+						</child>
+					</object>
+					<packing>
+						<property name="expand">False</property>
+						<property name="fill">False</property>
+						<property name="position">0</property>
+					</packing>
+				</child>
+				<child>
+					<!-- n-columns=2 n-rows=2 -->
+					<object class="GtkGrid">
+						<property name="visible">True</property>
+						<property name="can-focus">False</property>
+						<child>
+							<object class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="label" translatable="yes">Find text:</property>
+								<style>
+									<class name="llabel"/>
+								</style>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">0</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkEntry" id="dialog_find_text">
+								<property name="visible">True</property>
+								<property name="can-focus">True</property>
+								<property name="has-focus">True</property>
+								<property name="hexpand">True</property>
+								<property name="activates-default">True</property>
+								<style>
+									<class name="textentry"/>
+								</style>
+							</object>
+							<packing>
+								<property name="left-attach">1</property>
+								<property name="top-attach">0</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="hexpand">True</property>
+								<property name="vexpand">True</property>
+								<property name="label">Note: Find functionality is placeholder</property>
+								<property name="justify">center</property>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">1</property>
+								<property name="width">2</property>
+							</packing>
+						</child>
+					</object>
+					<packing>
+						<property name="expand">False</property>
+						<property name="fill">True</property>
+						<property name="position">1</property>
+					</packing>
+				</child>
+			</object>
+		</child>
+		<action-widgets>
+			<action-widget response="-6">button-dialog-find-cancel</action-widget>
+			<action-widget response="-5">button-dialog-find-ok</action-widget>
 		</action-widgets>
 	</object>
 </interface>

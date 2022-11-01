@@ -444,3 +444,15 @@ entry {
 	transition-duration:0.15s;
 	transition-delay:0s;
 }
+
+/* Find results dialog */
+
+.find_results {
+	background:white;
+	min-width:30em;
+	min-height:10em;
+}
+
+.find_results label {
+	padding:0.3ex;
+}

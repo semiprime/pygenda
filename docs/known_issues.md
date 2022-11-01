@@ -52,7 +52,8 @@ Major
   (In tests, with .ics file, file writing is slow; with CalDAV server
   re-sorting the lists is slow.)
 
-* No "Find" function
+* "Find" function is rudimentary/placeholder (no options, doesn't search
+  todo items, can't jump to entries from results, not progressive ...).
 
 * No "Import" function
 

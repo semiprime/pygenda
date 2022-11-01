@@ -499,6 +499,25 @@ class Calendar:
         return cls._todo_list
 
 
+    @classmethod
+    def search(cls, txt:str) -> list:
+        # Searches through entries for text string 'txt'.
+        # !! Simple version - need to add options
+        ret_list = []
+        txt_n = txt.casefold() # !! also need to remove accents !!
+        # Non-repeating entries
+        cls._update_entry_norep_list()
+        for ev in cls._entry_norep_list_sorted:
+            if 'SUMMARY' in ev and txt_n in ev['SUMMARY'].casefold():
+                ret_list.append(ev)
+        # Repeating entries
+        cls._update_entry_rep_list()
+        for ev in cls._entry_rep_list:
+            if 'SUMMARY' in ev and txt_n in ev['SUMMARY'].casefold():
+                ret_list.append(ev)
+        return ret_list
+
+
 #
 # Connector class for ICS files
 #
