@@ -66,6 +66,7 @@ Checklist for releases
 * Run test_repeats.py unit tests.
 * Check repeats in test02_repeats.ics displayed correctly
 * Check darkmode & backgrounds CSS still work
+* Check mouse clicks/touchscreen taps work (all views)
 * Check start_week_day!=Monday still works (all views)
 * Increase version number
 

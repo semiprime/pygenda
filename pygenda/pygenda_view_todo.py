@@ -140,7 +140,10 @@ class View_Todo(View):
             new_list_content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
             new_list_scroller.add(new_list_content)
             cls._list_container.append(new_list_scroller)
-            list_hbox.add(new_list)
+            new_eventbox = Gtk.EventBox()
+            new_eventbox.connect('button_press_event', cls.click_list, i)
+            new_eventbox.add(new_list)
+            list_hbox.add(new_eventbox)
 
 
     @classmethod
@@ -291,6 +294,51 @@ class View_Todo(View):
         else:
             cats = [c for c in td['CATEGORIES'].cats if c]
         return cats
+
+
+    @classmethod
+    def click_list(cls, wid:Gtk.Widget, ev:Gdk.EventButton, list_idx:int) -> None:
+        # Callback. Called whenever a list is clicked/tapped.
+        # Moves cursor to list/item clicked
+        cls._cursor_move_list(list_idx)
+        parent_vbox = wid.get_children()[0] # 2 rows: title & scroller
+        title = parent_vbox.get_children()[0]
+        scroller = cls._list_container[list_idx]
+        vwport = scroller.get_children()[0]
+        row_vbox = vwport.get_children()[0]
+        # Pixels above the first row:
+        ycount = title.get_allocated_height()
+        ycount += parent_vbox.get_spacing()
+        ycount += cls._top_spacing(scroller)
+        ycount += cls._top_spacing(vwport)
+        ycount += cls._top_spacing(row_vbox)
+        i = 0
+        if ev.y > ycount:
+            # Click occurred in list area, rather than todo list title
+            # Take account of list's vertical scrollbar:
+            ycount -= cls._list_container[list_idx].get_vadjustment().get_value()
+            # Look through rows until cumulative height exceeds click ycoord
+            row_spacing = row_vbox.get_spacing()
+            rows = row_vbox.get_children()
+            ycount -= row_spacing//2 # adjust for no spacing above first row
+            for r in rows:
+                ycount += r.get_allocated_height()
+                ycount += row_spacing
+                if ycount > ev.y:
+                    break
+                i += 1
+        cls._cursor_move_index(i)
+        cls._scroll_to_cursor_required = True
+
+
+    @staticmethod
+    def _top_spacing(wid:Gtk.Widget) -> float:
+        # Return size of padding+border+margin of widget
+        ctx = wid.get_style_context()
+        pad = ctx.get_padding(Gtk.StateFlags.NORMAL)
+        bord = ctx.get_border(Gtk.StateFlags.NORMAL)
+        marg = ctx.get_margin(Gtk.StateFlags.NORMAL)
+        return pad.top + bord.top + marg.top
 
 
     @classmethod

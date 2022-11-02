@@ -65,8 +65,8 @@ Medium
 ------
 * No "Zoom" function (is this even needed with a decent modern display?)
 
-* Todo View navigation needs work: touchscreen not supported, and
-  left/right can make cursor jump up and down
+* Todo View navigation needs refining: left/right can make cursor jump
+  up and down
 
 * Todo items cannot be shown in Week or Year views
 
