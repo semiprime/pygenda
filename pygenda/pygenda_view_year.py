@@ -128,6 +128,8 @@ class View_Year(View_DayUnit_Base):
         cls._KEYMAP_SHIFT = {
             Gdk.KEY_Up: lambda: cls._idxcursor_move_up(),
             Gdk.KEY_Down: lambda: cls._idxcursor_move_dn(),
+            Gdk.KEY_Page_Up: lambda: cls._idxcursor_move_up(), # !! Placeholder
+            Gdk.KEY_Page_Down: lambda: cls._idxcursor_move_dn(),#!! Placeholder
         }
 
 
