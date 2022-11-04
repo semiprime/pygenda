@@ -33,7 +33,7 @@ def print_stamp_uid():
     uid += 1
 
 
-def print_vevent(desc, date, time=None, endtime=None, daycount=None, repeat=None, repeat_count=0, status=None):
+def print_vevent(desc, date, time=None, endtime=None, daycount=None, repeat=None, interval=1, repeat_count=None, bymonthday=None, status=None):
     if isinstance(date, str):
         date = datetime.strptime(date,'%Y-%m-%d').date()
     print('BEGIN:VEVENT', end='\r\n')
@@ -53,19 +53,36 @@ def print_vevent(desc, date, time=None, endtime=None, daycount=None, repeat=None
             print('DTEND;VALUE=DATE:{:04d}{:02d}{:02d}'.format(enddate.year, enddate.month, enddate.day), end='\r\n')
     print_stamp_uid()
     if repeat=='YEARLY':
-        print('RRULE:FREQ=YEARLY;INTERVAL=1{:s}'.format('' if repeat_count==0 else ';COUNT={:d}'.format(repeat_count)), end='\r\n')
+        print('RRULE:FREQ=YEARLY{:s}{:s}{:s}'.format(
+            '' if interval==1 else ';INTERVAL={:d}'.format(interval),
+            '' if bymonthday is None else ';BYMONTH={:d};BYDAY={:s}'.format(bymonthday[0],bymonthday[1]),
+            '' if repeat_count is None else ';COUNT={:d}'.format(repeat_count)
+            ), end='\r\n')
     elif repeat=='WEEKLY':
-        print('RRULE:FREQ=WEEKLY;INTERVAL=1{:s}'.format('' if repeat_count==0 else ';COUNT={:d}'.format(repeat_count)), end='\r\n')
-    elif repeat=='FORTNIGHTLY':
-        print('RRULE:FREQ=WEEKLY;INTERVAL=2{:s}'.format('' if repeat_count==0 else ';COUNT={:d}'.format(repeat_count)), end='\r\n')
+        print('RRULE:FREQ=WEEKLY{:s}{:s}'.format(
+            '' if interval==1 else ';INTERVAL={:d}'.format(interval),
+            '' if repeat_count is None else ';COUNT={:d}'.format(repeat_count)
+            ), end='\r\n')
+    elif repeat=='MONTHLY':
+        print('RRULE:FREQ=MONTHLY{:s}{:s}{:s}'.format(
+            '' if interval==1 else ';INTERVAL={:d}'.format(interval),
+            '' if bymonthday is None else ';BYDAY={:s}'.format(bymonthday),
+            '' if repeat_count is None else ';COUNT={:d}'.format(repeat_count)
+            ), end='\r\n')
     if status is not None:
         print('STATUS:{:s}'.format(status.upper()), end='\r\n')
     print('END:VEVENT', end='\r\n')
 
 
-def print_vtodo(desc, date=None):
+def print_vtodo(desc, cat=None, priority=None, status=None, date=None):
     print('BEGIN:VTODO', end='\r\n')
     print('SUMMARY:{:s}'.format(desc), end='\r\n')
+    if cat is not None:
+        print('CATEGORIES:{:s}'.format(cat), end='\r\n')
+    if priority is not None:
+        print('PRIORITY:{:d}'.format(priority), end='\r\n')
+    if status is not None:
+        print('STATUS:{:s}'.format(status), end='\r\n')
     if date is not None:
         if isinstance(date, str):
             date = date.strptime(date,'%Y-%m-%d').date()
@@ -75,18 +92,10 @@ def print_vtodo(desc, date=None):
 
 
 def print_daylight_saving_changes():
-    print('BEGIN:VEVENT', end='\r\n')
-    print('SUMMARY:Clocks go forward', end='\r\n')
-    print('DTSTART;VALUE=DATE-TIME:20000326T010000', end='\r\n')
-    print_stamp_uid()
-    print('RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3', end='\r\n')
-    print('END:VEVENT', end='\r\n')
-    print('BEGIN:VEVENT', end='\r\n')
-    print('SUMMARY:Clocks go back', end='\r\n')
-    print('DTSTART;VALUE=DATE-TIME:20001029T010000', end='\r\n')
-    print_stamp_uid()
-    print('RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10', end='\r\n')
-    print('END:VEVENT', end='\r\n')
+    print_vevent('Clocks go forward (Europe)', '2000-03-26', time='1:00', repeat='YEARLY', bymonthday=[3,'-1SU'])
+    print_vevent('Clocks go back (Europe)', '2000-10-29', time='1:00', repeat='YEARLY', bymonthday=[10,'-1SU'])
+    print_vevent('Clocks go forward (US)', '2000-03-12', time='2:00', repeat='YEARLY', bymonthday=[3,'2SU'])
+    print_vevent('Clocks go back (US)', '2000-11-05', time='2:00', repeat='YEARLY', bymonthday=[11,'1SU'])
 
 
 def print_thanksgiving():
@@ -124,16 +133,25 @@ print_vevent('Bonfire Night', '2000-11-05', repeat='YEARLY', daycount=1)
 print_vevent('Halloween', '2000-10-31', repeat='YEARLY', daycount=1)
 print_vevent('Valentine\'s Day', '2000-02-14', repeat='YEARLY', daycount=1)
 print_vevent('Armistice Day', '1918-11-11', repeat='YEARLY', daycount=1)
+print_vevent('VE Day', '1945-05-08', repeat='YEARLY', daycount=1)
+print_vevent('VJ Day', '1945-08-15', repeat='YEARLY', daycount=1)
 print_vevent('May Day', '2000-05-01', repeat='YEARLY', daycount=1)
+print_vevent('May Day bank holiday (UK)', '2000-05-01', repeat='YEARLY', bymonthday=[5,'1MO'], daycount=1)
+print_vevent('Spring bank holiday (UK)', '2000-05-29', repeat='YEARLY', bymonthday=[5,'-1MO'], daycount=1)
+print_vevent('Summer bank holiday (UK)', '2000-08-28', repeat='YEARLY', bymonthday=[8,'-1MO'], daycount=1)
 print_vevent('April Fools\' Day', '2000-04-01', repeat='YEARLY', daycount=1)
 print_vevent('Burns\' Night', '1759-01-25', repeat='YEARLY', daycount=1)
 print_vevent('St Patrick\'s Day', '2000-03-17', repeat='YEARLY', daycount=1)
+print_vevent('Mother\'s Day (US)', '2000-05-14', repeat='YEARLY', bymonthday=[5,'2SU'], daycount=1)
+print_vevent('Father\'s Day', '2000-06-18', repeat='YEARLY', bymonthday=[6,'3SU'], daycount=1)
 print_vevent('Winter Solstice', '0001-12-21', repeat='YEARLY', daycount=1)
 print_vevent('Summer Solstice', '0001-06-21', repeat='YEARLY', daycount=1)
 print_vevent('New Year\'s Eve', '0001-12-31', repeat='YEARLY', daycount=1)
 print_vevent('Holocaust Memorial Day', '1945-01-27', repeat='YEARLY', daycount=1)
 print_vevent('International Women\'s Day', '1977-03-08', repeat='YEARLY', daycount=1)
 print_vevent('International Men\'s Day', '1999-11-19', repeat='YEARLY', daycount=1)
+print_vevent('International Talk Like a Pirate Day', '1995-09-19', repeat='YEARLY', daycount=1)
+print_vevent('Pi Day', '2000-03-14', repeat='YEARLY', daycount=1)
 print_vevent('Perseids meteor shower', '2000-08-12', repeat='YEARLY')
 print_vevent('Leonids meteor shower', '2000-11-17', repeat='YEARLY')
 print_vevent('Beethoven\'s birthday', '1770-12-16', repeat='YEARLY', daycount=1)
@@ -144,7 +162,7 @@ print_thanksgiving()
 # Work events
 day_back = 11-(day_offset+3)%7 # first Mon after 4th Jan
 print_vevent('Back to work', '{:04d}-01-{:02d}'.format(YEAR,day_back))
-print_vevent('Team meeting', '{:04d}-01-{:02d}'.format(YEAR,day_back), time='10:30', repeat='WEEKLY')
+print_vevent('Team meeting', '{:04d}-01-{:02d}'.format(YEAR,1+(7-day_offset)%7), time='10:30', repeat='MONTHLY', bymonthday='1MO')
 print_vevent('Farrier', '{:04d}-01-{:02d}'.format(YEAR,day_back+3), time='19:00')
 print_vevent('Presentation to Sophie & team', '{:04d}-02-{:02d}'.format(YEAR,day_back+7), time='14:00')
 print_vevent('Meeting with Steve (Marketing)', '{:04d}-02-{:02d}'.format(YEAR,1 if day_offset not in (2,3) else 5-day_offset), time='14:30')
@@ -172,6 +190,7 @@ for easter_date in EASTER_DATES:
     print_vevent('Easter', edt, daycount=1)
     print_vevent('Easter Monday', edt+timedelta(days=1), daycount=1)
     print_vevent('Shrove Tuesday', edt-timedelta(days=47), daycount=1)
+    print_vevent('Mothering Sunday (UK)', edt-timedelta(days=21), daycount=1)
 
 # Full moon (note dates given here are for UTC, so don't use outside of testing)
 FULLMOON_DATES =(
@@ -187,7 +206,7 @@ for fm_date in FULLMOON_DATES:
 
 # Social & personal events
 first_wed = 12-(day_offset+1)%7 # first Wed after 2nd Jan
-print_vevent('Guitar lesson', '{:04d}-01-{:02d}'.format(YEAR, first_wed), time='19:00', repeat='FORTNIGHTLY')
+print_vevent('Guitar lesson', '{:04d}-01-{:02d}'.format(YEAR, first_wed), time='19:00', repeat='WEEKLY', interval=2)
 print_vevent('Dentist', '{:04d}-03-{:02d}'.format(YEAR, 1 if day_offset2<5 else 8-day_offset2), time='9:00')
 print_vevent('Merseyside Derby', '{:04d}-02-{:02d}'.format(YEAR, 7-day_offset2), time='14:00')
 print_vevent('Party at Mo+Soph\'s', '{:04d}-02-{:02d}'.format(YEAR, 20-day_offset2 if day_offset2<5 else 27-day_offset2), time='20:00')
@@ -197,15 +216,43 @@ print_vevent('Take car for MOT', '{:04d}-03-17'.format(YEAR), time='10:00')
 print_vevent('New bed delivered', '{:04d}-02-01'.format(YEAR), time='9:00',endtime='12:00')
 print_vevent('Thai with Jay+Rich?', '{:04d}-{:02d}-{:02d}'.format(YEAR, 3, 14),status='tentative')
 
+# Some to-dos
+# config assumed:
+#list0_filter = UNCATEGORIZED
+#list1_title = Exercises
+#list1_filter = exercise
+#list2_title = Spanish vocab
+#list2_filter = spanish
+#list3_title = Holiday
+#list3_filter = holiday
+
+print_vtodo('Book flu vaccinations')
+print_vtodo('Renew domain names')
+print_vtodo('Phone bank')
+
+# Exercises
+print_vtodo('Bike - 5m warmup + 25min alternate 2m & 30s sprints', 'exercise')
+print_vtodo('Planks (side) planks - 1min, 3(2) reps', 'exercise')
+print_vtodo('Squats - 20, 3 reps', 'exercise')
+
 # Fictional holiday
 print_vevent('Fly to Barcelona', '{:04d}-07-{:02d}'.format(YEAR, 24-day_offset2))
 print_vevent('Off work', '{:04d}-07-{:02d}'.format(YEAR, 23-day_offset2), daycount=15)
 print_vevent('Back to UK', '{:04d}-{:02d}-{:02d}'.format(YEAR, 8 if day_offset2<5 else 7, (5 if day_offset2<5 else 36)-day_offset2))
 print_vevent('Spanish class', '{:04d}-05-{:02d}'.format(YEAR, 12-day_offset2), time='19:30', repeat='WEEKLY', repeat_count=11)
+print_vtodo('Take Luna (& food etc.) to Antoine & Nila\'s', cat='holiday')
+print_vtodo('Order Euros', cat='holiday', priority=1, status='NEEDS-ACTION')
+print_vtodo('Buy: suncream, mosquito repellant', cat='holiday')
+print_vtodo('Buy: hats & sunglasses for the kids', cat='holiday')
+print_vtodo('Find power adaptors', cat='holiday')
 
-# Some to-dos
-print_vtodo('Book flu vaccinations')
-print_vtodo('Renew domain names')
-print_vtodo('Phone bank')
+# Spanish vocab
+print_vtodo(u'el museo - museum', cat='spanish')
+print_vtodo(u'el billete de ida y vuelta - return ticket', cat='spanish')
+print_vtodo(u'el horario - timetable', cat='spanish')
+print_vtodo(u'el mapa - map', cat='spanish')
+print_vtodo(u'la heladería - ice cream shop', cat='spanish')
+print_vtodo(u'la tumbona - sunbed', cat='spanish')
+print_vtodo(u'el secador de pelo - hair dryer', cat='spanish')
 
 print('END:VCALENDAR', end='\r\n')
