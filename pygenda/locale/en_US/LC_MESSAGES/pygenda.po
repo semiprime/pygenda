@@ -21,8 +21,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 22:24+0100\n"
-"PO-Revision-Date: 2022-10-31 22:24+0100\n"
+"POT-Creation-Date: 2022-11-07 22:54+0100\n"
+"PO-Revision-Date: 2022-11-07 22:54+0100\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
@@ -30,10 +30,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: pygenda.glade:307
+#: pygenda.glade:312
 msgid "Cance_lled"
 msgstr "Cance_led"
 
-#: pygenda.glade:1686
+#: pygenda.glade:1692
 msgid "Cancelled"
 msgstr "Canceled"
