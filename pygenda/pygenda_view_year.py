@@ -47,7 +47,7 @@ class View_Year(View_DayUnit_Base):
     GRID_CURSOR_STYLE = 'yearview_cursor'
     ENTRY_CURSOR_STYLE = 'yearview_entry_cursor'
     _target_col = None
-    _year_viewed = None
+    _year_viewed = -1 # Indicates next redraw will draw year
     _last_cursor = None
     _visible_occurrences = None
     _show_datecontent_pending = False
@@ -79,7 +79,6 @@ class View_Year(View_DayUnit_Base):
         cls._date_content = GUI._builder.get_object('year_datecontent')
         cls._date_content.connect('draw', cls._pre_datecontent_draw)
         cls._draw_day_month_labels()
-        cls._year_viewed = -1 # Indicates next redraw will draw year
         cls._init_keymap()
         cls._init_grid()
         GUI._builder.get_object('year_grid_events').connect('button_press_event', cls.click_grid)

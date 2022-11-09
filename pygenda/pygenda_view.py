@@ -347,7 +347,7 @@ class View_DayUnit_Base(View):
             if isinstance(dt, dt_datetime):
                 dt = dt.date()
             cls.cursor_set_date(dt)
-        cls._target_entry = ev # NB: week+year view classes have this variable
+        cls._target_entry = ev # type:ignore # Week/Year View classes have this
         return True # Indicates success, so use this view
 
 
