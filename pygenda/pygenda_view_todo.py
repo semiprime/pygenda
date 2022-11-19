@@ -410,8 +410,8 @@ class View_Todo(View):
     @classmethod
     def _scroll_to_cursor(cls) -> None:
         # If required, scroll view elements so that cursor is visible.
-        # Note: If view is not yet drawn, calculation not correct.
-        # Hence the first time, this should be called in idle so draw occurs.
+        # Note: If view is not yet laid-out, calculation not correct.
+        # Hence this will be called in 'draw' event handler, so layout is done.
         list_width = cls._list_container[0].get_allocated_width() # homogeneous
         view_width = cls._topboxscroll.get_allocated_width()
         maxv = cls._cursor_list*list_width # left edge of list at left of view

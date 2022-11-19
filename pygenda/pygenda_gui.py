@@ -2119,7 +2119,7 @@ class FindController:
 
     @classmethod
     def find(cls) -> None:
-        # Opens Find dialog and passes seach query to _find_results()
+        # Opens Find dialog and passes search query to _find_results()
         cls.find_text.grab_focus()
         response = cls.dialog.run()
         cls.dialog.hide()
