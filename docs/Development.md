@@ -62,9 +62,9 @@ Checklist for releases
   todo pasted as event & vice-versa, text pasted
 * Regenerate .po and .mo localisation files (see above)
 * Check at least one non-English language
-* Check any ics files in validator, eg https://icalendar.org/validator.html
+* Check any ics files in validator, e.g. https://icalendar.org/validator.html
 * Run test_repeats.py unit tests.
-* Check repeats in test02_repeats.ics displayed correctly
+* Check all test files (testxx_*.ics & generated files) display correctly
 * Check darkmode & backgrounds CSS still work
 * Check mouse clicks/touchscreen taps work (all views)
 * Check start_week_day!=Monday still works (all views)

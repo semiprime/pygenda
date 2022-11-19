@@ -8,11 +8,18 @@ Series 5 range of PDAs.
 **WARNING: This is in-development code, released as a preview for
 developers. The software is provided as-is, with no guarantees. You
 should back up any data or files used by Pygenda (e.g. iCal files
-or data stored on servers).**
+or data stored on calendar servers).**
 
 There are currently **lots of missing/incomplete features** as well as
 **bugs**. For a list of known issues, see: [known_issues.md](docs/known_issues.md).
-If you find any new bugs, please report them to: pygenda@semiprime.com.
+If you find any new bugs (or have any feature requests), please send
+them to: pygenda@semiprime.com.
+
+*However*, it currently has Week, Year and Todo Views that are functional
+enough that the author is now using Pygenda as his main agenda, so
+maybe other people will also find it useful. Feedback is welcome at
+pygenda@semiprime.com - suggestions, questions about how to get something
+working, or just to say that you tried it out.
 
 Video (from March 2021): https://www.youtube.com/watch?v=QjHcgeRudMo
 
@@ -20,8 +27,8 @@ Source code
 -----------
 Source is available at: https://github.com/semiprime/pygenda
 
-License
--------
+License (GPL3)
+--------------
 Pygenda is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
 Free Software Foundation, version 3.
@@ -42,23 +49,17 @@ To run without installing, cd to the root pygenda directory, and do:
 
 	python3 -m pygenda
 
-(If you want to run this way using a graphical launcher, set the
-working directory in the launcher settings, and use the above command.)
-
-Better: install the python module with (for example)...
+Better/recommended: install the Python module with (for example)...
 
 	./setup.py install --user
 
 (You can uninstall the module with `pip3 uninstall pygenda`.)
 
 NOTE: Gemian (Debian port for Gemini PDA) doesn't install the Python module
-dependencies. I recommend installing these dependencies manually - see
-below. The reason for this appears to be old pip/setuptools on Gemian.
-You can upgrade these using `pip3 install --upgrade [pip|setuptools]`,
-but that won't fix the install because pip3 tries to get a version of
-PyGObject that requires a more-recent-than-installed version of glib.
+dependencies. The reason for this appears to be old pip/setuptools on Gemian.
+I recommend installing these dependencies manually - see "Dependencies" below.
 
-Then you can run from anywhere with:
+Then you can now run Pygenda from anywhere with:
 
 	python3 -m pygenda
 
@@ -87,7 +88,7 @@ Note: When I tested on Gemian on the Gemini, pip3 installed tzlocal
 version 2.1, which did not work (although versions 1 to 4 worked on a
 Linux laptop). If you get errors like "No such file or directory:
 'getprop'" at startup, try installing a different version of tzlocal
-with either apt or pip3 (v1.x should work on Gemian with Python 3.5).
+with either apt or pip3 (v1.5.1 should work on Gemian with Python 3.5).
 
 That should be enough to start Pygenda, but if you want to use a
 CalDAV server (recommended for real use) there are some extra

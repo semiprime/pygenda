@@ -17,7 +17,8 @@ Major
 * Alarms are not implemented (note: a separate server should handle
   the actual alarm notifications)
 
-* Many event properties are not implemented (details, attendees etc.)
+* Many event properties are not implemented (details, attendees,
+  attachments, etc.)
 
 * Many todo item properties are not implemented (due date, status etc.)
   and they can only be sorted by priority
@@ -127,6 +128,9 @@ Medium
   see: https://dateutil.readthedocs.io/en/stable/rrule.html
   Check if using recurring-ical-events module could improve speed??
   See: https://pypi.org/project/recurring-ical-events/
+
+* Startup is slow on Gemini. Possible optimisation: run independent
+  tasks asynchronously.
 
 * Starting date of repeating events is not always obvious to the user.
   For example, date 30th March, repeat on last day of month -> starts
