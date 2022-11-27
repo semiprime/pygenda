@@ -40,7 +40,10 @@ from .pygenda_util import start_end_dts_occ
 
 # Singleton class for Year View
 class View_Year(View_DayUnit_Base):
-    Config.set_defaults('year_view',{})
+    Config.set_defaults('year_view',{
+        'show_event_location': True,
+    })
+
     DAY_CLASS = [ 'yearview_day_{}'.format(s) for s in ['mon','tue','wed','thu','fri','sat','sun'] ]
     GRID_COLUMNS = 37
     GRID_ROWS = 12 # One per month
@@ -272,6 +275,7 @@ class View_Year(View_DayUnit_Base):
         # Can be slow, so called in idle from redraw.
         dt = View._cursor_date
         cls._visible_occurrences = Calendar.occurrence_list(dt, dt+timedelta(days=1))
+        show_loc = Config.get_bool('year_view','show_event_location')
         r = 0
         for occ in cls._visible_occurrences:
             occ_dt_sta,occ_dt_end = start_end_dts_occ(occ)
@@ -282,7 +286,7 @@ class View_Year(View_DayUnit_Base):
             ctx.add_class('yearview_marker') # add style for CSS
             row.add(mark_label)
             # Create entry content label & add to row
-            cont_label = cls.entry_text_label(occ[0],occ_dt_sta,occ_dt_end)
+            cont_label = cls.entry_text_label(occ[0], occ_dt_sta, occ_dt_end, add_location=show_loc)
             cont_label.set_hexpand(True) # Also sets hexpand_set to True
             row.add(cont_label)
             cls._date_content.add(row)

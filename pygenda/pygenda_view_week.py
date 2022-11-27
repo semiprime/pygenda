@@ -43,6 +43,7 @@ class View_Week(View_DayUnit_Base):
     Config.set_defaults('week_view',{
         'pageleft_datepos': 'left',
         'pageright_datepos': 'right',
+        'show_event_location': True,
     })
 
     _day_ent_count = [0]*7 # entry count for each day
@@ -203,6 +204,7 @@ class View_Week(View_DayUnit_Base):
         except StopIteration:
             occ = None
         oneday = timedelta(days=1)
+        show_loc = Config.get_bool('week_view','show_event_location')
         for i in range(7):
             dt_nxt = dt + oneday
             # Delete anything previously written to day v-box
@@ -218,7 +220,7 @@ class View_Week(View_DayUnit_Base):
                 if cls._target_entry is not None and cls._target_entry is occ[0] and dt==View._cursor_date:
                     View._cursor_idx_in_date = cls._day_ent_count[i]
                     cls._target_entry = None
-                cls._add_day_entry_row(occ[0], occ_dt_sta, occ_dt_end, i)
+                cls._add_day_entry_row(occ[0], occ_dt_sta, occ_dt_end, i, show_loc)
                 try:
                     occ = next(itr)
                 except StopIteration:
@@ -236,7 +238,7 @@ class View_Week(View_DayUnit_Base):
 
 
     @classmethod
-    def _add_day_entry_row(cls, ev:iCal.Event, dt_st:dt_date, dt_end:dt_date, dayidx:int) -> None:
+    def _add_day_entry_row(cls, ev:iCal.Event, dt_st:dt_date, dt_end:dt_date, dayidx:int, show_loc:bool) -> None:
         # Add Gtk labels for event 'ev', occurrence at time/date from 'dt_st'
         # to 'dt_end', in day 'dayidx' (e.g. 0=Monday if week starts Monday).
         # Used when displaying week contents.
@@ -247,7 +249,7 @@ class View_Week(View_DayUnit_Base):
         ctx.add_class('weekview_marker') # add style for CSS
         row.add(mark_label)
         # Create entry content label & add to row
-        cont_label = cls.entry_text_label(ev, dt_st, dt_end)
+        cont_label = cls.entry_text_label(ev, dt_st, dt_end, add_location=show_loc)
         cont_label.set_hexpand(True) # Also sets hexpand_set to True
         row.add(cont_label)
         cls._day_rows[dayidx].add(row)

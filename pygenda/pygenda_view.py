@@ -151,7 +151,7 @@ class View:
 
 
     @staticmethod
-    def entry_text_label(ev:iCal.Event, dt_st:dt_date, dt_end:dt_date) -> Gtk.Label:
+    def entry_text_label(ev:iCal.Event, dt_st:dt_date, dt_end:dt_date, add_location:bool=False) -> Gtk.Label:
         # Returns a GtkLabel with entry summary + icons as content.
         # Used by Week & Year views to display entries.
         lab = Gtk.Label()
@@ -162,7 +162,11 @@ class View:
         endtm = View.entry_endtime(dt_st,dt_end,True)
         icons = View.entry_icons(ev,True)
         d_txt = ev['SUMMARY'] if 'SUMMARY' in ev else ''
-        lab.set_text(u'{:s}{:s}{:s}'.format(d_txt,endtm,icons))
+        if add_location and 'LOCATION' in ev:
+            l_txt = ' (@{:s})'.format(ev['LOCATION'])
+        else:
+            l_txt = ''
+        lab.set_text(u'{:s}{:s}{:s}{:s}'.format(d_txt,endtm,l_txt,icons))
         View.add_event_styles(lab, ev)
         return lab
 
