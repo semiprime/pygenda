@@ -215,7 +215,7 @@ class View:
     def add_event_styles(wid:Gtk.Label, ev:iCal.Event) -> None:
         # Adds formatting class to label corresponding to event status.
         # Allows entry to be formatted appropriately by CSS.
-        if 'STATUS' in ev and ev['STATUS'] in ('TENTATIVE','CONFIRMED','CANCELLED'):
+        if 'STATUS' in ev and ev['STATUS'] in Calendar.STATUS_LIST_EVENT:
             ctx = wid.get_style_context()
             ctx.add_class(ev['STATUS'].lower())
 

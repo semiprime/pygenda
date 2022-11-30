@@ -237,18 +237,22 @@ class View_Todo(View):
                             cls._target_listidx = None
                             cls._target_todo = None
                     row = Gtk.Box()
+                    ctx = row.get_style_context()
+                    ctx.add_class('todoview_item')
                     # Potential markers: ①-0x245f ➀-0x277f ❶-0x2775 ➊-0x2789
                     mark_label = Gtk.Label(chr(0x2789+td['PRIORITY']) if 'PRIORITY' in td else u'•')
                     mark_label.set_halign(Gtk.Align.END)
                     mark_label.set_valign(Gtk.Align.START)
-                    ctx = mark_label.get_style_context()
-                    ctx.add_class('todoview_marker')
+                    mark_label.get_style_context().add_class('todoview_marker')
                     row.add(mark_label)
                     item_text = Gtk.Label(td['SUMMARY'] if 'SUMMARY' in td else '')
+                    item_text.get_style_context().add_class('todoview_itemtext')
                     item_text.set_xalign(0)
                     item_text.set_yalign(0)
                     item_text.set_line_wrap(True)
                     item_text.set_line_wrap_mode(PWrapMode.WORD_CHAR)
+                    if 'STATUS' in td and td['STATUS'] in Calendar.STATUS_LIST_TODO:
+                        ctx.add_class(td['STATUS'].lower())
                     row.add(item_text)
                     new_list_content.add(row)
                     cls._list_items[-1].append(td)

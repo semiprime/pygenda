@@ -329,6 +329,23 @@ scrollbar {
 	border-radius:4px;
 }
 
+.needs-action > .todoview_itemtext {
+	color:red;
+	font-weight:bold;
+}
+
+.completed > .todoview_itemtext {
+	text-decoration:line-through;
+}
+
+.in-process > .todoview_itemtext {
+	font-style:italic;
+}
+
+.cancelled > .todoview_itemtext {
+	color:gray;
+	text-decoration:line-through #444;
+}
 
 /* Entries */
 

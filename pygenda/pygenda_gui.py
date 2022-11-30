@@ -1572,7 +1572,7 @@ class EventDialogController:
                         u = u.date()
                     cls.wid_rep_enddt.set_date(u if u>dt else dt)
                     cls.rep_occs_determines_end = False
-            if 'STATUS' in event and event['STATUS'] in ('TENTATIVE','CONFIRMED','CANCELLED'):
+            if 'STATUS' in event and event['STATUS'] in Calendar.STATUS_LIST_EVENT:
                 cls.wid_status.set_active_id(event['STATUS'])
             if 'LOCATION' in event:
                 cls.wid_location.set_text(event['LOCATION'])

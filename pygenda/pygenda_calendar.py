@@ -63,6 +63,9 @@ class CalendarConnector:
 
 # Singleton class for calendar data access/manipulation
 class Calendar:
+    STATUS_LIST_EVENT = ('TENTATIVE','CONFIRMED','CANCELLED')
+    STATUS_LIST_TODO = ('NEEDS-ACTION','IN-PROCESS','COMPLETED','CANCELLED')
+
     _entry_norep_list_sorted = None
     _entry_rep_list = None
     _todo_list = None
@@ -378,7 +381,7 @@ class Calendar:
         # Only allow known values.
         if 'STATUS' in ev:
             del(ev['STATUS'])
-        if e_inf.status in ('TENTATIVE','CONFIRMED','CANCELLED'):
+        if e_inf.status in Calendar.STATUS_LIST_EVENT:
             ev.add('STATUS', e_inf.status)
 
 
@@ -413,7 +416,7 @@ class Calendar:
             if stat==event['STATUS']:
                 stat = None # If on, we toggle it off
             del(event['STATUS'])
-        if stat in ('TENTATIVE','CONFIRMED','CANCELLED'):
+        if stat in Calendar.STATUS_LIST_EVENT:
             event.add('STATUS', stat)
         cls.calConnector.update_entry(event) # Write to store
 
