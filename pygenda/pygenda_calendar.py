@@ -143,7 +143,7 @@ class Calendar:
             else:
                 cls._entry_norep_list_sorted = None # Clear norep cache, mod'd
 
-        cls._event_set_status_from_info(en, e_inf)
+        cls._entry_set_status_from_info(en, e_inf)
         cls._event_set_location_from_info(en, e_inf)
         if e_inf.categories:
             # Convert to list - to work around bug passing set to old icalendar
@@ -287,7 +287,7 @@ class Calendar:
             clear_norep = True
 
         # Other properties: status (cancelled, tentative, etc.), location
-        cls._event_set_status_from_info(en, e_inf)
+        cls._entry_set_status_from_info(en, e_inf)
         cls._event_set_location_from_info(en, e_inf)
 
         # This needs optimising - some cases cause too much cache flushing !!
@@ -376,13 +376,11 @@ class Calendar:
 
 
     @staticmethod
-    def _event_set_status_from_info(ev:iEvent, e_inf:EntryInfo) -> None:
-        # Set event status (cancelled, tentative etc.) from e_inf.
-        # Only allow known values.
-        if 'STATUS' in ev:
-            del(ev['STATUS'])
-        if e_inf.status in Calendar.STATUS_LIST_EVENT:
-            ev.add('STATUS', e_inf.status)
+    def _entry_set_status_from_info(en:Union[iEvent,iTodo], e_inf:EntryInfo) -> None:
+        # Set entry status (cancelled, tentative etc.) from e_inf.
+        if 'STATUS' in en:
+            del(en['STATUS'])
+        Calendar._add_status_entry(en, e_inf.status)
 
 
     @staticmethod
@@ -409,16 +407,33 @@ class Calendar:
 
 
     @classmethod
-    def set_toggle_status_entry(cls, event:iEvent, stat:Optional[str]) -> None:
-        # Set event STATUS to stat.
+    def set_toggle_status_entry(cls, entry:Union[iEvent,iTodo], stat:Optional[str]) -> None:
+        # Set entry STATUS to stat & save entry.
         # If STATUS is set and equals stat, toggle it off.
-        if 'STATUS' in event:
-            if stat==event['STATUS']:
+        if 'STATUS' in entry:
+            if stat==entry['STATUS']:
                 stat = None # If on, we toggle it off
-            del(event['STATUS'])
-        if stat in Calendar.STATUS_LIST_EVENT:
-            event.add('STATUS', stat)
-        cls.calConnector.update_entry(event) # Write to store
+            del(entry['STATUS'])
+        cls._add_status_entry(entry, stat)
+        cls.calConnector.update_entry(entry) # Write to store
+
+
+    @staticmethod
+    def _add_status_entry(entry:Union[iEvent,iTodo], stat:Optional[str]) -> None:
+        # Set entry STATUS to stat.
+        # Assumes entry['STATUS'] does not exist.
+        # Only allows spec'ed values.
+        if stat=='COMPLETED':
+            if 'PERCENT-COMPLETE' in entry:
+                del(entry['PERCENT-COMPLETE']) # Automatically set to 100
+        else:
+            if 'PERCENT-COMPLETE' in entry and entry['PERCENT-COMPLETE']==100:
+                entry['PERCENT-COMPLETE'] = 99 # Stop it being == 100
+            if 'COMPLETED' in entry:
+                del(entry['COMPLETED'])
+        if (isinstance(entry,iEvent) and stat in Calendar.STATUS_LIST_EVENT) or (
+            isinstance(entry,iTodo) and stat in Calendar.STATUS_LIST_TODO):
+                entry.add('STATUS', stat)
 
 
     @classmethod
