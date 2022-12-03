@@ -421,7 +421,7 @@
 											</object>
 										</child>
 										<child>
-											<object class="GtkImageMenuItem">
+											<object class="GtkImageMenuItem" id="menuelt-fullscreen">
 												<property name="label">gtk-fullscreen</property>
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>

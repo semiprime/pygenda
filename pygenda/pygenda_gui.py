@@ -72,6 +72,9 @@ class GUI:
     _box_view_cont = None # type: Gtk.Box
     _eventbox = Gtk.EventBox()
 
+    _image_leave_fs = Gtk.Image.new_from_icon_name('gtk-leave-fullscreen',Gtk.IconSize.MENU)
+    _image_enter_fs = None # type: Gtk.Widget
+
     date_order = ''
     date_formatting_numeric = ''
     date_formatting_text = ''
@@ -124,9 +127,10 @@ class GUI:
         cls._window.set_hide_titlebar_when_maximized(Config.get_bool('global','hide_titlebar_when_maximized'))
         if Config.get_bool('startup','maximize'):
             cls._window.maximize()
-        cls._is_fullscreen = Config.get_bool('startup','fullscreen')
-        if cls._is_fullscreen:
-            cls._window.fullscreen()
+        cls._menu_elt_fullscreen = cls._builder.get_object('menuelt-fullscreen')
+        cls._image_enter_fs = cls._menu_elt_fullscreen.get_image()
+        if Config.get_bool('startup','fullscreen'):
+            cls.toggle_fullscreen()
 
         # Handle SIGINT (e.g. from ctrl+C) etc.
         GLib.unix_signal_add(GLib.PRIORITY_DEFAULT_IDLE, signal.SIGINT, cls.exit)
@@ -807,12 +811,15 @@ class GUI:
     @classmethod
     def toggle_fullscreen(cls, *args) -> None:
         # Callback to toggle fullscreen mode on/off (e.g. from menu)
-        # !! to-do: update menu text to reflect state
         cls._is_fullscreen = not cls._is_fullscreen
         if cls._is_fullscreen:
             cls._window.fullscreen()
+            cls._menu_elt_fullscreen.set_label('gtk-leave-fullscreen')
+            cls._menu_elt_fullscreen.set_image(cls._image_leave_fs)
         else:
             cls._window.unfullscreen()
+            cls._menu_elt_fullscreen.set_label('gtk-fullscreen')
+            cls._menu_elt_fullscreen.set_image(cls._image_enter_fs)
 
 
     @classmethod

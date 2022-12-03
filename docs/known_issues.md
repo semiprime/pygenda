@@ -185,7 +185,7 @@ Minor
 * Menu shortcuts set in glade are not translated (e.g. aller à = ctrl+g)
 
 * Menu items are not disabled when not relevant (e.g. cut/copy when cursor
-  is not on an entry). (Maybe "fullscreen" could toggle on/off too?)
+  is not on an entry).
 
 * If using a .ics file and multiple instances edit the same file, data
   can be lost (note: using .ics file is not recommended => minor)
