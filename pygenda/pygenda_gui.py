@@ -72,6 +72,12 @@ class GUI:
     _box_view_cont = None # type: Gtk.Box
     _eventbox = Gtk.EventBox()
 
+    _menu_elt_fullscreen = None # type: Gtk.Widget
+    _menu_elts_entry = None # type: Tuple[Gtk.Widget,...]
+    _menu_elts_event = None # type: Tuple[Gtk.Widget,...]
+    _menu_elts_stat_event = None # type: Tuple[Gtk.Widget,...]
+    _menu_elts_stat_todo = None # type: Tuple[Gtk.Widget,...]
+
     _image_leave_fs = Gtk.Image.new_from_icon_name('gtk-leave-fullscreen',Gtk.IconSize.MENU)
     _image_enter_fs = None # type: Gtk.Widget
 
@@ -132,6 +138,12 @@ class GUI:
         if Config.get_bool('startup','fullscreen'):
             cls.toggle_fullscreen()
 
+        # Get handles to menu items to enable/disable when on/not on an entry
+        cls._menu_elts_entry = cls._get_objs_by_id(('menuelt-cut','menuelt-copy','menuelt-delete','menuelt-set-status'))
+        cls._menu_elts_event = cls._get_objs_by_id(('menuelt-edit-time','menuelt-edit-reps','menuelt-edit-alarm','menuelt-edit-details'))
+        cls._menu_elts_stat_event = cls._get_objs_by_id(('menuelt-status-confirmed','menuelt-status-tentative'))
+        cls._menu_elts_stat_todo = cls._get_objs_by_id(('menuelt-status-needsaction','menuelt-status-inprocess','menuelt-status-completed'))
+
         # Handle SIGINT (e.g. from ctrl+C) etc.
         GLib.unix_signal_add(GLib.PRIORITY_DEFAULT_IDLE, signal.SIGINT, cls.exit)
         GLib.unix_signal_add(GLib.PRIORITY_DEFAULT_IDLE, signal.SIGTERM, cls.exit)
@@ -154,6 +166,9 @@ class GUI:
             'menuitem_stat_confirmed': lambda a: cls.handler_stat_toggle('CONFIRMED'),
             'menuitem_stat_canceled': lambda a: cls.handler_stat_toggle('CANCELLED'),
             'menuitem_stat_tentative': lambda a: cls.handler_stat_toggle('TENTATIVE'),
+            'menuitem_stat_needsaction': lambda a: cls.handler_stat_toggle('NEEDS-ACTION'),
+            'menuitem_stat_inprocess': lambda a: cls.handler_stat_toggle('IN-PROCESS'),
+            'menuitem_stat_completed': lambda a: cls.handler_stat_toggle('COMPLETED'),
             'menuitem_deleteentry': cls.delete_request,
             'menuitem_switchview': cls.switch_view,
             'menuitem_goto': cls.dialog_goto,
@@ -204,6 +219,12 @@ class GUI:
         # Delay further initialisation so we can display GUI/window early
         cls._window.show()
         GLib.idle_add(cls.init_stage2)
+
+
+    @classmethod
+    def _get_objs_by_id(cls, id_list:Tuple[str,...]) -> Tuple[Gtk.Widget,...]:
+        # Helper function to get a tuple of widgets by id
+        return tuple((cls._builder.get_object(id) for id in id_list))
 
 
     @staticmethod
@@ -421,6 +442,26 @@ class GUI:
         for eb_id in ('entry_dialogevent_desc','entry_dialogevent_location','entry_dialogtodo_desc'):
             eb = cls._builder.get_object(eb_id)
             eb.connect('focus-out-event', cls._focusout_unhighlight)
+
+
+    @classmethod
+    def set_menu_elts(cls, on_event:bool=False, on_todo:bool=False) -> None:
+        # Called from Views as the cursor is moved. Enables/disables/hides
+        # menu items appropriate for the current cursor item.
+        for id in cls._menu_elts_entry:
+            id.set_sensitive(on_event or on_todo)
+        for id in cls._menu_elts_event:
+            id.set_sensitive(on_event)
+        if on_event:
+            for id in cls._menu_elts_stat_event:
+                id.show()
+            for id in cls._menu_elts_stat_todo:
+                id.hide()
+        elif on_todo:
+            for id in cls._menu_elts_stat_event:
+                id.hide()
+            for id in cls._menu_elts_stat_todo:
+                id.show()
 
 
     @classmethod

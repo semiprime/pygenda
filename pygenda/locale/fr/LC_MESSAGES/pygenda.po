@@ -22,8 +22,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-07 22:54+0100\n"
-"PO-Revision-Date: 2022-11-07 22:54+0100\n"
+"POT-Creation-Date: 2022-12-03 23:10+0100\n"
+"PO-Revision-Date: 2022-12-03 23:10+0100\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -31,11 +31,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: pygenda_gui.py:725
+#: pygenda_gui.py:769
 msgid "Delete Entry"
 msgstr "Supprimer l’entrée"
 
-#: pygenda_gui.py:731
+#: pygenda_gui.py:775
 msgid ""
 "Delete all repeats:\n"
 "\"{:s}\"?"
@@ -43,7 +43,7 @@ msgstr ""
 "Supprimer toutes les entrées\n"
 "« {:s} » ?"
 
-#: pygenda_gui.py:733
+#: pygenda_gui.py:777
 msgid ""
 "Delete entry:\n"
 "\"{:s}\"?"
@@ -51,15 +51,15 @@ msgstr ""
 "Supprimer l’entrée\n"
 "« {:s} » ?"
 
-#: pygenda_gui.py:752 pygenda.glade:541
+#: pygenda_gui.py:796 pygenda.glade:571
 msgid "Go To"
 msgstr "Aller à"
 
-#: pygenda_gui.py:764
+#: pygenda_gui.py:808
 msgid "Go"
 msgstr "Y aller"
 
-#: pygenda_gui.py:801
+#: pygenda_gui.py:845
 msgid ""
 "A calendar/agenda application written in Python/GTK3. The UI is inspired by "
 "the Agenda apps on the Psion Series 3 and Series 5 PDAs.\n"
@@ -72,44 +72,44 @@ msgstr ""
 "publiée en avant-première pour les développeurs/euses. Il y aura des "
 "bogues ; veuillez les rapporter à : pygenda@semiprime.com."
 
-#: pygenda_gui.py:1422 pygenda.glade:491
+#: pygenda_gui.py:1469 pygenda.glade:521
 msgid "New Event"
 msgstr "Nouvel\névènement"
 
-#: pygenda_gui.py:1434
+#: pygenda_gui.py:1481
 msgid "Edit Event"
 msgstr "Modifier évènement"
 
-#: pygenda_gui.py:1651 pygenda.glade:1175 pygenda.glade:1507 pygenda.glade:1690
-#: pygenda.glade:1890
+#: pygenda_gui.py:1698 pygenda.glade:1205 pygenda.glade:1537 pygenda.glade:1720
+#: pygenda.glade:1920
 msgid "None"
 msgstr "Rien"
 
-#: pygenda_gui.py:1902
+#: pygenda_gui.py:1949
 msgid "Exception dates"
 msgstr "Dates omises"
 
-#: pygenda_gui.py:1919
+#: pygenda_gui.py:1966
 msgid "Add date"
 msgstr "Ajouter date"
 
-#: pygenda_gui.py:1940
+#: pygenda_gui.py:1987
 msgid "Remove date(s)"
 msgstr "Retirer date(s)"
 
-#: pygenda_gui.py:2040
+#: pygenda_gui.py:2087
 msgid "New To-do"
 msgstr "Nouvelle tâche"
 
-#: pygenda_gui.py:2051
+#: pygenda_gui.py:2098
 msgid "Edit To-do"
 msgstr "Modifier tâche"
 
-#: pygenda_gui.py:2133
+#: pygenda_gui.py:2180
 msgid "Find results"
 msgstr "Resultats de recherche"
 
-#: pygenda_gui.py:2140
+#: pygenda_gui.py:2187
 msgid "No results found"
 msgstr "Pas d'entrées trouvées"
 
@@ -121,27 +121,27 @@ msgstr "Tâches"
 msgid "_Todo View"
 msgstr "Mode _Tâches"
 
-#: pygenda_view_week.py:59
+#: pygenda_view_week.py:60
 msgid "_Week View"
 msgstr "Mode _Hebdomadaire"
 
-#: pygenda_view_week.py:64
+#: pygenda_view_week.py:65
 msgid "week_view_accel"
 msgstr "h"
 
-#: pygenda_view_week.py:166
+#: pygenda_view_week.py:167
 msgid "Week 53/Week 1"
 msgstr "Semaine 53/Semaine 1"
 
-#: pygenda_view_week.py:168
+#: pygenda_view_week.py:169
 msgid "Week {}"
 msgstr "Semaine {}"
 
-#: pygenda_view_year.py:61
+#: pygenda_view_year.py:64
 msgid "_Year View"
 msgstr "Mode _Annuelle"
 
-#: pygenda_view_year.py:66
+#: pygenda_view_year.py:69
 msgid "year_view_accel"
 msgstr "a"
 
@@ -202,242 +202,254 @@ msgid "_Confirmed"
 msgstr "_Confirmé"
 
 #: pygenda.glade:312
+msgid "_Action required"
+msgstr "_Action requise"
+
+#: pygenda.glade:322
+msgid "In _progress"
+msgstr "En _cours"
+
+#: pygenda.glade:332
+msgid "_Completed"
+msgstr "_Achevé"
+
+#: pygenda.glade:342
 msgid "Cance_lled"
 msgstr "_Annulé"
 
-#: pygenda.glade:322
+#: pygenda.glade:352
 msgid "_Tentative"
 msgstr "_Provisoire"
 
-#: pygenda.glade:334
+#: pygenda.glade:364
 msgid "_Delete…"
 msgstr "_Supprimer…"
 
-#: pygenda.glade:353
+#: pygenda.glade:383
 msgid "_View"
 msgstr "_Afficharge"
 
-#: pygenda.glade:363
+#: pygenda.glade:393
 msgid "_Go To…"
 msgstr "_Aller à…"
 
-#: pygenda.glade:373
+#: pygenda.glade:403
 msgid "_View Mode"
 msgstr "_Mode"
 
-#: pygenda.glade:383
+#: pygenda.glade:413
 msgid "Switch _View"
 msgstr "Changer mode"
 
-#: pygenda.glade:442
+#: pygenda.glade:472
 msgid "_Help"
 msgstr "Aid_e"
 
-#: pygenda.glade:516
+#: pygenda.glade:546
 msgid "View"
 msgstr "Mode"
 
-#: pygenda.glade:567
+#: pygenda.glade:597
 msgid "Zoom"
 msgstr "Zoom"
 
-#: pygenda.glade:888 pygenda.glade:1817
+#: pygenda.glade:918 pygenda.glade:1847
 msgid "Description:"
 msgstr "Description :"
 
-#: pygenda.glade:919
+#: pygenda.glade:949
 msgid "Date:"
 msgstr "Date :"
 
-#: pygenda.glade:943
+#: pygenda.glade:973
 msgid "Timed event:"
 msgstr "Avec heure :"
 
-#: pygenda.glade:959
+#: pygenda.glade:989
 msgid "No"
 msgstr "Non"
 
-#: pygenda.glade:974
+#: pygenda.glade:1004
 msgid "Yes"
 msgstr "Oui"
 
-#: pygenda.glade:989
+#: pygenda.glade:1019
 msgid "All day"
 msgstr "Journée"
 
-#: pygenda.glade:1023
+#: pygenda.glade:1053
 msgid "Start time:"
 msgstr "Commencer à :"
 
-#: pygenda.glade:1039
+#: pygenda.glade:1069
 msgid "Duration:"
 msgstr "Durée :"
 
-#: pygenda.glade:1055
+#: pygenda.glade:1085
 msgid "End time:"
 msgstr "Heure de fin :"
 
-#: pygenda.glade:1101
+#: pygenda.glade:1131
 msgid "Days:"
 msgstr "Jours :"
 
-#: pygenda.glade:1142
+#: pygenda.glade:1172
 msgid "Time"
 msgstr "Heure"
 
-#: pygenda.glade:1157
+#: pygenda.glade:1187
 msgid "Repeats:"
 msgstr "Répétition :"
 
-#: pygenda.glade:1176
+#: pygenda.glade:1206
 msgid "Yearly"
 msgstr "Annuelle"
 
-#: pygenda.glade:1177
+#: pygenda.glade:1207
 msgid "Monthly"
 msgstr "Mensuelle"
 
-#: pygenda.glade:1178
+#: pygenda.glade:1208
 msgid "Monthly by day"
 msgstr "Mensuelle par jour"
 
-#: pygenda.glade:1179
+#: pygenda.glade:1209
 msgid "Monthly by weekday"
 msgstr "Mensuelle par jour de la semaine"
 
-#: pygenda.glade:1180
+#: pygenda.glade:1210
 msgid "Weekly"
 msgstr "Hebdomadaire"
 
-#: pygenda.glade:1181
+#: pygenda.glade:1211
 msgid "Daily"
 msgstr "Quotidienne"
 
-#: pygenda.glade:1197
+#: pygenda.glade:1227
 msgid "Repeat on:"
 msgstr "Répéter le :"
 
-#: pygenda.glade:1226
+#: pygenda.glade:1256
 msgid "Last day"
 msgstr "Dernier jour"
 
-#: pygenda.glade:1227
+#: pygenda.glade:1257
 msgid "2nd last day"
 msgstr "2e au dernier jour"
 
-#: pygenda.glade:1228
+#: pygenda.glade:1258
 msgid "3rd last day"
 msgstr "3e au dernier jour"
 
-#: pygenda.glade:1229
+#: pygenda.glade:1259
 msgid "4th last day"
 msgstr "4e au dernier jour"
 
-#: pygenda.glade:1230
+#: pygenda.glade:1260
 msgid "5th last day"
 msgstr "5e au dernier jour"
 
-#: pygenda.glade:1231
+#: pygenda.glade:1261
 msgid "6th last day"
 msgstr "6e au dernier jour"
 
-#: pygenda.glade:1232
+#: pygenda.glade:1262
 msgid "7th last day"
 msgstr "7e au dernier jour"
 
-#: pygenda.glade:1258
+#: pygenda.glade:1288
 msgid "1st"
 msgstr "1er"
 
-#: pygenda.glade:1259
+#: pygenda.glade:1289
 msgid "2nd"
 msgstr "2e"
 
-#: pygenda.glade:1260
+#: pygenda.glade:1290
 msgid "3rd"
 msgstr "3e"
 
-#: pygenda.glade:1261
+#: pygenda.glade:1291
 msgid "4th"
 msgstr "4e"
 
-#: pygenda.glade:1262
+#: pygenda.glade:1292
 msgid "5th"
 msgstr "5e"
 
-#: pygenda.glade:1263
+#: pygenda.glade:1293
 msgid "Last"
 msgstr "Dernier"
 
-#: pygenda.glade:1264
+#: pygenda.glade:1294
 msgid "2nd last"
 msgstr "2e au dernier"
 
-#: pygenda.glade:1265
+#: pygenda.glade:1295
 msgid "3rd last"
 msgstr "3e au dernier"
 
-#: pygenda.glade:1266
+#: pygenda.glade:1296
 msgid "4th last"
 msgstr "4e au dernier"
 
-#: pygenda.glade:1267
+#: pygenda.glade:1297
 msgid "5th last"
 msgstr "5e au dernier"
 
-#: pygenda.glade:1316
+#: pygenda.glade:1346
 msgid "Period:"
 msgstr "Période :"
 
-#: pygenda.glade:1332
+#: pygenda.glade:1362
 msgid "Repeat Forever:"
 msgstr "Répéter à jamais :"
 
-#: pygenda.glade:1358
+#: pygenda.glade:1388
 msgid "Occurrences:"
 msgstr "Occurrences :"
 
-#: pygenda.glade:1374
+#: pygenda.glade:1404
 msgid "Until:"
 msgstr "Jusqu’à :"
 
-#: pygenda.glade:1399
+#: pygenda.glade:1429
 msgid "Exceptions:"
 msgstr "Dates omises :"
 
-#: pygenda.glade:1559
+#: pygenda.glade:1589
 msgid "Repeats"
 msgstr "Répétitions"
 
-#: pygenda.glade:1576
+#: pygenda.glade:1606
 msgid "Alarm set:"
 msgstr "Alarme réglée :"
 
-#: pygenda.glade:1625
+#: pygenda.glade:1655
 msgid "Alarm"
 msgstr "Alarme"
 
-#: pygenda.glade:1642
+#: pygenda.glade:1672
 msgid "Location:"
 msgstr "Lieu :"
 
-#: pygenda.glade:1672
+#: pygenda.glade:1702
 msgid "Status:"
 msgstr "Statut :"
 
-#: pygenda.glade:1691
+#: pygenda.glade:1721
 msgid "Tentative"
 msgstr "Provisoire"
 
-#: pygenda.glade:1692
+#: pygenda.glade:1722
 msgid "Cancelled"
 msgstr "Annulé"
 
-#: pygenda.glade:1693
+#: pygenda.glade:1723
 msgid "Confirmed"
 msgstr "Confirmé"
 
-#: pygenda.glade:1707
+#: pygenda.glade:1737
 msgid ""
 "Details will go here:\n"
 "long description, attendees…"
@@ -445,30 +457,30 @@ msgstr ""
 "Les détails seront ici :\n"
 "description détaillée, partipants…"
 
-#: pygenda.glade:1726
+#: pygenda.glade:1756
 msgid "Details"
 msgstr "Détails"
 
-#: pygenda.glade:1847
+#: pygenda.glade:1877
 msgid "To-do list:"
 msgstr "Liste :"
 
-#: pygenda.glade:1873
+#: pygenda.glade:1903
 msgid "Priority:"
 msgstr "Priorité :"
 
-#: pygenda.glade:1891
+#: pygenda.glade:1921
 msgid "1 (Highest)"
 msgstr "1 (la plus haute)"
 
-#: pygenda.glade:1899
+#: pygenda.glade:1929
 msgid "9 (Lowest)"
 msgstr "9 (la plus basse)"
 
-#: pygenda.glade:1923
+#: pygenda.glade:1953
 msgid "Find"
 msgstr "Rechercher"
 
-#: pygenda.glade:1984
+#: pygenda.glade:2014
 msgid "Find text:"
 msgstr "Chercher texte :"

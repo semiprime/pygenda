@@ -282,6 +282,7 @@ class View_Week(View_DayUnit_Base):
             cls._scroll_to_cursor_in_day = dy # to be read in draw handler
         else:
             cls._scroll_to_cursor_in_day = None
+        GUI.set_menu_elts(on_event=(ecount!=0)) # Enable/disable hide menu items
 
 
     @classmethod

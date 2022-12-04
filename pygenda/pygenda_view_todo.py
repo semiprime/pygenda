@@ -373,6 +373,7 @@ class View_Todo(View):
         cls._last_cursor_idx_in_list = cls._cursor_idx_in_list
         # Add scroll call to idle, in case column widths not yet determined
         cls._scroll_to_cursor_required = True
+        GUI.set_menu_elts(on_todo=(icount!=0)) # Enable/disable hide menu items
 
 
     @classmethod

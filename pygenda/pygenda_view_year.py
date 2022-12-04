@@ -308,6 +308,7 @@ class View_Year(View_DayUnit_Base):
         if cls._date_content_count==0:
             # No entries for day - return
             View._cursor_idx_in_date = 0
+            GUI.set_menu_elts(on_event=False) # Disable menu items
             return
         i = View._cursor_idx_in_date
         if i<0 or i>=cls._date_content_count:
@@ -318,6 +319,7 @@ class View_Year(View_DayUnit_Base):
         ctx.add_class(cls.ENTRY_CURSOR_STYLE)
         cls._last_entry_cursor = i
         cls._scroll_to_cursor_required = True # to be read in draw handler
+        GUI.set_menu_elts(on_event=True) # Enable menu items
 
 
     @classmethod

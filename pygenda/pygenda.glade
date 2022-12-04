@@ -139,7 +139,7 @@
 										<property name="visible">True</property>
 										<property name="can-focus">False</property>
 										<child>
-											<object class="GtkImageMenuItem">
+											<object class="GtkImageMenuItem" id="menuelt-cut">
 												<property name="label">gtk-cut</property>
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
@@ -150,7 +150,7 @@
 											</object>
 										</child>
 										<child>
-											<object class="GtkImageMenuItem">
+											<object class="GtkImageMenuItem" id="menuelt-copy">
 												<property name="label">gtk-copy</property>
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
@@ -230,7 +230,7 @@
 											</object>
 										</child>
 										<child>
-											<object class="GtkMenuItem">
+											<object class="GtkMenuItem" id="menuelt-edit-time">
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
 												<property name="label" translatable="yes">Edit _Time…</property>
@@ -240,7 +240,7 @@
 											</object>
 										</child>
 										<child>
-											<object class="GtkMenuItem">
+											<object class="GtkMenuItem" id="menuelt-edit-reps">
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
 												<property name="label" translatable="yes">Edit _Repeats…</property>
@@ -250,7 +250,7 @@
 											</object>
 										</child>
 										<child>
-											<object class="GtkMenuItem">
+											<object class="GtkMenuItem" id="menuelt-edit-alarm">
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
 												<property name="label" translatable="yes">Edit _Alarm…</property>
@@ -260,7 +260,7 @@
 											</object>
 										</child>
 										<child>
-											<object class="GtkMenuItem">
+											<object class="GtkMenuItem" id="menuelt-edit-details">
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
 												<property name="label" translatable="yes">Edit _Details…</property>
@@ -276,7 +276,7 @@
 											</object>
 										</child>
 										<child>
-											<object class="GtkMenuItem">
+											<object class="GtkMenuItem" id="menuelt-set-status">
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
 												<property name="label" translatable="yes">Set _Status</property>
@@ -296,12 +296,42 @@
 															</object>
 														</child>
 														<child>
-															<object class="GtkMenuItem">
+															<object class="GtkMenuItem" id="menuelt-status-confirmed">
 																<property name="visible">True</property>
 																<property name="can-focus">False</property>
 																<property name="label" translatable="yes">_Confirmed</property>
 																<property name="use-underline">True</property>
 																<signal name="activate" handler="menuitem_stat_confirmed" swapped="no"/>
+																<accelerator key="c" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+															</object>
+														</child>
+														<child>
+															<object class="GtkMenuItem" id="menuelt-status-needsaction">
+																<property name="visible">True</property>
+																<property name="can-focus">False</property>
+																<property name="label" translatable="yes">_Action required</property>
+																<property name="use-underline">True</property>
+																<signal name="activate" handler="menuitem_stat_needsaction" swapped="no"/>
+																<accelerator key="a" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+															</object>
+														</child>
+														<child>
+															<object class="GtkMenuItem" id="menuelt-status-inprocess">
+																<property name="visible">True</property>
+																<property name="can-focus">False</property>
+																<property name="label" translatable="yes">In _progress</property>
+																<property name="use-underline">True</property>
+																<signal name="activate" handler="menuitem_stat_inprocess" swapped="no"/>
+																<accelerator key="p" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+															</object>
+														</child>
+														<child>
+															<object class="GtkMenuItem" id="menuelt-status-completed">
+																<property name="visible">True</property>
+																<property name="can-focus">False</property>
+																<property name="label" translatable="yes">_Completed</property>
+																<property name="use-underline">True</property>
+																<signal name="activate" handler="menuitem_stat_completed" swapped="no"/>
 																<accelerator key="c" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
 															</object>
 														</child>
@@ -316,7 +346,7 @@
 															</object>
 														</child>
 														<child>
-															<object class="GtkMenuItem">
+															<object class="GtkMenuItem" id="menuelt-status-tentative">
 																<property name="visible">True</property>
 																<property name="can-focus">False</property>
 																<property name="label" translatable="yes">_Tentative</property>
@@ -330,7 +360,7 @@
 											</object>
 										</child>
 										<child>
-											<object class="GtkImageMenuItem">
+											<object class="GtkImageMenuItem" id="menuelt-delete">
 												<property name="label" translatable="yes">_Delete…</property>
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
