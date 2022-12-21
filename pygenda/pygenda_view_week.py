@@ -43,7 +43,7 @@ class View_Week(View_DayUnit_Base):
     Config.set_defaults('week_view',{
         'pageleft_datepos': 'left',
         'pageright_datepos': 'right',
-        'show_event_location': True,
+        'show_event_location': 'always',
     })
 
     _day_ent_count = [0]*7 # entry count for each day
@@ -53,6 +53,8 @@ class View_Week(View_DayUnit_Base):
     _scroll_to_cursor_in_day = None
     _target_entry = None
     CURSOR_STYLE = 'weekview_cursor'
+
+    SHOW_LOC_ALWAYS = 1 # constant 'enum' for _show_location flag
 
     @staticmethod
     def view_name() -> str:
@@ -76,6 +78,7 @@ class View_Week(View_DayUnit_Base):
         cls._weekno_label = GUI._builder.get_object('week_label_weekno')
         cls._init_week_widgets()
         cls._init_keymap()
+        cls._init_config()
         return cls._topbox
 
 
@@ -137,6 +140,29 @@ class View_Week(View_DayUnit_Base):
             page_l.pack_start(cls._day_eventbox[i], True, True, 0)
         for i in range(3,7): # ... and right
             page_r.pack_start(cls._day_eventbox[i], True, True, 0)
+
+
+    @classmethod
+    def _init_keymap(cls) -> None:
+        # Initialises KEYMAP for class. Called from init() since it needs
+        # to be called after class construction, so that functions exist.
+        cls._KEYMAP = {
+            Gdk.KEY_Up: lambda: cls._cursor_move_up(),
+            Gdk.KEY_Down: lambda: cls._cursor_move_dn(),
+            Gdk.KEY_Right: lambda: cls._cursor_move_rt(),
+            Gdk.KEY_Left: lambda: cls._cursor_move_lt(),
+            Gdk.KEY_space: lambda: cls._cursor_move_today(),
+            Gdk.KEY_Return: lambda: cls.cursor_edit_entry(),
+        }
+
+
+    @classmethod
+    def _init_config(cls) -> None:
+        # Initialisation from config settings.
+        # Set _show_location flag from config.
+        show_loc = Config.get('week_view','show_event_location')
+        map = {'always':cls.SHOW_LOC_ALWAYS, 'never':0}
+        cls._show_location = map[show_loc] if show_loc in map else 0
 
 
     @classmethod
@@ -204,7 +230,6 @@ class View_Week(View_DayUnit_Base):
         except StopIteration:
             occ = None
         oneday = timedelta(days=1)
-        show_loc = Config.get_bool('week_view','show_event_location')
         for i in range(7):
             dt_nxt = dt + oneday
             # Delete anything previously written to day v-box
@@ -220,7 +245,7 @@ class View_Week(View_DayUnit_Base):
                 if cls._target_entry is not None and cls._target_entry is occ[0] and dt==View._cursor_date:
                     View._cursor_idx_in_date = cls._day_ent_count[i]
                     cls._target_entry = None
-                cls._add_day_entry_row(occ[0], occ_dt_sta, occ_dt_end, i, show_loc)
+                cls._add_day_entry_row(occ[0], occ_dt_sta, occ_dt_end, i, cls._show_location)
                 try:
                     occ = next(itr)
                 except StopIteration:
@@ -405,20 +430,6 @@ class View_Week(View_DayUnit_Base):
         elif View._today_toggle_date is not None:
             cls.cursor_set_date(View._today_toggle_date, idx=View._today_toggle_idx)
             cls.redraw(en_changes=False)
-
-
-    @classmethod
-    def _init_keymap(cls) -> None:
-        # Initialises KEYMAP for class. Called from init() since it needs
-        # to be called after class construction, so that functions exist.
-        cls._KEYMAP = {
-            Gdk.KEY_Up: lambda: cls._cursor_move_up(),
-            Gdk.KEY_Down: lambda: cls._cursor_move_dn(),
-            Gdk.KEY_Right: lambda: cls._cursor_move_rt(),
-            Gdk.KEY_Left: lambda: cls._cursor_move_lt(),
-            Gdk.KEY_space: lambda: cls._cursor_move_today(),
-            Gdk.KEY_Return: lambda: cls.cursor_edit_entry(),
-        }
 
 
     @classmethod

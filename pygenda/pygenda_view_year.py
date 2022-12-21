@@ -41,7 +41,7 @@ from .pygenda_util import start_end_dts_occ
 # Singleton class for Year View
 class View_Year(View_DayUnit_Base):
     Config.set_defaults('year_view',{
-        'show_event_location': True,
+        'show_event_location': 'always',
     })
 
     DAY_CLASS = [ 'yearview_day_{}'.format(s) for s in ['mon','tue','wed','thu','fri','sat','sun'] ]
@@ -57,6 +57,8 @@ class View_Year(View_DayUnit_Base):
     _date_content_count = 0
     _scroll_to_cursor_required = False
     _target_entry = None
+
+    SHOW_LOC_ALWAYS = 1 # constant 'enum' for _show_location flag
 
     @staticmethod
     def view_name() -> str:
@@ -84,6 +86,8 @@ class View_Year(View_DayUnit_Base):
         cls._draw_day_month_labels()
         cls._init_keymap()
         cls._init_grid()
+        cls._init_config()
+
         GUI._builder.get_object('year_grid_events').connect('button_press_event', cls.click_grid)
         GUI._builder.get_object('year_datecontent_events').connect('button_press_event', cls.click_events)
         return cls._topbox
@@ -144,6 +148,15 @@ class View_Year(View_DayUnit_Base):
                 l.set_xalign(0)
                 l.set_yalign(0)
                 cls._grid_cells.attach(l,d,m,1,1)
+
+
+    @classmethod
+    def _init_config(cls) -> None:
+        # Initialisation from config settings.
+        # Set _show_location flag from config.
+        show_loc = Config.get('year_view','show_event_location')
+        map = {'always':cls.SHOW_LOC_ALWAYS, 'never':0}
+        cls._show_location = map[show_loc] if show_loc in map else 0
 
 
     @classmethod
@@ -275,7 +288,6 @@ class View_Year(View_DayUnit_Base):
         # Can be slow, so called in idle from redraw.
         dt = View._cursor_date
         cls._visible_occurrences = Calendar.occurrence_list(dt, dt+timedelta(days=1))
-        show_loc = Config.get_bool('year_view','show_event_location')
         r = 0
         for occ in cls._visible_occurrences:
             occ_dt_sta,occ_dt_end = start_end_dts_occ(occ)
@@ -286,7 +298,7 @@ class View_Year(View_DayUnit_Base):
             ctx.add_class('yearview_marker') # add style for CSS
             row.add(mark_label)
             # Create entry content label & add to row
-            cont_label = cls.entry_text_label(occ[0], occ_dt_sta, occ_dt_end, add_location=show_loc)
+            cont_label = cls.entry_text_label(occ[0], occ_dt_sta, occ_dt_end, add_location=cls._show_location)
             cont_label.set_hexpand(True) # Also sets hexpand_set to True
             row.add(cont_label)
             cls._date_content.add(row)
