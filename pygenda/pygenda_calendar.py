@@ -167,8 +167,10 @@ class Calendar:
         # Return a reference to the new entry.
         if e_type==EntryInfo.TYPE_EVENT or (e_type is None and isinstance(exen,iEvent)):
             en = iEvent()
+            en_is_event = True
         elif e_type==EntryInfo.TYPE_TODO or (e_type is None and isinstance(exen,iTodo)):
             en = iTodo()
+            en_is_event = False
         else:
             raise ValueError('Unrecognized iCal entry type')
         en.add('UID', Calendar.gen_uid()) # Required
@@ -181,7 +183,7 @@ class Calendar:
             summ = 'New entry' # fallback summary
         en.add('SUMMARY', summ)
         new_dt_start = None
-        if isinstance(en,iEvent):
+        if en_is_event:
             ex_dt_start = exen['DTSTART'].dt if 'DTSTART' in exen else None
             if dt_start:
                 if ex_dt_start:
@@ -200,6 +202,7 @@ class Calendar:
                 delta = new_dt_start - ex_dt_start
                 new_dt_end = ex_dt_end + delta
                 en.add('DTEND', new_dt_end)
+
         if 'LOCATION' in exen:
             en.add('LOCATION', exen['LOCATION'])
         if e_cats is True:
@@ -210,10 +213,16 @@ class Calendar:
             en.add('CATEGORIES', list(e_cats))
         if 'PRIORITY' in exen:
             en.add('PRIORITY', exen['PRIORITY'])
+        if 'STATUS' in exen:
+            # Only add status if it is valid for entry type
+            sl = cls.STATUS_LIST_EVENT if en_is_event else cls.STATUS_LIST_TODO
+            exen_status = exen['STATUS']
+            if exen_status in sl:
+                en.add('STATUS', exen_status)
         en = cls.calConnector.add_entry(en) # Write to store
         if new_dt_start is not None:
             cls._entry_norep_list_sorted = None # Clear norep cache as modified
-        if isinstance(en,iTodo):
+        if not en_is_event: # is Todo
             cls._todo_list = None # Clear todo cache as modified
         return en
 

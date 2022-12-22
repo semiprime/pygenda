@@ -55,11 +55,12 @@ Process each .po to make .mo:
 Checklist for releases
 ----------------------
 * Check new code is appropriately commented and annotated
+* Check any doc changes made (e.g. known issues, config, this checklist)
 * Run `mypy .` in source directory, check any new messages
 * If any new dependencies are required, add them to setup.py
 * Check setup.py install works & the installed module runs correctly
-* Check copy/cut/paste works, including e.g. time of event, multi-day events,
-  todo pasted as event & vice-versa, text pasted
+* Check copy/cut/paste works, including e.g. event date/time, multi-day events,
+  event status, todo pasted as event & vice-versa, text pasted
 * Regenerate .po and .mo localisation files (see above)
 * Check at least one non-English language
 * Check any ics files in validator, e.g. https://icalendar.org/validator.html
