@@ -178,15 +178,16 @@
 											</object>
 										</child>
 										<child>
-											<object class="GtkImageMenuItem">
-												<property name="label" translatable="yes">_Find…</property>
+											<object class="GtkImageMenuItem" id="menuelt-delete">
+												<property name="label" translatable="yes">_Delete…</property>
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
 												<property name="use-underline">True</property>
-												<property name="image">image-find</property>
+												<property name="image">image-delete</property>
 												<property name="use-stock">False</property>
-												<signal name="activate" handler="menuitem_find" swapped="no"/>
-												<accelerator key="f" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+												<signal name="activate" handler="menuitem_deleteentry" swapped="no"/>
+												<accelerator key="Delete" signal="activate"/>
+												<accelerator key="BackSpace" signal="activate"/>
 											</object>
 										</child>
 									</object>
@@ -359,19 +360,6 @@
 												</child>
 											</object>
 										</child>
-										<child>
-											<object class="GtkImageMenuItem" id="menuelt-delete">
-												<property name="label" translatable="yes">_Delete…</property>
-												<property name="visible">True</property>
-												<property name="can-focus">False</property>
-												<property name="use-underline">True</property>
-												<property name="image">image-delete</property>
-												<property name="use-stock">False</property>
-												<signal name="activate" handler="menuitem_deleteentry" swapped="no"/>
-												<accelerator key="Delete" signal="activate"/>
-												<accelerator key="BackSpace" signal="activate"/>
-											</object>
-										</child>
 									</object>
 								</child>
 							</object>
@@ -386,16 +374,6 @@
 									<object class="GtkMenu">
 										<property name="visible">True</property>
 										<property name="can-focus">False</property>
-										<child>
-											<object class="GtkMenuItem">
-												<property name="visible">True</property>
-												<property name="can-focus">False</property>
-												<property name="label" translatable="yes">_Go To…</property>
-												<property name="use-underline">True</property>
-												<signal name="activate" handler="menuitem_goto" swapped="no"/>
-												<accelerator key="g" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-											</object>
-										</child>
 										<child>
 											<object class="GtkMenuItem">
 												<property name="visible">True</property>
@@ -459,6 +437,42 @@
 												<property name="use-stock">True</property>
 												<signal name="activate" handler="menuitem_fullscreen" swapped="no"/>
 												<accelerator key="f" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+									</object>
+								</child>
+							</object>
+						</child>
+						<child>
+							<object class="GtkMenuItem">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="label" translatable="yes">_Tools</property>
+								<property name="use-underline">True</property>
+								<child type="submenu">
+									<object class="GtkMenu">
+										<property name="visible">True</property>
+										<property name="can-focus">False</property>
+										<child>
+											<object class="GtkMenuItem">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="label" translatable="yes">_Go To…</property>
+												<property name="use-underline">True</property>
+												<signal name="activate" handler="menuitem_goto" swapped="no"/>
+												<accelerator key="g" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+										<child>
+											<object class="GtkImageMenuItem">
+												<property name="label" translatable="yes">_Find…</property>
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="use-underline">True</property>
+												<property name="image">image-find</property>
+												<property name="use-stock">False</property>
+												<signal name="activate" handler="menuitem_find" swapped="no"/>
+												<accelerator key="f" signal="activate" modifiers="GDK_CONTROL_MASK"/>
 											</object>
 										</child>
 									</object>
