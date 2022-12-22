@@ -174,7 +174,7 @@ class View:
     @staticmethod
     def entry_icons(ev:iCal.Event, prefix_space:bool) -> str:
         # Returns string of icons for entry (repeat, alarm...)
-        alarm = u'♫' # alternatives: alarm clock ⏰ (U+23F0), bell 🔔 (U+1F514)
+        alarm = u'♫' # alternatives: alarm clock ⏰ (U+23F0), bell 🕭,🔔 (U+1F56D,U+1F514)
         repeat = u'⟳'
         icons = ''
         if ev.walk('VALARM'):
@@ -357,7 +357,9 @@ class View_DayUnit_Base(View):
 
     # Bullets to use as markers in Week/Year views
     _BULLET = u'•'
-    _BULLET_ALLDAY = u'‣' # alternatives:❖⍟✪⦿❂
+    _BULLET_ALLDAY = u'✦' # alternatives:❖⍟✪⦿❂♦⧫⏣⎔⌾⌘⌑⎊⎈⁕⧓⚫⚭⚙✷✦
+    _BULLET_MULTIDAY_START = u'‣'
+    _BULLET_ONGOING = u'»'
     _BULLET_TODO = u'🅣' # alternative:Ⓣ
 
     @classmethod
@@ -372,7 +374,10 @@ class View_DayUnit_Base(View):
         elif type(ev) is iCal.Todo:
             mark = cls._BULLET_TODO
         elif 'DTEND' in ev:
-            mark = cls._BULLET_ALLDAY
+            if dt_lte(ev['DTEND'].dt, ev['DTSTART'].dt+timedelta(days=1)):
+                mark = cls._BULLET_ALLDAY
+            else:
+                mark = cls._BULLET_MULTIDAY_START
         else:
             mark = cls._BULLET
         lab.set_text(mark)
