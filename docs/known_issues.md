@@ -12,7 +12,8 @@ of any sort.
 
 Major
 -----
-* Missing views: Day, List, Busy
+* Missing views: Day, List, Busy.
+  (Also, a Month View, e.g. https://www.rmrsoft.com/epoc/month.htm )
 
 * Alarms are not implemented (note: a separate server should handle
   the actual alarm notifications)
@@ -20,8 +21,10 @@ Major
 * Many event properties are not implemented (details, attendees,
   attachments, etc.)
 
-* Many todo item properties are not implemented (due date, time etc.)
-  and they can only be sorted by priority
+* Many todo item properties are not implemented (due/expires date,
+  user tags, timed-but-undated, etc.)
+
+* Todo items can only be sorted by priority - add by-status, by-date...
 
 * Repeated event UI missing many elements (more complete repeat by
   BYMONTHDAY, BYSETPOS, Monday & Wednesday every week, extra dates,
@@ -56,7 +59,8 @@ Major
 * "Find" function is rudimentary/placeholder (no options, doesn't search
   todo items, can't jump to entries from results, not progressive ...).
 
-* No "Import" function
+* No "Import" function (e.g. to import iCal events from an email).
+  Also, how do we share events - "export"?
 
 * Only one calendar source can be used at a time. (Maybe allow multiple
   CalDAV calendars, each with own style element, so can be coloured
@@ -66,6 +70,10 @@ Medium
 ------
 * No "Zoom" function (is this even needed with a decent modern display?)
 
+* Esc key should toggle views
+
+* Need InfoPrints (a.k.a. toast notifications) for some situations
+
 * Todo View navigation needs refining: left/right can make cursor jump
   up and down
 
@@ -74,7 +82,9 @@ Medium
 * When deleting a repeated event, all are deleted. Should offer option
   of deleting this one (better, also offer delete all from, all before...)
 
-* No file manipulation: open, import, save-as, new file...
+* No goto next/previous entry (for those without endless appointments)
+
+* No file manipulation: open, save-as, new file (what's the use case?)
 
 * No time-zone support (should at least be part of time widget)
   (Options: "Travels with me" (default), zone xxx (list local first))
