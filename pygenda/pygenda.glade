@@ -1948,6 +1948,40 @@ long description, attendees…</property>
 								<property name="top-attach">2</property>
 							</packing>
 						</child>
+						<child>
+							<object class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="halign">end</property>
+								<property name="label" translatable="yes">Status:</property>
+								<style>
+									<class name="llabel"/>
+								</style>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">3</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkComboBoxText" id="combo_todo_status">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="halign">start</property>
+								<property name="active">0</property>
+								<items>
+									<item translatable="yes">None</item>
+									<item id="NEEDS-ACTION" translatable="yes">Action required</item>
+									<item id="IN-PROCESS" translatable="yes">In progress</item>
+									<item id="COMPLETED" translatable="yes">Completed</item>
+									<item id="CANCELLED" translatable="yes">Cancelled</item>
+								</items>
+							</object>
+							<packing>
+								<property name="left-attach">1</property>
+								<property name="top-attach">3</property>
+							</packing>
+						</child>
 					</object>
 					<packing>
 						<property name="expand">False</property>

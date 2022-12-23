@@ -20,7 +20,7 @@ Major
 * Many event properties are not implemented (details, attendees,
   attachments, etc.)
 
-* Many todo item properties are not implemented (due date, status etc.)
+* Many todo item properties are not implemented (due date, time etc.)
   and they can only be sorted by priority
 
 * Repeated event UI missing many elements (more complete repeat by

@@ -22,8 +22,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-22 19:09+0100\n"
-"PO-Revision-Date: 2022-12-22 19:09+0100\n"
+"POT-Creation-Date: 2022-12-23 21:33+0100\n"
+"PO-Revision-Date: 2022-12-23 21:33+0100\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -81,7 +81,7 @@ msgid "Edit Event"
 msgstr "Modifier évènement"
 
 #: pygenda_gui.py:1699 pygenda.glade:1219 pygenda.glade:1551 pygenda.glade:1734
-#: pygenda.glade:1934
+#: pygenda.glade:1934 pygenda.glade:1973
 msgid "None"
 msgstr "Rien"
 
@@ -97,19 +97,19 @@ msgstr "Ajouter date"
 msgid "Remove date(s)"
 msgstr "Retirer date(s)"
 
-#: pygenda_gui.py:2088
+#: pygenda_gui.py:2090
 msgid "New To-do"
 msgstr "Nouvelle tâche"
 
-#: pygenda_gui.py:2099
+#: pygenda_gui.py:2101
 msgid "Edit To-do"
 msgstr "Modifier tâche"
 
-#: pygenda_gui.py:2181
+#: pygenda_gui.py:2189
 msgid "Find results"
 msgstr "Resultats de recherche"
 
-#: pygenda_gui.py:2188
+#: pygenda_gui.py:2196
 msgid "No results found"
 msgstr "Pas d'entrées trouvées"
 
@@ -437,7 +437,7 @@ msgstr "Alarme"
 msgid "Location:"
 msgstr "Lieu :"
 
-#: pygenda.glade:1716
+#: pygenda.glade:1716 pygenda.glade:1956
 msgid "Status:"
 msgstr "Statut :"
 
@@ -445,7 +445,7 @@ msgstr "Statut :"
 msgid "Tentative"
 msgstr "Provisoire"
 
-#: pygenda.glade:1736
+#: pygenda.glade:1736 pygenda.glade:1977
 msgid "Cancelled"
 msgstr "Annulé"
 
@@ -481,10 +481,22 @@ msgstr "1 (la plus haute)"
 msgid "9 (Lowest)"
 msgstr "9 (la plus basse)"
 
-#: pygenda.glade:1967
+#: pygenda.glade:1974
+msgid "Action required"
+msgstr "Action requise"
+
+#: pygenda.glade:1975
+msgid "In progress"
+msgstr "En cours"
+
+#: pygenda.glade:1976
+msgid "Completed"
+msgstr "Achevé"
+
+#: pygenda.glade:2001
 msgid "Find"
 msgstr "Rechercher"
 
-#: pygenda.glade:2028
+#: pygenda.glade:2062
 msgid "Find text:"
 msgstr "Chercher texte :"
