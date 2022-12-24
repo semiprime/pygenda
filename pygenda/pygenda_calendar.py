@@ -657,7 +657,7 @@ class CalendarConnectorCalDAV(CalendarConnector):
             vevent.__conn_entry = ev # Sneakily add ev, for rapid access later
             self.cal.add_component(vevent)
         # ... and todos
-        todos = self.calendar.todos()
+        todos = self.calendar.todos(sort_keys=(), include_completed=True)
         for td in todos:
             vtodo = td.icalendar_instance.walk('VTODO')[0]
             vtodo.__conn_entry = td # Sneakily add td, for rapid access later

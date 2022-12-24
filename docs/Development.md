@@ -59,6 +59,8 @@ Checklist for releases
 * Run `mypy .` in source directory, check any new messages
 * If any new dependencies are required, add them to setup.py
 * Check setup.py install works & the installed module runs correctly
+* Create various events & todo items. Close & reopen Pygenda and check
+  they are still there (with ics file & CalDAV server).
 * Check copy/cut/paste works, including e.g. event date/time, multi-day events,
   event status, todo pasted as event & vice-versa, text pasted
 * Regenerate .po and .mo localisation files (see above)
