@@ -18,7 +18,10 @@ Usage is intended to be intuitive, but a few things are worth noting:
   number), and comboboxes (choose option from dropdown list) can be
   increased with + or >, and decreased with - or <.
 
-* Space toggles between Today and wherever the cursor was last.
+* The Escape key toggles between the most recent two views.
+
+* In Week and Year views, the space key toggles between Today and
+  wherever the cursor was last.
 
 * If you want the Tab key to move within elements in date/time/duration
   widgets then set the global/tab_elts_datetime config option to True.

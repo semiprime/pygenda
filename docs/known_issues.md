@@ -70,8 +70,6 @@ Medium
 ------
 * No "Zoom" function (is this even needed with a decent modern display?)
 
-* Esc key should toggle views
-
 * Need InfoPrints (a.k.a. toast notifications) for some situations
 
 * Todo View navigation needs refining: left/right can make cursor jump

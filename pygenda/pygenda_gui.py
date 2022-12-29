@@ -63,6 +63,7 @@ class GUI:
     views = []
     view_widgets = [] # type: List[Gtk.Widget]
     _view_idx = 0 # take first view as default
+    _toggle_view_idx = -1 # used to toggle between views (Esc key)
 
     _lib_clip = None
 
@@ -467,6 +468,8 @@ class GUI:
     @classmethod
     def keypress(cls, wid:Gtk.Widget, ev:Gdk.EventKey) -> None:
         # Called whenever a key is pressed/repeated when View in focus
+        if ev.keyval==Gdk.KEY_Escape and cls._toggle_view_idx >= 0:
+            cls.switch_view(None, cls._toggle_view_idx)
         cls.views[cls._view_idx].keypress(wid,ev)
 
 
@@ -564,10 +567,12 @@ class GUI:
         # idx = index of new view (otherwise goes to next view in list)
         if idx is None:
             # Go to next view in list
+            cls._toggle_view_idx = cls._view_idx
             cls._view_idx = (cls._view_idx+1)%len(cls.views)
         elif cls._view_idx == idx:
             return # No change, so skip redraw
         else:
+            cls._toggle_view_idx = cls._view_idx
             cls._view_idx = idx
         cls._eventbox.remove(cls._eventbox.get_child())
         new_view = cls.views[cls._view_idx]
