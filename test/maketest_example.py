@@ -3,7 +3,7 @@
 #
 # Generate test file for Pygenda
 #
-# Copyright (C) 2022 Matthew Lewis
+# Copyright (C) 2022,2023 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -98,21 +98,6 @@ def print_daylight_saving_changes():
     print_vevent('Clocks go back (US)', '2000-11-05', time='2:00', repeat='YEARLY', bymonthday=[11,'1SU'])
 
 
-def print_thanksgiving():
-    print('BEGIN:VEVENT', end='\r\n')
-    print('SUMMARY:Thanksgiving (US)', end='\r\n')
-    print('DTSTART;VALUE=DATE:19421126', end='\r\n')
-    print_stamp_uid()
-    print('RRULE:FREQ=YEARLY;BYDAY=4TH;BYMONTH=11', end='\r\n')
-    print('END:VEVENT', end='\r\n')
-    print('BEGIN:VEVENT', end='\r\n')
-    print('SUMMARY:Thanksgiving (Canada)', end='\r\n')
-    print('DTSTART;VALUE=DATE:19571014', end='\r\n')
-    print_stamp_uid()
-    print('RRULE:FREQ=YEARLY;BYDAY=2MO;BYMONTH=10', end='\r\n')
-    print('END:VEVENT', end='\r\n')
-
-
 print('BEGIN:VCALENDAR', end='\r\n')
 print('VERSION:2.0', end='\r\n')
 print('PRODID:-//Semiprime//PygendaTest//EN', end='\r\n')
@@ -142,14 +127,22 @@ print_vevent('Summer bank holiday (UK)', '2000-08-28', repeat='YEARLY', bymonthd
 print_vevent('April Fools\' Day', '2000-04-01', repeat='YEARLY', daycount=1)
 print_vevent('Burns\' Night', '1759-01-25', repeat='YEARLY', daycount=1)
 print_vevent('St Patrick\'s Day', '2000-03-17', repeat='YEARLY', daycount=1)
+print_vevent('Independence Day (US)', '1776-07-04', repeat='YEARLY', daycount=1)
+print_vevent('Thanksgiving (US)', '1942-11-26', repeat='YEARLY', bymonthday=[11,'4TH'], daycount=1)
+print_vevent('Thanksgiving (Canada)', '1957-10-14', repeat='YEARLY', bymonthday=[10,'2MO'], daycount=1)
+print_vevent('Australia Day', '1994-01-26', repeat='YEARLY', daycount=1)
+print_vevent('Waitangi Day (NZ)', '1947-02-06', repeat='YEARLY', daycount=1)
+print_vevent(u'Fête nationale française (Bastille Day)', '1880-07-14', repeat='YEARLY', daycount=1)
 print_vevent('Mother\'s Day (US)', '2000-05-14', repeat='YEARLY', bymonthday=[5,'2SU'], daycount=1)
 print_vevent('Father\'s Day', '2000-06-18', repeat='YEARLY', bymonthday=[6,'3SU'], daycount=1)
-print_vevent('Winter Solstice', '0001-12-21', repeat='YEARLY', daycount=1)
-print_vevent('Summer Solstice', '0001-06-21', repeat='YEARLY', daycount=1)
+print_vevent('Winter Solstice (northern hemisphere)', '0001-12-21', repeat='YEARLY', daycount=1)
+print_vevent('Summer Solstice (northern hemisphere)', '0001-06-21', repeat='YEARLY', daycount=1)
 print_vevent('New Year\'s Eve', '0001-12-31', repeat='YEARLY', daycount=1)
 print_vevent('Holocaust Memorial Day', '1945-01-27', repeat='YEARLY', daycount=1)
 print_vevent('International Women\'s Day', '1977-03-08', repeat='YEARLY', daycount=1)
 print_vevent('International Men\'s Day', '1999-11-19', repeat='YEARLY', daycount=1)
+print_vevent('Martin Luther King Jr. Day (US)', '1986-01-20', repeat='YEARLY', bymonthday=[1,'3MO'], daycount=1)
+print_vevent('Fall of the Berlin Wall (1989)', '1989-11-09', repeat='YEARLY', daycount=1)
 print_vevent('International Talk Like a Pirate Day', '1995-09-19', repeat='YEARLY', daycount=1)
 print_vevent('Pi Day', '2000-03-14', repeat='YEARLY', daycount=1)
 print_vevent('Perseids meteor shower', '2000-08-12', repeat='YEARLY')
@@ -157,7 +150,6 @@ print_vevent('Leonids meteor shower', '2000-11-17', repeat='YEARLY')
 print_vevent('Beethoven\'s birthday', '1770-12-16', repeat='YEARLY', daycount=1)
 
 print_daylight_saving_changes()
-print_thanksgiving()
 
 # Work events
 day_back = 11-(day_offset+3)%7 # first Mon after 4th Jan
