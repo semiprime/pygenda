@@ -3,7 +3,7 @@
 # pygenda_gui.py
 # Top-level GUI code and shared elements (e.g. soft buttons, dialogs)
 #
-# Copyright (C) 2022 Matthew Lewis
+# Copyright (C) 2022,2023 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -27,7 +27,7 @@ from gi.repository import Gtk, Gdk, GLib, Gio
 from datetime import date as dt_date, time as dt_time, datetime as dt_datetime, timedelta
 from dateutil import rrule as du_rrule
 from dateutil.relativedelta import relativedelta
-from icalendar import Calendar as iCalendar, Event as iEvent, Todo as iTodo
+from icalendar import Calendar as iCalendar, Event as iEvent, Todo as iTodo, vRecur
 from importlib import import_module
 from os import path as ospath
 from sys import stderr
@@ -843,7 +843,7 @@ class GUI:
         # Display the "About" dialog
         dialog = Gtk.AboutDialog(parent=cls._window)
         dialog.set_program_name('Pygenda')
-        dialog.set_copyright(u'Copyright © 2022 Matthew Lewis')
+        dialog.set_copyright(u'Copyright © 2022,2023 Matthew Lewis')
         dialog.set_license_type(Gtk.License.GPL_3_0_ONLY)
         dialog.set_logo_icon_name('x-office-calendar')
         dialog.set_authors(('Matthew Lewis',))
@@ -884,6 +884,17 @@ class GUI:
             return [], []
         tdv = cls.views[todo_idx]
         return tdv._list_titles, tdv._list_default_cats
+
+
+# Exception used to indicate dialog can't display event properties.
+# In these cases there is a danger of the user accidentally changing
+# the event property. For example, if the dialog can't show monthly
+# repeats that happen on two days of the month, (BYMONTHDAY has two
+# values) it could try to "approximate" it, by just showing one day;
+# however, the user might not notice, and change some other property,
+# save the entry, and thus erase half of the repeats (i.e. data loss).
+class EventPropertyBeyondDialog(Exception):
+    pass
 
 
 # Singleton class to manage Event dialog (to create/edit Events)
@@ -1533,121 +1544,140 @@ class EventDialogController:
     def _seed_fields(cls, event:iEvent, txt:Optional[str], date:Optional[dt_date]) -> None:
         # Initialise fields when dialog is opened.
         # Data optionally from an existing event, or text used as summary.
-        # !! This function is a horrible mess. Needs rationalising !!
 
-        # Set defaults
-        dur = None
-        end_dttm = None
+        # First, set to default values (possibly overwritten later)
+        cls._set_fields_to_defaults(date)
+
+        # Two cases: new event or edit existing event
+        if event is None:
+            # Initialise decscription field
+            cls._seed_text_only(txt)
+        else: # existing entry - take values
+            cls._seed_from_event(event)
+
+        cls._seed_rep_exception_list(event) # If event==None this clears exlist
+
+
+    @classmethod
+    def _set_fields_to_defaults(cls, date:Optional[dt_date]) -> None:
+        # Set dialog fields to default values
+        # 'date' is an optional argument, usually the cursor date
+
+        # Desc. This is not a user interaction, so block signal
+        cls.wid_desc.handler_block(cls._wid_desc_changed_handler)
+        cls.wid_desc.set_text('')
+        cls.wid_desc.handler_unblock(cls._wid_desc_changed_handler) # unblock
+        cls.wid_date.set_date(dt_date.today() if date is None else date)
+
+        # Time tab
+        cls.wid_timed_buttons[0].set_active(True) # Sends signal to hide fields
+        tm9 = dt_time(hour=9)
+        cls.wid_time.set_time(tm9)
+        cls.wid_dur.set_duration(timedelta(0))
+        cls.wid_endtime.set_time(tm9)
         cls.dur_determines_end = True
         cls.wid_allday_count.set_value(1)
-        cls.wid_rep_type.set_active(0)
+
+        # Repeats tab
+        cls.wid_rep_type.set_active(0) # Sends signal to hide fields
         cls.repbymonthday_initialized = False # Init these later when we can
         cls.repbyweekday_initialized = False  # choose appropriate values.
         cls.wid_rep_interval.set_value(1)
         cls.wid_rep_forever.set_active(True)
         cls.rep_occs_determines_end = True
-        cls._set_occs_min(1)
         cls.wid_rep_occs.set_value(1)
+        cls._set_occs_min(1)
         # No need to set wid_rep_enddt because it will be synced when revealed
-        cls.wid_status.set_active(0)
-        cls.wid_location.set_text('')
+
+        # Alarm tab
         cls.wid_alarmset.set_active(False)
 
-        # Two cases: new event or edit existing event
-        if event is None:
-            # Initialise decscription field
-            # We don't want this to count as user interaction, so block signal
-            cls.wid_desc.handler_block(cls._wid_desc_changed_handler)
-            if txt is None:
-                cls.wid_desc.set_text('') # clear text
-            else:
-                cls.wid_desc.set_text(txt)
-                cls.wid_desc.set_position(len(txt))
-            cls.wid_desc.handler_unblock(cls._wid_desc_changed_handler)#unblock
-            cls.wid_desc.grab_focus_without_selecting()
-            dt = dt_date.today() if date is None else date
-            tm = None
-        else: # existing entry - take values
-            cls.wid_desc.set_text(event['SUMMARY'] if 'SUMMARY' in event else '')
-            cls.wid_desc.grab_focus()
-            dt = event['DTSTART'].dt
-            dttm = None
-            if isinstance(dt,dt_datetime):
-                dttm = dt
-                dt = dttm.date()
-                tm = dttm.time()
-                if 'DTEND' in event:
-                    end_dttm = event['DTEND'].dt
-                    if isinstance(end_dttm, dt_time):
-                        end_dttm = dt_datetime.combine(dt,end_dttm)
-                        if end_dttm<dttm:
-                            end_dttm += timedelta(days=1)
-                elif 'DURATION' in event:
-                    dur = event['DURATION'].dt
-            elif isinstance(dt,dt_date):
-                tm = None
-                if 'DTEND' in event and isinstance(event['DTEND'].dt, dt_date):
-                    end_dttm = event['DTEND'].dt
-            else: # dt is neither a date nor a datetime
-                raise TypeError("Event date of unexpected type")
-            if 'RRULE' in event:
-                rrule = event['RRULE']
-                rrfreq = rrule['FREQ'][0]
-                if rrfreq == 'MONTHLY' and 'BYDAY' in rrule:
-                    cls.wid_rep_type.set_active_id('MONTHLY-WEEKDAY')
-                    byday = rrule['BYDAY'][0]
-                    cls.repbyweekday_initialized = True
-                    cls.wid_repbyweekday_ord.set_active_id(byday[1 if byday[0]=='+' else 0:-2])
-                    cls.wid_repbyweekday_day.set_active_id(byday[-2:])
-                elif rrfreq == 'MONTHLY' and 'BYMONTHDAY' in rrule:
-                    if len(rrule['BYMONTHDAY'])!=1:
-                        raise TypeError('Editing repeat with multiple \'BYMONTHDAY\' not (yet) supported')
-                    cls.wid_rep_type.set_active_id('MONTHLY-MONTHDAY')
-                    bymday = rrule['BYMONTHDAY'][0]
-                    if not(-7 <= int(bymday) <= -1):
-                        raise TypeError('Editing repeat with BYMONTHDAY={} not (yet) supported'.format(bymday))
-                    cls.wid_repbymonthday.set_active_id(str(bymday))
-                    cls.repbymonthday_initialized = True
-                elif rrfreq in ('YEARLY','MONTHLY','WEEKLY','DAILY'):
-                    cls.wid_rep_type.set_active_id(rrfreq)
-                else:
-                    raise TypeError('Editing repeat freq \'{}\' not (yet) supported'.format(rrfreq))
-                cls.wid_rep_interval.set_value(int(rrule['INTERVAL'][0]) if 'INTERVAL' in rrule else 1)
-                if 'COUNT' in rrule:
-                    cls.wid_rep_forever.set_active(False)
-                    c = rrule['COUNT'][0]
-                    cls.wid_rep_occs.set_value(c if c>=1 else 1)
-                    cls.rep_occs_determines_end = True
-                elif 'UNTIL' in rrule:
-                    cls.wid_rep_forever.set_active(False)
-                    u = rrule['UNTIL'][0]
-                    if isinstance(u,dt_datetime):
-                        u = u.date()
-                    cls.wid_rep_enddt.set_date(u if u>dt else dt)
-                    cls.rep_occs_determines_end = False
-            if 'STATUS' in event and event['STATUS'] in Calendar.STATUS_LIST_EVENT:
-                cls.wid_status.set_active_id(event['STATUS'])
-            if 'LOCATION' in event:
-                cls.wid_location.set_text(event['LOCATION'])
-            if event.walk('VALARM'):
-                cls.wid_alarmset.set_active(True)
+        # Details tab
+        cls.wid_status.set_active(0)
+        cls.wid_location.set_text('')
 
-        cls.wid_date.set_date(dt)
+
+    @classmethod
+    def _seed_text_only(cls, txt:Optional[str]) -> None:
+        # Called when dialog is opened for a new event
+        # Text possibly typed, or pasted from clipboard
+        if txt is not None:
+            # Not a user interaction, so block signal
+            cls.wid_desc.handler_block(cls._wid_desc_changed_handler)
+            cls.wid_desc.set_text(txt)
+            cls.wid_desc.set_position(len(txt))
+            cls.wid_desc.handler_unblock(cls._wid_desc_changed_handler)
+        cls.wid_desc.grab_focus_without_selecting()
+
+
+    @classmethod
+    def _seed_from_event(cls, event:iEvent) -> None:
+        # Called when dialog is opened for en existing event.
+        # Assume defaults already set before this is called.
+
+        if 'SUMMARY' in event:
+            cls.wid_desc.set_text(event['SUMMARY'])
+        cls.wid_desc.grab_focus() # also selects text in field
+
+        # Date & Time tab
+        cls._seed_date_timetab(event)
+
+        # Repeats tab
+        if 'RRULE' in event:
+            cls._seed_repeatstab(event['RRULE'])
+
+        # Alarm tab
+        if event.walk('VALARM'):
+            cls.wid_alarmset.set_active(True)
+
+        # Details tab
+        if 'STATUS' in event and event['STATUS'] in Calendar.STATUS_LIST_EVENT:
+            cls.wid_status.set_active_id(event['STATUS'])
+        if 'LOCATION' in event:
+            cls.wid_location.set_text(event['LOCATION'])
+
         cls._sync_rep_occs_end()
 
-        if tm is None:
-            # Setting radio buttons for Untimed/Timed/Allday.
-            # This also reveals appropriate UI elements via signal connections.
-            if end_dttm is None:
-                cls.wid_timed_buttons[0].set_active(True)
-            else:
-                cls.wid_timed_buttons[2].set_active(True)
-                d = end_dttm - dt
-                cls.wid_allday_count.set_value(d.days)
-            tm = dt_time(hour=9)
-        else:
+
+    @classmethod
+    def _seed_date_timetab(cls, event:iEvent) -> None:
+        # Called when dialog is opened for en existing event.
+        # Seeds the date field and the time tab (inc. all-day events).
+        dt = event['DTSTART'].dt
+        dttm = None
+        tm = None
+        dur = None
+        end_dttm = None
+        if isinstance(dt,dt_datetime):
+            dttm = dt
+            dt = dttm.date()
+            tm = dttm.time()
+            if 'DTEND' in event:
+                end_dttm = event['DTEND'].dt
+                if isinstance(end_dttm, dt_time):
+                    end_dttm = dt_datetime.combine(dt,end_dttm)
+                    if end_dttm<dttm:
+                        end_dttm += timedelta(days=1)
+            elif 'DURATION' in event:
+                dur = event['DURATION'].dt
+        elif isinstance(dt,dt_date):
+            if 'DTEND' in event and isinstance(event['DTEND'].dt, dt_date):
+                end_dttm = event['DTEND'].dt
+        else: # dt is neither a date nor a datetime
+            raise TypeError('Event date of unexpected type')
+        cls.wid_date.set_date(dt)
+
+        # Setting radio buttons etc. for Untimed/Timed/Allday.
+        # This also reveals appropriate UI elements via signal connections.
+        if tm is not None:
+            # Timed entry
             cls.wid_timed_buttons[1].set_active(True)
-        cls.wid_time.set_time(tm)
+            cls.wid_time.set_time(tm)
+        elif end_dttm is not None:
+            # All day entry
+            cls.wid_timed_buttons[2].set_active(True)
+            d = end_dttm - dt
+            cls.wid_allday_count.set_value(d.days)
 
         if dur is not None:
             end_dttm = dttm + dur
@@ -1657,13 +1687,62 @@ class EventDialogController:
             cls.dur_determines_end = False
 
         if dur is None:
-            cls.wid_dur.set_duration(timedelta(0))
-            cls.wid_endtime.set_time(tm)
+            if tm is not None:
+                # No duration or endtime in event.
+                # Set dialog endtime equal to starttime.
+                cls.wid_endtime.set_time(tm)
         else:
+            # One of duration or endtime in event.
+            # Set both fields in dialog. Values have been made to match above.
             cls.wid_dur.set_duration(dur)
             cls.wid_endtime.set_time(end_dttm.time())
 
-        cls._seed_rep_exception_list(event)
+
+    @classmethod
+    def _seed_repeatstab(cls, rrule:vRecur) -> None:
+        # Called when dialog is opened for en existing event.
+        # Assumes that start date has already been set from event.
+        rrfreq = rrule['FREQ'][0]
+        if rrfreq == 'MONTHLY' and 'BYDAY' in rrule:
+            cls.wid_rep_type.set_active_id('MONTHLY-WEEKDAY')
+            if len(rrule['BYDAY']) > 1:
+                raise EventPropertyBeyondDialog('Editing MONTHLY repeat with multiple \'BYDAY\' not (yet) supported')
+            byday = rrule['BYDAY'][0]
+            cls.repbyweekday_initialized = True
+            cls.wid_repbyweekday_ord.set_active_id(byday[1 if byday[0]=='+' else 0:-2])
+            cls.wid_repbyweekday_day.set_active_id(byday[-2:])
+        elif rrfreq == 'MONTHLY' and 'BYMONTHDAY' in rrule:
+            if len(rrule['BYMONTHDAY'])!=1:
+                raise EventPropertyBeyondDialog('Editing repeat with multiple \'BYMONTHDAY\' not (yet) supported')
+            cls.wid_rep_type.set_active_id('MONTHLY-MONTHDAY')
+            bymday = rrule['BYMONTHDAY'][0]
+            if not(-7 <= int(bymday) <= -1):
+                raise EventPropertyBeyondDialog('Editing repeat with BYMONTHDAY={} not (yet) supported'.format(bymday))
+            cls.wid_repbymonthday.set_active_id(str(bymday))
+            cls.repbymonthday_initialized = True
+        elif rrfreq in ('YEARLY','MONTHLY','WEEKLY','DAILY'):
+            cls.wid_rep_type.set_active_id(rrfreq)
+        else:
+            raise EventPropertyBeyondDialog('Editing repeat freq \'{}\' not (yet) supported'.format(rrfreq))
+        cls.wid_rep_interval.set_value(int(rrule['INTERVAL'][0]) if 'INTERVAL' in rrule else 1)
+        if 'COUNT' in rrule:
+            cls.wid_rep_forever.set_active(False)
+            c = rrule['COUNT'][0]
+            cls.wid_rep_occs.set_value(c if c>=1 else 1)
+            cls.rep_occs_determines_end = True
+        elif 'UNTIL' in rrule:
+            cls.wid_rep_forever.set_active(False)
+            u = rrule['UNTIL'][0]
+            if isinstance(u,dt_datetime):
+                u = u.date()
+            dt_st = cls.get_date_start() # Won't be none, because seeded
+            cls.wid_rep_enddt.set_date(u if u>dt_st else dt_st)
+            cls.rep_occs_determines_end = False
+
+        if rrfreq == 'WEEKLY' and 'BYDAY' in rrule:
+            rr_byday = rrule['BYDAY']
+            if isinstance(rr_byday, list) and len(rr_byday)>1:
+                raise EventPropertyBeyondDialog('Editing WEEKLY repeat with multiple \'BYDAY\' not (yet) supported')
 
 
     @classmethod
