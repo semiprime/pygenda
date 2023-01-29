@@ -3,7 +3,7 @@
 # pygenda_calendar.py
 # Connects to agenda data provider - either an ics file or CalDAV server.
 #
-# Copyright (C) 2022 Matthew Lewis
+# Copyright (C) 2022,2023 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -543,6 +543,18 @@ class Calendar:
             if 'SUMMARY' in ev and txt_n in ev['SUMMARY'].casefold():
                 ret_list.append(ev)
         return ret_list
+
+
+    @staticmethod
+    def caldatetime_tree_to_dt_list(ed) -> list:
+        # Utility function to map a "tree" of dates (arg `ed`)
+        # (as returned by icalendar when retrieving EXDATE)
+        # to a flat list of Python date/datetimes.
+        if isinstance(ed, list):
+            exdate_list = [ed[i].dts[j] for i in range(len(ed)) for j in range(len(ed[i].dts))]
+        else:
+            exdate_list = ed.dts
+        return [d.dt for d in exdate_list]
 
 
 #
@@ -1233,8 +1245,8 @@ def repeats_in_range_with_rrstr(ev:iEvent, start:dt_date, stop:dt_date) -> list:
         i_until_z = rrstr.find('Z', i_until_st)
         if i_until_z == -1 or i_until_z > i_until_end:
             rrstr = rrstr[:i_until_end] + 'Z' + rrstr[i_until_end:]
-    exd = 'EXDATE' in ev
-    rr = rrulestr(rrstr,dtstart=dt,forceset=exd)
+    has_exd = 'EXDATE' in ev
+    rr = rrulestr(rrstr,dtstart=dt,forceset=has_exd)
     st = date_to_datetime(start, is_timed)
     sp = date_to_datetime(stop, is_timed)
     sp -= timedelta(milliseconds=1)
@@ -1244,21 +1256,17 @@ def repeats_in_range_with_rrstr(ev:iEvent, start:dt_date, stop:dt_date) -> list:
     elif is_hr_min_sec:
         # After doing calculations in UTC, convert results to local time
         ret = [d.astimezone(LOCAL_TZ) for d in ret]
-    if exd:
-        if isinstance(ev['EXDATE'], list):
-            exdate_list = [ev['EXDATE'][i].dts[j] for i in range(len(ev['EXDATE'])) for j in range(len(ev['EXDATE'][i].dts))]
-        else:
-            exdate_list = ev['EXDATE'].dts
-        for de in exdate_list:
-            dedt = de.dt
+    if has_exd:
+        exdate_list = Calendar.caldatetime_tree_to_dt_list(ev['EXDATE'])
+        for exdt in exdate_list:
             if is_timed:
-                if isinstance(dedt, dt_datetime):
-                    dedt = date_to_datetime(dedt, True)
-                    ret = [d for d in ret if d!=dedt]
+                if isinstance(exdt, dt_datetime):
+                    exdt = date_to_datetime(exdt, True)
+                    ret = [d for d in ret if d!=exdt]
                 else:
-                    ret = [d for d in ret if d.date()!=dedt]
+                    ret = [d for d in ret if d.date()!=exdt]
             else:
-                ret = [d for d in ret if d!=dedt]
+                ret = [d for d in ret if d!=exdt]
     return ret
 
 
