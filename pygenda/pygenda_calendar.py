@@ -542,6 +542,11 @@ class Calendar:
         for ev in cls._entry_rep_list:
             if 'SUMMARY' in ev and txt_n in ev['SUMMARY'].casefold():
                 ret_list.append(ev)
+        # Todo entries
+        cls._update_todo_list()
+        for td in cls._todo_list:
+            if 'SUMMARY' in td and txt_n in td['SUMMARY'].casefold():
+                ret_list.append(td)
         return ret_list
 
 

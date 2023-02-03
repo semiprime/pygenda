@@ -56,8 +56,9 @@ Major
   (In tests, with .ics file, file writing is slow; with CalDAV server
   re-sorting the lists is slow.)
 
-* "Find" function is rudimentary/placeholder (no options, doesn't search
-  todo items, can't jump to entries from results, not progressive ...).
+* "Find" function is rudimentary/placeholder (no options, just searches
+  for full string, only searches in the Summary, can't jump to entries
+  from results, not progressive, order of results is not useful, ...)
 
 * No "Import" function (e.g. to import iCal events from an email).
   Also, how do we share events - "export"?

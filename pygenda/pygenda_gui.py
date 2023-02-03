@@ -2288,9 +2288,13 @@ class FindController:
             r_dialog.get_content_area().add(scroller)
             i = 0
             for en in res:
-                dt = en['DTSTART'].dt
-                l_dt = Gtk.Label(dt.strftime(GUI.date_formatting_numeric))
-                r_grid.attach(l_dt, 0, i, 1, 1)
+                if isinstance(en, iTodo):
+                    l_left = Gtk.Label(u'Ⓣ')
+                    l_left.set_halign(Gtk.Align.END)
+                else:
+                    dt = en['DTSTART'].dt
+                    l_left = Gtk.Label(dt.strftime(GUI.date_formatting_numeric))
+                r_grid.attach(l_left, 0, i, 1, 1)
                 l_sum = Gtk.Label(en['SUMMARY'])
                 l_sum.set_halign(Gtk.Align.START)
                 r_grid.attach(l_sum, 1, i, 1, 1)
