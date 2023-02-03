@@ -3,7 +3,7 @@
 # pygenda_view_todo.py
 # Provides the "To-Do View" for Pygenda.
 #
-# Copyright (C) 2022 Matthew Lewis
+# Copyright (C) 2022,2023 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -190,7 +190,7 @@ class View_Todo(View):
         # Handle pasting of text in Todo view.
         # Open a New Todo dialog with description initialised as txt,
         # and to-do list set from current cursor position.
-        GLib.idle_add(lambda x: TodoDialogController.newtodo(txt=x, list_idx=cls.cursor_todo_list()), txt)
+        GLib.idle_add(lambda x: TodoDialogController.new_todo(txt=x, list_idx=cls.cursor_todo_list()), txt)
 
 
     @classmethod
@@ -466,7 +466,7 @@ class View_Todo(View):
             # If it's a character key, take as first of new todo
             # !! Bug: only works for ASCII characters
             if ev.state & (Gdk.ModifierType.CONTROL_MASK|Gdk.ModifierType.MOD1_MASK)==0 and Gdk.KEY_exclam <= ev.keyval <= Gdk.KEY_asciitilde:
-                GLib.idle_add(lambda x: TodoDialogController.newtodo(txt=x, list_idx=cls.cursor_todo_list()), chr(ev.keyval))
+                GLib.idle_add(lambda x: TodoDialogController.new_todo(txt=x, list_idx=cls.cursor_todo_list()), chr(ev.keyval))
 
 
     @classmethod
@@ -513,6 +513,6 @@ class View_Todo(View):
         # Assigned to the 'Enter' key.
         en = cls.get_cursor_entry()
         if en is None:
-            TodoDialogController.newtodo(list_idx=cls.cursor_todo_list())
+            TodoDialogController.new_todo(list_idx=cls.cursor_todo_list())
         else:
-            TodoDialogController.edittodo(en, list_idx=cls.cursor_todo_list())
+            TodoDialogController.edit_todo(en, list_idx=cls.cursor_todo_list())

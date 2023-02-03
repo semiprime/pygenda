@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 	pygenda.glade
-	Copyright (C) 2022 Matthew Lewis
+	Copyright (C) 2022,2023 Matthew Lewis
 	Based on a file generated with glade 3.38.2
 
 	This file is part of Pygenda.
@@ -222,6 +222,15 @@
 												<property name="use-underline">True</property>
 												<signal name="activate" handler="menuitem_newtodo" swapped="no"/>
 												<accelerator key="m" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+										<child>
+											<object class="GtkMenuItem" id="menuelt-show-entry-props">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="label" translatable="yes">Show _Properties</property>
+												<property name="use-underline">True</property>
+												<signal name="activate" handler="menuitem_show_entry_props" swapped="no"/>
 											</object>
 										</child>
 										<child>

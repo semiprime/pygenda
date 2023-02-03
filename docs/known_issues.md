@@ -198,6 +198,9 @@ Minor
 
 * In comboboxes, when in "popped out" state, +/-/</> keys don't work
 
+* In the Entry Properties dialog, some properties are missing (attendees),
+  and dates aren't localised
+
 * In code, various places marked with '!!' indicating known bugs or
   temporary/placeholder implementations.
 

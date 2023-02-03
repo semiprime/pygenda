@@ -23,6 +23,7 @@
 from gi import require_version as gi_require_version
 gi_require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GLib, Gio
+from gi.repository.Pango import WrapMode as PWrapMode
 
 from datetime import date as dt_date, time as dt_time, datetime as dt_datetime, timedelta
 from dateutil import rrule as du_rrule
@@ -33,7 +34,7 @@ from os import path as ospath
 from sys import stderr
 import signal
 import ctypes
-from typing import Optional, Tuple, List
+from typing import Optional, Tuple, List, Union
 
 # for internationalisation/localisation
 import locale
@@ -58,6 +59,8 @@ class GUI:
     _VIEWS = ('Week','Year','Todo') # Order gives order in menus
     SPINBUTTON_INC_KEY = (Gdk.KEY_plus,Gdk.KEY_greater)
     SPINBUTTON_DEC_KEY = (Gdk.KEY_minus,Gdk.KEY_less)
+    STYLE_TXTLABEL = 'tlabel'
+    STYLE_TXTPROP = 'plabel'
     STYLE_ERR = 'dialog_error'
 
     views = []
@@ -140,7 +143,7 @@ class GUI:
             cls.toggle_fullscreen()
 
         # Get handles to menu items to enable/disable when on/not on an entry
-        cls._menu_elts_entry = cls._get_objs_by_id(('menuelt-cut','menuelt-copy','menuelt-delete','menuelt-set-status'))
+        cls._menu_elts_entry = cls._get_objs_by_id(('menuelt-cut','menuelt-copy','menuelt-delete','menuelt-show-entry-props','menuelt-set-status'))
         cls._menu_elts_event = cls._get_objs_by_id(('menuelt-edit-time','menuelt-edit-reps','menuelt-edit-alarm','menuelt-edit-details'))
         cls._menu_elts_stat_event = cls._get_objs_by_id(('menuelt-status-confirmed','menuelt-status-tentative'))
         cls._menu_elts_stat_todo = cls._get_objs_by_id(('menuelt-status-needsaction','menuelt-status-inprocess','menuelt-status-completed'))
@@ -156,9 +159,10 @@ class GUI:
             'menuitem_cut': cls.cut_request,
             'menuitem_copy': cls.copy_request,
             'menuitem_paste': cls.paste_request,
-            'menuitem_find': cls.handler_find,
+            'menuitem_deleteentry': cls.delete_request,
             'menuitem_newevent': cls.handler_newevent,
             'menuitem_newtodo': cls.handler_newtodo,
+            'menuitem_show_entry_props': cls.handler_showentryprops,
             'menuitem_edittime': cls.handler_edittime,
             'menuitem_editrepeats': cls.handler_editrepeats,
             'menuitem_editalarm': cls.handler_editalarm,
@@ -170,10 +174,10 @@ class GUI:
             'menuitem_stat_needsaction': lambda a: cls.handler_stat_toggle('NEEDS-ACTION'),
             'menuitem_stat_inprocess': lambda a: cls.handler_stat_toggle('IN-PROCESS'),
             'menuitem_stat_completed': lambda a: cls.handler_stat_toggle('COMPLETED'),
-            'menuitem_deleteentry': cls.delete_request,
             'menuitem_switchview': cls.switch_view,
-            'menuitem_goto': cls.dialog_goto,
             'menuitem_fullscreen': cls.toggle_fullscreen,
+            'menuitem_goto': cls.dialog_goto,
+            'menuitem_find': cls.handler_find,
             'menuitem_about': cls.dialog_about,
             'button0_clicked': cls.handler_newevent,
             'button1_clicked': cls.switch_view,
@@ -644,7 +648,7 @@ class GUI:
     def handler_newevent(cls, *args) -> None:
         # Callback for new event signal (menu, softbutton)
         date = cls.views[cls._view_idx].cursor_date()
-        EventDialogController.newevent(date=date)
+        EventDialogController.new_event(date=date)
 
     @classmethod
     def handler_find(cls, *args) -> None:
@@ -655,35 +659,52 @@ class GUI:
     def handler_newtodo(cls, *args) -> None:
         # Callback for new todo signal (menu)
         lst = cls.views[cls._view_idx].cursor_todo_list()
-        TodoDialogController.newtodo(list_idx=lst)
+        TodoDialogController.new_todo(list_idx=lst)
+
+    @classmethod
+    def handler_showentryprops(cls, *args) -> None:
+        # Callback for show-entry-props signal (menu item)
+        en = cls.views[cls._view_idx].get_cursor_entry()
+        if en:
+            cls.dialog_showentryprops(en)
 
     @classmethod
     def handler_edittime(cls, *args) -> None:
         # Callback for change-entry-time signal (menu item)
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en:
-            EventDialogController.editevent(en, EventDialogController.TAB_TIME)
+            cls.edit_or_display_event(en, EventDialogController.TAB_TIME)
 
     @classmethod
     def handler_editrepeats(cls, *args) -> None:
         # Callback for change-entry-repeats signal (menu item)
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en:
-            EventDialogController.editevent(en, EventDialogController.TAB_REPEATS)
+            cls.edit_or_display_event(en, EventDialogController.TAB_REPEATS)
 
     @classmethod
     def handler_editalarm(cls, *args) -> None:
         # Callback for change-entry-alarm signal (menu item)
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en:
-            EventDialogController.editevent(en, EventDialogController.TAB_ALARM)
+            cls.edit_or_display_event(en, EventDialogController.TAB_ALARM)
 
     @classmethod
     def handler_editdetails(cls, *args) -> None:
         # Callback for change-entry-details signal (menu item)
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en:
-            EventDialogController.editevent(en, EventDialogController.TAB_DETAILS)
+            cls.edit_or_display_event(en, EventDialogController.TAB_DETAILS)
+
+
+    @classmethod
+    def edit_or_display_event(cls, en:iEvent, subtab:int=None) -> None:
+        # Bring up dialog to edit event, or show details if not editable
+        try:
+            EventDialogController.edit_event(en, subtab)
+        except EventPropertyBeyondDialog as exc:
+            print('Warning: {:s} - showing entry properties'.format(str(exc)), file=stderr)
+            cls.dialog_showentryprops(en)
 
 
     @classmethod
@@ -794,6 +815,15 @@ class GUI:
         if response == Gtk.ResponseType.APPLY:
             Calendar.delete_entry(en)
             cls.view_redraw(en_changes=True)
+
+
+    @classmethod
+    def dialog_showentryprops(cls, entry:Union[iEvent,iTodo]) -> None:
+        # Shows dialog with entry details.
+        # Used if requested from menu or, e.g., for read-only entries.
+        dialog = EntryPropertiesDialog(entry, parent=cls._window)
+        response = dialog.run()
+        dialog.destroy()
 
 
     @classmethod
@@ -1481,7 +1511,7 @@ class EventDialogController:
 
 
     @classmethod
-    def newevent(cls, txt:str=None, date:dt_date=None) -> None:
+    def new_event(cls, txt:str=None, date:dt_date=None) -> None:
         # Called to implement "new event" from GUI, e.g. menu
         cls.dialog.set_title(_('New Event'))
         cls._empty_desc_allowed = True # initially allowed, can switch to False
@@ -1493,7 +1523,7 @@ class EventDialogController:
 
 
     @classmethod
-    def editevent(cls, event:iEvent, subtab:int=None) -> None:
+    def edit_event(cls, event:iEvent, subtab:int=None) -> None:
         # Called to implement "edit event" from GUI
         cls.dialog.set_title(_('Edit Event'))
         cls._empty_desc_allowed = None # empty desc always allowed (for delete)
@@ -1510,7 +1540,7 @@ class EventDialogController:
     @classmethod
     def _do_event_dialog(cls, event:iEvent=None, txt:str=None, date:dt_date=None, subtab:int=None) -> Tuple[int,EntryInfo]:
         # Do the core work displaying event dialog and extracting result.
-        # Called from both newevent() and editevent().
+        # Called from both new_event() and edit_event().
         cls._seed_fields(event, txt, date)
 
         # Select visible subtab: time, repeats, alarms...
@@ -2169,7 +2199,7 @@ class TodoDialogController:
 
 
     @classmethod
-    def newtodo(cls, txt:str=None, list_idx:int=None) -> None:
+    def new_todo(cls, txt:str=None, list_idx:int=None) -> None:
         # Called to implement "new todo" from GUI, e.g. menu
         cls.dialog.set_title(_('New To-do'))
         response,ei,list_idx = cls._do_todo_dialog(txt=txt, list_idx=list_idx)
@@ -2180,7 +2210,7 @@ class TodoDialogController:
 
 
     @classmethod
-    def edittodo(cls, todo:iTodo, list_idx:int=None) -> None:
+    def edit_todo(cls, todo:iTodo, list_idx:int=None) -> None:
         # Called to implement "edit todo" from GUI
         cls.dialog.set_title(_('Edit To-do'))
         response,ei,list_idx = cls._do_todo_dialog(todo=todo, list_idx=list_idx)
@@ -2302,3 +2332,199 @@ class FindController:
         r_dialog.show_all()
         r_dialog.run()
         r_dialog.destroy()
+
+
+class EntryPropertiesDialog:
+    # Dialog to display properties of 'entry' (an Event or Todo item)
+
+    # Constants
+    ENTRY_TYPES = ('Event','Todo','Journal')
+    RRULE_RPTPROPLIST = {
+        'BYMONTH': 'By month:',
+        'BYWEEKNO': 'By week number:',
+        'BYYEARDAY': 'By year day:',
+        'BYMONTHDAY': 'By month day:',
+        'BYDAY': 'By day:',
+        'BYHOUR': 'By hour:',
+        'BYMINUTE': 'By minute:',
+        'BYSECOND': 'By second:',
+        'WKST': 'Week starts:',
+        'UNTIL': 'Until:',
+        'COUNT': 'Count:'
+        }
+    STATUS_MAP = {
+        'IN-PROCESS': 'In progress',
+        'NEEDS-ACTION': 'Action required'
+        }
+
+
+    def __init__(self, entry:Union[iEvent,iTodo], parent:Gtk.Window=None):
+        self.entry = entry
+        self.dialog = Gtk.Dialog(title=_('Entry properties'), parent=parent,
+            flags=Gtk.DialogFlags.MODAL|Gtk.DialogFlags.DESTROY_WITH_PARENT,
+            buttons=(Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE))
+        self.dialog.set_resizable(False)
+        self.grid = Gtk.Grid()
+        self.grid_y = 0
+        self.dialog.get_content_area().add(self.grid)
+
+
+    def _write_dialog_content(self) -> None:
+        # Fill the dialog with properties of self.entry
+        self._add_property_row('SUMMARY')
+        self._add_type_row()
+        self._add_datetime_rows()
+        self._add_rrule_row()
+        self._add_property_row('PRIORITY')
+        self._add_status_row()
+        self._add_property_row('LOCATION')
+        self._add_alarm_rows()
+        self._add_description_rows()
+
+
+    def _add_row(self, label:str, cont:str, wrap:bool=False) -> None:
+        # Add text to bottom of grid in the form "label cont"
+        propnm_lab = Gtk.Label(label)
+        propnm_lab.set_halign(Gtk.Align.END)
+        propnm_lab.set_yalign(0)
+        propnm_lab.get_style_context().add_class(GUI.STYLE_TXTLABEL)
+        cont_lab = Gtk.Label(cont)
+        cont_lab.set_halign(Gtk.Align.START)
+        cont_lab.set_yalign(0)
+        cont_lab.set_xalign(0)
+        propnm_lab.get_style_context().add_class(GUI.STYLE_TXTPROP)
+        if wrap:
+            cont_lab.set_line_wrap(True)
+            cont_lab.set_line_wrap_mode(PWrapMode.WORD_CHAR)
+            cont_lab.set_max_width_chars(50) # otherwise it fills screen
+        self.grid.attach(propnm_lab, 0,self.grid_y, 1,1)
+        self.grid.attach(cont_lab, 1,self.grid_y, 1,1)
+        self.grid_y += 1
+
+
+    def _add_property_row(self, propnm:str) -> None:
+        # Add simple property in a single row to bottom of grid
+        if propnm in self.entry:
+            self._add_row(_(propnm.capitalize()+':'), self.entry[propnm])
+
+
+    def _add_type_row(self) -> None:
+        # Add entry type property to bottom of grid
+        typestr = str(type(self.entry))
+        afterdot = typestr.rfind('.')+1
+        endquote = typestr.rfind("'")
+        if afterdot>0 and endquote>afterdot:
+            typestr = typestr[afterdot:endquote]
+            if typestr in self.ENTRY_TYPES:
+                self._add_row(_('Type:'), _(typestr))
+
+
+    def _add_datetime_rows(self) -> None:
+        # Add datetime start/end/duration properties to bottom of grid
+        if 'DTSTART' in self.entry:
+            dt_st = self.entry['DTSTART'].dt
+            if isinstance(dt_st, dt_datetime):
+                self._add_row(_('Start date/time:'), dt_st)
+            else:
+                self._add_row(_('Start date:'), dt_st)
+        if 'DTEND' in self.entry:
+            dt_end = self.entry['DTEND'].dt
+            if isinstance(dt_end, dt_datetime):
+                self._add_row(_('End date/time:'), dt_end)
+            else:
+                self._add_row(_('End date:'), dt_end)
+        if 'DURATION' in self.entry:
+            dur = self.entry['DURATION'].dt
+            self._add_row(_('Duration:'), dur)
+
+
+    def _add_rrule_row(self) -> None:
+        # Add rrule properties to bottom of grid
+        rep_info = ''
+        if 'RRULE' in self.entry:
+            rr = self.entry['RRULE']
+            if 'FREQ' in rr:
+                rep_info = rr['FREQ'][0].capitalize()
+                if 'INTERVAL' in rr:
+                    rep_info += ' ({} {})'.format(_('interval:'), rr['INTERVAL'][0])
+            for by in self.RRULE_RPTPROPLIST:
+                if by in rr:
+                    if rep_info:
+                        rep_info +='\n'
+                    val = rr[by]
+                    if len(val) == 1:
+                        val = val[0]
+                    rep_info += '{} {}'.format(_(self.RRULE_RPTPROPLIST[by]), str(val))
+        if 'EXDATE' in self.entry:
+            exdts = Calendar.caldatetime_tree_to_dt_list(self.entry['EXDATE'])
+            if rep_info:
+                rep_info +='\n'
+            rep_info += _('Exception dates:')
+            exdt_str = ''
+            for dt in exdts:
+                if exdt_str:
+                    exdt_str += _(';')
+                exdt_str += ' ' + str(dt)
+            rep_info += exdt_str
+
+        # Finally, display the info string
+        if rep_info:
+            self._add_row(_('Repeats:'), rep_info)
+
+
+    def _add_status_row(self) -> None:
+        # Add status property to bottom of grid
+        if 'STATUS' in self.entry:
+            stat = self.entry['STATUS']
+            if stat in self.STATUS_MAP:
+                stat = self.STATUS_MAP[stat]
+            else:
+                stat = stat.capitalize()
+            self._add_row(_('Status:'), _(stat))
+
+
+    def _add_alarm_rows(self) -> None:
+        # Add alarm properties to bottom of grid
+        alarms = self.entry.walk('VALARM')
+        if alarms:
+            a_info = ''
+            for a in alarms:
+                if a_info:
+                    a_info += '\n'
+                if 'TRIGGER' in a:
+                    a_info += str(a['TRIGGER'].dt)
+                    if 'ACTION' in a:
+                        a_info += ' ' + a['ACTION'].capitalize()
+                else:
+                    a_info += 'Unspecified'
+            self._add_row(_('Alarms:'), a_info)
+
+
+    def _add_description_rows(self) -> None:
+        # Add description(s) to bottom of grid.
+        # (I notice that in RFC 5545, descriptions must not occur more
+        # than once for events/todos. However, I wrote code to handle
+        # more than one, so I'm leaving it that way.)
+        if 'DESCRIPTION' in self.entry:
+            edesc = self.entry['DESCRIPTION']
+            if isinstance(edesc, list):
+                for d in edesc:
+                    if 'LANGUAGE' in d.params:
+                        self._add_row(_('Description ({}):').format(d.params['LANGUAGE']), d, wrap=True)
+                    else:
+                        self._add_row(_('Description:'), d, wrap=True)
+            else:
+                # !! Not sure how to access LANGUAGE parameter for single desc
+                self._add_row(_('Description:'), edesc, wrap=True)
+
+
+    def run(self) -> Gtk.ResponseType:
+        # run the dialog
+        self._write_dialog_content()
+        self.dialog.show_all()
+        return self.dialog.run()
+
+
+    def destroy(self) -> None:
+        # destroy the dialog
+        self.dialog.destroy()

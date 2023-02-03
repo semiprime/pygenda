@@ -3,7 +3,7 @@
 # pygenda_view_week.py
 # Provides the "Week View" for Pygenda.
 #
-# Copyright (C) 2022 Matthew Lewis
+# Copyright (C) 2022,2023 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -444,7 +444,7 @@ class View_Week(View_DayUnit_Base):
             # !! Bug: only works for ASCII characters
             if ev.state & (Gdk.ModifierType.CONTROL_MASK|Gdk.ModifierType.MOD1_MASK)==0 and Gdk.KEY_exclam <= ev.keyval <= Gdk.KEY_asciitilde:
                 date = cls.cursor_date()
-                GLib.idle_add(EventDialogController.newevent, chr(ev.keyval), date)
+                GLib.idle_add(EventDialogController.new_event, chr(ev.keyval), date)
 
 
     @classmethod

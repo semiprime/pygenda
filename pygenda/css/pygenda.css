@@ -1,6 +1,6 @@
 /*****************************
   pygenda.css
-  Copyright (C) 2022 Matthew Lewis
+  Copyright (C) 2022,2023 Matthew Lewis
 
   This file is part of Pygenda.
 
@@ -446,6 +446,18 @@ notebook:focus tab:checked {
 
 .llabel {
 	min-height:30px;
+	padding-right:0.4ex;
+	padding-left:0.4ex;
+}
+
+.tlabel {
+	min-height:1.4em;
+	padding-right:0.4ex;
+	padding-left:0.4ex;
+}
+
+.plabel {
+	min-height:1.4em;
 	padding-right:0.4ex;
 	padding-left:0.4ex;
 }

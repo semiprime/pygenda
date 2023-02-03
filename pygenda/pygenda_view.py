@@ -4,7 +4,7 @@
 # "View" class definition - base class for Week View, Year View.
 # Provides default implementations of functions.
 #
-# Copyright (C) 2022 Matthew Lewis
+# Copyright (C) 2022,2023 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -309,7 +309,7 @@ class View_DayUnit_Base(View):
         # Handle pasting of text in Week/Year views.
         # Open a New Entry dialog with description initialised as txt
         date = cls.cursor_date()
-        GLib.idle_add(EventDialogController.newevent, txt, date)
+        GLib.idle_add(EventDialogController.new_event, txt, date)
 
 
     @classmethod
@@ -327,9 +327,9 @@ class View_DayUnit_Base(View):
         en = cls.get_cursor_entry()
         if en is None:
             date = cls.cursor_date()
-            EventDialogController.newevent(date=date)
+            EventDialogController.new_event(date=date)
         else:
-            EventDialogController.editevent(en)
+            GUI.edit_or_display_event(en)
 
 
     @classmethod

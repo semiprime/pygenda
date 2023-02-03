@@ -1,5 +1,5 @@
 # US English translations for Pygenda package.
-# Copyright (C) 2022 Matthew Lewis
+# Copyright (C) 2022,2023 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -15,13 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Pygenda. If not, see <https://www.gnu.org/licenses/>.
 #
-# Matthew Lewis <pygenda@semiprime.com>, 2022.
+# Matthew Lewis <pygenda@semiprime.com>, 2022,2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-23 21:33+0100\n"
+"POT-Creation-Date: 2023-02-03 23:18+0100\n"
 "PO-Revision-Date: 2022-12-23 21:33+0100\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: en_US\n"
@@ -30,10 +30,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: pygenda.glade:343
+#: pygenda.glade:352
 msgid "Cance_lled"
 msgstr "Cance_led"
 
-#: pygenda.glade:1736 pygenda.glade:1977
+#: pygenda.glade:1745 pygenda.glade:1986
 msgid "Cancelled"
 msgstr "Canceled"
