@@ -106,7 +106,7 @@ class View:
     def cursor_inc(cls, delta:timedelta, idx:int=None) -> None:
         # Add delta to current cursor date; optionally set index in date.
         # Call redraw on view.
-        View._cursor_date += delta
+        View._cursor_date += delta # raises OverflowError if out of range
         if idx is not None:
             View._cursor_idx_in_date = idx
         cls.redraw(en_changes=False)

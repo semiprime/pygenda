@@ -743,7 +743,14 @@ class RepeatInfo:
             if self.subday_rpt:
                 # Need to do calculations in UTC (e.g. for summer time changes)
                 self.start = self.start.astimezone(timezone.utc)
-            start = date_to_datetime(start, True).astimezone(timezone.utc)
+            try:
+                start = date_to_datetime(start, True).astimezone(timezone.utc)
+            except OverflowError:
+                if start.year==1:
+                    # Underflow due to timezone, set start to earliest time pos
+                    start = dt_datetime(1,1,1,tzinfo=timezone.utc)
+                else:
+                    raise
             stop = date_to_datetime(stop, True).astimezone(timezone.utc)
         else:
             self.start = self.dtstart
