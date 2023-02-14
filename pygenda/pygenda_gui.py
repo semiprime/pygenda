@@ -702,7 +702,7 @@ class GUI:
         # Bring up dialog to edit event, or show details if not editable
         try:
             EventDialogController.edit_event(en, subtab)
-        except EventPropertyBeyondDialog as exc:
+        except EventPropertyBeyondEditDialog as exc:
             print('Warning: {:s} - showing entry properties'.format(str(exc)), file=stderr)
             cls.dialog_showentryprops(en)
 
@@ -923,7 +923,7 @@ class GUI:
 # values) it could try to "approximate" it, by just showing one day;
 # however, the user might not notice, and change some other property,
 # save the entry, and thus erase half of the repeats (i.e. data loss).
-class EventPropertyBeyondDialog(Exception):
+class EventPropertyBeyondEditDialog(Exception):
     pass
 
 
@@ -1736,24 +1736,24 @@ class EventDialogController:
         if rrfreq == 'MONTHLY' and 'BYDAY' in rrule:
             cls.wid_rep_type.set_active_id('MONTHLY-WEEKDAY')
             if len(rrule['BYDAY']) > 1:
-                raise EventPropertyBeyondDialog('Editing MONTHLY repeat with multiple \'BYDAY\' not (yet) supported')
+                raise EventPropertyBeyondEditDialog('Editing MONTHLY repeat with multiple \'BYDAY\' not (yet) supported')
             byday = rrule['BYDAY'][0]
             cls.repbyweekday_initialized = True
             cls.wid_repbyweekday_ord.set_active_id(byday[1 if byday[0]=='+' else 0:-2])
             cls.wid_repbyweekday_day.set_active_id(byday[-2:])
         elif rrfreq == 'MONTHLY' and 'BYMONTHDAY' in rrule:
             if len(rrule['BYMONTHDAY'])!=1:
-                raise EventPropertyBeyondDialog('Editing repeat with multiple \'BYMONTHDAY\' not (yet) supported')
+                raise EventPropertyBeyondEditDialog('Editing repeat with multiple \'BYMONTHDAY\' not (yet) supported')
             cls.wid_rep_type.set_active_id('MONTHLY-MONTHDAY')
             bymday = rrule['BYMONTHDAY'][0]
             if not(-7 <= int(bymday) <= -1):
-                raise EventPropertyBeyondDialog('Editing repeat with BYMONTHDAY={} not (yet) supported'.format(bymday))
+                raise EventPropertyBeyondEditDialog('Editing repeat with BYMONTHDAY={} not (yet) supported'.format(bymday))
             cls.wid_repbymonthday.set_active_id(str(bymday))
             cls.repbymonthday_initialized = True
         elif rrfreq in ('YEARLY','MONTHLY','WEEKLY','DAILY'):
             cls.wid_rep_type.set_active_id(rrfreq)
         else:
-            raise EventPropertyBeyondDialog('Editing repeat freq \'{}\' not (yet) supported'.format(rrfreq))
+            raise EventPropertyBeyondEditDialog('Editing repeat freq \'{}\' not (yet) supported'.format(rrfreq))
         cls.wid_rep_interval.set_value(int(rrule['INTERVAL'][0]) if 'INTERVAL' in rrule else 1)
         if 'COUNT' in rrule:
             cls.wid_rep_forever.set_active(False)
@@ -1772,7 +1772,7 @@ class EventDialogController:
         if rrfreq == 'WEEKLY' and 'BYDAY' in rrule:
             rr_byday = rrule['BYDAY']
             if isinstance(rr_byday, list) and len(rr_byday)>1:
-                raise EventPropertyBeyondDialog('Editing WEEKLY repeat with multiple \'BYDAY\' not (yet) supported')
+                raise EventPropertyBeyondEditDialog('Editing WEEKLY repeat with multiple \'BYDAY\' not (yet) supported')
 
 
     @classmethod
@@ -2424,18 +2424,18 @@ class EntryPropertiesDialog:
         if 'DTSTART' in self.entry:
             dt_st = self.entry['DTSTART'].dt
             if isinstance(dt_st, dt_datetime):
-                self._add_row(_('Start date/time:'), dt_st)
+                self._add_row(_('Start date/time:'), str(dt_st))
             else:
-                self._add_row(_('Start date:'), dt_st)
+                self._add_row(_('Start date:'), str(dt_st))
         if 'DTEND' in self.entry:
             dt_end = self.entry['DTEND'].dt
             if isinstance(dt_end, dt_datetime):
-                self._add_row(_('End date/time:'), dt_end)
+                self._add_row(_('End date/time:'), str(dt_end))
             else:
-                self._add_row(_('End date:'), dt_end)
+                self._add_row(_('End date:'), str(dt_end))
         if 'DURATION' in self.entry:
             dur = self.entry['DURATION'].dt
-            self._add_row(_('Duration:'), dur)
+            self._add_row(_('Duration:'), str(dur))
 
 
     def _add_rrule_row(self) -> None:
@@ -2492,10 +2492,33 @@ class EntryPropertiesDialog:
                 if a_info:
                     a_info += '\n'
                 if 'TRIGGER' in a:
-                    a_info += str(a['TRIGGER'].dt)
+                    trig = a['TRIGGER'].dt
+                    if isinstance(trig,timedelta) and trig<timedelta(0):
+                        # More intuitive way to show negative deltas
+                        a_info += u'−'
+                        trig = -trig
+                    a_info += str(trig)
                     if 'ACTION' in a:
-                        a_info += ' ' + a['ACTION'].capitalize()
+                        act = a['ACTION'].capitalize()
+                        a_info += ' ' + act
+                        if act=='Email':
+                            if 'ATTENDEE' in a:
+                                # May be more than one attendee
+                                a_info += '\n('
+                                attee = a['ATTENDEE']
+                                if isinstance(attee, list):
+                                    a_info += ', '.join(attee)
+                                else:
+                                    a_info += attee
+                                a_info += ')'
+                        if act in ('Display','Email'):
+                            if 'DESCRIPTION' in a:
+                                # Spec says only one description
+                                a_info += '\n' + _(u'“')
+                                a_info += a['DESCRIPTION']
+                                a_info += _(u'”')
                 else:
+                    # No Trigger (so breaks specs)
                     a_info += 'Unspecified'
             self._add_row(_('Alarms:'), a_info)
 
