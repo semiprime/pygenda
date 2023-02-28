@@ -3,7 +3,7 @@
 # pygenda_entryinfo.py
 # Class to encapsulate entry details passed from dialog to calendar.
 #
-# Copyright (C) 2022 Matthew Lewis
+# Copyright (C) 2022,2023 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -21,7 +21,8 @@
 
 
 from datetime import date as dt_date, time as dt_time, datetime as dt_datetime, timedelta
-from typing import Optional
+from copy import deepcopy
+from typing import Optional, List
 
 
 class EntryInfo:
@@ -49,6 +50,7 @@ class EntryInfo:
         self.set_duration(duration) # also checks only one of dur/enddt is set
         self.status = status # string, e.g. 'CONFIRMED'
         self.location = location if location else None
+        self.alarms = [] # type:List['AlarmInfo']
 
 
     def get_start_date(self) -> Optional[dt_date]:
@@ -96,3 +98,17 @@ class EntryInfo:
     def set_priority(self, pri:Optional[int]) -> None:
         # Set priority for this entry
         self.priority = pri if pri and 0<pri<=9 else None
+
+
+    def add_alarm(self, alarm_info:'AlarmInfo') -> None:
+        # Add alarm for this entry
+        self.alarms.append(deepcopy(alarm_info))
+
+
+class AlarmInfo:
+    def __init__(self, tdelta:timedelta, action:str, desc:str=None, summary:str=None, attendee:str=None):
+        self.tdelta = tdelta # Note: -ve -> before entry; +ve -> after entry
+        self.action = action
+        self.desc = desc
+        self.summary = summary
+        self.attendee = attendee

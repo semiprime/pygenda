@@ -20,7 +20,7 @@
 # along with Pygenda. If not, see <https://www.gnu.org/licenses/>.
 
 
-from icalendar import Calendar as iCalendar, Event as iEvent, Todo as iTodo, vRecur
+from icalendar import Calendar as iCalendar, Event as iEvent, Todo as iTodo, Alarm as iAlarm, vRecur
 from datetime import timedelta, datetime as dt_datetime, time as dt_time, date as dt_date, timezone
 from dateutil.relativedelta import relativedelta
 from dateutil.rrule import rrulestr
@@ -151,6 +151,8 @@ class Calendar:
         if e_inf.priority:
             en.add('PRIORITY', e_inf.priority)
 
+        cls._entry_set_alarms_from_info(en, e_inf)
+
         entry = cls.calConnector.add_entry(en) # Write to store
         return entry
 
@@ -184,6 +186,7 @@ class Calendar:
         en.add('SUMMARY', summ)
         new_dt_start = None
         if en_is_event:
+            # Some entry elements only relevant if an event (may change later)
             ex_dt_start = exen['DTSTART'].dt if 'DTSTART' in exen else None
             if dt_start:
                 if ex_dt_start:
@@ -202,6 +205,9 @@ class Calendar:
                 delta = new_dt_start - ex_dt_start
                 new_dt_end = ex_dt_end + delta
                 en.add('DTEND', new_dt_end)
+            alms = exen.walk('VALARM')
+            for alm in alms:
+                en.add_component(deepcopy(alm)) # Not sure need dc, but safer
 
         if 'LOCATION' in exen:
             en.add('LOCATION', exen['LOCATION'])
@@ -219,7 +225,9 @@ class Calendar:
             exen_status = exen['STATUS']
             if exen_status in sl:
                 en.add('STATUS', exen_status)
+
         en = cls.calConnector.add_entry(en) # Write to store
+
         if new_dt_start is not None:
             cls._entry_norep_list_sorted = None # Clear norep cache as modified
         if not en_is_event: # is Todo
@@ -298,6 +306,12 @@ class Calendar:
         # Other properties: status (cancelled, tentative, etc.), location
         cls._entry_set_status_from_info(en, e_inf)
         cls._event_set_location_from_info(en, e_inf)
+
+        # First delete alarms before adding requested ones
+        alms = en.walk('VALARM')
+        for alm in alms:
+            en.subcomponents.remove(alm)
+        cls._entry_set_alarms_from_info(en, e_inf)
 
         # This needs optimising - some cases cause too much cache flushing !!
         if clear_norep:
@@ -399,6 +413,37 @@ class Calendar:
             del(ev['LOCATION'])
         if e_inf.location:
             ev.add('LOCATION', e_inf.location)
+
+
+    @staticmethod
+    def _entry_set_alarms_from_info(en:Union[iEvent,iTodo], e_inf:EntryInfo) -> None:
+        # Set entry alarms from e_inf
+        for al in e_inf.alarms:
+            v_alm = iAlarm()
+            v_alm.add('TRIGGER', al.tdelta)
+            v_alm.add('ACTION', al.action)
+            desc = al.desc
+            summ = al.summary
+            attee = al.attendee
+            if al.action=='DISPLAY':
+                # Description required for Display
+                if desc is None:
+                    desc = ''
+            elif al.action=='EMAIL':
+                # Description, Summary, Attendee required for Email
+                if desc is None:
+                    desc = ''
+                if summ is None:
+                    summ = ''
+                if attee is None:
+                    attee = ''
+            if desc is not None:
+                v_alm.add('DESCRIPTION', desc)
+            if summ is not None:
+                v_alm.add('SUMMARY', summ)
+            if attee is not None:
+                v_alm.add('ATTENDEE', attee)
+            en.add_component(v_alm)
 
 
     @classmethod
