@@ -15,8 +15,9 @@ Major
 * Missing views: Day, List, Busy.
   (Also, a Month View, e.g. https://www.rmrsoft.com/epoc/month.htm )
 
-* Alarms are not implemented (note: a separate server should handle
-  the actual alarm notifications)
+* Setting alarms is under development. See [Usage.md](Usage.md) for
+  current details. (Note: a separate alarm server should handle the
+  actual alarm notifications.)
 
 * Many event properties are not implemented (details, attendees,
   attachments, etc.)

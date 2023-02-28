@@ -37,3 +37,15 @@ Usage is intended to be intuitive, but a few things are worth noting:
   events.
 
 * Hint: To convert To-dos into Events, or vice-versa, cut & paste them.
+
+* Setting alarms is currently under development and testing is welcome.
+  (Note: sounding/displaying/sending alarms will be the job of a
+  different program - an alarm server. Pygenda does not, and will not,
+  activate the alarms. There is a warning in the UI about this because
+  it's important that you understand that you need to do some setup or
+  alarms will not be activated. You can get rid of the warning by
+  changing the appropriate config setting to False.)
+  Keys: +/>/-/< - move alarm time of the selected alarm forward/back;
+  N - new alarm; Delete - delete selected alarm; A/D/E - change action
+  of selected alarm to Audio/Display/Email. For email alarms, you will
+  need to set an email address in the config setting new_event/default_alarm_emailaddr.

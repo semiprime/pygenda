@@ -62,7 +62,7 @@ Checklist for releases
 * Create various events & todo items. Close & reopen Pygenda and check
   they are still there (with ics file & CalDAV server).
 * Check copy/cut/paste works, including e.g. event date/time, multi-day events,
-  event status, todo pasted as event & vice-versa, text pasted
+  event status, with alarms, todo pasted as event & vice-versa, text pasted
 * Regenerate .po and .mo localisation files (see above)
 * Check at least one non-English language
 * Check any ics files in validator, e.g. https://icalendar.org/validator.html

@@ -1,3 +1,11 @@
+/*****************************
+gemini.css
+
+Example user CSS file for Planet Computers' Gemini PDA. Include from
+~/.config/pygenda/pygenda.css or copy & adapt as desired. Should also
+be suitable for similar products such as the Cosmo Communicator.
+******************************/
+
 /* Remove transition animations - they make Gemini feel slow */
 * {
 	transition-duration:0s;
@@ -13,6 +21,16 @@ menubar, button {
 
 dialog {
 	font-size:15pt;
+}
+
+/* Increasing font size in dialog distorts switches, so we tweak size... */
+switch {
+    border-radius:12pt;
+}
+
+switch slider {
+    min-height:20pt;
+    border-radius:10pt;
 }
 
 scrollbar.vertical, scrollbar.vertical slider, scrollbar button {

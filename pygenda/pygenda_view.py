@@ -174,7 +174,7 @@ class View:
     @staticmethod
     def entry_icons(ev:iCal.Event, prefix_space:bool) -> str:
         # Returns string of icons for entry (repeat, alarm...)
-        alarm = u'♫' # alternatives: alarm clock ⏰ (U+23F0), bell 🕭,🔔 (U+1F56D,U+1F514)
+        alarm = u'♫' # alternatives: alarm clock ⏰ (U+23F0), bell 🕭,🔔 (U+1F56D,U+1F514), speaker 🔊
         repeat = u'⟳'
         icons = ''
         if ev.walk('VALARM'):

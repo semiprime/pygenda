@@ -3,7 +3,7 @@
 # pygenda_util.py
 # Miscellaneous utility functions for Pygenda.
 #
-# Copyright (C) 2022 Matthew Lewis
+# Copyright (C) 2022,2023 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -261,3 +261,30 @@ def guess_date_fmt_text_from_locale() -> str:
             incl = True
         i += 1
     return ret if ret else '%A, %B %-d, %Y' # fallback
+
+
+def parse_timedelta(s:str) -> timedelta:
+    # Parse a sting like "1h30m" to timedelta.
+    # Used to parse config file entries.
+    MAP = {
+        'd': lambda a: timedelta(days=a),
+        'h': lambda a: timedelta(hours=a),
+        'm': lambda a: timedelta(minutes=a),
+        's': lambda a: timedelta(seconds=a),
+        }
+    s = s.lower()
+    td = timedelta()
+    i = 0
+    while i < len(s):
+        j = i
+        while s[j] not in MAP:
+            j += 1
+            if j == len(s):
+                return td
+        try:
+            n = int(s[i:j])
+        except ValueError:
+            break
+        td += MAP[s[j]](n)
+        i = j+1
+    return td

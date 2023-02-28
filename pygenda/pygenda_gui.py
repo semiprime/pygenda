@@ -45,8 +45,8 @@ from calendar import day_name, monthrange
 from .pygenda_config import Config
 from .pygenda_calendar import Calendar, RepeatInfo
 from .pygenda_widgets import WidgetDate, WidgetTime, WidgetDuration
-from .pygenda_entryinfo import EntryInfo
-from .pygenda_util import guess_date_ord_from_locale,guess_date_sep_from_locale,guess_time_sep_from_locale, guess_date_fmt_text_from_locale, datetime_to_date
+from .pygenda_entryinfo import EntryInfo, AlarmInfo
+from .pygenda_util import guess_date_ord_from_locale,guess_date_sep_from_locale,guess_time_sep_from_locale, guess_date_fmt_text_from_locale, datetime_to_date, parse_timedelta
 from .pygenda_version import __version__
 
 
@@ -183,7 +183,8 @@ class GUI:
             'button1_clicked': cls.switch_view,
             'button2_clicked': cls.dialog_goto,
             'button3_clicked': cls.debug, # zoom, to be decided/implemented
-            'exceptions_modify': EventDialogController.dialog_repeat_exceptions
+            'exceptions_modify': EventDialogController.dialog_repeat_exceptions,
+            'alarms_understood': EventDialogController.alarms_understood
             }
         cls._builder.connect_signals(HANDLERS)
 
@@ -316,7 +317,7 @@ class GUI:
         cls._box_view_cont.pack_start(cls._eventbox, True, True, 0)
         cls._box_view_cont.reorder_child(cls._eventbox, view_pos)
         cls._eventbox.add(cls.view_widgets[cls._view_idx])
-        cls._eventbox.connect('key_press_event', cls.keypress)
+        cls._eventbox.connect('key-press-event', cls.keypress)
         cls.view_widgets[cls._view_idx].grab_focus() # so it gets keypresses
         del(cls._box_view_cont) # don't need this anymore
 
@@ -988,11 +989,22 @@ class EventDialogController:
     dur_determines_end = False
     exception_list = [] # type: List[dt_date]
 
+    wid_alarmstack = None # type: Gtk.Stack
     wid_alarmset = None # type: Gtk.Switch
+    _revealer_alarmlist = None # type: Gtk.Revealer
+    wid_alarmlist = None # type: Gtk.TreeView
+    alarmlist_model = None # type: Gtk.ListStore
+    _default_alarm_before = None # type: timedelta
 
     wid_status = None # type: Gtk.ComboBox
     wid_location = None # type: Gtk.Entry
 
+    # Set defaults for config
+    Config.set_defaults('new_event',{
+        'show_alarm_warning': True,
+        'timed_default_alarm_before': '15m',
+        'default_alarm_emailaddr': None,
+        })
 
     @classmethod
     def init(cls) -> None:
@@ -1105,7 +1117,22 @@ class EventDialogController:
     def _init_alarmfields(cls) -> None:
         # Initialise widgets etc in the Event dialog under the "Alarm" tab.
         # Called on app startup.
+        cls.wid_alarmstack = GUI._builder.get_object('alarm-stack')
         cls.wid_alarmset = GUI._builder.get_object('alarm-set')
+        cls._revealer_alarmlist = GUI._builder.get_object('revealer_alarmlist')
+        cls.wid_alarmset.connect('state-set', cls._do_alarmset_toggle)
+
+        cls.wid_alarmlist = GUI._builder.get_object('alarm-list')
+        cls.alarmlist_model = Gtk.ListStore(object, str, str) # AlarmInfo + cols
+        cls.wid_alarmlist.set_model(cls.alarmlist_model)
+        cls.wid_alarmlist.append_column(Gtk.TreeViewColumn(_('Time before event'),Gtk.CellRendererText(), text=1))
+        cls.wid_alarmlist.append_column(Gtk.TreeViewColumn(_('Action'), Gtk.CellRendererText(), text=2))
+        cls.wid_alarmlist.connect('key-press-event', cls._alarmlist_keypress)
+        cls.wid_alarmlist.connect('focus-out-event', cls._alarmlist_focusloss)
+
+        # Read config settings
+        td_str = Config.get('new_event','timed_default_alarm_before')
+        cls._default_alarm_before = parse_timedelta(td_str)
 
 
     @classmethod
@@ -1121,7 +1148,7 @@ class EventDialogController:
         # For some reason, cannot generally navigate up/down from
         # radio buttons. This sets up a custom handler.
         for i in range(3):
-            cls.wid_timed_buttons[i].connect('key_press_event', cls._radiobutton_keypress)
+            cls.wid_timed_buttons[i].connect('key-press-event', cls._radiobutton_keypress)
 
 
     @classmethod
@@ -1263,6 +1290,37 @@ class EventDialogController:
                     cls.wid_rep_occs.set_value(1)
 
         cls._cancel_empty_desc_allowed()
+
+
+    @classmethod
+    def _do_alarmset_toggle(cls, wid:Gtk.Widget, state:bool) -> None:
+        # Callback. Called when alarm set state is changed by user.
+        # Reveals/hides alarm list.
+        if state and len(cls.alarmlist_model)==0:
+            # User just enabled alarms, so if no alarms, create default ones
+            cls._add_alarm(AlarmInfo(-cls._default_alarm_before,action='AUDIO'))
+            cls._add_alarm(AlarmInfo(-cls._default_alarm_before,action='DISPLAY',desc=cls.wid_desc.get_text()))
+            # Also, user has interacted with settings, so expect a valid entry
+            cls._cancel_empty_desc_allowed()
+        cls._revealer_alarmlist.set_reveal_child(state)
+
+
+    @classmethod
+    def _add_alarm(cls, a_info:AlarmInfo) -> None:
+        # Adds an alarm to alarm list
+        itr = cls.alarmlist_model.append(None)
+        cls._set_alarm_row(itr, a_info)
+
+
+    @classmethod
+    def _set_alarm_row(cls, itr:Gtk.TreeIter, a_info:AlarmInfo) -> None:
+        # Sets alarm in alarm list for row given by itr
+        desc = a_info.action.capitalize()
+        if desc=='Email':
+            desc += ' (' + a_info.attendee + ')'
+        elif desc=='Display' and a_info.desc is not None:
+            desc += _(u' “') + a_info.desc + _(u'”')
+        cls.alarmlist_model.set(itr, 0,a_info, 1,str(-a_info.tdelta), 2,desc)
 
 
     @classmethod
@@ -1620,7 +1678,10 @@ class EventDialogController:
         # No need to set wid_rep_enddt because it will be synced when revealed
 
         # Alarm tab
+        if Config.get_bool('new_event','show_alarm_warning'):
+            cls.wid_alarmstack.set_visible_child_name('warning')
         cls.wid_alarmset.set_active(False)
+        cls.alarmlist_model.clear()
 
         # Details tab
         cls.wid_status.set_active(0)
@@ -1657,8 +1718,9 @@ class EventDialogController:
             cls._seed_repeatstab(event['RRULE'])
 
         # Alarm tab
-        if event.walk('VALARM'):
-            cls.wid_alarmset.set_active(True)
+        valarms = event.walk('VALARM')
+        if valarms:
+            cls._seed_alarmstab(valarms)
 
         # Details tab
         if 'STATUS' in event and event['STATUS'] in Calendar.STATUS_LIST_EVENT:
@@ -1815,6 +1877,25 @@ class EventDialogController:
 
 
     @classmethod
+    def _seed_alarmstab(cls, valarms:list) -> None:
+        # Initialise Alarms tab.
+        # Called from _seed_from_event(). Assumes list cleared.
+        for valarm in valarms:
+            if 'TRIGGER' in valarm and 'ACTION' in valarm:
+                pretime = valarm['TRIGGER'].dt
+                act = str(valarm['ACTION'])
+                desc = valarm['DESCRIPTION'] if 'DESCRIPTION' in valarm else None
+                summ = valarm['SUMMARY'] if 'SUMMARY' in valarm else None
+                attee = valarm['ATTENDEE'] if 'ATTENDEE' in valarm else None
+                if isinstance(attee, list):
+                    raise EventPropertyBeyondEditDialog('Can\'t edit alarm with >1 email addresses')
+                a_info = AlarmInfo(pretime, action=act, desc=desc, summary=summ, attendee=attee)
+                cls._add_alarm(a_info)
+        if len(cls.alarmlist_model):
+            cls.wid_alarmset.set_active(True)
+
+
+    @classmethod
     def _get_entryinfo(cls) -> EntryInfo:
         # Decipher dialog fields and return info as an EntryInfo object.
         desc = cls.wid_desc.get_text()
@@ -1851,6 +1932,12 @@ class EventDialogController:
                 else:
                     until = cls.wid_rep_enddt.get_date_or_none()
             ei.set_repeat_info(reptype, interval=inter, count=count, until=until, bymonthday=bymonthday, byday=byday, except_list=cls._get_exceptions_list_for_type())
+
+        # Alarm info
+        if cls.wid_alarmset.get_active():
+            for al in cls.alarmlist_model:
+                ei.add_alarm(al[0])
+
         return ei
 
 
@@ -2033,6 +2120,103 @@ class EventDialogController:
             cls.exception_list = dates
             cls._set_label_rep_list()
         edc.destroy()
+
+
+    @classmethod
+    def alarms_understood(cls, *args) -> None:
+        # Handler for Alarms Understood button - show content
+        cls.wid_alarmstack.set_visible_child_name('content')
+
+
+    @classmethod
+    def _alarmlist_keypress(cls, wid:Gtk.Widget, ev:Gdk.EventKey) -> bool:
+        # Handler for key-press/repeat when alarmlist is focused
+        if ev.keyval in (Gdk.KEY_BackSpace, Gdk.KEY_Delete):
+            store,row = wid.get_selection().get_selected()
+            if store and row:
+                store.remove(row)
+            return True # Event handled; don't propagate
+        elif ev.keyval == Gdk.KEY_Up:
+            # If cursor at top of list, need to handle navigation
+            sel = wid.get_cursor()[0]
+            if sel is not None:
+                rows = sel.get_indices()
+            if sel is None or (len(rows)>0 and rows[0]==0):
+                cls.wid_alarmset.grab_focus()
+                return True # Don't propagate
+        # !! We should handle other navigation too (KEY_Down). However,
+        # !! UI is still in a state of flux, so leaving that out for now.
+        elif ev.keyval in GUI.SPINBUTTON_INC_KEY:
+            cls._alarmlist_add_to_current_row(timedelta(minutes=1))
+            return True # Don't propagate event
+        elif ev.keyval in GUI.SPINBUTTON_DEC_KEY:
+            cls._alarmlist_add_to_current_row(timedelta(minutes=-1))
+            return True # Don't propagate event
+        elif ev.keyval in (Gdk.KEY_a, Gdk.KEY_d, Gdk.KEY_e):
+            # Change selected alarm to Audio/Display/Email
+            store,row = wid.get_selection().get_selected()
+            if store and row:
+                a_info = cls.alarmlist_model.get_value(row,0)
+                a_info.desc = None
+                a_info.summary = None
+                a_info.attendee = None
+                if ev.keyval==Gdk.KEY_a:
+                    a_info.action = 'AUDIO'
+                elif ev.keyval==Gdk.KEY_d:
+                    a_info.action = 'DISPLAY'
+                    a_info.desc = cls.wid_desc.get_text()
+                elif ev.keyval==Gdk.KEY_e:
+                    a_info.action = 'EMAIL'
+                    a_info.attendee = Config.get('new_event','default_alarm_emailaddr')
+                    a_info.summary = cls.wid_desc.get_text() # email subject
+                    a_info.desc = a_info.summary # email body
+                    loc = cls.wid_location.get_text()
+                    if loc:
+                        a_info.desc += '\n' + loc
+                    if not a_info.attendee:
+                        # If no default address, for now can't set email alarms
+                        print('Error: No email address available', file=stderr)
+                        return True
+                cls._set_alarm_row(row, a_info)
+            return True # Don't propagate event
+        elif ev.keyval==Gdk.KEY_n:
+            # Add new alarm to list, Audio since it's the most basic type
+            cls._add_alarm(AlarmInfo(-cls._default_alarm_before,action='AUDIO'))
+            wid.set_cursor(len(cls.alarmlist_model)-1) # Move cursor to new row
+            return True # Don't propagate event
+        elif ev.keyval==Gdk.KEY_Return:
+            # Manually trigger default event on dialog box
+            dlg = wid.get_toplevel()
+            if dlg:
+                dlg.response(Gtk.ResponseType.OK)
+            return True # Don't propagate event
+
+        return False # Propagate event
+
+
+    @classmethod
+    def _alarmlist_add_to_current_row(cls, d:timedelta) -> None:
+        # Add timedelta d to time in currently selected alarmlist row
+        store,row = cls.wid_alarmlist.get_selection().get_selected()
+        if store and row:
+            a_info = cls.alarmlist_model.get_value(row, 0)
+            a_info.tdelta = min(a_info.tdelta+d, timedelta()) # don't go above 0
+            cls._set_alarm_row(row, a_info)
+
+
+    @classmethod
+    def _alarmlist_focusloss(cls, wid:Gtk.Widget, ev:Gdk.EventKey) -> bool:
+        # Handler for alarmlist losing focus.
+        # Removes highlight/selection.
+        # !! Maybe I'm overlooking something obvious, but I can't find
+        # !! a simple way to remove the highlight from a TreeView.
+        # !! I tried set_cursor() with various aguments, as well as
+        # !! row_activated(), but nothing worked.
+        # !! Hence this function works by temporarily changing the view's
+        # !! model to an empty one and then back to the proper model.
+        wid.set_model(Gtk.ListStore())
+        wid.set_model(cls.alarmlist_model)
+        return False
 
 
 class DateLabel(Gtk.Label):

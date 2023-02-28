@@ -311,8 +311,8 @@ msgid "Edit _Repeats…"
 msgstr "Modifier _répétitions…"
 
 #: pygenda.glade:266
-msgid "Edit _Alarm…"
-msgstr "Modifier _alarme…"
+msgid "Edit _Alarms…"
+msgstr "Modifier _alarmes…"
 
 #: pygenda.glade:276
 msgid "Edit _Details…"
@@ -543,12 +543,12 @@ msgid "Repeats"
 msgstr "Répétitions"
 
 #: pygenda.glade:1629
-msgid "Alarm set:"
-msgstr "Alarme réglée :"
+msgid "Alarm(s) set:"
+msgstr "Alarme(s) activée(s) :"
 
 #: pygenda.glade:1678
-msgid "Alarm"
-msgstr "Alarme"
+msgid "Alarms"
+msgstr "Alarmes"
 
 #: pygenda.glade:1695
 msgid "Location:"
