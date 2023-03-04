@@ -34,7 +34,7 @@ from os import path as ospath
 from sys import stderr
 import signal
 import ctypes
-from typing import Optional, Tuple, List, Union
+from typing import Optional, Tuple, List, Union, Type
 
 # for internationalisation/localisation
 import locale
@@ -63,7 +63,7 @@ class GUI:
     STYLE_TXTPROP = 'plabel'
     STYLE_ERR = 'dialog_error'
 
-    views = []
+    views = [] # type: List[Type]
     view_widgets = [] # type: List[Gtk.Widget]
     _view_idx = 0 # take first view as default
     _toggle_view_idx = -1 # used to toggle between views (Esc key)
@@ -283,7 +283,7 @@ class GUI:
                 # True => main_quit() has been called
                 ci_cancel.cancel()
                 return
-            GLib.usleep(1000) # microsecs
+            GLib.usleep(8000) # microsecs; low->smooth spin, high->fast start
         del(cls._starting_cal) # Flag no longer needed
 
         # Get rid of loading indicator, but store position for view placement
