@@ -485,3 +485,13 @@ entry {
 .find_results label {
 	padding:0.3ex;
 }
+
+
+/* List box - make row more highlighted when focused than when selected */
+list row:selected {
+	background:#7ab1e7
+}
+
+list row:focus {
+	background:#398ee7
+}
