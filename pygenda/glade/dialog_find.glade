@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	dialog_find.glade
+	Copyright (C) 2022,2023 Matthew Lewis
+	Based on a file generated with glade 3.38.2
+
+	This file is part of Pygenda.
+
+	Pygenda is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, version 3.
+
+	Pygenda is distributed in the hope that it will be useful, but
+	WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+	General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Pygenda. If not, see https://www.gnu.org/licenses/.
+-->
+<interface>
+	<requires lib="gtk+" version="3.20"/>
+	<object class="GtkDialog" id="dialog_find">
+		<property name="can-focus">False</property>
+		<property name="title" translatable="yes">Find</property>
+		<property name="modal">True</property>
+		<property name="destroy-with-parent">True</property>
+		<property name="icon-name">edit-find</property>
+		<property name="type-hint">dialog</property>
+		<property name="transient-for">window_main</property>
+		<child internal-child="vbox">
+			<object class="GtkBox">
+				<property name="can-focus">False</property>
+				<property name="orientation">vertical</property>
+				<property name="spacing">2</property>
+				<child internal-child="action_area">
+					<object class="GtkButtonBox">
+						<property name="can-focus">False</property>
+						<property name="layout-style">end</property>
+						<child>
+							<object class="GtkButton" id="button-dialog-find-cancel">
+								<property name="label">gtk-cancel</property>
+								<property name="visible">True</property>
+								<property name="can-focus">True</property>
+								<property name="receives-default">True</property>
+								<property name="use-stock">True</property>
+							</object>
+							<packing>
+								<property name="expand">True</property>
+								<property name="fill">True</property>
+								<property name="position">0</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkButton" id="button-dialog-find-ok">
+								<property name="label">gtk-ok</property>
+								<property name="visible">True</property>
+								<property name="can-focus">True</property>
+								<property name="can-default">True</property>
+								<property name="has-default">True</property>
+								<property name="receives-default">True</property>
+								<property name="use-stock">True</property>
+							</object>
+							<packing>
+								<property name="expand">True</property>
+								<property name="fill">True</property>
+								<property name="position">1</property>
+							</packing>
+						</child>
+					</object>
+					<packing>
+						<property name="expand">False</property>
+						<property name="fill">False</property>
+						<property name="position">0</property>
+					</packing>
+				</child>
+				<child>
+					<!-- n-columns=2 n-rows=2 -->
+					<object class="GtkGrid">
+						<property name="visible">True</property>
+						<property name="can-focus">False</property>
+						<child>
+							<object class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="label" translatable="yes">Find text:</property>
+								<style>
+									<class name="llabel"/>
+								</style>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">0</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkEntry" id="dialog_find_text">
+								<property name="visible">True</property>
+								<property name="can-focus">True</property>
+								<property name="has-focus">True</property>
+								<property name="hexpand">True</property>
+								<property name="activates-default">True</property>
+								<style>
+									<class name="textentry"/>
+								</style>
+							</object>
+							<packing>
+								<property name="left-attach">1</property>
+								<property name="top-attach">0</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="hexpand">True</property>
+								<property name="vexpand">True</property>
+								<property name="label">Note: Find functionality is placeholder</property>
+								<property name="justify">center</property>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
+								<property name="top-attach">1</property>
+								<property name="width">2</property>
+							</packing>
+						</child>
+					</object>
+					<packing>
+						<property name="expand">False</property>
+						<property name="fill">True</property>
+						<property name="position">1</property>
+					</packing>
+				</child>
+			</object>
+		</child>
+		<action-widgets>
+			<action-widget response="-6">button-dialog-find-cancel</action-widget>
+			<action-widget response="-5">button-dialog-find-ok</action-widget>
+		</action-widgets>
+	</object>
+</interface>

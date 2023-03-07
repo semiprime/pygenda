@@ -52,7 +52,6 @@ from .pygenda_version import __version__
 
 # Singleton class for top-level GUI control
 class GUI:
-    _GLADE_FILE = '{:s}/pygenda.glade'.format(ospath.dirname(__file__))
     _CSS_FILE_APP = '{:s}/css/pygenda.css'.format(ospath.dirname(__file__))
     _CSS_FILE_USER = GLib.get_user_config_dir() + '/pygenda/pygenda.css'
     _LOCALE_DIR = '{:s}/locale/'.format(ospath.dirname(__file__))
@@ -127,7 +126,7 @@ class GUI:
         cls._init_locale()
 
         # Construct GUI from GTK Builder XML glade file
-        cls._builder.add_from_file(cls._GLADE_FILE)
+        cls.load_glade_file('main.glade')
 
         cls._window = cls._builder.get_object('window_main')
         if (not cls._window): # Sanity check
@@ -183,8 +182,6 @@ class GUI:
             'button1_clicked': cls.switch_view,
             'button2_clicked': cls.dialog_goto,
             'button3_clicked': cls.debug, # zoom, to be decided/implemented
-            'exceptions_modify': EventDialogController.dialog_repeat_exceptions,
-            'alarms_understood': EventDialogController.alarms_understood
             }
         cls._builder.connect_signals(HANDLERS)
 
@@ -231,6 +228,16 @@ class GUI:
     def _get_objs_by_id(cls, id_list:Tuple[str,...]) -> Tuple[Gtk.Widget,...]:
         # Helper function to get a tuple of widgets by id
         return tuple((cls._builder.get_object(id) for id in id_list))
+
+
+    @classmethod
+    def load_glade_file(cls, gfile:str) -> None:
+        # Load GUI elements from GTK Builder XML glade file in glade directory
+        fullname = ospath.dirname(__file__) + '/glade/' + gfile
+        r = cls._builder.add_from_file(fullname)
+        if not r:
+            print('Error loading glade file '+gfile, file=stderr)
+            Gtk.main_quit()
 
 
     @staticmethod
@@ -1010,6 +1017,16 @@ class EventDialogController:
     def init(cls) -> None:
         # Initialiser for singleton class.
         # Called from GUI init_stage2().
+
+        # Load glade file
+        GUI.load_glade_file('dialog_event.glade')
+
+        # Connect signal handlers
+        HANDLERS = {
+            'exceptions_modify': cls.dialog_repeat_exceptions,
+            'alarms_understood': cls.alarms_understood
+            }
+        GUI._builder.connect_signals(HANDLERS)
 
         # Get some references to dialog elements in glade
         cls.dialog = GUI._builder.get_object('dialog_event')
@@ -2362,6 +2379,9 @@ class TodoDialogController:
         # Initialiser for TodoDialogController singleton class.
         # Called from GUI init_stage2().
 
+        # Load glade file
+        GUI.load_glade_file('dialog_todo.glade')
+
         # Get some references to dialog elements in glade
         cls.dialog = GUI._builder.get_object('dialog_todo')
         if (not cls.dialog): # Sanity check
@@ -2464,6 +2484,9 @@ class FindController:
     def init(cls) -> None:
         # Initialiser for FindController singleton class.
         # Called from GUI init_stage2().
+
+        # Load glade file
+        GUI.load_glade_file('dialog_find.glade')
 
         # Get some references to dialog elements in glade
         cls.dialog = GUI._builder.get_object('dialog_find')

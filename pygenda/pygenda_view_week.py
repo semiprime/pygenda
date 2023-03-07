@@ -73,6 +73,7 @@ class View_Week(View_DayUnit_Base):
         # Called on startup.
         # Gets view framework from glade file & tweaks/adds a few elements.
         # Returns widget containing view.
+        GUI.load_glade_file('view_week.glade')
         cls._topbox = GUI._builder.get_object('view_week')
         cls._month_label = GUI._builder.get_object('week_label_month')
         cls._weekno_label = GUI._builder.get_object('week_label_weekno')

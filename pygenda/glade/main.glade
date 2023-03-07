@@ -1,0 +1,630 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	main.glade
+	Copyright (C) 2022,2023 Matthew Lewis
+	Based on a file generated with glade 3.38.2
+
+	This file is part of Pygenda.
+
+	Pygenda is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, version 3.
+
+	Pygenda is distributed in the hope that it will be useful, but
+	WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+	General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Pygenda. If not, see https://www.gnu.org/licenses/.
+-->
+<interface>
+	<requires lib="gtk+" version="3.20"/>
+	<object class="GtkImage" id="image-delete">
+		<property name="visible">True</property>
+		<property name="can-focus">False</property>
+		<property name="stock">gtk-delete</property>
+	</object>
+	<object class="GtkImage" id="image-find">
+		<property name="visible">True</property>
+		<property name="can-focus">False</property>
+		<property name="stock">gtk-find</property>
+	</object>
+	<object class="GtkApplicationWindow" id="window_main">
+		<property name="can-focus">False</property>
+		<property name="title">Pygenda</property>
+		<property name="window-position">center-always</property>
+		<signal name="delete-event" handler="window_main delete" swapped="no"/>
+		<child>
+			<object class="GtkBox" id="box">
+				<property name="visible">True</property>
+				<property name="can-focus">False</property>
+				<property name="orientation">vertical</property>
+				<child>
+					<object class="GtkMenuBar" id="menu_bar">
+						<property name="visible">True</property>
+						<property name="sensitive">False</property>
+						<property name="can-focus">False</property>
+						<property name="valign">start</property>
+						<child>
+							<object class="GtkMenuItem">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="label" translatable="yes">_File</property>
+								<property name="use-underline">True</property>
+								<child type="submenu">
+									<object class="GtkMenu">
+										<property name="visible">True</property>
+										<property name="can-focus">False</property>
+										<child>
+											<object class="GtkImageMenuItem">
+												<property name="label">gtk-new</property>
+												<property name="visible">True</property>
+												<property name="sensitive">False</property>
+												<property name="can-focus">False</property>
+												<property name="use-underline">True</property>
+												<property name="use-stock">True</property>
+											</object>
+										</child>
+										<child>
+											<object class="GtkImageMenuItem">
+												<property name="label">gtk-open</property>
+												<property name="visible">True</property>
+												<property name="sensitive">False</property>
+												<property name="can-focus">False</property>
+												<property name="use-underline">True</property>
+												<property name="use-stock">True</property>
+											</object>
+										</child>
+										<child>
+											<object class="GtkImageMenuItem">
+												<property name="label">gtk-save-as</property>
+												<property name="visible">True</property>
+												<property name="sensitive">False</property>
+												<property name="can-focus">False</property>
+												<property name="use-underline">True</property>
+												<property name="use-stock">True</property>
+											</object>
+										</child>
+										<child>
+											<object class="GtkSeparatorMenuItem">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+											</object>
+										</child>
+										<child>
+											<object class="GtkImageMenuItem">
+												<property name="label">gtk-quit</property>
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="use-underline">True</property>
+												<property name="use-stock">True</property>
+												<signal name="activate" handler="menuitem_quit" swapped="no"/>
+												<accelerator key="q" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+									</object>
+								</child>
+							</object>
+						</child>
+						<child>
+							<object class="GtkMenuItem">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="label" translatable="yes">_Edit</property>
+								<property name="use-underline">True</property>
+								<child type="submenu">
+									<object class="GtkMenu">
+										<property name="visible">True</property>
+										<property name="can-focus">False</property>
+										<child>
+											<object class="GtkImageMenuItem" id="menuelt-cut">
+												<property name="label">gtk-cut</property>
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="use-underline">True</property>
+												<property name="use-stock">True</property>
+												<signal name="activate" handler="menuitem_cut" swapped="no"/>
+												<accelerator key="x" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+										<child>
+											<object class="GtkImageMenuItem" id="menuelt-copy">
+												<property name="label">gtk-copy</property>
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="use-underline">True</property>
+												<property name="use-stock">True</property>
+												<signal name="activate" handler="menuitem_copy" swapped="no"/>
+												<accelerator key="c" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+										<child>
+											<object class="GtkImageMenuItem">
+												<property name="label">gtk-paste</property>
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="use-underline">True</property>
+												<property name="use-stock">True</property>
+												<signal name="activate" handler="menuitem_paste" swapped="no"/>
+												<accelerator key="v" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+										<child>
+											<object class="GtkSeparatorMenuItem">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+											</object>
+										</child>
+										<child>
+											<object class="GtkImageMenuItem" id="menuelt-delete">
+												<property name="label" translatable="yes">_Delete…</property>
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="use-underline">True</property>
+												<property name="image">image-delete</property>
+												<property name="use-stock">False</property>
+												<signal name="activate" handler="menuitem_deleteentry" swapped="no"/>
+												<accelerator key="Delete" signal="activate"/>
+												<accelerator key="BackSpace" signal="activate"/>
+											</object>
+										</child>
+									</object>
+								</child>
+							</object>
+						</child>
+						<child>
+							<object class="GtkMenuItem">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="label" translatable="yes">E_ntry</property>
+								<property name="use-underline">True</property>
+								<child type="submenu">
+									<object class="GtkMenu">
+										<property name="visible">True</property>
+										<property name="can-focus">False</property>
+										<child>
+											<object class="GtkMenuItem">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="label" translatable="yes">_New Event…</property>
+												<property name="use-underline">True</property>
+												<signal name="activate" handler="menuitem_newevent" swapped="no"/>
+												<accelerator key="n" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+										<child>
+											<object class="GtkMenuItem">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="label" translatable="yes">New _To-do…</property>
+												<property name="use-underline">True</property>
+												<signal name="activate" handler="menuitem_newtodo" swapped="no"/>
+												<accelerator key="m" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+										<child>
+											<object class="GtkMenuItem" id="menuelt-show-entry-props">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="label" translatable="yes">Show _Properties</property>
+												<property name="use-underline">True</property>
+												<signal name="activate" handler="menuitem_show_entry_props" swapped="no"/>
+											</object>
+										</child>
+										<child>
+											<object class="GtkSeparatorMenuItem">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+											</object>
+										</child>
+										<child>
+											<object class="GtkMenuItem" id="menuelt-edit-time">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="label" translatable="yes">Edit _Time…</property>
+												<property name="use-underline">True</property>
+												<signal name="activate" handler="menuitem_edittime" swapped="no"/>
+												<accelerator key="t" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+										<child>
+											<object class="GtkMenuItem" id="menuelt-edit-reps">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="label" translatable="yes">Edit _Repeats…</property>
+												<property name="use-underline">True</property>
+												<signal name="activate" handler="menuitem_editrepeats" swapped="no"/>
+												<accelerator key="r" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+										<child>
+											<object class="GtkMenuItem" id="menuelt-edit-alarm">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="label" translatable="yes">Edit _Alarms…</property>
+												<property name="use-underline">True</property>
+												<signal name="activate" handler="menuitem_editalarm" swapped="no"/>
+												<accelerator key="a" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+										<child>
+											<object class="GtkMenuItem" id="menuelt-edit-details">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="label" translatable="yes">Edit _Details…</property>
+												<property name="use-underline">True</property>
+												<signal name="activate" handler="menuitem_editdetails" swapped="no"/>
+												<accelerator key="d" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+										<child>
+											<object class="GtkSeparatorMenuItem">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+											</object>
+										</child>
+										<child>
+											<object class="GtkMenuItem" id="menuelt-set-status">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="label" translatable="yes">Set _Status</property>
+												<property name="use-underline">True</property>
+												<child type="submenu">
+													<object class="GtkMenu">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<child>
+															<object class="GtkMenuItem">
+																<property name="visible">True</property>
+																<property name="can-focus">False</property>
+																<property name="label" translatable="yes">_None</property>
+																<property name="use-underline">True</property>
+																<signal name="activate" handler="menuitem_stat_none" swapped="no"/>
+																<accelerator key="n" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+															</object>
+														</child>
+														<child>
+															<object class="GtkMenuItem" id="menuelt-status-confirmed">
+																<property name="visible">True</property>
+																<property name="can-focus">False</property>
+																<property name="label" translatable="yes">_Confirmed</property>
+																<property name="use-underline">True</property>
+																<signal name="activate" handler="menuitem_stat_confirmed" swapped="no"/>
+																<accelerator key="c" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+															</object>
+														</child>
+														<child>
+															<object class="GtkMenuItem" id="menuelt-status-needsaction">
+																<property name="visible">True</property>
+																<property name="can-focus">False</property>
+																<property name="label" translatable="yes">_Action required</property>
+																<property name="use-underline">True</property>
+																<signal name="activate" handler="menuitem_stat_needsaction" swapped="no"/>
+																<accelerator key="a" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+															</object>
+														</child>
+														<child>
+															<object class="GtkMenuItem" id="menuelt-status-inprocess">
+																<property name="visible">True</property>
+																<property name="can-focus">False</property>
+																<property name="label" translatable="yes">In _progress</property>
+																<property name="use-underline">True</property>
+																<signal name="activate" handler="menuitem_stat_inprocess" swapped="no"/>
+																<accelerator key="p" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+															</object>
+														</child>
+														<child>
+															<object class="GtkMenuItem" id="menuelt-status-completed">
+																<property name="visible">True</property>
+																<property name="can-focus">False</property>
+																<property name="label" translatable="yes">_Completed</property>
+																<property name="use-underline">True</property>
+																<signal name="activate" handler="menuitem_stat_completed" swapped="no"/>
+																<accelerator key="c" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+															</object>
+														</child>
+														<child>
+															<object class="GtkMenuItem">
+																<property name="visible">True</property>
+																<property name="can-focus">False</property>
+																<property name="label" translatable="yes">Cance_lled</property>
+																<property name="use-underline">True</property>
+																<signal name="activate" handler="menuitem_stat_canceled" swapped="no"/>
+																<accelerator key="x" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+															</object>
+														</child>
+														<child>
+															<object class="GtkMenuItem" id="menuelt-status-tentative">
+																<property name="visible">True</property>
+																<property name="can-focus">False</property>
+																<property name="label" translatable="yes">_Tentative</property>
+																<property name="use-underline">True</property>
+																<signal name="activate" handler="menuitem_stat_tentative" swapped="no"/>
+																<accelerator key="u" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+															</object>
+														</child>
+													</object>
+												</child>
+											</object>
+										</child>
+									</object>
+								</child>
+							</object>
+						</child>
+						<child>
+							<object class="GtkMenuItem">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="label" translatable="yes">_View</property>
+								<property name="use-underline">True</property>
+								<child type="submenu">
+									<object class="GtkMenu">
+										<property name="visible">True</property>
+										<property name="can-focus">False</property>
+										<child>
+											<object class="GtkMenuItem">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="label" translatable="yes">_View Mode</property>
+												<property name="use-underline">True</property>
+												<child type="submenu">
+													<object class="GtkMenu" id="menu_views_list">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<child>
+															<object class="GtkMenuItem">
+																<property name="visible">True</property>
+																<property name="can-focus">False</property>
+																<property name="label" translatable="yes">Switch _View</property>
+																<property name="use-underline">True</property>
+																<signal name="activate" handler="menuitem_switchview" swapped="no"/>
+																<accelerator key="v" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+															</object>
+														</child>
+														<child>
+															<object class="GtkSeparatorMenuItem">
+																<property name="visible">True</property>
+																<property name="can-focus">False</property>
+															</object>
+														</child>
+													</object>
+												</child>
+											</object>
+										</child>
+										<child>
+											<object class="GtkImageMenuItem">
+												<property name="label">gtk-zoom-in</property>
+												<property name="visible">True</property>
+												<property name="sensitive">False</property>
+												<property name="can-focus">False</property>
+												<property name="use-underline">True</property>
+												<property name="use-stock">True</property>
+												<accelerator key="z" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+												<accelerator key="plus" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+										<child>
+											<object class="GtkImageMenuItem">
+												<property name="label">gtk-zoom-out</property>
+												<property name="visible">True</property>
+												<property name="sensitive">False</property>
+												<property name="can-focus">False</property>
+												<property name="use-underline">True</property>
+												<property name="use-stock">True</property>
+												<accelerator key="z" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+												<accelerator key="minus" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+										<child>
+											<object class="GtkImageMenuItem" id="menuelt-fullscreen">
+												<property name="label">gtk-fullscreen</property>
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="use-underline">True</property>
+												<property name="use-stock">True</property>
+												<signal name="activate" handler="menuitem_fullscreen" swapped="no"/>
+												<accelerator key="f" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+									</object>
+								</child>
+							</object>
+						</child>
+						<child>
+							<object class="GtkMenuItem">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="label" translatable="yes">_Tools</property>
+								<property name="use-underline">True</property>
+								<child type="submenu">
+									<object class="GtkMenu">
+										<property name="visible">True</property>
+										<property name="can-focus">False</property>
+										<child>
+											<object class="GtkMenuItem">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="label" translatable="yes">_Go To…</property>
+												<property name="use-underline">True</property>
+												<signal name="activate" handler="menuitem_goto" swapped="no"/>
+												<accelerator key="g" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+										<child>
+											<object class="GtkImageMenuItem">
+												<property name="label" translatable="yes">_Find…</property>
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="use-underline">True</property>
+												<property name="image">image-find</property>
+												<property name="use-stock">False</property>
+												<signal name="activate" handler="menuitem_find" swapped="no"/>
+												<accelerator key="f" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+											</object>
+										</child>
+									</object>
+								</child>
+							</object>
+						</child>
+						<child>
+							<object class="GtkMenuItem">
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="label" translatable="yes">_Help</property>
+								<property name="use-underline">True</property>
+								<child type="submenu">
+									<object class="GtkMenu">
+										<property name="visible">True</property>
+										<property name="can-focus">False</property>
+										<child>
+											<object class="GtkImageMenuItem">
+												<property name="label">gtk-about</property>
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="use-underline">True</property>
+												<property name="use-stock">True</property>
+												<signal name="activate" handler="menuitem_about" swapped="no"/>
+											</object>
+										</child>
+									</object>
+								</child>
+							</object>
+						</child>
+					</object>
+					<packing>
+						<property name="expand">False</property>
+						<property name="fill">True</property>
+						<property name="position">0</property>
+					</packing>
+				</child>
+				<child>
+					<object class="GtkBox" id="box_view_cont">
+						<property name="visible">True</property>
+						<property name="can-focus">False</property>
+						<child>
+							<object class="GtkBox" id="box_buttons">
+								<property name="visible">True</property>
+								<property name="sensitive">False</property>
+								<property name="can-focus">False</property>
+								<property name="orientation">vertical</property>
+								<property name="homogeneous">True</property>
+								<child>
+									<object class="GtkButton" id="button0">
+										<property name="visible">True</property>
+										<property name="can-focus">False</property>
+										<property name="focus-on-click">False</property>
+										<property name="receives-default">False</property>
+										<signal name="clicked" handler="button0_clicked" swapped="no"/>
+										<child>
+											<object class="GtkLabel">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="label" translatable="yes">New Event</property>
+												<property name="justify">center</property>
+											</object>
+										</child>
+										<style>
+											<class name="softbutton"/>
+										</style>
+									</object>
+									<packing>
+										<property name="expand">True</property>
+										<property name="fill">True</property>
+										<property name="position">0</property>
+									</packing>
+								</child>
+								<child>
+									<object class="GtkButton" id="button1">
+										<property name="visible">True</property>
+										<property name="can-focus">False</property>
+										<property name="focus-on-click">False</property>
+										<property name="receives-default">False</property>
+										<signal name="clicked" handler="button1_clicked" swapped="no"/>
+										<child>
+											<object class="GtkLabel">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="label" translatable="yes">View</property>
+												<property name="justify">center</property>
+											</object>
+										</child>
+										<style>
+											<class name="softbutton"/>
+										</style>
+									</object>
+									<packing>
+										<property name="expand">True</property>
+										<property name="fill">True</property>
+										<property name="position">1</property>
+									</packing>
+								</child>
+								<child>
+									<object class="GtkButton" id="button2">
+										<property name="visible">True</property>
+										<property name="can-focus">False</property>
+										<property name="focus-on-click">False</property>
+										<property name="receives-default">False</property>
+										<signal name="clicked" handler="button2_clicked" swapped="no"/>
+										<child>
+											<object class="GtkLabel">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="label" translatable="yes">Go To</property>
+												<property name="justify">center</property>
+											</object>
+										</child>
+										<style>
+											<class name="softbutton"/>
+										</style>
+									</object>
+									<packing>
+										<property name="expand">True</property>
+										<property name="fill">True</property>
+										<property name="position">2</property>
+									</packing>
+								</child>
+								<child>
+									<object class="GtkButton" id="button3">
+										<property name="visible">True</property>
+										<property name="sensitive">False</property>
+										<property name="can-focus">False</property>
+										<property name="focus-on-click">False</property>
+										<property name="receives-default">False</property>
+										<signal name="clicked" handler="button3_clicked" swapped="no"/>
+										<child>
+											<object class="GtkLabel">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="label" translatable="yes">Zoom</property>
+												<property name="justify">center</property>
+											</object>
+										</child>
+										<style>
+											<class name="softbutton"/>
+										</style>
+									</object>
+									<packing>
+										<property name="expand">True</property>
+										<property name="fill">True</property>
+										<property name="position">3</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="expand">False</property>
+								<property name="fill">True</property>
+								<property name="position">1</property>
+							</packing>
+						</child>
+					</object>
+					<packing>
+						<property name="expand">True</property>
+						<property name="fill">True</property>
+						<property name="position">1</property>
+					</packing>
+				</child>
+			</object>
+		</child>
+	</object>
+</interface>

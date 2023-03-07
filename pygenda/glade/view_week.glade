@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	view_week.glade
+	Copyright (C) 2022,2023 Matthew Lewis
+	Based on a file generated with glade 3.38.2
+
+	This file is part of Pygenda.
+
+	Pygenda is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, version 3.
+
+	Pygenda is distributed in the hope that it will be useful, but
+	WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+	General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Pygenda. If not, see https://www.gnu.org/licenses/.
+-->
+<interface>
+	<requires lib="gtk+" version="3.20"/>
+	<object class="GtkBox" id="view_week">
+		<property name="name">view_week</property>
+		<property name="visible">True</property>
+		<property name="can-focus">True</property>
+		<child>
+			<object class="GtkBox" id="week_page_l">
+				<property name="visible">True</property>
+				<property name="can-focus">False</property>
+				<property name="orientation">vertical</property>
+				<property name="homogeneous">True</property>
+				<child>
+					<object class="GtkBox">
+						<property name="name">weekview_titlearea</property>
+						<property name="visible">True</property>
+						<property name="can-focus">False</property>
+						<property name="orientation">vertical</property>
+						<child>
+							<object class="GtkLabel" id="week_label_month">
+								<property name="name">weekview_labelmonth</property>
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="track-visited-links">False</property>
+								<property name="xalign">0</property>
+								<property name="yalign">0</property>
+							</object>
+							<packing>
+								<property name="expand">True</property>
+								<property name="fill">True</property>
+								<property name="position">0</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkLabel" id="week_label_weekno">
+								<property name="name">weekview_labelweek</property>
+								<property name="visible">True</property>
+								<property name="can-focus">False</property>
+								<property name="track-visited-links">False</property>
+								<property name="xalign">1</property>
+								<property name="yalign">1</property>
+							</object>
+							<packing>
+								<property name="expand">False</property>
+								<property name="fill">False</property>
+								<property name="position">1</property>
+							</packing>
+						</child>
+					</object>
+					<packing>
+						<property name="expand">False</property>
+						<property name="fill">True</property>
+						<property name="position">0</property>
+					</packing>
+				</child>
+			</object>
+			<packing>
+				<property name="expand">True</property>
+				<property name="fill">True</property>
+				<property name="position">0</property>
+			</packing>
+		</child>
+		<child type="center">
+			<object class="GtkSeparator">
+				<property name="name">weekview_fold</property>
+				<property name="visible">True</property>
+				<property name="can-focus">False</property>
+				<property name="orientation">vertical</property>
+			</object>
+			<packing>
+				<property name="expand">False</property>
+				<property name="fill">True</property>
+				<property name="position">1</property>
+			</packing>
+		</child>
+		<child>
+			<object class="GtkBox" id="week_page_r">
+				<property name="visible">True</property>
+				<property name="can-focus">False</property>
+				<property name="orientation">vertical</property>
+			</object>
+			<packing>
+				<property name="expand">True</property>
+				<property name="fill">True</property>
+				<property name="pack-type">end</property>
+				<property name="position">0</property>
+			</packing>
+		</child>
+	</object>
+</interface>

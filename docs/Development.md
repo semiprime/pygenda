@@ -31,7 +31,7 @@ Translating strings
 Create a locale/pygenda.pot template from .py and .glade source
 files. In the pygenda subdirectory:
 
-    xgettext --package-name Pygenda --copyright-holder "Matthew Lewis" -k_ -kN_ -o locale/pygenda.pot *.py *.glade
+    xgettext --package-name Pygenda --copyright-holder "Matthew Lewis" -k_ -kN_ -o locale/pygenda.pot *.py glade/*.glade
 
 Use .pot to make .po for each language.
 

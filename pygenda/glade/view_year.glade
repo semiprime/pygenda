@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	view_year.glade
+	Copyright (C) 2022,2023 Matthew Lewis
+	Based on a file generated with glade 3.38.2
+
+	This file is part of Pygenda.
+
+	Pygenda is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, version 3.
+
+	Pygenda is distributed in the hope that it will be useful, but
+	WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+	General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Pygenda. If not, see https://www.gnu.org/licenses/.
+-->
+<interface>
+	<requires lib="gtk+" version="3.20"/>
+	<!-- n-columns=2 n-rows=4 -->
+	<object class="GtkGrid" id="view_year">
+		<property name="name">view_year</property>
+		<property name="visible">True</property>
+		<property name="can-focus">True</property>
+		<child>
+			<object class="GtkLabel" id="year_yearlabel">
+				<property name="name">yearview_labelyear</property>
+				<property name="visible">True</property>
+				<property name="can-focus">False</property>
+				<property name="xalign">0</property>
+			</object>
+			<packing>
+				<property name="left-attach">0</property>
+				<property name="top-attach">0</property>
+				<property name="width">2</property>
+			</packing>
+		</child>
+		<child>
+			<object class="GtkLabel">
+				<property name="name">yearview_gridcorner</property>
+				<property name="visible">True</property>
+				<property name="can-focus">False</property>
+			</object>
+			<packing>
+				<property name="left-attach">0</property>
+				<property name="top-attach">1</property>
+			</packing>
+		</child>
+		<child>
+			<object class="GtkBox" id="day_names">
+				<property name="visible">True</property>
+				<property name="can-focus">False</property>
+				<property name="hexpand">True</property>
+				<property name="homogeneous">True</property>
+			</object>
+			<packing>
+				<property name="left-attach">1</property>
+				<property name="top-attach">1</property>
+			</packing>
+		</child>
+		<child>
+			<object class="GtkBox" id="month_names">
+				<property name="visible">True</property>
+				<property name="can-focus">False</property>
+				<property name="vexpand">True</property>
+				<property name="orientation">vertical</property>
+				<property name="homogeneous">True</property>
+			</object>
+			<packing>
+				<property name="left-attach">0</property>
+				<property name="top-attach">2</property>
+			</packing>
+		</child>
+		<child>
+			<object class="GtkEventBox" id="year_grid_events">
+				<property name="visible">True</property>
+				<property name="can-focus">False</property>
+				<property name="visible-window">False</property>
+				<child>
+					<!-- n-columns=37 n-rows=12 -->
+					<object class="GtkGrid" id="year_grid_days">
+						<property name="name">yearview_daygrid</property>
+						<property name="visible">True</property>
+						<property name="can-focus">False</property>
+						<property name="hexpand">True</property>
+						<property name="vexpand">True</property>
+						<property name="row-homogeneous">True</property>
+						<property name="column-homogeneous">True</property>
+					</object>
+				</child>
+			</object>
+			<packing>
+				<property name="left-attach">1</property>
+				<property name="top-attach">2</property>
+			</packing>
+		</child>
+		<child>
+			<object class="GtkBox">
+				<property name="visible">True</property>
+				<property name="can-focus">False</property>
+				<child>
+					<object class="GtkLabel" id="year_datelabel">
+						<property name="name">yearview_labeldate</property>
+						<property name="visible">True</property>
+						<property name="can-focus">False</property>
+						<property name="vexpand">True</property>
+						<property name="xalign">1</property>
+						<property name="yalign">0</property>
+					</object>
+					<packing>
+						<property name="expand">False</property>
+						<property name="fill">True</property>
+						<property name="position">0</property>
+					</packing>
+				</child>
+				<child>
+					<object class="GtkEventBox" id="year_datecontent_events">
+						<property name="visible">True</property>
+						<property name="can-focus">False</property>
+						<child>
+							<object class="GtkScrolledWindow" id="year_datecontent_scroll">
+								<property name="name">yearview_datecontent_scroller</property>
+								<property name="visible">True</property>
+								<property name="can-focus">True</property>
+								<property name="hexpand">True</property>
+								<property name="hscrollbar-policy">never</property>
+								<property name="shadow-type">in</property>
+								<property name="overlay-scrolling">False</property>
+								<child>
+									<object class="GtkViewport">
+										<property name="visible">True</property>
+										<property name="can-focus">False</property>
+										<child>
+											<object class="GtkBox" id="year_datecontent">
+												<property name="name">yearview_datecontent</property>
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="orientation">vertical</property>
+											</object>
+										</child>
+									</object>
+								</child>
+							</object>
+						</child>
+					</object>
+					<packing>
+						<property name="expand">False</property>
+						<property name="fill">True</property>
+						<property name="position">1</property>
+					</packing>
+				</child>
+			</object>
+			<packing>
+				<property name="left-attach">0</property>
+				<property name="top-attach">3</property>
+				<property name="width">2</property>
+			</packing>
+		</child>
+	</object>
+</interface>
