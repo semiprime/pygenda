@@ -35,7 +35,8 @@ from .pygenda_view import View, View_DayUnit_Base
 from .pygenda_calendar import Calendar
 from .pygenda_config import Config
 from .pygenda_util import start_of_week, day_in_week, month_abbr, start_end_dts_occ, dt_lte
-from .pygenda_gui import GUI, EventDialogController
+from .pygenda_gui import GUI
+from .pygenda_dialog_event import EventDialogController
 
 
 # Singleton class for Week View

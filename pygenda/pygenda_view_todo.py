@@ -33,7 +33,8 @@ from typing import Optional, List, Union
 from .pygenda_view import View
 from .pygenda_calendar import Calendar
 from .pygenda_config import Config
-from .pygenda_gui import GUI, TodoDialogController
+from .pygenda_gui import GUI
+from .pygenda_dialog_todo import TodoDialogController
 from .pygenda_entryinfo import EntryInfo
 
 

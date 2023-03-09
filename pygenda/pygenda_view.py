@@ -30,7 +30,8 @@ from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
 from datetime import date as dt_date, datetime as dt_datetime, timedelta
 from typing import Optional, Union
 
-from .pygenda_gui import GUI, EventDialogController
+from .pygenda_gui import GUI
+from .pygenda_dialog_event import EventDialogController
 from .pygenda_util import datetime_to_time, datetime_to_date, date_to_datetime, format_time, format_compact_date, format_compact_time, format_compact_datetime, dt_lte
 from .pygenda_calendar import Calendar
 from .pygenda_entryinfo import EntryInfo

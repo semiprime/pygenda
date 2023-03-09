@@ -32,7 +32,8 @@ from typing import Tuple
 
 # pygenda components
 from .pygenda_view import View, View_DayUnit_Base
-from .pygenda_gui import GUI, EventDialogController
+from .pygenda_gui import GUI
+from .pygenda_dialog_event import EventDialogController
 from .pygenda_config import Config
 from .pygenda_calendar import Calendar
 from .pygenda_util import start_end_dts_occ

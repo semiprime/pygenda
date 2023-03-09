@@ -4,7 +4,7 @@
 # pygenda/__main__.py
 # Main entry point for Pygenda.
 #
-# Copyright (C) 2022 Matthew Lewis
+# Copyright (C) 2022,2023 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -21,10 +21,7 @@
 # along with Pygenda. If not, see <https://www.gnu.org/licenses/>.
 
 
-# Import pygenda components
 from .pygenda_gui import GUI
-from .pygenda_calendar import Calendar
-
 
 if __name__=="__main__":
     GUI.init()
