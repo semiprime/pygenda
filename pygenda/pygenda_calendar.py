@@ -111,8 +111,8 @@ class Calendar:
     @staticmethod
     def gen_uid() -> str:
         # Generate a UID for iCal elements (required element)
-        uid = 'Pygenda-{}'.format(uuid1())
-        return uid
+        uid = uuid1() # based on MAC addr, time & random element
+        return str(uid)
 
 
     @classmethod
