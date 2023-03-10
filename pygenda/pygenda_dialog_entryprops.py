@@ -26,7 +26,7 @@ from gi.repository import Gtk
 from gi.repository.Pango import WrapMode as PWrapMode
 
 from datetime import datetime as dt_datetime, timedelta
-from icalendar import Event as iEvent, Todo as iTodo
+from icalendar import Event as iEvent, Todo as iTodo, vDDDTypes
 from locale import gettext as _
 from typing import Union
 
@@ -123,20 +123,31 @@ class EntryPropertiesDialog:
     def _add_datetime_rows(self) -> None:
         # Add datetime start/end/duration properties to bottom of grid
         if 'DTSTART' in self.entry:
-            dt_st = self.entry['DTSTART'].dt
-            if isinstance(dt_st, dt_datetime):
-                self._add_row(_('Start date/time:'), str(dt_st))
+            dt_st = self.entry['DTSTART']
+            dt_st_dt = dt_st.dt
+            if isinstance(dt_st_dt, dt_datetime):
+                self._add_row(_('Start date/time:'), str(dt_st_dt)+self._tz_str(dt_st))
             else:
-                self._add_row(_('Start date:'), str(dt_st))
+                self._add_row(_('Start date:'), str(dt_st_dt))
         if 'DTEND' in self.entry:
-            dt_end = self.entry['DTEND'].dt
-            if isinstance(dt_end, dt_datetime):
-                self._add_row(_('End date/time:'), str(dt_end))
+            dt_end = self.entry['DTEND']
+            dt_end_dt = dt_end.dt
+            if isinstance(dt_end_dt, dt_datetime):
+                self._add_row(_('End date/time:'), str(dt_end_dt)+self._tz_str(dt_end))
             else:
-                self._add_row(_('End date:'), str(dt_end))
+                self._add_row(_('End date:'), str(dt_end_dt))
         if 'DURATION' in self.entry:
             dur = self.entry['DURATION'].dt
             self._add_row(_('Duration:'), str(dur))
+
+
+    @staticmethod
+    def _tz_str(dt_st:vDDDTypes) -> str:
+        # Returns string indicating timezone, to be appended to times
+        params = dt_st.params
+        if 'TZID' in params:
+            return _(' (timezone: {:s})').format(params['TZID']) # type:ignore
+        return ''
 
 
     def _add_rrule_row(self) -> None:
