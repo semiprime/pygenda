@@ -885,7 +885,7 @@
 														<property name="hexpand">True</property>
 														<property name="vexpand">False</property>
 														<property name="label" translatable="yes">&lt;span weight="bold"&gt;Warning:&lt;/span&gt; Pygenda will &lt;span style="italic" weight="bold"&gt;not&lt;/span&gt; sound/display alarms.
-A separate alarm server is required for alarms to activate.
+A separate alarm handler is required for alarms to activate.
 (To remove this warning, see the documentation.)</property>
 														<property name="use-markup">True</property>
 														<property name="justify">center</property>
@@ -898,7 +898,7 @@ A separate alarm server is required for alarms to activate.
 												</child>
 												<child>
 													<object class="GtkButton">
-														<property name="label">Understood</property>
+														<property name="label" translatable="yes">Understood</property>
 														<property name="visible">True</property>
 														<property name="can-focus">True</property>
 														<property name="receives-default">True</property>

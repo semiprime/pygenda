@@ -212,7 +212,7 @@ class EntryPropertiesDialog:
                     a_info += str(trig)
                     if 'ACTION' in a:
                         act = a['ACTION'].capitalize()
-                        a_info += ' ' + act
+                        a_info += ' ' + _(act)
                         if act=='Email':
                             if 'ATTENDEE' in a:
                                 # May be more than one attendee
@@ -226,9 +226,8 @@ class EntryPropertiesDialog:
                         if act in ('Display','Email'):
                             if 'DESCRIPTION' in a:
                                 # Spec says only one description
-                                a_info += '\n' + _(u'“')
-                                a_info += a['DESCRIPTION']
-                                a_info += _(u'”')
+                                a_info += '\n'
+                                a_info += _(u'“{:s}”').format(a['DESCRIPTION'])
                 else:
                     # No Trigger (so breaks specs)
                     a_info += 'Unspecified'

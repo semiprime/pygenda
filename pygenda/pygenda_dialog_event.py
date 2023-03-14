@@ -450,11 +450,13 @@ class EventDialogController:
     @classmethod
     def _set_alarm_row(cls, itr:Gtk.TreeIter, a_info:AlarmInfo) -> None:
         # Sets alarm in alarm list for row given by itr
-        desc = a_info.action.capitalize()
-        if desc=='Email':
+        act = a_info.action.capitalize()
+        desc = _(act)
+        if act=='Email':
             desc += ' (' + a_info.attendee + ')'
-        elif desc=='Display' and a_info.desc is not None:
-            desc += _(u' “') + a_info.desc + _(u'”')
+        elif act=='Display' and a_info.desc is not None:
+            desc += ' '
+            desc += _(u'“{:s}”').format(a_info.desc)
         cls.alarmlist_model.set(itr, 0,a_info, 1,str(-a_info.tdelta), 2,desc)
 
 
