@@ -14,8 +14,8 @@ This document describes how to set up Pygenda to use a CalDAV server.
 theoretically work, but it might be more practical to periodically
 sync a local server to the remote and access the local).
 
-Extra dependencies if using CalDAV server
------------------------------------------
+Extra Pygenda dependencies for connecting to a CalDAV server
+------------------------------------------------------------
 Python3 modules: caldav
 
     pip3 install caldav # [there's probably an apt equivalent to this]
@@ -35,7 +35,9 @@ You probably also want to install a CalDAV server. I tested using the
 Radicale CalDAV server (v3.0.6). https://radicale.org/
 (Radicale is written in Python, so it fits the ongoing "Python" theme.)
 
-Install:
+If you already have a CalDAV server, you can skip to the next section.
+
+Install Radicale:
 
     pip3 install radicale
 
@@ -64,8 +66,8 @@ you're happy with this setup, you can put your Radicale settings in
 the Gemini, go to LXQT Configuration Center -> Session Settings ->
 Autostart, and add the command "`python3 -m radicale`".
 
-Configuring Pygenda to use the local Radicale server
-----------------------------------------------------
+Configuring Pygenda to use the local Radicale (or another) server
+-----------------------------------------------------------------
 Edit/create your `~/.config/pygenda/pygenda.ini` file. Edit/add:
 
     [calendar]

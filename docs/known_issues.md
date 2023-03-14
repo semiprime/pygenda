@@ -12,11 +12,11 @@ of any sort.
 
 Major
 -----
-* Missing views: Day, List, Busy.
+* Missing views: Day, List, Anniversary, Busy.
   (Also, a Month View, e.g. https://www.rmrsoft.com/epoc/month.htm )
 
 * Setting alarms is under development. See [Usage.md](Usage.md) for
-  current details. (Note: a separate alarm server should handle the
+  current details. (Note: a separate alarm program should handle the
   actual alarm notifications.)
 
 * Many event properties are not implemented (details, attendees,
@@ -25,7 +25,8 @@ Major
 * Many todo item properties are not implemented (due/expires date,
   user tags, timed-but-undated, etc.)
 
-* Todo items can only be sorted by priority - add by-status, by-date...
+* Todo items can only be sorted by priority - add sort by-status,
+  by-date, manual...
 
 * Repeated event UI missing many elements (more complete repeat by
   BYMONTHDAY, BYSETPOS, Monday & Wednesday every week, extra dates,
