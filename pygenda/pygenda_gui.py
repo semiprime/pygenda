@@ -498,11 +498,12 @@ class GUI:
 
 
     @classmethod
-    def keypress(cls, wid:Gtk.Widget, ev:Gdk.EventKey) -> None:
+    def keypress(cls, wid:Gtk.Widget, ev:Gdk.EventKey) -> bool:
         # Called whenever a key is pressed/repeated when View in focus
         if ev.keyval==Gdk.KEY_Escape and cls._toggle_view_idx >= 0:
             cls.switch_view(None, cls._toggle_view_idx)
         cls.views[cls._view_idx].keypress(wid,ev)
+        return True # event handled - don't propagate
 
 
     @staticmethod
@@ -512,7 +513,7 @@ class GUI:
         if ev.keyval in GUI.SPINBUTTON_INC_KEY or (shiftdown and ev.keyval==Gdk.KEY_Up):
             wid.update() # So if user types "5" then "+" value changes to "6"
             wid.spin(Gtk.SpinType.STEP_FORWARD, 1)
-            return True # done
+            return True # done, don't propagate
         if ev.keyval in GUI.SPINBUTTON_DEC_KEY or (shiftdown and ev.keyval==Gdk.KEY_Down):
             wid.update()
             wid.spin(Gtk.SpinType.STEP_BACKWARD, 1)
@@ -521,7 +522,7 @@ class GUI:
             return wid.get_toplevel().child_focus(Gtk.DirectionType.UP)
         if ev.keyval==Gdk.KEY_Down:
             return wid.get_toplevel().child_focus(Gtk.DirectionType.DOWN)
-        return False # propagate event
+        return False # unhandled, so propagate event
 
 
     @staticmethod
@@ -548,7 +549,7 @@ class GUI:
                 a = 0
             a = (a-1)%count
             wid.set_active(a)
-            return True # done
+            return True # done, don't propagate
 
         if ev.keyval==Gdk.KEY_Up:
             return wid.get_toplevel().child_focus(Gtk.DirectionType.UP)
@@ -571,7 +572,7 @@ class GUI:
                 if ch==ch1:
                     wid.set_active((a+i)%count)
                     break
-            return True # done
+            return True # done, don't propagate
 
         return False # propagate event
 
@@ -594,7 +595,7 @@ class GUI:
 
 
     @classmethod
-    def switch_view(cls, wid:Gtk.Widget, idx:int=None, redraw:bool=True) -> None:
+    def switch_view(cls, wid:Gtk.Widget, idx:int=None, redraw:bool=True) -> bool:
         # Callback from UI widget (e.g. menu, softbutton) to change view.
         # idx = index of new view (otherwise goes to next view in list)
         if idx is None:
@@ -602,7 +603,7 @@ class GUI:
             cls._toggle_view_idx = cls._view_idx
             cls._view_idx = (cls._view_idx+1)%len(cls.views)
         elif cls._view_idx == idx:
-            return # No change, so skip redraw
+            return True # No change, so skip redraw & don't propagate event
         else:
             cls._toggle_view_idx = cls._view_idx
             cls._view_idx = idx
@@ -615,6 +616,7 @@ class GUI:
         cls._eventbox.add(new_wid)
         new_wid.grab_focus()
         new_wid.show_all()
+        return True # don't propagate event
 
 
     @classmethod
@@ -668,61 +670,70 @@ class GUI:
 
     # Signal handling functions
     @classmethod
-    def exit(cls, *args) -> None:
+    def exit(cls, *args) -> bool:
         # Callback for various types of exit signal (command line, menus...)
         Gtk.main_quit()
+        return True # don't propagate event
 
     @classmethod
-    def handler_newevent(cls, *args) -> None:
-        # Callback for new event signal (menu, softbutton)
+    def handler_newevent(cls, *args) -> bool:
+        # Callback for "Create new event" signal (menu, softbutton)
         date = cls.views[cls._view_idx].cursor_date()
         EventDialogController.new_event(date=date)
+        return True # don't propagate event
 
     @classmethod
-    def handler_find(cls, *args) -> None:
-        # Callback for find signal (menu)
-        FindDialogController.find()
-
-    @classmethod
-    def handler_newtodo(cls, *args) -> None:
-        # Callback for new todo signal (menu)
+    def handler_newtodo(cls, *args) -> bool:
+        # Callback for "Create new todo" signal (menu)
         lst = cls.views[cls._view_idx].cursor_todo_list()
         TodoDialogController.new_todo(list_idx=lst)
+        return True # don't propagate event
 
     @classmethod
-    def handler_showentryprops(cls, *args) -> None:
-        # Callback for show-entry-props signal (menu item)
+    def handler_find(cls, *args) -> bool:
+        # Callback for find signal (menu)
+        FindDialogController.find()
+        return True # don't propagate event
+
+    @classmethod
+    def handler_showentryprops(cls, *args) -> bool:
+        # Callback for "show entry properties" signal (menu item)
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en:
             cls.dialog_showentryprops(en)
+        return True # don't propagate event
 
     @classmethod
-    def handler_edittime(cls, *args) -> None:
-        # Callback for change-entry-time signal (menu item)
+    def handler_edittime(cls, *args) -> bool:
+        # Callback for "edit entry time" signal (menu item)
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en:
             cls.edit_or_display_event(en, EventDialogController.TAB_TIME)
+        return True # don't propagate event
 
     @classmethod
-    def handler_editrepeats(cls, *args) -> None:
-        # Callback for change-entry-repeats signal (menu item)
+    def handler_editrepeats(cls, *args) -> bool:
+        # Callback for "edit entry repeats" signal (menu item)
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en:
             cls.edit_or_display_event(en, EventDialogController.TAB_REPEATS)
+        return True # don't propagate event
 
     @classmethod
-    def handler_editalarm(cls, *args) -> None:
-        # Callback for change-entry-alarm signal (menu item)
+    def handler_editalarm(cls, *args) -> bool:
+        # Callback for "edit entry alarms" signal (menu item)
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en:
             cls.edit_or_display_event(en, EventDialogController.TAB_ALARM)
+        return True # don't propagate event
 
     @classmethod
-    def handler_editdetails(cls, *args) -> None:
-        # Callback for change-entry-details signal (menu item)
+    def handler_editdetails(cls, *args) -> bool:
+        # Callback for "edit entry details" signal (menu item)
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en:
             cls.edit_or_display_event(en, EventDialogController.TAB_DETAILS)
+        return True # don't propagate event
 
 
     @classmethod
@@ -736,25 +747,27 @@ class GUI:
 
 
     @classmethod
-    def handler_stat_toggle(cls, stat:Optional[str]) -> None:
+    def handler_stat_toggle(cls, stat:Optional[str]) -> bool:
         # Handle signals from menu to change current entry's status.
         # Paramenter stat is None or text string for status (eg 'CONFIRMED').
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en:
             Calendar.set_toggle_status_entry(en, stat)
             cls.view_redraw(en_changes=True)
+        return True # don't propagate event
 
 
     @classmethod
-    def delete_request(cls, *args) -> None:
+    def delete_request(cls, *args) -> bool:
         # Callback to implement "delete" from GUI, e.g. backspace key pressed
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en is not None:
             cls.dialog_deleteentry(en)
+        return True # don't propagate event
 
 
     @classmethod
-    def cut_request(cls, *args) -> None:
+    def cut_request(cls, *args) -> bool:
         # Handler to implement "cut" from GUI, e.g. cut clicked in menu
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en and 'SUMMARY' in en:
@@ -774,10 +787,11 @@ class GUI:
                 cls._lib_clip.set_cb(ctypes.create_string_buffer(txtbuf),ctypes.create_string_buffer(calbuf))
                 Calendar.delete_entry(en)
                 cls.view_redraw(en_changes=True)
+        return True # don't propagate event
 
 
     @classmethod
-    def copy_request(cls, *args) -> None:
+    def copy_request(cls, *args) -> bool:
         # Handler to implement "copy" from GUI, e.g. copy clicked in menu
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en and 'SUMMARY' in en:
@@ -790,10 +804,11 @@ class GUI:
                 txtbuf = bytes(en['SUMMARY'], 'utf-8')
                 calbuf = en.to_ical()
                 cls._lib_clip.set_cb(ctypes.create_string_buffer(txtbuf),ctypes.create_string_buffer(calbuf))
+        return True # don't propagate event
 
 
     @classmethod
-    def paste_request(cls, *args) -> None:
+    def paste_request(cls, *args) -> bool:
         # Handler to implement "paste" from GUI, e.g. paste clicked in menu
         cb = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 
@@ -804,18 +819,24 @@ class GUI:
             en = ical.walk()[0]
             cls.views[cls._view_idx].new_entry_from_example(en)
             cls.view_redraw(en_changes=True)
-            return
         except:
-            None
+            # Fallback: request plain text from clipboard
+            txt = cb.wait_for_text()
+            if txt: # might be None
+                txt = cls._sanitise_pasted_text(txt)
+                # Type of entry created depends on View, so call View paste fn
+                if txt:
+                    cls.views[cls._view_idx].paste_text(txt)
+        return True # don't propagate event
 
-        # Fallback: request plain text from clipboard
-        txt = cb.wait_for_text()
-        if txt is not None:
-            txt = txt.strip()
-            txt = txt.replace('\n',' ')
-            txt = txt.replace('\t',' ')
-            # What type of entry is created will depend on view, so call current view paste fn
-            cls.views[cls._view_idx].paste_text(txt)
+
+    @staticmethod
+    def _sanitise_pasted_text(txt:str) -> str:
+        # Clean up text from clipboard so it's suitable as an entry summary
+        txt = txt.strip()
+        txt = txt.replace('\n',' ')
+        txt = txt.replace('\t',' ')
+        return txt
 
 
     @classmethod
@@ -855,7 +876,7 @@ class GUI:
 
 
     @classmethod
-    def dialog_goto(cls, *args) -> None:
+    def dialog_goto(cls, *args) -> bool:
         # Called to implement "go to" from GUI, e.g. button
         dialog = Gtk.Dialog(title=_('Go To'), parent=cls._window,
             flags=Gtk.DialogFlags.MODAL|Gtk.DialogFlags.DESTROY_WITH_PARENT,
@@ -885,20 +906,22 @@ class GUI:
             cls.cursor_goto_date(dt)
             cls.view_redraw(en_changes=False)
         dialog.destroy()
+        return True # don't propagate event
 
 
     @staticmethod
-    def check_date_fixed(wid:WidgetDate) -> None:
+    def check_date_fixed(wid:WidgetDate) -> bool:
         # Removes error highlight if date is valid (e.g. not 30th Feb)
         # Would be nice to make this a method of WidgetDate class.
         # Can be used as a callback, e.g. attached to 'changed' signal
         if wid.get_date_or_none() is not None:
             wid.get_style_context().remove_class(GUI.STYLE_ERR)
+        return False # propagate event
 
 
     @classmethod
-    def dialog_about(cls, *args) -> None:
-        # Display the "About" dialog
+    def dialog_about(cls, *args) -> bool:
+        # Display the "About Pygenda" dialog
         dialog = Gtk.AboutDialog(parent=cls._window)
         dialog.set_program_name('Pygenda')
         dialog.set_copyright(u'Copyright © 2022,2023 Matthew Lewis')
@@ -910,10 +933,11 @@ class GUI:
         dialog.show_all()
         dialog.run()
         dialog.destroy()
+        return True # don't propagate event
 
 
     @classmethod
-    def toggle_fullscreen(cls, *args) -> None:
+    def toggle_fullscreen(cls, *args) -> bool:
         # Callback to toggle fullscreen mode on/off (e.g. from menu)
         cls._is_fullscreen = not cls._is_fullscreen
         if cls._is_fullscreen:
@@ -924,13 +948,15 @@ class GUI:
             cls._window.unfullscreen()
             cls._menu_elt_fullscreen.set_label('gtk-fullscreen')
             cls._menu_elt_fullscreen.set_image(cls._image_enter_fs)
+        return True # don't propagate event
 
 
     @classmethod
-    def debug(cls, *args):
+    def debug(cls, *args) -> bool:
         # Temporary callback - delete me !!!!
         # Placeholder until we decide what fourth button does
         print('Button clicked {}'.format(args[0]))
+        return False # propagate event
 
 
     @classmethod

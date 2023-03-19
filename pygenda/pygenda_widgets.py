@@ -3,7 +3,7 @@
 # pygenda_widgets.py
 # Date, Time and Duration entry widgets for Pygenda.
 #
-# Copyright (C) 2022 Matthew Lewis
+# Copyright (C) 2022,2023 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -96,18 +96,20 @@ class _WidgetDateTimeBase(Gtk.Box):
             self._elts[i].connect('focus-in-event', self._focus_in)
 
 
-    def _focus_in(self, entry:Gtk.Widget, ev:Gdk.EventFocus) -> None:
+    def _focus_in(self, entry:Gtk.Widget, ev:Gdk.EventFocus) -> bool:
         # Event callback for when any sub-field gets the focus
         # This and the next function allow us to style whole widget with .focus
         # We update counter to avoid unnecessary remove/add styles
         if self._focus_count==0:
             self.get_style_context().add_class(self.FOCUS_STYLE)
         self._focus_count += 1
+        return False # propagate event
 
-    def _focus_out(self, entry:Gtk.Widget, ev:Gdk.EventFocus) -> None:
+    def _focus_out(self, entry:Gtk.Widget, ev:Gdk.EventFocus) -> bool:
         # Event callback for when any sub-field looses the focus
         # Do the work in idle so in leave/enter pairs, leave happens last
         GLib.idle_add(_WidgetDateTimeBase._do_focus_out, self)
+        return False # propagate event
 
     def _do_focus_out(self) -> None:
         # Idle event callback for when any sub-field loses focus
@@ -199,13 +201,14 @@ class _WidgetDateTimeBase(Gtk.Box):
         return ev.keyval not in (self.ALLOWED_KEYS_WITH_CTRL if ev.state==Gdk.ModifierType.CONTROL_MASK else self.ALLOWED_KEYS)
 
 
-    def _changed(self, entry:Gtk.Widget) -> None:
+    def _changed(self, entry:Gtk.Widget) -> bool:
         # If one subcomponent changes, cascade 'changed' signal down
         self.emit('changed')
+        return False # propagate event
 
 
     @staticmethod
-    def validate_entry(entry:Gtk.Entry, ev:Gdk.EventFocus, mn:int, mx:int, pad:int) -> None:
+    def validate_entry(entry:Gtk.Entry, ev:Gdk.EventFocus, mn:int, mx:int, pad:int) -> bool:
         # Helper function to validate (and correct) date/time fields.
         # Used as callback function when focus leaves the field.
         entry.select_region(0,0) # remove highlight
@@ -216,6 +219,7 @@ class _WidgetDateTimeBase(Gtk.Box):
         except ValueError:
             v = mn
         entry.set_text('{{:0{:d}d}}'.format(pad).format(v))
+        return False # propagate event - in case it's used elsewhere
 
 
     def grab_focus(self) -> None:

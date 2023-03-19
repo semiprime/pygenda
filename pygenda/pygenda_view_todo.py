@@ -306,16 +306,17 @@ class View_Todo(View):
 
 
     @classmethod
-    def click_title(cls, wid:Gtk.Widget, ev:Gdk.EventButton, list_idx:int) -> None:
+    def click_title(cls, wid:Gtk.Widget, ev:Gdk.EventButton, list_idx:int) -> bool:
         # Callback. Called whenever a list title is clicked/tapped.
         # Moves cursor to top of list/item clicked
         cls._cursor_move_list(list_idx)
         cls._cursor_move_index(0)
         cls._scroll_to_cursor_required = True
+        return True # event handled - don't propagate
 
 
     @classmethod
-    def click_list(cls, wid:Gtk.Widget, ev:Gdk.EventButton, list_idx:int) -> None:
+    def click_list(cls, wid:Gtk.Widget, ev:Gdk.EventButton, list_idx:int) -> bool:
         # Callback. Called whenever list content is clicked/tapped.
         # Moves cursor to list/item clicked
         cls._cursor_move_list(list_idx)
@@ -341,6 +342,7 @@ class View_Todo(View):
             i += 1
         cls._cursor_move_index(i)
         cls._scroll_to_cursor_required = True
+        return True # event handled - don't propagate
 
 
     @staticmethod
@@ -378,7 +380,7 @@ class View_Todo(View):
 
 
     @classmethod
-    def _pre_draw(cls, wid:Gtk.Widget, _) -> None:
+    def _pre_draw(cls, wid:Gtk.Widget, _) -> bool:
         # Callback called on 'draw' event on date_content.
         # Called before drawing date content.
         # Used to scroll window when cursor has been moved (since we
@@ -386,6 +388,7 @@ class View_Todo(View):
         if cls._scroll_to_cursor_required:
             cls._scroll_to_cursor()
             cls._scroll_to_cursor_required = False
+        return False # propagate event
 
 
     @classmethod

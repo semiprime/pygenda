@@ -337,7 +337,7 @@ class View_Year(View_DayUnit_Base):
 
 
     @classmethod
-    def _pre_datecontent_draw(cls, wid:Gtk.Widget, _) -> None:
+    def _pre_datecontent_draw(cls, wid:Gtk.Widget, _) -> bool:
         # Callback called on 'draw' event on date_content.
         # Called before drawing date content.
         # Used to scroll window when cursor has been moved (since we
@@ -345,6 +345,7 @@ class View_Year(View_DayUnit_Base):
         if cls._scroll_to_cursor_required:
             cls.scroll_to_row(cls._date_content, View._cursor_idx_in_date, cls._date_content_scroll)
             cls._scroll_to_cursor_required = False
+        return False # propagate event
 
 
     @classmethod
@@ -590,17 +591,18 @@ class View_Year(View_DayUnit_Base):
 
 
     @classmethod
-    def click_grid(cls, wid:Gtk.Widget, ev:Gdk.EventButton) -> None:
+    def click_grid(cls, wid:Gtk.Widget, ev:Gdk.EventButton) -> bool:
         # Callback. Called whenever day grid is clicked/tapped.
         # Move grid (main) cursor to cell that was clicked.
         x = int(cls.GRID_COLUMNS*ev.x/wid.get_allocated_width())
         y = int(cls.GRID_ROWS*ev.y/wid.get_allocated_height())
         dt = cls._cell_to_date_clamped(x, y, cls._year_viewed)
         GLib.idle_add(cls._jump_to_date, dt, priority=GLib.PRIORITY_HIGH_IDLE+30)
+        return True # event handled - don't propagate
 
 
     @classmethod
-    def click_events(cls, wid:Gtk.Widget, ev:Gdk.EventButton) -> None:
+    def click_events(cls, wid:Gtk.Widget, ev:Gdk.EventButton) -> bool:
         # Callback. Called whenever events area at bottom is clicked/tapped.
         # Move entry cursor to entry that was clicked
         new_idx = cls.y_to_day_row(cls._date_content, ev.y, cls._date_content_count, cls._date_content_scroll)
@@ -608,6 +610,7 @@ class View_Year(View_DayUnit_Base):
             View._cursor_idx_in_date = new_idx
             cls._hide_entry_cursor()
             cls._show_entry_cursor()
+        return True # event handled - don't propagate
 
 
     @classmethod

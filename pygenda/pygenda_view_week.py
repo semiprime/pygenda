@@ -108,7 +108,7 @@ class View_Week(View_DayUnit_Base):
             ctx.add_class('weekview_day{:d}'.format(i))
             ctx.add_class('weekview_{:s}'.format(day_ab[(i+st_wk)%7]))
             cls._day_eventbox[i].add(day_box)
-            cls._day_eventbox[i].connect("button_press_event", cls.click_date)
+            cls._day_eventbox[i].connect('button_press_event', cls.click_date)
             # labels
             cls._day_label.append(Gtk.Label())
             cls._day_label[i].set_justify(Gtk.Justification.CENTER)
@@ -313,7 +313,7 @@ class View_Week(View_DayUnit_Base):
 
 
     @classmethod
-    def _pre_datecontent_draw(cls, wid:Gtk.Widget, _, day:int) -> None:
+    def _pre_datecontent_draw(cls, wid:Gtk.Widget, _, day:int) -> bool:
         # Callback called on 'draw' event on date_content.
         # Called before drawing date content.
         # Used to scroll window when cursor has been moved (since we
@@ -321,6 +321,7 @@ class View_Week(View_DayUnit_Base):
         if cls._scroll_to_cursor_in_day == day:
             cls.scroll_to_row(cls._day_rows[day], View._cursor_idx_in_date, cls._day_scroll[day])
             cls._scroll_to_cursor_in_day = None
+        return False # propagate event
 
 
     @classmethod
@@ -450,13 +451,13 @@ class View_Week(View_DayUnit_Base):
 
 
     @classmethod
-    def click_date(cls, wid:Gtk.Widget, ev:Gdk.EventButton) -> None:
+    def click_date(cls, wid:Gtk.Widget, ev:Gdk.EventButton) -> bool:
         # Callback. Called whenever a date is clicked/tapped.
         # Moves cursor to date/item clicked
         try:
             new_day = cls._day_eventbox.index(wid)
         except ValueError:
-            return
+            return False # propagate event
 
         new_idx = 0 # default index if not going to specific entry
 
@@ -471,6 +472,7 @@ class View_Week(View_DayUnit_Base):
                 new_idx = cls.y_to_day_row(cls._day_rows[new_day], ev.y, cls._day_ent_count[new_day], cls._day_scroll[new_day])
 
         GLib.idle_add(cls._jump_to_date, cls._day_index_to_date(new_day), new_idx)
+        return True # event handled - don't propagate
 
 
     @classmethod

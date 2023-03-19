@@ -333,37 +333,40 @@ class EventDialogController:
 
 
     @classmethod
-    def _do_timed_toggle(cls, wid:Gtk.RadioButton) -> None:
+    def _do_timed_toggle(cls, wid:Gtk.RadioButton) -> bool:
         # Callback. Called when "timed" radio button changes state.
         # Reveals/hides appropriate sub-obtions, and flags that
         # dialog state had been changed.
         ti = cls.wid_timed_buttons[1].get_active()
         cls._do_multireveal(cls.revs_timedur, ti)
         cls._cancel_empty_desc_allowed()
+        return True # don't propagate event
 
 
     @classmethod
-    def _do_allday_toggle(cls, wid:Gtk.RadioButton) -> None:
+    def _do_allday_toggle(cls, wid:Gtk.RadioButton) -> bool:
         # Callback. Called when "all day" radio button changes state.
         # Reveals/hides appropriate sub-obtions, and flags that
         # dialog state had been changed.
         ad = cls.wid_timed_buttons[2].get_active()
         cls._do_multireveal(cls.revs_allday, ad)
         cls._cancel_empty_desc_allowed()
+        return True # don't propagate event
 
 
     @classmethod
-    def _desc_changed(cls, wid:Gtk.Entry) -> None:
+    def _desc_changed(cls, wid:Gtk.Entry) -> bool:
         # Callback. Called when event description is changed by user.
         # Flags that dialog state had been changed.
         # Removes error state styling if it is no longer needed.
         if cls.wid_desc.get_text(): # if desc field is non-empty
             cls._cancel_empty_desc_allowed()
         cls._is_valid_event(set_style=False) # remove error styles if present
+        return True # don't propagate event
 
 
     @classmethod
-    def _reptype_changed(cls, wid:Gtk.ComboBox) -> None:
+    def _reptype_changed(cls, wid:Gtk.ComboBox) -> bool:
         # Callback. Called when event repeat type is changed by user.
         # Reveals/hides relevant sub-options.
         # wid should be the repeat-type combobox
@@ -404,10 +407,11 @@ class EventDialogController:
                     rem = monthrange(sdt.year,sdt.month)[1]-sdt.day
                     cls.wid_repbyweekday_ord.set_active_id(str(-1-(rem//7)))
         cls._cancel_empty_desc_allowed()
+        return True # don't propagate event
 
 
     @classmethod
-    def _do_repeatforever_toggle(cls, wid:Gtk.Button) -> None:
+    def _do_repeatforever_toggle(cls, wid:Gtk.Button) -> bool:
         # Callback. Called when repeat-forever state is changed by user.
         # Reveals/hides relevant sub-options.
         st = not wid.get_active() #If *not* forever, we show repeat-til options
@@ -425,11 +429,12 @@ class EventDialogController:
                     cls.wid_rep_occs.set_value(1)
 
         cls._cancel_empty_desc_allowed()
+        return True # don't propagate event
 
 
     @classmethod
-    def _do_alarmset_toggle(cls, wid:Gtk.Widget, state:bool) -> None:
-        # Callback. Called when alarm set state is changed by user.
+    def _do_alarmset_toggle(cls, wid:Gtk.Widget, state:bool) -> bool:
+        # Callback. Called when alarm set state is changed.
         # Reveals/hides alarm list.
         if state and len(cls.alarmlist_model)==0:
             # User just enabled alarms, so if no alarms, create default ones
@@ -438,6 +443,7 @@ class EventDialogController:
             # Also, user has interacted with settings, so expect a valid entry
             cls._cancel_empty_desc_allowed()
         cls._revealer_alarmlist.set_reveal_child(state)
+        return True # don't propagate event
 
 
     @classmethod
@@ -514,7 +520,7 @@ class EventDialogController:
 
 
     @classmethod
-    def _tmdur_changed(cls, wid:Gtk.Widget, el:int) -> None:
+    def _tmdur_changed(cls, wid:Gtk.Widget, el:int) -> bool:
         # Callback. Called when starttime/endtime/duration changed.
         # 'el' paramenter indicates which one changed (but could use wid).
         sdt = cls.get_date_start()
@@ -543,10 +549,11 @@ class EventDialogController:
                 cls._unblock_tmdur_signals()
         cls._cancel_empty_desc_allowed()
         cls._is_valid_event(set_style=False) # remove error styles if present
+        return True # don't propagate event
 
 
     @classmethod
-    def _repend_changed(cls, wid:Gtk.Widget, el:int) -> None:
+    def _repend_changed(cls, wid:Gtk.Widget, el:int) -> bool:
         # Handler for signals from any widget that might result in either the
         # repeat end-date or occurence count changing. Prompts recalculation
         # and possibly also updates which of end-date/occurences is the leader.
@@ -564,6 +571,7 @@ class EventDialogController:
             cls._unblock_rep_occend_signals()
         cls._cancel_empty_desc_allowed()
         cls._is_valid_event(set_style=False) # remove error styles if present
+        return True # don't propagate event
 
 
     @classmethod
@@ -1248,7 +1256,7 @@ class EventDialogController:
 
 
     @classmethod
-    def dialog_repeat_exceptions(cls, *args) -> None:
+    def dialog_repeat_exceptions(cls, *args) -> bool:
         # Callback for +/- button to open sub-dialog for "repeat exceptions"
         edc = ExceptionsDialogController(cls.exception_list, parent=cls.dialog)
         result = edc.run()
@@ -1257,12 +1265,14 @@ class EventDialogController:
             cls.exception_list = dates
             cls._set_label_rep_list()
         edc.destroy()
+        return True # event handled - don't propagate event
 
 
     @classmethod
-    def alarms_understood(cls, *args) -> None:
+    def alarms_understood(cls, *args) -> bool:
         # Handler for Alarms Understood button - show content
         cls.wid_alarmstack.set_visible_child_name('content')
+        return True # event handled - don't propagate event
 
 
     @classmethod
