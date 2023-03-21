@@ -79,6 +79,7 @@
 				<property name="visible">True</property>
 				<property name="can-focus">False</property>
 				<property name="visible-window">False</property>
+				<signal name="button-press-event" handler="year_grid_click" swapped="no"/>
 				<child>
 					<!-- n-columns=37 n-rows=12 -->
 					<object class="GtkGrid" id="year_grid_days">
@@ -120,6 +121,8 @@
 					<object class="GtkEventBox" id="year_datecontent_events">
 						<property name="visible">True</property>
 						<property name="can-focus">False</property>
+						<signal name="button-press-event" handler="year_dtcont_click" swapped="no"/>
+						<signal name="draw" handler="year_dtcont_draw" swapped="no"/>
 						<child>
 							<object class="GtkScrolledWindow" id="year_datecontent_scroll">
 								<property name="name">yearview_datecontent_scroller</property>

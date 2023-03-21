@@ -196,6 +196,7 @@
 														<property name="receives-default">False</property>
 														<property name="draw-indicator">True</property>
 														<property name="group">radiobutton_timed_no</property>
+														<signal name="toggled" handler="timed_toggled" swapped="no"/>
 													</object>
 													<packing>
 														<property name="expand">False</property>
@@ -211,6 +212,7 @@
 														<property name="receives-default">False</property>
 														<property name="draw-indicator">True</property>
 														<property name="group">radiobutton_timed_no</property>
+														<signal name="toggled" handler="allday_toggled" swapped="no"/>
 													</object>
 													<packing>
 														<property name="expand">False</property>
@@ -399,6 +401,7 @@
 													<item id="WEEKLY" translatable="yes">Weekly</item>
 													<item id="DAILY" translatable="yes">Daily</item>
 												</items>
+												<signal name="changed" handler="reptype_changed" swapped="no"/>
 											</object>
 											<packing>
 												<property name="left-attach">1</property>
@@ -671,6 +674,7 @@
 																<property name="halign">start</property>
 																<property name="active">True</property>
 																<property name="draw-indicator">True</property>
+																<signal name="toggled" handler="repforever_toggled" swapped="no"/>
 															</object>
 															<packing>
 																<property name="expand">False</property>
@@ -817,6 +821,7 @@
 																<property name="can-focus">True</property>
 																<property name="halign">start</property>
 																<property name="valign">center</property>
+																<signal name="state-set" handler="alarmset_changed" swapped="no"/>
 															</object>
 															<packing>
 																<property name="expand">False</property>
@@ -853,6 +858,8 @@
 																		<property name="enable-search">False</property>
 																		<property name="show-expanders">False</property>
 																		<property name="activate-on-single-click">True</property>
+																		<signal name="focus-out-event" handler="alarmlist_focusout" swapped="no"/>
+																		<signal name="key-press-event" handler="alarmlist_keypress" swapped="no"/>
 																		<child internal-child="selection">
 																			<object class="GtkTreeSelection"/>
 																		</child>

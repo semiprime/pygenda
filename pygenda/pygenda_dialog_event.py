@@ -141,8 +141,15 @@ class EventDialogController:
 
         # Connect signal handlers
         HANDLERS = {
+            'timed_toggled': cls._do_timed_toggle,
+            'allday_toggled': cls._do_allday_toggle,
+            'reptype_changed': cls._reptype_changed,
+            'repforever_toggled': cls._do_repeatforever_toggle,
             'exceptions_modify': cls.dialog_repeat_exceptions,
-            'alarms_understood': cls.alarms_understood
+            'alarms_understood': cls.alarms_understood,
+            'alarmset_changed': cls._do_alarmset_toggle,
+            'alarmlist_focusout': cls._alarmlist_focusloss,
+            'alarmlist_keypress': cls._alarmlist_keypress,
             }
         GUI._builder.connect_signals(HANDLERS)
 
@@ -188,9 +195,6 @@ class EventDialogController:
         cls.revs_allday = cls._revealers_from_ids('revealer_allday_l', 'revealer_allday_e')
         cls.wid_allday_count = GUI._builder.get_object('allday_count')
 
-        cls.wid_timed_buttons[1].connect('toggled', cls._do_timed_toggle)
-        cls.wid_timed_buttons[2].connect('toggled', cls._do_allday_toggle)
-
         # We keep references to these connections, so then can be (un)blocked.
         cls._tmdur_handler_time = cls.wid_time.connect('changed', cls._tmdur_changed, 0)
         cls._tmdur_handler_dur = cls.wid_dur.connect('changed', cls._tmdur_changed, 1)
@@ -209,14 +213,12 @@ class EventDialogController:
         cls.revs_rep_monthdays = cls._revealers_from_ids('revealer_repeat_monthday_e')
         cls.revs_rep_weekdays = cls._revealers_from_ids('revealer_repeat_weekday_e')
         cls.revs_rep_monthweekdays = cls._revealers_from_ids('revealer_repeat_day_l')
-        cls.wid_rep_type.connect('changed', cls._reptype_changed)
 
         cls.wid_rep_interval = GUI._builder.get_object('repeat_interval')
         cls.wid_rep_forever = GUI._builder.get_object('repeat_forever')
         cls.wid_repbymonthday = GUI._builder.get_object('combo_bydaymonth')
         cls.wid_repbyweekday_day = GUI._builder.get_object('combo_byday_day')
         cls.wid_repbyweekday_ord = GUI._builder.get_object('combo_byday_ord')
-        cls.wid_rep_forever.connect('toggled', cls._do_repeatforever_toggle)
 
         cls.wid_rep_occs = GUI._builder.get_object('repeat_occurrences')
         cls.wid_rep_enddt = WidgetDate()
@@ -255,15 +257,12 @@ class EventDialogController:
         cls.wid_alarmstack = GUI._builder.get_object('alarm-stack')
         cls.wid_alarmset = GUI._builder.get_object('alarm-set')
         cls._revealer_alarmlist = GUI._builder.get_object('revealer_alarmlist')
-        cls.wid_alarmset.connect('state-set', cls._do_alarmset_toggle)
 
         cls.wid_alarmlist = GUI._builder.get_object('alarm-list')
         cls.alarmlist_model = Gtk.ListStore(object, str, str) # AlarmInfo + cols
         cls.wid_alarmlist.set_model(cls.alarmlist_model)
         cls.wid_alarmlist.append_column(Gtk.TreeViewColumn(_('Time before event'),Gtk.CellRendererText(), text=1))
         cls.wid_alarmlist.append_column(Gtk.TreeViewColumn(_('Action'), Gtk.CellRendererText(), text=2))
-        cls.wid_alarmlist.connect('key-press-event', cls._alarmlist_keypress)
-        cls.wid_alarmlist.connect('focus-out-event', cls._alarmlist_focusloss)
 
         # Read config settings
         td_str = Config.get('new_event','timed_default_alarm_before')

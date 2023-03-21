@@ -84,14 +84,19 @@ class View_Year(View_DayUnit_Base):
         cls._date_label = GUI._builder.get_object('year_datelabel')
         cls._date_content_scroll = GUI._builder.get_object('year_datecontent_scroll')
         cls._date_content = GUI._builder.get_object('year_datecontent')
-        cls._date_content.connect('draw', cls._pre_datecontent_draw)
         cls._draw_day_month_labels()
         cls._init_keymap()
         cls._init_grid()
         cls._init_config()
 
-        GUI._builder.get_object('year_grid_events').connect('button_press_event', cls.click_grid)
-        GUI._builder.get_object('year_datecontent_events').connect('button_press_event', cls.click_events)
+        # Connect signal handlers
+        HANDLERS = {
+            'year_grid_click': cls.click_grid,
+            'year_dtcont_click': cls.click_events,
+            'year_dtcont_draw': cls._pre_datecontent_draw,
+            }
+        GUI._builder.connect_signals(HANDLERS)
+
         return cls._topbox
 
 
