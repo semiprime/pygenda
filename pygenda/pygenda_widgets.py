@@ -192,7 +192,7 @@ class _WidgetDateTimeBase(Gtk.Box):
         if ev.keyval>=Gdk.KEY_0 and ev.keyval<=Gdk.KEY_9:
             if at_end and one_from_max and idx+1<len(self._elts):
                 # In this case, handle insert and move to next field here
-                entry.insert_text('{:d}'.format(ev.keyval-Gdk.KEY_0),-1)
+                entry.insert_text(str(ev.keyval-Gdk.KEY_0),-1)
                 self._elts[idx+1].grab_focus()
                 return True
             # Otherwise number keys can safely be handled by standard code
@@ -491,7 +491,7 @@ class WidgetTime(_WidgetDateTimeBase):
                 h = 12
             elif h>12:
                 h -= 12
-            self.field_hour.set_text('{:d}'.format(h))
+            self.field_hour.set_text(str(h))
         self.field_min.set_text('{:02d}'.format(tm.minute))
 
 
@@ -556,17 +556,17 @@ class WidgetDuration(_WidgetDateTimeBase):
         # Set widget contents.
         tot_min = int(timed.total_seconds()//60)
         hr,mn = divmod(tot_min,60)
-        self.field_hour.set_text('{:d}'.format(hr))
+        self.field_hour.set_text(str(hr))
         self.field_min.set_text('{:02d}'.format(mn))
 
 
     def get_duration(self) -> timedelta:
         # Get widget contents. Raises ValueError if duration invalid.
-        h = int(self.field_hour.get_text())
-        m = int(self.field_min.get_text())
-        if not (0<=m<60) or h<0:
+        hr = int(self.field_hour.get_text())
+        mn = int(self.field_min.get_text())
+        if not (0<=mn<60) or hr<0:
             raise(ValueError)
-        td = timedelta(hours=h, minutes=m)
+        td = timedelta(hours=hr, minutes=mn)
         return td
 
 

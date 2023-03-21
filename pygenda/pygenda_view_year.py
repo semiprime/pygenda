@@ -175,7 +175,7 @@ class View_Year(View_DayUnit_Base):
         yr = c_date.year
         cls._year_viewed = yr
         l = GUI._builder.get_object('year_yearlabel')
-        l.set_text('{:d}'.format(yr))
+        l.set_text(str(yr))
 
         st_wk = Config.get_int('global','start_week_day')
         mon_labs = GUI._builder.get_object('month_names').get_children()
@@ -221,7 +221,7 @@ class View_Year(View_DayUnit_Base):
                 # so we know label text is already ''.
                 t = ''
                 if day==st_wk or d==0 or d==daycount-1:
-                    t = '{:d}'.format(d+1)
+                    t = str(d+1)
                 l = cls._grid_cells.get_child_at(col,m-1)
                 l.set_text(t)
                 ctx = l.get_style_context()
