@@ -31,6 +31,7 @@ from datetime import date as dt_date, datetime as dt_datetime, timedelta
 from typing import Optional, Union
 
 from .pygenda_gui import GUI
+from .pygenda_config import Config
 from .pygenda_dialog_event import EventDialogController
 from .pygenda_util import datetime_to_time, datetime_to_date, date_to_datetime, format_time, format_compact_date, format_compact_time, format_compact_datetime, dt_lte
 from .pygenda_calendar import Calendar
@@ -65,6 +66,17 @@ class View:
         # Initialise view and return Gtk widget for that view.
         # Called from GUI._init_views() on startup.
         return None
+
+
+    @classmethod
+    def init_zoom(cls, config_gp:str, ctx:Gtk.StyleContext) -> None:
+        # Initialise zoom level
+        # Called during initialisation by child class.
+        cls.zoom_lvls = Config.get_int(config_gp,'zoom_levels') # type:ignore
+        cls.zoom_lvl = Config.get_int(config_gp,'default_zoom') # type:ignore
+        cls.zoom_lvl %= cls.zoom_lvls # type:ignore
+        cls.zoom_ctx = ctx # type:ignore
+        cls.zoom_ctx.add_class('zoom'+str(cls.zoom_lvl)) # type:ignore
 
 
     @classmethod
@@ -149,6 +161,17 @@ class View:
         # Return True if can (False if can't) jump to todo in this view.
         # Default implementation does nothing & returns False.
         return False
+
+
+    @classmethod
+    def zoom(cls, inc:int) -> None:
+        # Zoom by inc, so zoom-in if inc==+1; zoom-out if inc==-1
+        # Assumes zoom_init() has been called.
+        # If not using this system, View should supply its own zoom().
+        # !! Note: might be better if it kept the cursor visible
+        cls.zoom_ctx.remove_class('zoom'+str(cls.zoom_lvl)) # type:ignore
+        cls.zoom_lvl = (cls.zoom_lvl+inc)%cls.zoom_lvls # type:ignore
+        cls.zoom_ctx.add_class('zoom'+str(cls.zoom_lvl)) # type:ignore
 
 
     @staticmethod

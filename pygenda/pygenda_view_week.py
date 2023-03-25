@@ -45,6 +45,8 @@ class View_Week(View_DayUnit_Base):
         'pageleft_datepos': 'left',
         'pageright_datepos': 'right',
         'show_event_location': 'always',
+        'zoom_levels': 5,
+        'default_zoom': 1,
     })
 
     _day_ent_count = [0]*7 # entry count for each day
@@ -81,6 +83,7 @@ class View_Week(View_DayUnit_Base):
         cls._init_week_widgets()
         cls._init_keymap()
         cls._init_config()
+        cls.init_zoom('week_view', cls._topbox.get_style_context())
         return cls._topbox
 
 

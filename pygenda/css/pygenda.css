@@ -57,9 +57,25 @@ scrollbar {
 	font-weight:bold;
 }
 
+.zoom3 #weekview_labelmonth {
+	font-size:13pt;
+}
+
+.zoom4 #weekview_labelmonth {
+	font-size:14pt;
+}
+
 #weekview_labelweek {
 	font-family:'DejaVu Sans';
 	font-size:9pt;
+}
+
+.zoom3 #weekview_labelweek {
+	font-size:9.5pt;
+}
+
+.zoom4 #weekview_labelweek {
+	font-size:10pt;
 }
 
 #weekview_fold {
@@ -99,8 +115,27 @@ scrollbar {
 	padding:4px;
 	color:black;
 	font-family:'DejaVu Sans';
-	font-size:9pt;
 	font-weight:normal;
+}
+
+.zoom0 .weekview_daytext {
+	font-size:8pt;
+}
+
+.zoom1 .weekview_daytext {
+	font-size:9pt;
+}
+
+.zoom2 .weekview_daytext {
+	font-size:10pt;
+}
+
+.zoom3 .weekview_daytext {
+	font-size:11pt;
+}
+
+.zoom4 .weekview_daytext {
+	font-size:12pt;
 }
 
 .weekview_marker {
@@ -114,7 +149,7 @@ scrollbar {
 .weekview_cursor {
 	color:white;
 	background-color:black;
-	border-radius:4px;
+	border-radius:0.3em;
 }
 
 
@@ -188,14 +223,32 @@ scrollbar {
 
 #yearview_labeldate {
 	font-family:'DejaVu Sans Condensed';
-	font-size:11pt;
 	font-weight:bold;
 	padding-right:0.8ex;
 }
 
 #yearview_datecontent {
-	font-size:11pt;
 	font-family:'DejaVu Sans';
+}
+
+.zoom0 #yearview_datecontent, .zoom0 #yearview_labeldate {
+	font-size:9pt;
+}
+
+.zoom1 #yearview_datecontent, .zoom1 #yearview_labeldate {
+	font-size:10pt;
+}
+
+.zoom2 #yearview_datecontent, .zoom2 #yearview_labeldate {
+	font-size:11pt;
+}
+
+.zoom3 #yearview_datecontent, .zoom3 #yearview_labeldate {
+	font-size:12pt;
+}
+
+.zoom4 #yearview_datecontent, .zoom4 #yearview_labeldate {
+	font-size:13pt;
 }
 
 #yearview_datecontent_scroller {
@@ -212,7 +265,7 @@ scrollbar {
 .yearview_entry_cursor {
 	color:rgba(255,255,255,0.93);
 	background-color:black;
-	border-radius:4px;
+	border-radius:0.3em;
 }
 
 .yearview_entry_single, .yearview_entry_repeated_day, .yearview_entry_repeated_hour, .yearview_entry_repeated_minute, .yearview_entry_repeated_second {
@@ -297,8 +350,27 @@ scrollbar {
 
 .todoview_title {
 	font-family:'DejaVu Sans';
-	font-size:11pt;
 	font-weight:bold;
+}
+
+.zoom0 .todoview_title {
+	font-size:9pt;
+}
+
+.zoom1 .todoview_title {
+	font-size:10pt;
+}
+
+.zoom2 .todoview_title {
+	font-size:11pt;
+}
+
+.zoom3 .todoview_title {
+	font-size:12pt;
+}
+
+.zoom4 .todoview_title {
+	font-size:13pt;
 }
 
 .todoview_list {
@@ -313,7 +385,26 @@ scrollbar {
 .todoview_items {
 	padding:4px;
 	font-family:'DejaVu Sans';
+}
+
+.zoom0 .todoview_items {
+	font-size:8pt;
+}
+
+.zoom1 .todoview_items {
+	font-size:9pt;
+}
+
+.zoom2 .todoview_items {
 	font-size:10pt;
+}
+
+.zoom3 .todoview_items {
+	font-size:11pt;
+}
+
+.zoom4 .todoview_items {
+	font-size:12pt;
 }
 
 .todoview_marker {
@@ -326,7 +417,7 @@ scrollbar {
 .todoview_cursor {
 	color:white;
 	background-color:black;
-	border-radius:4px;
+	border-radius:0.3em;
 }
 
 .needs-action > .todoview_itemtext {

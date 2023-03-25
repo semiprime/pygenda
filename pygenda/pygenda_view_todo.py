@@ -42,6 +42,8 @@ from .pygenda_entryinfo import EntryInfo
 class View_Todo(View):
     Config.set_defaults('todo_view',{
         'list0_title': _('To-do'),
+        'zoom_levels': 5,
+        'default_zoom': 2,
     })
 
     _cursor_list = 0
@@ -74,6 +76,7 @@ class View_Todo(View):
         cls._init_parse_list_config()
         cls._init_todo_widgets()
         cls._init_keymap()
+        cls.init_zoom('todo_view', cls._topboxscroll.get_style_context())
         return cls._topboxscroll
 
 

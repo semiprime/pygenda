@@ -61,8 +61,24 @@ scrollbar slider {
 	font-size:21pt;
 }
 
+.zoom3 #weekview_labelmonth {
+	font-size:22.5pt;
+}
+
+.zoom4 #weekview_labelmonth {
+	font-size:24pt;
+}
+
 #weekview_labelweek {
 	font-size:13pt;
+}
+
+.zoom3 #weekview_labelweek {
+	font-size:14pt;
+}
+
+.zoom4 #weekview_labelweek {
+	font-size:15pt;
 }
 
 .weekview_labelday {
@@ -70,10 +86,25 @@ scrollbar slider {
 	min-width:2.95em;
 }
 
-.weekview_daytext {
+.zoom0 .weekview_daytext {
+	font-size:13pt;
+}
+
+.zoom1 .weekview_daytext {
 	font-size:15pt;
 }
 
+.zoom2 .weekview_daytext {
+	font-size:17pt;
+}
+
+.zoom3 .weekview_daytext {
+	font-size:19pt;
+}
+
+.zoom4 .weekview_daytext {
+	font-size:21pt;
+}
 
 /* Year View */
 
@@ -83,23 +114,70 @@ scrollbar slider {
 }
 
 #yearview_labeldate {
-	font-size:15pt;
 	padding:2px;
 }
 
-#yearview_datecontent {
+.zoom0 #yearview_datecontent, .zoom0 #yearview_labeldate {
+	font-size:13pt;
+}
+
+.zoom1 #yearview_datecontent, .zoom1 #yearview_labeldate {
 	font-size:15pt;
+}
+
+.zoom2 #yearview_datecontent, .zoom2 #yearview_labeldate {
+	font-size:17pt;
+}
+
+.zoom3 #yearview_datecontent, .zoom3 #yearview_labeldate {
+	font-size:19pt;
+}
+
+.zoom4 #yearview_datecontent, .zoom4 #yearview_labeldate {
+	font-size:21pt;
 }
 
 
 /* Todo View */
 
-.todoview_title {
+.zoom0 .todoview_title {
+	font-size:12pt;
+}
+
+.zoom1 .todoview_title {
+	font-size:14pt;
+}
+
+.zoom2 .todoview_title {
 	font-size:16pt;
 }
 
-.todoview_items {
+.zoom3 .todoview_title {
+	font-size:18pt;
+}
+
+.zoom4 .todoview_title {
+	font-size:20pt;
+}
+
+.zoom0 .todoview_items {
+	font-size:11pt;
+}
+
+.zoom1 .todoview_items {
+	font-size:13pt;
+}
+
+.zoom2 .todoview_items {
 	font-size:15pt;
+}
+
+.zoom3 .todoview_items {
+	font-size:17pt;
+}
+
+.zoom4 .todoview_items {
+	font-size:19pt;
 }
 
 .todoview_list {

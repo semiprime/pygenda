@@ -23,6 +23,10 @@ Usage is intended to be intuitive, but a few things are worth noting:
 * In Week and Year views, the space key toggles between Today and
   wherever the cursor was last.
 
+* The Zoom soft-button zooms in; shift+Zoom or ctrl+Zoom zooms out. You can
+  set the number of zoom levels and the default with the zoom_levels and
+  default_zoom config options. You can set the font sizes with custom CSS.
+
 * If you want the Tab key to move within elements in date/time/duration
   widgets then set the global/tab_elts_datetime config option to True.
 
@@ -40,7 +44,7 @@ Usage is intended to be intuitive, but a few things are worth noting:
 
 * Setting alarms is currently under development and testing is welcome.
   (Note: sounding/displaying/sending alarms will be the job of a
-  different program - an alarm server. Pygenda does not, and will not,
+  different program - an alarm handler. Pygenda does not, and will not,
   activate the alarms. There is a warning in the UI about this because
   it's important that you understand that you need to do some setup or
   alarms will not be activated. You can get rid of the warning by

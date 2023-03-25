@@ -43,6 +43,8 @@ from .pygenda_util import start_end_dts_occ
 class View_Year(View_DayUnit_Base):
     Config.set_defaults('year_view',{
         'show_event_location': 'always',
+        'zoom_levels': 5,
+        'default_zoom': 2,
     })
 
     DAY_CLASS = [ 'yearview_day_{}'.format(s) for s in ['mon','tue','wed','thu','fri','sat','sun'] ]
@@ -88,6 +90,7 @@ class View_Year(View_DayUnit_Base):
         cls._init_keymap()
         cls._init_grid()
         cls._init_config()
+        cls.init_zoom('year_view', cls._topbox.get_style_context())
 
         # Connect signal handlers
         HANDLERS = {

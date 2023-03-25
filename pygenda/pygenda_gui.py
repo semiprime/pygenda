@@ -176,6 +176,8 @@ class GUI:
             'menuitem_stat_inprocess': lambda a: cls.handler_stat_toggle('IN-PROCESS'),
             'menuitem_stat_completed': lambda a: cls.handler_stat_toggle('COMPLETED'),
             'menuitem_switchview': cls.switch_view,
+            'menuitem_zoomin': lambda a: cls.zoom(+1),
+            'menuitem_zoomout': lambda a: cls.zoom(-1),
             'menuitem_fullscreen': cls.toggle_fullscreen,
             'menuitem_goto': cls.dialog_goto,
             'menuitem_find': cls.handler_find,
@@ -183,7 +185,7 @@ class GUI:
             'button0_clicked': cls.handler_newevent,
             'button1_clicked': cls.switch_view,
             'button2_clicked': cls.dialog_goto,
-            'button3_clicked': cls.debug, # zoom, to be decided/implemented
+            'button3_clicked': cls.zoom_button,
             }
         cls._builder.connect_signals(HANDLERS)
 
@@ -952,11 +954,19 @@ class GUI:
 
 
     @classmethod
-    def debug(cls, *args) -> bool:
-        # Temporary callback - delete me !!!!
-        # Placeholder until we decide what fourth button does
-        print('Button clicked {}'.format(args[0]))
-        return False # propagate event
+    def zoom_button(cls, wid:Gtk.Widget, ev:Gdk.EventKey) -> bool:
+        # Zoom handler for Zoom soft-button
+        cls.zoom(-1 if ev.state&(Gdk.ModifierType.SHIFT_MASK|Gdk.ModifierType.CONTROL_MASK) else +1)
+        return True # don't propagate event
+
+
+    @classmethod
+    def zoom(cls, inc:int) -> bool:
+        # Callback for zoom-in/out menu items
+        # Zoom by inc, so zoom-in if inc==+1; zoom-out if inc==-1
+        # Call current view to do the work
+        cls.views[cls._view_idx].zoom(inc)
+        return True # don't propagate event
 
 
     @classmethod
