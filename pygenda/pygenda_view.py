@@ -387,13 +387,15 @@ class View_DayUnit_Base(View):
     _BULLET_TODO = u'🅣' # alternative:Ⓣ
 
     @classmethod
-    def marker_label(cls, ev:iCal.Event, dt_st:dt_date) -> Gtk.Label:
+    def marker_label(cls, ev:iCal.Event, dt_st:dt_date, is_ongoing:bool=False) -> Gtk.Label:
         # Returns bullet or entry time suitable for marking entries.
         # Used to display entries in Week and Year views.
         lab = Gtk.Label()
         lab.set_halign(Gtk.Align.END)
         lab.set_valign(Gtk.Align.START)
-        if datetime_to_time(dt_st)!=False:
+        if is_ongoing:
+            mark = cls._BULLET_ONGOING
+        elif datetime_to_time(dt_st)!=False:
             mark = format_time(dt_st, True)
         elif type(ev) is iCal.Todo:
             mark = cls._BULLET_TODO

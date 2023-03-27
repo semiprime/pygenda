@@ -43,10 +43,9 @@ Major
   by making all occurrences exceptions; keyboard navigation in menu
   is not intuitive.
 
-* Multi-day events (i.e. that span multiple days) only displayed on
-  first day. (Need to set a config, e.g. "next_day_crossover" for week
-  view, year view.  If time goes beyond that, then also show in next
-  day.)
+* Multi-day events (i.e. ones that span multiple days) only displayed
+  on first day. (In progress - started on Week View.) (Future: config
+  option "next_day_crossover" to determine if an even crosses over.)
 
 * Cutting repeating events is not implemented. (Not sure how to do UI -
   probably need to bring up a dialog "Cut just this occurrence, or all

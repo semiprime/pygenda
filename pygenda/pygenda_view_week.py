@@ -34,7 +34,7 @@ from typing import Optional
 from .pygenda_view import View, View_DayUnit_Base
 from .pygenda_calendar import Calendar
 from .pygenda_config import Config
-from .pygenda_util import start_of_week, day_in_week, month_abbr, start_end_dts_occ, dt_lte
+from .pygenda_util import start_of_week, day_in_week, month_abbr, start_end_dts_occ, dt_lt, dt_lte
 from .pygenda_gui import GUI
 from .pygenda_dialog_event import EventDialogController
 
@@ -44,6 +44,7 @@ class View_Week(View_DayUnit_Base):
     Config.set_defaults('week_view',{
         'pageleft_datepos': 'left',
         'pageright_datepos': 'right',
+        'show_ongoing_event': 'first_day',
         'show_event_location': 'always',
         'zoom_levels': 5,
         'default_zoom': 1,
@@ -164,6 +165,11 @@ class View_Week(View_DayUnit_Base):
     @classmethod
     def _init_config(cls) -> None:
         # Initialisation from config settings.
+        # Set _show_ongoing flag from config.
+        show_ongoing = Config.get('week_view','show_ongoing_event')
+        map = {'every_day':1, 'first_day':0}
+        cls._show_ongoing = map[show_ongoing] if show_ongoing in map else 0
+
         # Set _show_location flag from config.
         show_loc = Config.get('week_view','show_event_location')
         map = {'always':cls.SHOW_LOC_ALWAYS, 'never':0}
@@ -234,11 +240,28 @@ class View_Week(View_DayUnit_Base):
             occ = next(itr)
         except StopIteration:
             occ = None
+        if cls._show_ongoing:
+            ongoing = [] # !! Replace with call to calendar
+            rollover_dt = dt # Might want this to be 2am or something
         oneday = timedelta(days=1)
         for i in range(7):
             dt_nxt = dt + oneday
             # Delete anything previously written to day v-box
             cls._day_rows[i].foreach(Gtk.Widget.destroy)
+            if cls._show_ongoing:
+                # Add rows for the ongoing events
+                rollover_dt += oneday
+                j = 0
+                while j < len(ongoing):
+                    occo = ongoing[j]
+                    occ_dt_sta,occ_dt_end = start_end_dts_occ(occo)
+                    cls._add_day_entry_row(occo[0], occ_dt_sta, occ_dt_end, i, show_loc=False, is_ongoing=True)
+                    # If this occurrence ends here, remove it from 'ongoing'
+                    if dt_lte(occ_dt_end, rollover_dt):
+                        ongoing.pop(j)
+                    else:
+                        j += 1
+            # Now we add events that start on this day
             while True:
                 if occ is None:
                     break
@@ -251,6 +274,10 @@ class View_Week(View_DayUnit_Base):
                     View._cursor_idx_in_date = cls._day_ent_count[i]
                     cls._target_entry = None
                 cls._add_day_entry_row(occ[0], occ_dt_sta, occ_dt_end, i, cls._show_location)
+                if cls._show_ongoing:
+                    # Add to 'ongoing' list if occurrence goes into next day
+                    if occ_dt_end and dt_lt(rollover_dt, occ_dt_end):
+                        ongoing.append(occ)
                 try:
                     occ = next(itr)
                 except StopIteration:
@@ -268,13 +295,13 @@ class View_Week(View_DayUnit_Base):
 
 
     @classmethod
-    def _add_day_entry_row(cls, ev:iCal.Event, dt_st:dt_date, dt_end:dt_date, dayidx:int, show_loc:bool) -> None:
+    def _add_day_entry_row(cls, ev:iCal.Event, dt_st:dt_date, dt_end:dt_date, dayidx:int, show_loc:bool, is_ongoing:bool=False) -> None:
         # Add Gtk labels for event 'ev', occurrence at time/date from 'dt_st'
         # to 'dt_end', in day 'dayidx' (e.g. 0=Monday if week starts Monday).
         # Used when displaying week contents.
         row = Gtk.Box()
         # Create entry mark (bullet or time) & add to row
-        mark_label = cls.marker_label(ev, dt_st)
+        mark_label = cls.marker_label(ev, dt_st, is_ongoing)
         ctx = mark_label.get_style_context()
         ctx.add_class('weekview_marker') # add style for CSS
         row.add(mark_label)
