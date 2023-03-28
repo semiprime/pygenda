@@ -57,33 +57,12 @@
 										<property name="visible">True</property>
 										<property name="can-focus">False</property>
 										<child>
-											<object class="GtkImageMenuItem">
-												<property name="label">gtk-new</property>
+											<object class="GtkMenuItem">
 												<property name="visible">True</property>
 												<property name="sensitive">False</property>
 												<property name="can-focus">False</property>
+												<property name="label" translatable="yes">_Import File</property>
 												<property name="use-underline">True</property>
-												<property name="use-stock">True</property>
-											</object>
-										</child>
-										<child>
-											<object class="GtkImageMenuItem">
-												<property name="label">gtk-open</property>
-												<property name="visible">True</property>
-												<property name="sensitive">False</property>
-												<property name="can-focus">False</property>
-												<property name="use-underline">True</property>
-												<property name="use-stock">True</property>
-											</object>
-										</child>
-										<child>
-											<object class="GtkImageMenuItem">
-												<property name="label">gtk-save-as</property>
-												<property name="visible">True</property>
-												<property name="sensitive">False</property>
-												<property name="can-focus">False</property>
-												<property name="use-underline">True</property>
-												<property name="use-stock">True</property>
 											</object>
 										</child>
 										<child>

@@ -82,8 +82,6 @@ Medium
 
 * No goto next/previous entry (for those without endless appointments)
 
-* No file manipulation: open, save-as, new file (what's the use case?)
-
 * No time-zone support (should at least be part of time widget)
   (Options: "Travels with me" (default), zone xxx (list local first))
 
