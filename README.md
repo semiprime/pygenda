@@ -23,19 +23,16 @@ working, or just to say that you tried it out.
 Screenshots and video
 ---------------------
 Week View:
-<div align="center">
+
 ![Screenshot - Week View](docs/screenshots/week_view.png?raw=true)
-</div>
 
 Year View:
-<div align="center">
+
 ![Screenshot - Year View](docs/screenshots/year_view.png?raw=true)
-</div>
 
 Todo View:
-<div align="center">
+
 ![Screenshot - Todo View](docs/screenshots/todo_view.png?raw=true)
-</div>
 
 Video: https://www.youtube.com/watch?v=QjHcgeRudMo (from March 2021)
 
