@@ -12,8 +12,7 @@ or data stored on calendar servers).**
 
 There are currently **lots of missing/incomplete features** as well as
 **bugs**. For a list of known issues, see: [known_issues.md](docs/known_issues.md).
-If you find any new bugs (or have any feature requests), please send
-them to: pygenda@semiprime.com.
+If you find any new bugs, please send them to: pygenda@semiprime.com.
 
 *However*, it currently has Week, Year and Todo Views that are functional
 enough that the author is now using Pygenda as his main agenda, so
@@ -21,7 +20,24 @@ maybe other people will also find it useful. Feedback is welcome at
 pygenda@semiprime.com - suggestions, questions about how to get something
 working, or just to say that you tried it out.
 
-Video (from March 2021): https://www.youtube.com/watch?v=QjHcgeRudMo
+Screenshots and video
+---------------------
+Week View:
+<div align="center">
+![Screenshot - Week View](docs/screenshots/week_view.png?raw=true)
+</div>
+
+Year View:
+<div align="center">
+![Screenshot - Year View](docs/screenshots/year_view.png?raw=true)
+</div>
+
+Todo View:
+<div align="center">
+![Screenshot - Todo View](docs/screenshots/todo_view.png?raw=true)
+</div>
+
+Video: https://www.youtube.com/watch?v=QjHcgeRudMo (from March 2021)
 
 Source code
 -----------
