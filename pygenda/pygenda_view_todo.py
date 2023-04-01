@@ -381,6 +381,9 @@ class View_Todo(View):
         cls._scroll_to_cursor_required = True
         GUI.set_menu_elts(on_todo=(icount!=0)) # Enable/disable hide menu items
 
+        # If cursor is offscreen, need signal that a redraw is needed
+        cls._topboxscroll.get_child().queue_draw()
+
 
     @classmethod
     def _pre_draw(cls, wid:Gtk.Widget, _) -> bool:
