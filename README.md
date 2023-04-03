@@ -17,22 +17,24 @@ If you find any new bugs, please send them to: pygenda@semiprime.com.
 *However*, it currently has Week, Year and Todo Views that are functional
 enough that the author is now using Pygenda as his main agenda, so
 maybe other people will also find it useful. Feedback is welcome at
-pygenda@semiprime.com - suggestions, questions about how to get something
+pygenda@semiprime.com – suggestions, questions about how to get something
 working, or just to say that you tried it out.
 
 Screenshots and video
 ---------------------
+(From a PC running Xfce and rescaled – your results may vary.)
+
 Week View:
 
-![Screenshot - Week View](docs/screenshots/week_view.png?raw=true)
+![Screenshot – Week View](docs/screenshots/week_view.png?raw=true)
 
 Year View:
 
-![Screenshot - Year View](docs/screenshots/year_view.png?raw=true)
+![Screenshot – Year View](docs/screenshots/year_view.png?raw=true)
 
 Todo View:
 
-![Screenshot - Todo View](docs/screenshots/todo_view.png?raw=true)
+![Screenshot – Todo View](docs/screenshots/todo_view.png?raw=true)
 
 Video: https://www.youtube.com/watch?v=QjHcgeRudMo (from March 2021)
 
@@ -70,7 +72,7 @@ Better/recommended: install the Python module with (for example)...
 
 NOTE: Gemian (Debian port for Gemini PDA) doesn't install the Python module
 dependencies. The reason for this appears to be old pip/setuptools on Gemian.
-I recommend installing these dependencies manually - see "Dependencies" below.
+I recommend installing these dependencies manually – see "Dependencies" below.
 
 Then you can now run Pygenda from anywhere with:
 
@@ -146,7 +148,7 @@ Usage
 -----
 See: [Usage.md](docs/Usage.md)
 
-Calendar data storage - a CalDAV server is recommended
+Calendar data storage – a CalDAV server is recommended
 ------------------------------------------------------
 Calendar data can be stored as an ICS file, or via a CalDAV server.
 The ICS file is the default, because it works without configuration,
