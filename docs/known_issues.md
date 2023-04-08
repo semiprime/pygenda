@@ -72,8 +72,7 @@ Medium
 ------
 * Need InfoPrints (a.k.a. toast notifications) for some situations
 
-* Todo View navigation needs refining: left/right can make cursor jump
-  up and down
+* Todo View navigation needs refining to take account of user CSS.
 
 * Todo items cannot be shown in Week or Year views
 

@@ -27,7 +27,7 @@ from gi.repository.Pango import WrapMode as PWrapMode
 
 from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
 from locale import gettext as _
-from typing import Optional, List, Union
+from typing import Optional, List, Tuple, Union
 
 # pygenda components
 from .pygenda_view import View
@@ -53,6 +53,7 @@ class View_Todo(View):
     _list_items = None # type: list
     _target_listidx = None
     _target_todo = None
+    _target_cursor_y = None # type: Optional[float]
     _scroll_to_cursor_required = False
     CURSOR_STYLE = 'todoview_cursor'
 
@@ -129,7 +130,7 @@ class View_Todo(View):
         list_hbox.connect('draw', cls._pre_draw)
 
         # Now add vertical boxes for each list
-        cls._list_container = []
+        cls._list_scroller = []
         for i in range(cls._list_count):
             new_list = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
             new_list.get_style_context().add_class('todoview_list')
@@ -144,13 +145,14 @@ class View_Todo(View):
             new_list_scroller.set_overlay_scrolling(False)
             new_list_scroller.set_vexpand(True)
             new_list_scroller.get_style_context().add_class('todoview_listcontent')
+            new_list_scroller.get_vadjustment().connect('value-changed', cls._list_scrolled)
             new_eventbox_list = Gtk.EventBox()
             new_eventbox_list.connect('button_press_event', cls.click_list, i)
             new_eventbox_list.add(new_list_scroller)
             new_list.add(new_eventbox_list)
             new_list_content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
             new_list_scroller.add(new_list_content)
-            cls._list_container.append(new_list_scroller)
+            cls._list_scroller.append(new_list_scroller)
             list_hbox.add(new_list)
 
 
@@ -219,15 +221,16 @@ class View_Todo(View):
     def redraw(cls, en_changes:bool) -> None:
         # Called when redraw required
         # en_changes: bool indicating if displayed entries need updating too
+        cls._target_cursor_y = None # reset navigation y-coord
         if not en_changes:
             return
         cls._last_cursor_list = None
         cls._last_cursor_idx_in_list = None
-        for cont in cls._list_container:
+        for cont in cls._list_scroller:
             cont.get_child().destroy()
         todos = Calendar.todo_list()
         cls._list_items = []
-        for i in range(len(cls._list_container)):
+        for i in range(len(cls._list_scroller)):
             new_list_content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
             count = 0
             cls._list_items.append([])
@@ -270,12 +273,19 @@ class View_Todo(View):
                 ctx.add_class('todoview_marker')
                 new_list_content.add(mark_label)
             new_list_content.get_style_context().add_class('todoview_items')
-            cls._list_container[i].add(new_list_content)
-            cls._list_container[i].show_all()
+            cls._list_scroller[i].add(new_list_content)
+            cls._list_scroller[i].show_all()
         # Reset target (though in theory this should already be done)
         cls._target_listidx = None
         cls._target_todo = None
         cls._show_cursor()
+
+
+    @classmethod
+    def zoom(cls, inc:int) -> None:
+        # Override zoom() in parent class so we can reset y-coord target
+        super().zoom(inc) # call version of zoom() in parent class
+        cls._target_cursor_y = None
 
 
     @staticmethod
@@ -314,6 +324,7 @@ class View_Todo(View):
         # Moves cursor to top of list/item clicked
         cls._cursor_move_list(list_idx)
         cls._cursor_move_index(0)
+        cls._target_cursor_y = None
         cls._scroll_to_cursor_required = True
         return True # event handled - don't propagate
 
@@ -323,7 +334,7 @@ class View_Todo(View):
         # Callback. Called whenever list content is clicked/tapped.
         # Moves cursor to list/item clicked
         cls._cursor_move_list(list_idx)
-        scroller = cls._list_container[list_idx]
+        scroller = cls._list_scroller[list_idx]
         vwport = scroller.get_children()[0]
         row_vbox = vwport.get_children()[0]
         # Pixels above the first row:
@@ -331,7 +342,7 @@ class View_Todo(View):
         ycount += cls._top_spacing(vwport)
         ycount += cls._top_spacing(row_vbox)
         # Take account of list's vertical scrollbar:
-        ycount -= cls._list_container[list_idx].get_vadjustment().get_value()
+        ycount -= cls._list_scroller[list_idx].get_vadjustment().get_value()
         # Look through rows until cumulative height exceeds click ycoord
         row_spacing = row_vbox.get_spacing()
         rows = row_vbox.get_children()
@@ -344,8 +355,16 @@ class View_Todo(View):
                 break
             i += 1
         cls._cursor_move_index(i)
+        cls._target_cursor_y = None
         cls._scroll_to_cursor_required = True
         return True # event handled - don't propagate
+
+
+    @classmethod
+    def _list_scrolled(cls, wid:Gtk.Widget) -> bool:
+        # Callback. Called whenever a list is scrolled
+        cls._target_cursor_y = None # reset navigation y-coord target
+        return True # don't propagate event
 
 
     @staticmethod
@@ -413,7 +432,7 @@ class View_Todo(View):
     def _get_cursor_ctx(cls, c_list:int, c_i_in_list:int) -> Gtk.StyleContext:
         # Returns a StyleContext object for to-do cursor coordinates
         # c_list & c_i_in_list
-        lst = cls._list_container[c_list].get_child().get_child()
+        lst = cls._list_scroller[c_list].get_child().get_child()
         item = lst.get_children()[c_i_in_list]
         if cls._item_counts[c_list]==0:
             ci = item
@@ -427,7 +446,9 @@ class View_Todo(View):
         # If required, scroll view elements so that cursor is visible.
         # Note: If view is not yet laid-out, calculation not correct.
         # Hence this will be called in 'draw' event handler, so layout is done.
-        list_width = cls._list_container[0].get_allocated_width() # homogeneous
+
+        # First: horizontal scrolling...
+        list_width = cls._list_scroller[0].get_allocated_width() # homogeneous
         view_width = cls._topboxscroll.get_allocated_width()
         maxv = cls._cursor_list*list_width # left edge of list at left of view
         minv = (cls._cursor_list+1)*list_width-view_width # rt edge @ rt of view
@@ -441,16 +462,15 @@ class View_Todo(View):
             adj.set_value(minv)
 
         # Now the vertical scrolling...
-        list_scroller = cls._list_container[cls._cursor_list]
-        list_box = list_scroller.get_child().get_child()
-        list_item_wids = list_box.get_children()
-        maxv = list_box.get_spacing()*cls._cursor_idx_in_list
+        list_scroller, listitems_box = cls._current_scroller_itemsbox()
+        maxv = listitems_box.get_spacing() * cls._cursor_idx_in_list
+        list_item_wids = listitems_box.get_children()
         for i in range(cls._cursor_idx_in_list):
             maxv += list_item_wids[i].get_allocated_height()
         minv = maxv + list_item_wids[cls._cursor_idx_in_list].get_allocated_height()
         minv -= list_scroller.get_allocated_height()
         # Take into account padding/margin etc.
-        ctx = list_box.get_style_context()
+        ctx = listitems_box.get_style_context()
         pad = ctx.get_padding(Gtk.StateFlags.NORMAL)
         bord = ctx.get_border(Gtk.StateFlags.NORMAL)
         marg = ctx.get_margin(Gtk.StateFlags.NORMAL)
@@ -483,11 +503,13 @@ class View_Todo(View):
     def _cursor_move_up(cls) -> None:
         # Callback for user moving cursor up
         cls._cursor_idx_in_list -= 1 # Cursor correction will fix if <0
+        cls._target_cursor_y = None
         cls._show_cursor()
 
     @classmethod
     def _cursor_move_dn(cls) -> None:
         # Callback for user moving cursor down
+        cls._target_cursor_y = None
         if cls._item_counts[cls._cursor_list] > 0:
             cls._cursor_idx_in_list = (cls._cursor_idx_in_list+1)%cls._item_counts[cls._cursor_list]
             cls._show_cursor()
@@ -495,13 +517,19 @@ class View_Todo(View):
     @classmethod
     def _cursor_move_rt(cls) -> None:
         # Callback for user moving cursor right
+        if cls._target_cursor_y is None:
+            cls._target_cursor_y = cls._get_cursor_y()
         cls._cursor_list = (cls._cursor_list+1)%cls._list_count
+        cls._cursor_idx_in_list = cls._y_to_todo_index(cls._target_cursor_y)
         cls._show_cursor()
 
     @classmethod
     def _cursor_move_lt(cls) -> None:
         # Callback for user moving cursor left
+        if cls._target_cursor_y is None:
+            cls._target_cursor_y = cls._get_cursor_y()
         cls._cursor_list -= 1 # Cursor correction will fix if <0
+        cls._cursor_idx_in_list = cls._y_to_todo_index(cls._target_cursor_y)
         cls._show_cursor()
 
     @classmethod
@@ -526,3 +554,47 @@ class View_Todo(View):
             TodoDialogController.new_todo(list_idx=cls.cursor_todo_list())
         else:
             TodoDialogController.edit_todo(en, list_idx=cls.cursor_todo_list())
+
+
+    @classmethod
+    def _get_cursor_y(cls) -> float:
+        # Return "visual" y of cursor - i.e. y coord as cursor
+        # is displayed. Used to calculate which todo item to
+        # move to when the cursor is moved right or left.
+        list_scroller, listitems_box = cls._current_scroller_itemsbox()
+        y = listitems_box.get_spacing() * cls._cursor_idx_in_list
+        list_item_wids = listitems_box.get_children()
+        for i in range(cls._cursor_idx_in_list):
+            y += list_item_wids[i].get_allocated_height()
+        y -= list_scroller.get_vadjustment().get_value() # Account for scrollbar
+        return y # type: ignore
+
+
+    @classmethod
+    def _y_to_todo_index(cls, y:float) -> int:
+        # Return index in current list, given a visual y-coord.
+        # Used to calculate which todo item to move to when the
+        # cursor is moved right or left.
+        list_scroller, listitems_box = cls._current_scroller_itemsbox()
+        y += list_scroller.get_vadjustment().get_value() # Account for scrollbar
+        idx = 0
+        ycount = 0
+        for w in listitems_box.get_children():
+            last_ycount = ycount
+            ycount += w.get_allocated_height()
+            if ycount > y:
+                if y-last_ycount > ycount-y:
+                    # y is closer to next entry, so choose that one
+                    idx += 1
+                break
+            idx += 1
+        return idx
+
+
+    @classmethod
+    def _current_scroller_itemsbox(cls) -> Tuple[Gtk.ScrolledWindow,Gtk.Box]:
+        # Utility function to return current list scroller and vbox
+        # containing list items ("current" meaning current cursor list).
+        list_scroller = cls._list_scroller[cls._cursor_list]
+        listitems_box = list_scroller.get_child().get_child()
+        return list_scroller, listitems_box
