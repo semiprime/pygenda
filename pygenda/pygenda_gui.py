@@ -342,7 +342,7 @@ class GUI:
         cls._builder.get_object('menu_bar').set_sensitive(True)
         cls._builder.get_object('box_buttons').set_sensitive(True)
 
-        cls.view_redraw() # Draw active view
+        cls.view_redraw(True) # Draw active view, including entries
         cls._eventbox.show_all()
 
 

@@ -209,6 +209,9 @@ Cosmetic
 
 * Year View: Pixel missing in grid lines at top-left corner
 
+* If Todo View is initial view, the vertical separator is not shown until
+  there is a redraw.
+
 * On Gemini, shows "no access" icons in instead of "minus" icons (e.g. in
   spin buttons of Event dialog) - Gemian bug?
 
