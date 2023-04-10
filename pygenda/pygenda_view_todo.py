@@ -135,6 +135,8 @@ class View_Todo(View):
             new_list = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
             new_list.get_style_context().add_class('todoview_list')
             new_title = Gtk.Label(cls._list_titles[i])
+            new_title.set_line_wrap(True)
+            new_title.set_line_wrap_mode(PWrapMode.WORD_CHAR)
             new_title.get_style_context().add_class('todoview_title')
             new_eventbox_title = Gtk.EventBox()
             new_eventbox_title.connect('button_press_event', cls.click_title, i)
