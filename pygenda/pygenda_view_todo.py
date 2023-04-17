@@ -130,6 +130,7 @@ class View_Todo(View):
         list_hbox.connect('draw', cls._pre_draw)
 
         # Now add vertical boxes for each list
+        cls._list_box = []
         cls._list_scroller = []
         for i in range(cls._list_count):
             new_list = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -154,6 +155,7 @@ class View_Todo(View):
             new_list.add(new_eventbox_list)
             new_list_content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
             new_list_scroller.add(new_list_content)
+            cls._list_box.append(new_list)
             cls._list_scroller.append(new_list_scroller)
             list_hbox.add(new_list)
 
@@ -376,7 +378,37 @@ class View_Todo(View):
         pad = ctx.get_padding(Gtk.StateFlags.NORMAL)
         bord = ctx.get_border(Gtk.StateFlags.NORMAL)
         marg = ctx.get_margin(Gtk.StateFlags.NORMAL)
-        return pad.top + bord.top + marg.top
+        return pad.top + bord.top + marg.top # type:ignore
+
+
+    @staticmethod
+    def _vert_spacing(wid:Gtk.Widget) -> float:
+        # Return total size of top+bottom padding+border+margin of widget
+        ctx = wid.get_style_context()
+        pad = ctx.get_padding(Gtk.StateFlags.NORMAL)
+        bord = ctx.get_border(Gtk.StateFlags.NORMAL)
+        marg = ctx.get_margin(Gtk.StateFlags.NORMAL)
+        return pad.top+pad.bottom + bord.top+bord.bottom + marg.top+marg.bottom # type:ignore
+
+
+    @staticmethod
+    def _left_spacing(wid:Gtk.Widget) -> float:
+        # Return total size of left padding+border+margin of widget
+        ctx = wid.get_style_context()
+        pad = ctx.get_padding(Gtk.StateFlags.NORMAL)
+        bord = ctx.get_border(Gtk.StateFlags.NORMAL)
+        marg = ctx.get_margin(Gtk.StateFlags.NORMAL)
+        return pad.left + bord.left + marg.left # type:ignore
+
+
+    @staticmethod
+    def _side_spacing(wid:Gtk.Widget) -> float:
+        # Return total size of left+right padding+border+margin of widget
+        ctx = wid.get_style_context()
+        pad = ctx.get_padding(Gtk.StateFlags.NORMAL)
+        bord = ctx.get_border(Gtk.StateFlags.NORMAL)
+        marg = ctx.get_margin(Gtk.StateFlags.NORMAL)
+        return pad.left+pad.right + bord.left+bord.right + marg.left+marg.right # type:ignore
 
 
     @classmethod
@@ -450,10 +482,14 @@ class View_Todo(View):
         # Hence this will be called in 'draw' event handler, so layout is done.
 
         # First: horizontal scrolling...
-        list_width = cls._list_scroller[0].get_allocated_width() # homogeneous
-        view_width = cls._topboxscroll.get_allocated_width()
+        # (We know spacing for hbox is zero, since we control it, so ignore)
+        list_width = cls._list_box[0].get_allocated_width() # homogeneous
+        viewport = cls._topboxscroll.get_child()
+        view_width = viewport.get_allocated_width()
         maxv = cls._cursor_list*list_width # left edge of list at left of view
-        minv = (cls._cursor_list+1)*list_width-view_width # rt edge @ rt of view
+        maxv += cls._left_spacing(viewport.get_child())
+        minv = maxv + list_width - view_width # rt edge @ rt of view
+        minv += cls._side_spacing(viewport)
         adj = cls._topboxscroll.get_hadjustment()
         cur = adj.get_value()
         if minv > maxv:
@@ -465,18 +501,17 @@ class View_Todo(View):
 
         # Now the vertical scrolling...
         list_scroller, listitems_box = cls._current_scroller_itemsbox()
-        maxv = listitems_box.get_spacing() * cls._cursor_idx_in_list
+        viewport = list_scroller.get_child()
+        # Take into account padding/margin etc of todoview_items:
+        maxv = cls._top_spacing(listitems_box)
+        maxv += listitems_box.get_spacing() * cls._cursor_idx_in_list
         list_item_wids = listitems_box.get_children()
         for i in range(cls._cursor_idx_in_list):
             maxv += list_item_wids[i].get_allocated_height()
         minv = maxv + list_item_wids[cls._cursor_idx_in_list].get_allocated_height()
-        minv -= list_scroller.get_allocated_height()
-        # Take into account padding/margin etc.
-        ctx = listitems_box.get_style_context()
-        pad = ctx.get_padding(Gtk.StateFlags.NORMAL)
-        bord = ctx.get_border(Gtk.StateFlags.NORMAL)
-        marg = ctx.get_margin(Gtk.StateFlags.NORMAL)
-        minv += pad.top + bord.top + marg.top + pad.bottom
+        # For min, subtract visible content height (child in case of padding):
+        minv -= viewport.get_allocated_height()
+        minv += cls._vert_spacing(viewport)
         if minv > maxv:
             minv = maxv # If item is taller than view, then show top
         adj = list_scroller.get_vadjustment()
@@ -563,8 +598,13 @@ class View_Todo(View):
         # Return "visual" y of cursor - i.e. y coord as cursor
         # is displayed. Used to calculate which todo item to
         # move to when the cursor is moved right or left.
+        y = cls._top_spacing(cls._list_box[cls._cursor_list])
+        list_title = cls._current_list_title()
+        y += list_title.get_allocated_height()
         list_scroller, listitems_box = cls._current_scroller_itemsbox()
-        y = listitems_box.get_spacing() * cls._cursor_idx_in_list
+        y += cls._top_spacing(list_scroller)
+        y += cls._top_spacing(listitems_box)
+        y += listitems_box.get_spacing() * cls._cursor_idx_in_list
         list_item_wids = listitems_box.get_children()
         for i in range(cls._cursor_idx_in_list):
             y += list_item_wids[i].get_allocated_height()
@@ -580,10 +620,16 @@ class View_Todo(View):
         list_scroller, listitems_box = cls._current_scroller_itemsbox()
         y += list_scroller.get_vadjustment().get_value() # Account for scrollbar
         idx = 0
-        ycount = 0
+        list_title = cls._current_list_title()
+        spacing = listitems_box.get_spacing()
+        ycount = cls._top_spacing(cls._list_box[cls._cursor_list])
+        ycount += list_title.get_allocated_height()
+        ycount += cls._top_spacing(list_scroller)
+        ycount += cls._top_spacing(listitems_box)
         for w in listitems_box.get_children():
             last_ycount = ycount
             ycount += w.get_allocated_height()
+            ycount += spacing
             if ycount > y:
                 if y-last_ycount > ycount-y:
                     # y is closer to next entry, so choose that one
@@ -591,6 +637,15 @@ class View_Todo(View):
                 break
             idx += 1
         return idx
+
+
+    @classmethod
+    def _current_list_title(cls) -> Gtk.Label:
+        # Utility function to return current list title Gtk.Label widget
+        # ("current" meaning current cursor list).
+        lst = cls._list_box[cls._cursor_list]
+        tlab = lst.get_children()[0].get_child()
+        return tlab
 
 
     @classmethod

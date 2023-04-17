@@ -72,8 +72,6 @@ Medium
 ------
 * Need InfoPrints (a.k.a. toast notifications) for some situations
 
-* Todo View navigation needs refining to take account of user CSS.
-
 * Todo items cannot be shown in Week or Year views
 
 * When deleting a repeated event, all are deleted. Should offer option
@@ -169,6 +167,10 @@ Minor
 (Note: minor bugs can still be irritating!)
 
 * After creating/editing a repeating event, cursor not always on that event
+
+* Todo View navigation refinements: left/right can sometimes make the cursor
+  move to an unexpected entry (need to find a better algorithm); if there
+  is a border/margin/padding, up/down navigation not obviously at start/end.
 
 * Would be nice to be able to edit dates with a calendar interface
   (Like pressing tab in S5)
