@@ -93,6 +93,8 @@ class GUI:
     date_formatting_textabb = ''
     date_formatting_textabb_noyear = ''
 
+    _plus_minus_zoom = False
+
     # For startup
     _starting_cal = True
     _loading_indicator = None
@@ -110,6 +112,7 @@ class GUI:
         '24hr': False,
         'start_week_day': 0, # 0 = Monday, 6 = Sunday
         'tab_elts_datetime': False,
+        'plus_minus_zoom': True,
         })
     Config.set_defaults('startup',{
         'maximize': False,
@@ -330,6 +333,7 @@ class GUI:
         cls.view_widgets[cls._view_idx].grab_focus() # so it gets keypresses
         del(cls._box_view_cont) # don't need this anymore
 
+        cls._init_config()
         cls._init_dialogs()
 
         # Add functionality to spinbuttons not provided by GTK
@@ -344,6 +348,12 @@ class GUI:
 
         cls.view_redraw(True) # Draw active view, including entries
         cls._eventbox.show_all()
+
+
+    @classmethod
+    def _init_config(cls) -> None:
+        # Read config settings at startup
+        cls._plus_minus_zoom = Config.get_bool('global','plus_minus_zoom')
 
 
     @staticmethod
@@ -502,9 +512,18 @@ class GUI:
     @classmethod
     def keypress(cls, wid:Gtk.Widget, ev:Gdk.EventKey) -> bool:
         # Called whenever a key is pressed/repeated when View in focus
-        if ev.keyval==Gdk.KEY_Escape and cls._toggle_view_idx >= 0:
-            cls.switch_view(None, cls._toggle_view_idx)
-        cls.views[cls._view_idx].keypress(wid,ev)
+        if cls._plus_minus_zoom:
+            if ev.keyval==Gdk.KEY_plus:
+                cls.zoom(+1)
+                return True # handled
+            elif ev.keyval==Gdk.KEY_minus:
+                cls.zoom(-1)
+                return True # handled
+        if ev.keyval==Gdk.KEY_Escape:
+            if cls._toggle_view_idx >= 0:
+                cls.switch_view(None, cls._toggle_view_idx)
+        else:
+            cls.views[cls._view_idx].keypress(wid,ev)
         return True # event handled - don't propagate
 
 

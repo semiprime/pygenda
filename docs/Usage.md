@@ -23,9 +23,16 @@ Usage is intended to be intuitive, but a few things are worth noting:
 * In Week and Year views, the space key toggles between Today and
   wherever the cursor was last.
 
-* The Zoom soft-button zooms in; shift+Zoom or ctrl+Zoom zooms out. You can
-  set the number of zoom levels and the default with the zoom_levels and
-  default_zoom config options. You can set the font sizes with custom CSS.
+* Plus and minus keys will zoom in/out (no need for ctrl). The motivation
+  for this is that on handheld devices, +/- might be require more than one
+  key on their own, so adding another key would make zooming awkward.
+  If you wish, you can disable this by setting the global/plus_minus_zoom
+  config setting to False (ctrl+plus/minus will work in either case).
+
+* The Zoom soft-button zooms in; shift+Zoom or ctrl+Zoom zooms out.
+
+* You can set the number of zoom levels and the default with the zoom_levels
+  and default_zoom config options. You can set the font sizes with custom CSS.
 
 * If you want the Tab key to move within elements in date/time/duration
   widgets then set the global/tab_elts_datetime config option to True.
