@@ -25,12 +25,12 @@ dialog {
 
 /* Increasing font size in dialog distorts switches, so we tweak size... */
 switch {
-    border-radius:12pt;
+	border-radius:12pt;
 }
 
 switch slider {
-    min-height:20pt;
-    border-radius:10pt;
+	min-height:20pt;
+	border-radius:10pt;
 }
 
 scrollbar.vertical, scrollbar.vertical slider, scrollbar button {
@@ -91,20 +91,33 @@ scrollbar slider {
 }
 
 .zoom1 .weekview_daytext {
-	font-size:15pt;
+	font-size:14.5pt;
 }
 
 .zoom2 .weekview_daytext {
-	font-size:17pt;
+	font-size:16pt;
 }
 
 .zoom3 .weekview_daytext {
-	font-size:19pt;
+	font-size:17.5pt;
 }
 
 .zoom4 .weekview_daytext {
-	font-size:21pt;
+	font-size:19pt;
 }
+
+.zoom2 .weekview_marker {
+	font-family:'DejaVu Sans Condensed';
+}
+
+.zoom3 .weekview_marker {
+	font-family:'DejaVu Sans Condensed';
+}
+
+.zoom4 .weekview_marker {
+	font-family:'DejaVu Sans Condensed';
+}
+
 
 /* Year View */
 
@@ -118,11 +131,11 @@ scrollbar slider {
 }
 
 .zoom0 #yearview_datecontent, .zoom0 #yearview_labeldate {
-	font-size:13pt;
+	font-size:14pt;
 }
 
 .zoom1 #yearview_datecontent, .zoom1 #yearview_labeldate {
-	font-size:15pt;
+	font-size:15.5pt;
 }
 
 .zoom2 #yearview_datecontent, .zoom2 #yearview_labeldate {
@@ -130,30 +143,34 @@ scrollbar slider {
 }
 
 .zoom3 #yearview_datecontent, .zoom3 #yearview_labeldate {
-	font-size:19pt;
+	font-size:18.5pt;
 }
 
 .zoom4 #yearview_datecontent, .zoom4 #yearview_labeldate {
-	font-size:21pt;
+	font-size:20pt;
 }
 
 
 /* Todo View */
 
-.zoom0 .todoview_title {
-	font-size:12pt;
+.todoview_list {
+	min-width:400px;
 }
 
-.zoom1 .todoview_title {
+.zoom0 .todoview_title {
 	font-size:14pt;
 }
 
+.zoom1 .todoview_title {
+	font-size:15.5pt;
+}
+
 .zoom2 .todoview_title {
-	font-size:16pt;
+	font-size:17pt;
 }
 
 .zoom3 .todoview_title {
-	font-size:18pt;
+	font-size:18.5pt;
 }
 
 .zoom4 .todoview_title {
@@ -161,27 +178,23 @@ scrollbar slider {
 }
 
 .zoom0 .todoview_items {
-	font-size:11pt;
-}
-
-.zoom1 .todoview_items {
 	font-size:13pt;
 }
 
+.zoom1 .todoview_items {
+	font-size:14.5pt;
+}
+
 .zoom2 .todoview_items {
-	font-size:15pt;
+	font-size:16pt;
 }
 
 .zoom3 .todoview_items {
-	font-size:17pt;
+	font-size:17.5pt;
 }
 
 .zoom4 .todoview_items {
 	font-size:19pt;
-}
-
-.todoview_list {
-	min-width:400px;
 }
 
 /* Dialogs */
