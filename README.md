@@ -20,9 +20,11 @@ maybe other people will also find it useful. Feedback is welcome at
 pygenda@semiprime.com – suggestions, questions about how to get something
 working, or just to say that you tried it out.
 
-Screenshots and video
+Video and screenshots
 ---------------------
-(From a PC running Xfce and rescaled – your results may vary.)
+Video: https://www.youtube.com/watch?v=uvQqFmlZ6nM (v0.2.7, April 2023)
+
+Screenshots from a PC running Xfce and rescaled – your results may vary.
 
 Week View:
 
@@ -35,8 +37,6 @@ Year View:
 Todo View:
 
 ![Screenshot – Todo View](docs/screenshots/todo_view.png?raw=true)
-
-Video: https://www.youtube.com/watch?v=QjHcgeRudMo (from March 2021)
 
 Source code
 -----------
@@ -60,7 +60,8 @@ Run/install
 -----------
 (See note about dependencies below.)
 
-To run without installing, cd to the root pygenda directory, and do:
+To run without installing, cd to the root directory of the project (containing
+this readme), and run:
 
 	python3 -m pygenda
 

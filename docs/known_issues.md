@@ -70,6 +70,10 @@ Major
 
 Medium
 ------
+* How to handle setting the status of a repeating event? (E.g., a
+  reasonable use-case would be to cancel just one occurrence of a
+  repeating event. How is this done with ical?)
+
 * Need InfoPrints (a.k.a. toast notifications) for some situations
 
 * Todo items cannot be shown in Week or Year views
