@@ -5,10 +5,10 @@ designed for "PDA" devices such as Planet Computers' Gemini. The user
 interface is inspired by the Agenda programs on the Psion Series 3 and
 Series 5 range of PDAs.
 
-**WARNING: This is in-development code, released as a preview for
-developers. The software is provided as-is, with no guarantees. You
-should back up any data or files used by Pygenda (e.g. iCal files
-or data stored on calendar servers).**
+**WARNING: This is in-development code, released for testing/feedback and
+as a preview for developers. The software is provided as-is, with no
+guarantees. You should back up any files or data used by Pygenda (e.g. iCal
+files or data stored on calendar servers).**
 
 There are currently **lots of missing/incomplete features** as well as
 **bugs**. For a list of known issues, see: [known_issues.md](docs/known_issues.md).

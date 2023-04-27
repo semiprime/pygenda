@@ -80,7 +80,7 @@ setup(
         "tzlocal",
     ],
     classifiers = [
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 3 - Alpha",
         "Environment :: Handhelds/PDA's",
         "Environment :: X11 Applications :: GTK",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
