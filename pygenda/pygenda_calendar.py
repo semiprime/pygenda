@@ -507,7 +507,7 @@ class Calendar:
         # (so don't get last one inserting loads into array) 
         if cls._entry_rep_list is None:
             evs = cls.calConnector.cal.walk('VEVENT')
-            cls._entry_rep_list = [e for e in evs if 'RRULE' in e]
+            cls._entry_rep_list = [e for e in evs if 'RRULE' in e and e['RRULE'] is not None]
 
 
     @classmethod
