@@ -243,33 +243,17 @@ class Calendar:
 
         if 'UID' not in en:
             en.add('UID', Calendar.gen_uid()) # Should be present
+
         # DateTime utcnow() function doesn't include TZ, so use now(tz.utc)
         utcnow =  dt_datetime.now(timezone.utc)
-        try:
-            en['DTSTAMP'].dt = utcnow
-        except KeyError:
-            # Entry had no DTSTAMP (note: DTSTAMP required by icalendar spec)
-            en.add('DTSTAMP', utcnow)
-        try:
-            en['LAST-MODIFIED'].dt = utcnow
-        except KeyError:
-            # Entry had no LAST-MODIFIED - add one
-            en.add('LAST-MODIFIED', utcnow)
-        try:
-            en['SUMMARY'] = e_inf.desc
-        except KeyError:
-            # Entry had no SUMMARY
-            en.add('SUMMARY', e_inf.desc)
+        cls._update_entry(en, 'DTSTAMP', utcnow)
+        cls._update_entry(en, 'LAST-MODIFIED', utcnow)
+        cls._update_entry(en, 'SUMMARY', e_inf.desc)
+        cls._update_entry(en, 'PRIORITY', e_inf.priority)
 
-        if 'CATEGORIES' in en:
-            del(en['CATEGORIES'])
-        if e_inf.categories:
-            # Convert to list - to work around bug passing set to old icalendar
-            en.add('CATEGORIES', list(e_inf.categories))
-        if 'PRIORITY' in en:
-            del(en['PRIORITY'])
-        if e_inf.priority:
-            en.add('PRIORITY', e_inf.priority)
+        # For Categories, we need to convert to a list,
+        # to work around bug passing set to old icalendar.
+        cls._update_entry(en, 'CATEGORIES', None if e_inf.categories is None else list(e_inf.categories))
 
         # DTSTART - delete & re-add so type (DATE vs. DATE-TIME) is correct
         # (Also, Q: if comparing DTSTARTs with different TZs, how does != work?)
@@ -280,10 +264,8 @@ class Calendar:
             en.add('DTSTART', e_inf.start_dt)
 
         # Duration or Endtime - first delete existing
-        if 'DURATION' in en:
-            del(en['DURATION'])
-        if 'DTEND' in en:
-            del(en['DTEND'])
+        cls._clear_entry(en, 'DURATION')
+        cls._clear_entry(en, 'DTEND')
         # Then add new end time/duration (if needed)
         cls._event_add_end_dur_from_info(en, e_inf)
 
@@ -294,8 +276,7 @@ class Calendar:
         elif had_date:
             # Previously had start time, but no repeats
             clear_norep = True
-        if 'EXDATE' in en:
-            del(en['EXDATE'])
+        cls._clear_entry(en, 'EXDATE')
         if e_inf.rep_type is not None and e_inf.rep_inter>0:
             cls._event_add_repeat_from_info(en, e_inf)
             clear_rep = True
@@ -322,6 +303,26 @@ class Calendar:
             cls._todo_list = None
 
         cls.calConnector.update_entry(en) # Write to store
+
+
+    @staticmethod
+    def _clear_entry(en:Union[iEvent,iTodo], elname:str) -> None:
+        # Helper function to delete an entry value if it exists.
+        if elname in en:
+            del(en[elname])
+
+
+    @staticmethod
+    def _update_entry(en:Union[iEvent,iTodo], elname:str, val) -> None:
+        # Helper function to update an entry value, or add if it doesn't
+        # exist. Use delete-and-recreate since seems more reliable
+        # (e.g. for datetimes, some combinations of modules lose the
+        # timezone marker if you do en[elname]=val).
+        # Note: if val is None, then existing entry is deleted.
+        if elname in en:
+            del(en[elname])
+        if val is not None:
+	        en.add(elname, val)
 
 
     @staticmethod
@@ -401,16 +402,14 @@ class Calendar:
     @staticmethod
     def _entry_set_status_from_info(en:Union[iEvent,iTodo], e_inf:EntryInfo) -> None:
         # Set entry status (cancelled, tentative etc.) from e_inf.
-        if 'STATUS' in en:
-            del(en['STATUS'])
+        Calendar._clear_entry(en, 'STATUS')
         Calendar._add_status_entry(en, e_inf.status)
 
 
     @staticmethod
     def _event_set_location_from_info(ev:iEvent, e_inf:EntryInfo) -> None:
         # Set event location (text string) from e_inf.
-        if 'LOCATION' in ev:
-            del(ev['LOCATION'])
+        Calendar._clear_entry(ev, 'LOCATION')
         if e_inf.location:
             ev.add('LOCATION', e_inf.location)
 
@@ -478,13 +477,12 @@ class Calendar:
         # Assumes entry['STATUS'] does not exist.
         # Only allows spec'ed values.
         if stat=='COMPLETED':
-            if 'PERCENT-COMPLETE' in entry:
-                del(entry['PERCENT-COMPLETE']) # Automatically set to 100
+            # PERCENT-COMPLETE automatically set to 100, so can delete
+            Calendar._clear_entry(entry, 'PERCENT-COMPLETE')
         else:
             if 'PERCENT-COMPLETE' in entry and entry['PERCENT-COMPLETE']==100:
                 entry['PERCENT-COMPLETE'] = 99 # Stop it being == 100
-            if 'COMPLETED' in entry:
-                del(entry['COMPLETED'])
+            Calendar._clear_entry(entry, 'COMPLETED')
         if (isinstance(entry,iEvent) and stat in Calendar.STATUS_LIST_EVENT) or (
             isinstance(entry,iTodo) and stat in Calendar.STATUS_LIST_TODO):
                 entry.add('STATUS', stat)
