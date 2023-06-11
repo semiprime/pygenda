@@ -22,7 +22,7 @@
 
 from gi import require_version as gi_require_version
 gi_require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk, GLib, Gio
+from gi.repository import Gtk, Gdk
 
 from icalendar import Todo as iTodo
 from locale import gettext as _
