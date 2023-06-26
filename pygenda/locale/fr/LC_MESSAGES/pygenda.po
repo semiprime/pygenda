@@ -22,8 +22,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-19 23:07+0200\n"
-"PO-Revision-Date: 2023-04-23 19:39+0200\n"
+"POT-Creation-Date: 2023-06-25 22:49+0200\n"
+"PO-Revision-Date: 2023-06-25 22:49+0200\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -148,12 +148,12 @@ msgstr " ;"
 msgid "Repeats:"
 msgstr "Répétition :"
 
-#: pygenda_dialog_entryprops.py:195 glade/dialog_event.glade:986
+#: pygenda_dialog_entryprops.py:195 glade/dialog_event.glade:915
 #: glade/dialog_todo.glade:181
 msgid "Status:"
 msgstr "Statut :"
 
-#: pygenda_dialog_entryprops.py:215 pygenda_dialog_event.py:459
+#: pygenda_dialog_entryprops.py:215 pygenda_dialog_event.py:413
 # Added by hand - not detected by gettext
 msgid "Audio"
 msgstr "Audio"
@@ -164,7 +164,7 @@ msgstr "Afficher"
 msgid "Email"
 msgstr "E-mail"
 
-#: pygenda_dialog_entryprops.py:230 pygenda_dialog_event.py:464
+#: pygenda_dialog_entryprops.py:230 pygenda_dialog_event.py:421
 msgid "“{:s}”"
 msgstr "« {:s} »"
 
@@ -181,37 +181,65 @@ msgstr "Description ({}) :"
 msgid "Description:"
 msgstr "Description :"
 
-#: pygenda_dialog_event.py:264
+#: pygenda_dialog_event.py:251
 msgid "Time before event"
 msgstr "Temps avant l’évènement"
 
-#: pygenda_dialog_event.py:265
+#: pygenda_dialog_event.py:252
 msgid "Action"
 msgstr "Action"
 
-#: pygenda_dialog_event.py:718 glade/main.glade:500
+#: pygenda_dialog_event.py:705
+msgid "1st day of month"
+msgstr "1er du mois"
+
+#: pygenda_dialog_event.py:707
+msgid "{ord:s} day of month"
+msgstr "{card:d} du mois"
+
+#: pygenda_dialog_event.py:709
+msgid "Last day of month"
+msgstr "Dernier jour du mois"
+
+#: pygenda_dialog_event.py:711
+msgid "{:s} to last day of month"
+msgstr "{:s} au dernier jour du mois"
+
+#: pygenda_dialog_event.py:712
+msgid "{ord:s} {day:s} of month"
+msgstr "{ord:s} {day:s} du mois"
+
+#: pygenda_dialog_event.py:714
+msgid "Last {day:s} of month"
+msgstr "Dernier {day:s} du mois"
+
+#: pygenda_dialog_event.py:716
+msgid "{ord:s} to last {day:s} of month"
+msgstr "{ord:s} au dernier {day:s} du mois"
+
+#: pygenda_dialog_event.py:723 glade/main.glade:500
 msgid "New Event"
 msgstr "Nouvel\névènement"
 
-#: pygenda_dialog_event.py:730
+#: pygenda_dialog_event.py:735
 msgid "Edit Event"
 msgstr "Modifier évènement"
 
-#: pygenda_dialog_event.py:1019 glade/dialog_event.glade:396
-#: glade/dialog_event.glade:730 glade/dialog_event.glade:1004
+#: pygenda_dialog_event.py:1059 glade/dialog_event.glade:396
+#: glade/dialog_event.glade:659 glade/dialog_event.glade:933
 #: glade/dialog_todo.glade:159 glade/dialog_todo.glade:198
 msgid "None"
 msgstr "Rien"
 
-#: pygenda_dialog_event.py:1394
+#: pygenda_dialog_event.py:1451
 msgid "Exception dates"
 msgstr "Dates omises"
 
-#: pygenda_dialog_event.py:1411
+#: pygenda_dialog_event.py:1468
 msgid "Add date"
 msgstr "Ajouter date"
 
-#: pygenda_dialog_event.py:1432
+#: pygenda_dialog_event.py:1489
 msgid "Remove date(s)"
 msgstr "Retirer date(s)"
 
@@ -261,8 +289,8 @@ msgstr ""
 "Une application agenda écrite en Python/GTK3. L’interface utilisateur "
 "s’inspire des applications Agenda des PDAs Series 3 et 5 de Psion.\n"
 "ATTENTION : Cette application est en cours de développement et elle est "
-"publiée à des fins de test et feedback. Il y aura des bogues ; veuillez "
-"les rapporter à : pygenda@semiprime.com."
+"publiée à des fins de test et feedback. Il y aura des bogues ; veuillez les "
+"rapporter à : pygenda@semiprime.com."
 
 #: pygenda_view_todo.py:44
 msgid "To-do"
@@ -345,122 +373,46 @@ msgid "Monthly"
 msgstr "Mensuelle"
 
 #: glade/dialog_event.glade:399
-msgid "Monthly by day"
-msgstr "Mensuelle par jour"
-
-#: glade/dialog_event.glade:400
-msgid "Monthly by weekday"
-msgstr "Mensuelle par jour de la semaine"
-
-#: glade/dialog_event.glade:401
 msgid "Weekly"
 msgstr "Hebdomadaire"
 
-#: glade/dialog_event.glade:402
+#: glade/dialog_event.glade:400
 msgid "Daily"
 msgstr "Quotidienne"
 
-#: glade/dialog_event.glade:419
+#: glade/dialog_event.glade:417
 msgid "Repeat on:"
 msgstr "Répéter le :"
 
-#: glade/dialog_event.glade:448
-msgid "Last day"
-msgstr "Dernier jour"
-
-#: glade/dialog_event.glade:449
-msgid "2nd last day"
-msgstr "2e au dernier jour"
-
-#: glade/dialog_event.glade:450
-msgid "3rd last day"
-msgstr "3e au dernier jour"
-
-#: glade/dialog_event.glade:451
-msgid "4th last day"
-msgstr "4e au dernier jour"
-
-#: glade/dialog_event.glade:452
-msgid "5th last day"
-msgstr "5e au dernier jour"
-
-#: glade/dialog_event.glade:453
-msgid "6th last day"
-msgstr "6e au dernier jour"
-
-#: glade/dialog_event.glade:454
-msgid "7th last day"
-msgstr "7e au dernier jour"
-
-#: glade/dialog_event.glade:480
-msgid "1st"
-msgstr "1er"
-
-#: glade/dialog_event.glade:481
-msgid "2nd"
-msgstr "2e"
-
-#: glade/dialog_event.glade:482
-msgid "3rd"
-msgstr "3e"
-
-#: glade/dialog_event.glade:483
-msgid "4th"
-msgstr "4e"
-
-#: glade/dialog_event.glade:484
-msgid "5th"
-msgstr "5e"
-
-#: glade/dialog_event.glade:485
-msgid "Last"
-msgstr "Dernier"
-
-#: glade/dialog_event.glade:486
-msgid "2nd last"
-msgstr "2e au dernier"
-
-#: glade/dialog_event.glade:487
-msgid "3rd last"
-msgstr "3e au dernier"
-
-#: glade/dialog_event.glade:488
-msgid "4th last"
-msgstr "4e au dernier"
-
-#: glade/dialog_event.glade:489
-msgid "5th last"
-msgstr "5e au dernier"
-
-#: glade/dialog_event.glade:538
+#: glade/dialog_event.glade:467
 msgid "Period:"
 msgstr "Période :"
 
-#: glade/dialog_event.glade:554
+#: glade/dialog_event.glade:483
 msgid "Repeat Forever:"
 msgstr "Répéter à jamais :"
 
-#: glade/dialog_event.glade:580
+#: glade/dialog_event.glade:509
 msgid "Occurrences:"
 msgstr "Occurrences :"
 
-#: glade/dialog_event.glade:596
+#: glade/dialog_event.glade:525
 msgid "Until:"
 msgstr "Jusqu’à :"
 
-#: glade/dialog_event.glade:621
+#: glade/dialog_event.glade:550
 msgid "Exceptions:"
 msgstr "Dates omises :"
 
-#: glade/dialog_event.glade:782
+#: glade/dialog_event.glade:711
 msgid "Repeats"
 msgstr "Répétitions"
 
-#: glade/dialog_event.glade:807
+#: glade/dialog_event.glade:736
 msgid "Alarm(s) set:"
 msgstr "Alarme(s) activée(s) :"
 
-#: glade/dialog_event.glade:894
+#: glade/dialog_event.glade:823
 msgid ""
 "<span weight=\"bold\">Warning:</span> Pygenda will <span style=\"italic\" weight=\"bold\">not</span> sound/display alarms.\n"
 "A separate alarm handler is required for alarms to activate.\n"
@@ -470,31 +422,31 @@ msgstr ""
 "Pour activer des alarmes, il faut un programme séparé pour s’en charger.\n"
 "(Pour enlever cet avertissement, voir la documentation.)"
 
-#: glade/dialog_event.glade:908
+#: glade/dialog_event.glade:837
 msgid "Understood"
 msgstr "Je comprends"
 
-#: glade/dialog_event.glade:939
+#: glade/dialog_event.glade:868
 msgid "Alarms"
 msgstr "Alarmes"
 
-#: glade/dialog_event.glade:956
+#: glade/dialog_event.glade:885
 msgid "Location:"
 msgstr "Lieu :"
 
-#: glade/dialog_event.glade:1005
+#: glade/dialog_event.glade:934
 msgid "Tentative"
 msgstr "Provisoire"
 
-#: glade/dialog_event.glade:1006 glade/dialog_todo.glade:202
+#: glade/dialog_event.glade:935 glade/dialog_todo.glade:202
 msgid "Cancelled"
 msgstr "Annulé"
 
-#: glade/dialog_event.glade:1007
+#: glade/dialog_event.glade:936
 msgid "Confirmed"
 msgstr "Confirmé"
 
-#: glade/dialog_event.glade:1021
+#: glade/dialog_event.glade:950
 msgid ""
 "Details will go here:\n"
 "long description, attendees…"
@@ -502,7 +454,7 @@ msgstr ""
 "Les détails seront ici :\n"
 "description détaillée, partipants…"
 
-#: glade/dialog_event.glade:1040
+#: glade/dialog_event.glade:969
 msgid "Details"
 msgstr "Détails"
 

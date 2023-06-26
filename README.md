@@ -95,10 +95,10 @@ GTK+3
 
 * Install on Debian: `sudo apt install gtk+3`
 
-Python3 modules: PyGObject3 (for gi), icalendar, python-dateutil, tzlocal
+Python3 modules: PyGObject3 (for gi), icalendar, python-dateutil, tzlocal, num2words
 
-* Install on Debian: `sudo apt install python3-gi python3-icalendar python3-dateutil python3-tzlocal`
-* Or install them using pip3: `pip3 install pygobject icalendar python-dateutil tzlocal`
+* Install on Debian: `sudo apt install python3-gi python3-icalendar python3-dateutil python3-tzlocal python3-num2words`
+* Or install them using pip3: `pip3 install [--user] pygobject icalendar python-dateutil tzlocal num2words`
 
 Note: When I tested on Gemian on the Gemini, pip3 installed tzlocal
 version 2.1, which did not work (although versions 1 to 4 worked on a

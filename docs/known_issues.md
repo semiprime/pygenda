@@ -29,8 +29,8 @@ Major
   by-date, manual...
 
 * Repeated event UI missing many elements (more complete repeat by
-  BYMONTHDAY, BYSETPOS, Monday & Wednesday every week, extra dates,
-  hourly/minutely/secondly repeats).
+  BYMONTHDAY, BYSETPOS, Monday & Wednesday every week, first weekday
+  of month, extra dates, hourly/minutely/secondly repeats).
   See: https://icalendar.org/iCalendar-RFC-5545/3-3-10-recurrence-rule.html
   Doesn't handle repeat by RDATE at all.
   See: https://icalendar.org/iCalendar-RFC-5545/3-8-5-2-recurrence-date-times.html
@@ -139,11 +139,6 @@ Medium
 * Startup is slow on Gemini. Possible optimisation: run independent
   tasks asynchronously.
 
-* Starting date of repeating events is not always obvious to the user.
-  For example, date 30th March, repeat on last day of month -> starts
-  31st March, but change to 3rd-to-last day of month and it starts 28th
-  April. (Maybe this will be clearer when cursor moves to edited event?)
-
 * If calendar data is updated externally while Pygenda is runing (e.g.
   another instance of Pygenda, or some other app, updates database)
   the changes are not detected/displayed.
@@ -203,6 +198,9 @@ Minor
 * In the Entry Properties dialog, some properties are missing (attendees),
   and dates aren't localised
 
+* In untranslated languages, there can be some awkward mixing of languages
+  of fixed and generated content (e.g. "2. to last Sonntag of month")
+
 * In code, various places marked with '!!' indicating known bugs or
   temporary/placeholder implementations.
 
@@ -212,6 +210,10 @@ Cosmetic
   dates, then it makes room for these in the Event dialog Repeats tab.
   This means that the Event dialog is made wide, and stays that way
   until Pygenda is restarted.
+
+* In Event dialog, "Repeat on" combobox can change width when date is
+  changed (due to expanding to contain longer strings - it stops once
+  maximum width has been reached).
 
 * Year View: Pixel missing in grid lines at top-left corner
 

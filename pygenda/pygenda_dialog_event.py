@@ -18,6 +18,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Pygenda. If not, see <https://www.gnu.org/licenses/>.
+
+
 from gi import require_version as gi_require_version
 gi_require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
@@ -27,11 +29,12 @@ from dateutil import rrule as du_rrule
 from dateutil.relativedelta import relativedelta
 from icalendar import Event as iEvent, vRecur
 from sys import stderr
-from typing import Optional, Tuple, List
+from typing import Optional, Union, Tuple, List
 
 # for internationalisation/localisation
-from locale import gettext as _
+from locale import gettext as _, getlocale
 from calendar import day_name, monthrange
+from num2words import num2words
 
 # pygenda components
 from .pygenda_config import Config
@@ -87,30 +90,24 @@ class EventDialogController:
 
     wid_rep_type = None # type: Gtk.ComboBox
     revs_repeat = None
-    revs_rep_monthdays = None
-    revs_rep_weekdays = None
-    revs_rep_monthweekdays = None
+    revs_repeaton_lab = None
+    revs_repeaton_month = None
     wid_rep_interval = None # type: Gtk.SpinButton
     wid_rep_forever = None # type: Gtk.CheckButton
-    wid_repbymonthday = None # type: Gtk.ComboBox
-    wid_repbyweekday_day = None # type: Gtk.ComboBox
-    wid_repbyweekday_ord = None # type: Gtk.ComboBox
+    wid_repeaton_month = None # type: Gtk.ComboBox
     wid_rep_occs = None # type: Gtk.SpinButton
     wid_rep_enddt = None # type: WidgetDate
     revs_rep_ends = None
     rep_occs_determines_end = True
     _rep_handler_date = 0
+    _rep_handler_date_repon = 0
     _rep_handler_time = 0
     _rep_handler_type = 0
-    _rep_handler_mday = 0
-    _rep_handler_wdayday = 0
-    _rep_handler_wdayord = 0
+    _rep_handler_repon_month = 0
     _rep_handler_inter = 0
     _rep_handler_occs = 0
     _rep_handler_enddt = 0
     _lab_rep_exceptions = None # type: Gtk.Label
-    repbymonthday_initialized = False
-    repbyweekday_initialized = False
     dur_determines_end = False
     exception_list = [] # type: List[dt_date]
 
@@ -210,15 +207,12 @@ class EventDialogController:
         # Called on app startup.
         cls.wid_rep_type = GUI._builder.get_object('combo_repeat_type')
         cls.revs_repeat = cls._revealers_from_ids('revealer_repeat_l','revealer_repeat_e')
-        cls.revs_rep_monthdays = cls._revealers_from_ids('revealer_repeat_monthday_e')
-        cls.revs_rep_weekdays = cls._revealers_from_ids('revealer_repeat_weekday_e')
-        cls.revs_rep_monthweekdays = cls._revealers_from_ids('revealer_repeat_day_l')
+        cls.revs_repeaton_lab = cls._revealers_from_ids('revealer_repeaton_l')
+        cls.revs_repeaton_month = cls._revealers_from_ids('revealer_repeaton_month')
 
         cls.wid_rep_interval = GUI._builder.get_object('repeat_interval')
         cls.wid_rep_forever = GUI._builder.get_object('repeat_forever')
-        cls.wid_repbymonthday = GUI._builder.get_object('combo_bydaymonth')
-        cls.wid_repbyweekday_day = GUI._builder.get_object('combo_byday_day')
-        cls.wid_repbyweekday_ord = GUI._builder.get_object('combo_byday_ord')
+        cls.wid_repeaton_month = GUI._builder.get_object('combo_repeaton_month')
 
         cls.wid_rep_occs = GUI._builder.get_object('repeat_occurrences')
         cls.wid_rep_enddt = WidgetDate()
@@ -228,20 +222,13 @@ class EventDialogController:
         cls.revs_rep_ends = cls._revealers_from_ids('revealer_repeat_until_l', 'revealer_repeat_until_e')
 
         cls._rep_handler_date = cls.wid_date.connect('changed', cls._repend_changed,0)
+        cls._rep_handler_date_repon = cls.wid_date.connect('changed', cls._repon_changed)
         cls._rep_handler_time = cls.wid_time.connect('changed', cls._repend_changed,0)
         cls._rep_handler_type = cls.wid_rep_type.connect('changed', cls._repend_changed,0)
-        cls._rep_handler_mday = cls.wid_repbymonthday.connect('changed', cls._repend_changed,0)
-        cls._rep_handler_wdayday = cls.wid_repbyweekday_day.connect('changed', cls._repend_changed,0)
-        cls._rep_handler_wdayord = cls.wid_repbyweekday_ord.connect('changed', cls._repend_changed,0)
+        cls._rep_handler_repon_month = cls.wid_repeaton_month.connect('changed', cls._repend_changed,0)
         cls._rep_handler_inter = cls.wid_rep_interval.connect('changed', cls._repend_changed,0)
         cls._rep_handler_occs = cls.wid_rep_occs.connect('changed', cls._repend_changed,1)
         cls._rep_handler_enddt = cls.wid_rep_enddt.connect('changed', cls._repend_changed,2)
-
-        # For repeat on "1st Sat." etc, we fill ComboBox with local day names
-        day = Config.get_int('global','start_week_day')
-        for i in range(7):
-            cls.wid_repbyweekday_day.append(RepeatInfo.DAY_ABBR[day],day_name[day])
-            day = (day+1)%7
 
         # Get label used to display exception dates
         cls._lab_rep_exceptions = GUI._builder.get_object('lab_rep_exceptions')
@@ -371,40 +358,10 @@ class EventDialogController:
         # wid should be the repeat-type combobox
         st = wid.get_active()>0
         cls._do_multireveal(cls.revs_repeat, st)
-        monthday = (wid.get_active_id()=='MONTHLY-MONTHDAY')
-        weekday = (wid.get_active_id()=='MONTHLY-WEEKDAY') # Booleans
-        cls._do_multireveal(cls.revs_rep_monthdays, monthday)
-        cls._do_multireveal(cls.revs_rep_weekdays, weekday)
-        cls._do_multireveal(cls.revs_rep_monthweekdays, monthday or weekday)
-        if monthday and not cls.repbymonthday_initialized:
-            # First time shown showing monthday-repeats, so initialise based on start date
-            cls.repbymonthday_initialized = True
-            sdt = cls.get_date_start()
-            if sdt is None: # Fallback in case date is invalid
-                cls.wid_repbymonthday.set_active(0)
-            else:
-                idx = sdt.day - monthrange(sdt.year,sdt.month)[1] - 1
-                if -7 <= idx <= -2:
-                    cls.wid_repbymonthday.set_active_id(str(idx))
-                else:
-                    cls.wid_repbymonthday.set_active(0)
-        elif weekday and not cls.repbyweekday_initialized:
-            # First time shown showing weekday-repeats, so initialise based on start date
-            cls.repbyweekday_initialized = True
-            sdt = cls.get_date_start()
-            if sdt is None: # Fallback in case date is invalid
-                cls.wid_repbyweekday_ord.set_active(0)
-                cls.wid_repbyweekday_day.set_active(0)
-            else:
-                wkst = Config.get_int('global','start_week_day')
-                cls.wid_repbyweekday_day.set_active((sdt.weekday()-wkst)%7)
-                if sdt.day<=21:
-                    # Value will be, e.g. "1st", "2nd" (Tues of month)
-                    cls.wid_repbyweekday_ord.set_active_id(str(1+(sdt.day-1)//7))
-                else:
-                    # Want, e.g. "last" (Friday of month)
-                    rem = monthrange(sdt.year,sdt.month)[1]-sdt.day
-                    cls.wid_repbyweekday_ord.set_active_id(str(-1-(rem//7)))
+        r_monthly = (wid.get_active_id()=='MONTHLY') # Boolean
+        cls._do_multireveal(cls.revs_repeaton_lab, r_monthly)
+        cls._do_multireveal(cls.revs_repeaton_month, r_monthly)
+        # (We assume above that repeat-on combobox is already setup)
         cls._cancel_empty_desc_allowed()
         return True # don't propagate event
 
@@ -491,11 +448,10 @@ class EventDialogController:
         # based on the new values. Generally, keep signals blocked except
         # when the dialog is being shown to the user.
         cls.wid_date.handler_block(cls._rep_handler_date)
+        cls.wid_date.handler_block(cls._rep_handler_date_repon)
         cls.wid_time.handler_block(cls._rep_handler_time)
         cls.wid_rep_type.handler_block(cls._rep_handler_type)
-        cls.wid_repbymonthday.handler_block(cls._rep_handler_mday)
-        cls.wid_repbyweekday_day.handler_block(cls._rep_handler_wdayday)
-        cls.wid_repbyweekday_ord.handler_block(cls._rep_handler_wdayord)
+        cls.wid_repeaton_month.handler_block(cls._rep_handler_repon_month)
         cls.wid_rep_interval.handler_block(cls._rep_handler_inter)
         cls.wid_rep_occs.handler_block(cls._rep_handler_occs)
         cls.wid_rep_enddt.handler_block(cls._rep_handler_enddt)
@@ -508,11 +464,10 @@ class EventDialogController:
         # based on the new values. Generally, unblock when the dialog is
         # being used and user can change these values.
         cls.wid_date.handler_unblock(cls._rep_handler_date)
+        cls.wid_date.handler_unblock(cls._rep_handler_date_repon)
         cls.wid_time.handler_unblock(cls._rep_handler_time)
         cls.wid_rep_type.handler_unblock(cls._rep_handler_type)
-        cls.wid_repbymonthday.handler_unblock(cls._rep_handler_mday)
-        cls.wid_repbyweekday_day.handler_unblock(cls._rep_handler_wdayday)
-        cls.wid_repbyweekday_ord.handler_unblock(cls._rep_handler_wdayord)
+        cls.wid_repeaton_month.handler_unblock(cls._rep_handler_repon_month)
         cls.wid_rep_interval.handler_unblock(cls._rep_handler_inter)
         cls.wid_rep_occs.handler_unblock(cls._rep_handler_occs)
         cls.wid_rep_enddt.handler_unblock(cls._rep_handler_enddt)
@@ -584,8 +539,6 @@ class EventDialogController:
     MAP_RTYPE_TO_RRULE = {
         'YEARLY': du_rrule.YEARLY,
         'MONTHLY': du_rrule.MONTHLY,
-        'MONTHLY-MONTHDAY': du_rrule.MONTHLY,
-        'MONTHLY-WEEKDAY': du_rrule.MONTHLY,
         'WEEKLY': du_rrule.WEEKLY,
         'DAILY': du_rrule.DAILY,
         'HOURLY': du_rrule.HOURLY,
@@ -593,15 +546,15 @@ class EventDialogController:
         'SECONDLY': du_rrule.SECONDLY
         }
 
-    MAP_RDAY_TO_RRULEDAY = {
-        'MO': du_rrule.MO,
-        'TU': du_rrule.TU,
-        'WE': du_rrule.WE,
-        'TH': du_rrule.TH,
-        'FR': du_rrule.FR,
-        'SA': du_rrule.SA,
-        'SU': du_rrule.SU
-        }
+    MAP_RDAY_TO_RRULEDAY = (
+        du_rrule.MO,
+        du_rrule.TU,
+        du_rrule.WE,
+        du_rrule.TH,
+        du_rrule.FR,
+        du_rrule.SA,
+        du_rrule.SU
+        )
 
     @classmethod
     def _sync_rep_occs_end(cls) -> None:
@@ -613,61 +566,72 @@ class EventDialogController:
         if rtype is None:
             return
         if cls.rep_occs_determines_end:
-            stdt = cls.get_date_start()
-            if stdt is not None:
-                span = (cls.get_repeat_occurrences()-1) * cls.get_repeat_interval()
-                if rtype=='YEARLY':
-                    if stdt.day==29 and stdt.month==2: # 29th Feb - leap day!
-                        cls._sync_rep_end_from_occ_rrule(rtype)
-                        return
-                    delta = relativedelta(years=span)
-                elif rtype=='MONTHLY':
-                    if cls.get_datetime_start().day>=29:
-                        cls._sync_rep_end_from_occ_rrule(rtype)
-                        return
-                    else:
-                        delta = relativedelta(months=span)
-                elif rtype=='WEEKLY':
-                    delta = timedelta(days=span*7)
-                elif rtype=='DAILY':
-                    delta = timedelta(days=span)
-                elif rtype=='HOURLY':
-                    delta = timedelta(hours=span)
-                elif rtype=='MINUTELY':
-                    delta = timedelta(minutes=span)
-                elif rtype=='SECONDLY':
-                    delta = timedelta(seconds=span)
-                elif rtype in ('MONTHLY-MONTHDAY','MONTHLY-WEEKDAY'):
+            cls._sync_rep_ends_from_occs(rtype)
+        else:
+            cls._sync_occs_from_rep_ends(rtype)
+
+
+    @classmethod
+    def _sync_rep_ends_from_occs(cls, rtype:str) -> None:
+        # Function to recalculate & update repeat End Date
+        # from Occurences count.
+        stdt = cls.get_date_start()
+        if stdt is not None:
+            span = (cls.get_repeat_occurrences()-1) * cls.get_repeat_interval()
+            if rtype=='YEARLY':
+                if stdt.day==29 and stdt.month==2: # 29th Feb - leap day!
+                    cls._sync_rep_end_from_occ_rrule(rtype)
+                    return
+                delta = relativedelta(years=span) # type:Union[relativedelta,timedelta]
+            elif rtype=='MONTHLY':
+                if stdt.day>=29 or cls.wid_repeaton_month.get_active()>0:
                     cls._sync_rep_end_from_occ_rrule(rtype)
                     return
                 else:
-                    # !! Don't know how to sync
-                    print('Warning: Sync for {} not implemented'.format(rtype), file=stderr)
-                    return
-                edt = stdt+delta
-                cls.wid_rep_enddt.set_date(edt)
-        else: # occurrences determined by end date - use dateutil:rrule to calc
-            try:
-                fr = cls.MAP_RTYPE_TO_RRULE[rtype]
-            except KeyError:
+                    delta = relativedelta(months=span)
+            elif rtype=='WEEKLY':
+                delta = timedelta(days=span*7)
+            elif rtype=='DAILY':
+                delta = timedelta(days=span)
+            elif rtype=='HOURLY':
+                delta = timedelta(hours=span)
+            elif rtype=='MINUTELY':
+                delta = timedelta(minutes=span)
+            elif rtype=='SECONDLY':
+                delta = timedelta(seconds=span)
+            else:
                 # !! Don't know how to sync
                 print('Warning: Sync for {} not implemented'.format(rtype), file=stderr)
                 return
+            edt = stdt+delta
+            cls.wid_rep_enddt.set_date(edt)
+
+
+    @classmethod
+    def _sync_occs_from_rep_ends(cls, rtype:str) -> None:
+        # Function to recalculate & update repeat Occurences count
+        # from End Date.
+        # Uses dateutil:rrule to do calculation.
+        try:
+            fr = cls.MAP_RTYPE_TO_RRULE[rtype]
+        except KeyError:
+            # !! Don't know how to sync
+            print('Warning: Sync for {} not implemented'.format(rtype), file=stderr)
+            return
+        if rtype=='MONTHLY':
+            bymtdy,bywkdy = cls._get_monthly_bymonthday_byweekday()
+        else:
             bymtdy = None
             bywkdy = None
-            if rtype=='MONTHLY-MONTHDAY':
-                bymtdy = cls._get_cal_monthday_rep()
-            elif rtype=='MONTHLY-WEEKDAY':
-                bywkdy = cls._get_cal_weekday_rep()
-            dtst = cls.get_date_start() # Without time, because time breaks calc
-            interv = cls.get_repeat_interval()
-            rend = cls.wid_rep_enddt.get_date_or_none()
-            if dtst is not None and rend is not None:
-                rr = du_rrule.rrule(fr, dtstart=dtst, interval=interv, until=rend, byweekday=bywkdy, bymonthday=bymtdy)
-                c = rr.count()
-                if c>=0:
-                    cls._set_occs_min(0 if c==0 else 1) # possibly allow "0"
-                    cls.wid_rep_occs.set_value(c)
+        dtst = cls.get_date_start() # Without time, because time breaks calc
+        interv = cls.get_repeat_interval()
+        rend = cls.wid_rep_enddt.get_date_or_none()
+        if dtst is not None and rend is not None:
+            rr = du_rrule.rrule(fr, dtstart=dtst, interval=interv, until=rend, byweekday=bywkdy, bymonthday=bymtdy)
+            c = rr.count()
+            if c>=0:
+                cls._set_occs_min(0 if c==0 else 1) # possibly allow "0"
+                cls.wid_rep_occs.set_value(c)
 
 
     @classmethod
@@ -686,30 +650,71 @@ class EventDialogController:
             return
         interv = cls.get_repeat_interval()
         occs = cls.get_repeat_occurrences()
-        bymtdy = None
-        bywkdy = None
-        if rtype=='MONTHLY-MONTHDAY':
-            bymtdy = cls._get_cal_monthday_rep()
-        elif rtype=='MONTHLY-WEEKDAY':
-            bywkdy = cls._get_cal_weekday_rep()
+        if rtype=='MONTHLY':
+            bymtdy,bywkdy = cls._get_monthly_bymonthday_byweekday()
+        else:
+            bymtdy = None
+            bywkdy = None
         rr = du_rrule.rrule(fr, dtstart=dtst, interval=interv, count=occs, byweekday=bywkdy, bymonthday=bymtdy)
         edt = list(rr)[-1]
         cls.wid_rep_enddt.set_date(edt)
 
 
     @classmethod
-    def _get_cal_monthday_rep(cls) -> int:
-        # Return value for monthday repeats to pass to rrule
-        retd = int(cls.wid_repbymonthday.get_active_id())
-        return retd
+    def _get_monthly_bymonthday_byweekday(cls) -> Tuple:
+        # Return bymonthday & byweekday for monthday repeats to pass to rrule
+        repon = cls.wid_repeaton_month.get_active_id()
+        dtst = cls.get_date_start()
+        bymtdy = None
+        bywkdy = None
+        if dtst is not None:
+            if repon=='FROMEND':
+                bymtdy = dtst.day - monthrange(dtst.year,dtst.month)[1] - 1
+            elif repon=='WEEKDAY':
+                dayocc = (dtst.day+6)//7
+                bywkdy = cls.MAP_RDAY_TO_RRULEDAY[dtst.weekday()](dayocc)
+            elif repon=='WEEKDAY_FROMEND':
+                dayocc = (dtst.day-monthrange(dtst.year,dtst.month)[1]-1)//7
+                bywkdy = cls.MAP_RDAY_TO_RRULEDAY[dtst.weekday()](dayocc)
+        return bymtdy,bywkdy
 
 
     @classmethod
-    def _get_cal_weekday_rep(cls) -> du_rrule.weekday:
-        # Return rrule structure for weekday repeats.
-        # E.g. MO(-2) = "2nd last Monday"
-        rrwd = cls.MAP_RDAY_TO_RRULEDAY[cls.wid_repbyweekday_day.get_active_id()](int(cls.wid_repbyweekday_ord.get_active_id()))
-        return rrwd
+    def _repon_changed(cls, wid:Gtk.Widget) -> bool:
+        # Handler for signals from any widget that might result in the
+        # text of the repeat on field to change. Rewrites text.
+        cls._block_rep_occend_signals()
+        cls._repon_wid_datesync()
+        cls._unblock_rep_occend_signals()
+        return True # don't propagate event
+
+
+    @classmethod
+    def _repon_wid_datesync(cls) -> None:
+        # Rewrites text of repeat-on monthly widget to reflect start date.
+        # Note: Should be called with signals blocked, o/w get side-effects.
+        dt = cls.wid_date.get_date_or_none()
+        if dt is None:
+            return # invalid date (eg 31st Feb)
+        active = cls.wid_repeaton_month.get_active() # save current value
+        fromend = monthrange(dt.year,dt.month)[1] - dt.day
+        daynm = day_name[dt.weekday()]
+        lang = getlocale()[0]
+        cls.wid_repeaton_month.remove_all()
+        if dt.day==1:
+            cls.wid_repeaton_month.append('STD',_('1st day of month'))
+        else:
+            cls.wid_repeaton_month.append('STD',_('{ord:s} day of month').format(ord=num2words(dt.day,to='ordinal_num',lang=lang),card=dt.day))
+        if fromend == 0:
+            cls.wid_repeaton_month.append('FROMEND',_('Last day of month'))
+        else:
+            cls.wid_repeaton_month.append('FROMEND',_('{:s} to last day of month').format(num2words(fromend+1,to='ordinal_num',lang=lang)))
+        cls.wid_repeaton_month.append('WEEKDAY',_('{ord:s} {day:s} of month').format(ord=num2words((dt.day+6)//7,to='ordinal_num',lang=lang),day=daynm))
+        if fromend < 7:
+	        cls.wid_repeaton_month.append('WEEKDAY_FROMEND',_('Last {day:s} of month').format(day=daynm))
+        else:
+	        cls.wid_repeaton_month.append('WEEKDAY_FROMEND',_('{ord:s} to last {day:s} of month').format(ord=num2words(fromend//7+1,to='ordinal_num',lang=lang),day=daynm))
+        cls.wid_repeaton_month.set_active(active) # restore saved value
 
 
     @classmethod
@@ -786,6 +791,7 @@ class EventDialogController:
             cls._seed_text_only(txt)
         else: # existing entry - take values
             cls._seed_from_event(event)
+        cls._repon_wid_datesync() # Do this at end, so date used is correct
 
         cls._seed_rep_exception_list(event) # If event==None this clears exlist
 
@@ -812,8 +818,7 @@ class EventDialogController:
 
         # Repeats tab
         cls.wid_rep_type.set_active(0) # Sends signal to hide fields
-        cls.repbymonthday_initialized = False # Init these later when we can
-        cls.repbyweekday_initialized = False  # choose appropriate values.
+        cls.wid_repeaton_month.set_active(0)
         cls.wid_rep_interval.set_value(1)
         cls.wid_rep_forever.set_active(True)
         cls.rep_occs_determines_end = True
@@ -847,7 +852,7 @@ class EventDialogController:
 
     @classmethod
     def _seed_from_event(cls, event:iEvent) -> None:
-        # Called when dialog is opened for en existing event.
+        # Called when dialog is opened for an existing event.
         # Assume defaults already set before this is called.
 
         if 'SUMMARY' in event:
@@ -877,7 +882,7 @@ class EventDialogController:
 
     @classmethod
     def _seed_date_timetab(cls, event:iEvent) -> None:
-        # Called when dialog is opened for en existing event.
+        # Called when dialog is opened for an existing event.
         # Seeds the date field and the time tab (inc. all-day events).
         dt = event['DTSTART'].dt
         dttm = None
@@ -936,30 +941,22 @@ class EventDialogController:
 
     @classmethod
     def _seed_repeatstab(cls, rrule:vRecur) -> None:
-        # Called when dialog is opened for en existing event.
+        # Called when dialog is opened for an existing event.
         # Assumes that start date has already been set from event.
         rrfreq = rrule['FREQ'][0]
-        if rrfreq == 'MONTHLY' and 'BYDAY' in rrule:
-            cls.wid_rep_type.set_active_id('MONTHLY-WEEKDAY')
-            if len(rrule['BYDAY']) > 1:
-                raise EventPropertyBeyondEditDialog('Editing MONTHLY repeat with multiple \'BYDAY\' not (yet) supported')
-            byday = rrule['BYDAY'][0]
-            cls.repbyweekday_initialized = True
-            cls.wid_repbyweekday_ord.set_active_id(byday[1 if byday[0]=='+' else 0:-2])
-            cls.wid_repbyweekday_day.set_active_id(byday[-2:])
-        elif rrfreq == 'MONTHLY' and 'BYMONTHDAY' in rrule:
-            if len(rrule['BYMONTHDAY'])!=1:
-                raise EventPropertyBeyondEditDialog('Editing repeat with multiple \'BYMONTHDAY\' not (yet) supported')
-            cls.wid_rep_type.set_active_id('MONTHLY-MONTHDAY')
-            bymday = rrule['BYMONTHDAY'][0]
-            if not(-7 <= int(bymday) <= -1):
-                raise EventPropertyBeyondEditDialog('Editing repeat with BYMONTHDAY={} not (yet) supported'.format(bymday))
-            cls.wid_repbymonthday.set_active_id(str(bymday))
-            cls.repbymonthday_initialized = True
-        elif rrfreq in ('YEARLY','MONTHLY','WEEKLY','DAILY'):
+        if rrfreq in ('YEARLY','MONTHLY','WEEKLY','DAILY'):
             cls.wid_rep_type.set_active_id(rrfreq)
         else:
             raise EventPropertyBeyondEditDialog('Editing repeat freq \'{}\' not (yet) supported'.format(rrfreq))
+
+        if rrfreq == 'MONTHLY':
+            cls._seed_reptab_monthly(rrule)
+
+        if rrfreq == 'WEEKLY' and 'BYDAY' in rrule:
+            rr_byday = rrule['BYDAY']
+            if isinstance(rr_byday, list) and len(rr_byday)>1:
+                raise EventPropertyBeyondEditDialog('Editing WEEKLY repeat with multiple \'BYDAY\' not (yet) supported')
+
         cls.wid_rep_interval.set_value(int(rrule['INTERVAL'][0]) if 'INTERVAL' in rrule else 1)
         if 'COUNT' in rrule:
             cls.wid_rep_forever.set_active(False)
@@ -975,10 +972,53 @@ class EventDialogController:
             cls.wid_rep_enddt.set_date(u if u>dt_st else dt_st)
             cls.rep_occs_determines_end = False
 
-        if rrfreq == 'WEEKLY' and 'BYDAY' in rrule:
-            rr_byday = rrule['BYDAY']
-            if isinstance(rr_byday, list) and len(rr_byday)>1:
-                raise EventPropertyBeyondEditDialog('Editing WEEKLY repeat with multiple \'BYDAY\' not (yet) supported')
+
+    @classmethod
+    def _seed_reptab_monthly(cls, rrule:vRecur) -> None:
+        # Called when dialog is opened for a monthly repeating event
+        has_byday = 'BYDAY' in rrule
+        has_bymonthday = 'BYMONTHDAY' in rrule
+        if has_byday and has_bymonthday:
+            raise EventPropertyBeyondEditDialog('MONTHLY repeat has both BYDAY and BYMONTHDAY')
+        if has_byday:
+            byday = rrule['BYDAY']
+            if len(byday) > 1:
+                raise EventPropertyBeyondEditDialog('Editing MONTHLY repeat with multiple \'BYDAY\' not (yet) supported')
+            byday = byday[0]
+            byday_day = byday[-2:]
+            dt_st = cls.get_date_start() # Won't be none, because seeded
+            if RepeatInfo.DAY_ABBR[dt_st.weekday()]!= byday_day:
+                raise EventPropertyBeyondEditDialog('Repeat BYDAY does not match start date')
+            try:
+                byday_ord = int(byday[0:-2])
+            except ValueError:
+                raise EventPropertyBeyondEditDialog('Non-integer value for BYDAY')
+            if byday_ord > 0:
+                if byday_ord != (dt_st.day+6)//7:
+                    raise EventPropertyBeyondEditDialog('Repeat BYDAY does not match start date')
+                cls.wid_repeaton_month.set_active_id('WEEKDAY')
+            else: # byday_ord<0
+                if byday_ord != (dt_st.day-monthrange(dt_st.year,dt_st.month)[1]-1)//7:
+                    raise EventPropertyBeyondEditDialog('Repeat BYDAY does not match start date')
+                cls.wid_repeaton_month.set_active_id('WEEKDAY_FROMEND')
+        elif has_bymonthday:
+            bymday = rrule['BYMONTHDAY']
+            if len(bymday)!=1:
+                raise EventPropertyBeyondEditDialog('Editing MONTHLY repeat with multiple \'BYMONTHDAY\' not (yet) supported')
+            try:
+                bymday = int(bymday[0])
+            except ValueError:
+                raise EventPropertyBeyondEditDialog('Non-integer value for BYMONTHDAY')
+            dt_st = cls.get_date_start() # Won't be none, because seeded
+            if bymday>=0:
+                if dt_st.day != bymday:
+                    raise EventPropertyBeyondEditDialog('Repeat BYMONTHDAY does not match start date')
+                # No need to set repeaton value - default works
+            else: # bymday < 0
+                dt_st_fromend = dt_st.day - monthrange(dt_st.year,dt_st.month)[1] - 1
+                if dt_st_fromend != bymday:
+                    raise EventPropertyBeyondEditDialog('Repeat BYMONTHDAY does not match start date')
+                cls.wid_repeaton_month.set_active_id('FROMEND')
 
 
     @classmethod
@@ -1056,26 +1096,8 @@ class EventDialogController:
         else:
             ei.set_end_dt(cls.wid_endtime.get_time_or_none())
 
-        # repeat information
-        reptype = cls.wid_rep_type.get_active_id()
-        if reptype is not None:
-            inter = cls.get_repeat_interval()
-            count = None
-            until = None
-            byday = None
-            bymonthday = None
-            if reptype=='MONTHLY-WEEKDAY':
-                reptype = 'MONTHLY'
-                byday = cls.wid_repbyweekday_ord.get_active_id() + cls.wid_repbyweekday_day.get_active_id()
-            elif reptype=='MONTHLY-MONTHDAY':
-                reptype = 'MONTHLY'
-                bymonthday = cls.wid_repbymonthday.get_active_id()
-            if not cls.wid_rep_forever.get_active():
-                if cls.rep_occs_determines_end:
-                    count = cls.get_repeat_occurrences()
-                else:
-                    until = cls.wid_rep_enddt.get_date_or_none()
-            ei.set_repeat_info(reptype, interval=inter, count=count, until=until, bymonthday=bymonthday, byday=byday, except_list=cls._get_exceptions_list_for_type())
+        # Repeat information
+        cls._fillin_repeatinfo(ei)
 
         # Alarm info
         if cls.wid_alarmset.get_active():
@@ -1083,6 +1105,41 @@ class EventDialogController:
                 ei.add_alarm(al[0])
 
         return ei
+
+
+    @classmethod
+    def _fillin_repeatinfo(cls, ei:EntryInfo) -> None:
+        # Add repeat info from dialog to ei
+        reptype = cls.wid_rep_type.get_active_id()
+        if reptype is not None:
+            inter = cls.get_repeat_interval()
+            # Repeat type details, e.g. monthly, 2nd Monday of month
+            byday = None
+            bymonthday = None # type: Optional[str]
+            if reptype=='MONTHLY':
+                repon = cls.wid_repeaton_month.get_active_id()
+                dt = cls.get_date_start()
+                if dt is not None:
+                    if repon=='FROMEND':
+                        bymonthday = dt.day - monthrange(dt.year,dt.month)[1] - 1 # type: ignore
+                        bymonthday = str(bymonthday)
+                    elif repon=='WEEKDAY':
+                        dayocc = (dt.day+6)//7
+                        dayabbr = RepeatInfo.DAY_ABBR[dt.weekday()]
+                        byday = str(dayocc)+dayabbr # e.g. '2SU' - 2nd Sunday
+                    elif repon=='WEEKDAY_FROMEND':
+                        dayoccn = (dt.day-monthrange(dt.year,dt.month)[1]-1)//7
+                        dayabbr = RepeatInfo.DAY_ABBR[dt.weekday()]
+                        byday = str(dayoccn)+dayabbr # e.g. '-2MO' - 2nd last Monday
+            # If not "repeat forever", when repeats stop
+            count = None
+            until = None
+            if not cls.wid_rep_forever.get_active():
+                if cls.rep_occs_determines_end:
+                    count = cls.get_repeat_occurrences()
+                else:
+                    until = cls.wid_rep_enddt.get_date_or_none()
+            ei.set_repeat_info(reptype, interval=inter, count=count, until=until, bymonthday=bymonthday, byday=byday, except_list=cls._get_exceptions_list_for_type())
 
 
     @classmethod

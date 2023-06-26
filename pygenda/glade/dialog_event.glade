@@ -396,8 +396,6 @@
 													<item translatable="yes">None</item>
 													<item id="YEARLY" translatable="yes">Yearly</item>
 													<item id="MONTHLY" translatable="yes">Monthly</item>
-													<item id="MONTHLY-MONTHDAY" translatable="yes">Monthly by day</item>
-													<item id="MONTHLY-WEEKDAY" translatable="yes">Monthly by weekday</item>
 													<item id="WEEKLY" translatable="yes">Weekly</item>
 													<item id="DAILY" translatable="yes">Daily</item>
 												</items>
@@ -409,7 +407,7 @@
 											</packing>
 										</child>
 										<child>
-											<object class="GtkRevealer" id="revealer_repeat_day_l">
+											<object class="GtkRevealer" id="revealer_repeaton_l">
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
 												<child>
@@ -430,91 +428,22 @@
 											</packing>
 										</child>
 										<child>
-											<object class="GtkBox">
+											<object class="GtkRevealer" id="revealer_repeaton_month">
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
-												<property name="orientation">vertical</property>
 												<child>
-													<object class="GtkRevealer" id="revealer_repeat_monthday_e">
+													<object class="GtkComboBoxText" id="combo_repeaton_month">
 														<property name="visible">True</property>
 														<property name="can-focus">False</property>
-														<child>
-															<object class="GtkComboBoxText" id="combo_bydaymonth">
-																<property name="visible">True</property>
-																<property name="can-focus">False</property>
-																<property name="halign">start</property>
-																<property name="active">0</property>
-																<items>
-																	<item id="-1" translatable="yes">Last day</item>
-																	<item id="-2" translatable="yes">2nd last day</item>
-																	<item id="-3" translatable="yes">3rd last day</item>
-																	<item id="-4" translatable="yes">4th last day</item>
-																	<item id="-5" translatable="yes">5th last day</item>
-																	<item id="-6" translatable="yes">6th last day</item>
-																	<item id="-7" translatable="yes">7th last day</item>
-																</items>
-															</object>
-														</child>
+														<property name="halign">start</property>
+														<property name="active">0</property>
+														<items>
+															<item id="STD">Xth day of month</item>
+															<item id="FROMEND">Xth to last day of month</item>
+															<item id="WEEKDAY">Xth WEEKDAY of month</item>
+															<item id="WEEKDAY_FROMEND">Xth to last WEEKDAY of month</item>
+														</items>
 													</object>
-													<packing>
-														<property name="expand">False</property>
-														<property name="fill">True</property>
-														<property name="position">0</property>
-													</packing>
-												</child>
-												<child>
-													<object class="GtkRevealer" id="revealer_repeat_weekday_e">
-														<property name="visible">True</property>
-														<property name="can-focus">False</property>
-														<child>
-															<object class="GtkBox">
-																<property name="visible">True</property>
-																<property name="can-focus">False</property>
-																<child>
-																	<object class="GtkComboBoxText" id="combo_byday_ord">
-																		<property name="visible">True</property>
-																		<property name="can-focus">False</property>
-																		<property name="halign">start</property>
-																		<property name="active">0</property>
-																		<items>
-																			<item id="1" translatable="yes">1st</item>
-																			<item id="2" translatable="yes">2nd</item>
-																			<item id="3" translatable="yes">3rd</item>
-																			<item id="4" translatable="yes">4th</item>
-																			<item id="5" translatable="yes">5th</item>
-																			<item id="-1" translatable="yes">Last</item>
-																			<item id="-2" translatable="yes">2nd last</item>
-																			<item id="-3" translatable="yes">3rd last</item>
-																			<item id="-4" translatable="yes">4th last</item>
-																			<item id="-5" translatable="yes">5th last</item>
-																		</items>
-																	</object>
-																	<packing>
-																		<property name="expand">False</property>
-																		<property name="fill">True</property>
-																		<property name="position">0</property>
-																	</packing>
-																</child>
-																<child>
-																	<object class="GtkComboBoxText" id="combo_byday_day">
-																		<property name="visible">True</property>
-																		<property name="can-focus">False</property>
-																		<property name="halign">start</property>
-																	</object>
-																	<packing>
-																		<property name="expand">False</property>
-																		<property name="fill">True</property>
-																		<property name="position">1</property>
-																	</packing>
-																</child>
-															</object>
-														</child>
-													</object>
-													<packing>
-														<property name="expand">False</property>
-														<property name="fill">True</property>
-														<property name="position">1</property>
-													</packing>
 												</child>
 											</object>
 											<packing>

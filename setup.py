@@ -78,6 +78,7 @@ setup(
         "python-dateutil",
         "icalendar",
         "tzlocal",
+        "num2words",
     ],
     classifiers = [
         "Development Status :: 3 - Alpha",
