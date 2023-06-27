@@ -49,6 +49,7 @@ class EntryPropertiesDialog:
         'BYHOUR': 'By hour:',
         'BYMINUTE': 'By minute:',
         'BYSECOND': 'By second:',
+        'BYSETPOS': 'By set position:',
         'WKST': 'Week starts:',
         'UNTIL': 'Until:',
         'COUNT': 'Count:'
