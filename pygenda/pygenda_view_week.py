@@ -343,7 +343,7 @@ class View_Week(View_DayUnit_Base):
 
 
     @classmethod
-    def _pre_datecontent_draw(cls, wid:Gtk.Widget, _, day:int) -> bool:
+    def _pre_datecontent_draw(cls, wid:Gtk.Widget, cairo_ctx, day:int) -> bool:
         # Callback called on 'draw' event on date_content.
         # Called before drawing date content.
         # Used to scroll window when cursor has been moved (since we
