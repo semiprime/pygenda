@@ -914,7 +914,11 @@ class RepeatInfo:
             self.byday_idx = int(byday_rule[:-2])
         except ValueError:
             raise RepeatUnsupportedError('Unsupported BYDAY {} in MONTHLY/YEARLY repeat'.format(byday_rule))
-        if (self.byday_idx==0 or abs(self.byday_idx)>4):
+        abs_byday = abs(self.byday_idx)
+        if abs_byday==0 or abs_byday>5:
+            print('Notice: Impossible BYDAY rule: {}'.format(byday_rule), file=stderr)
+            raise RepeatImpossibleError()
+        if (abs_byday==5):
             raise RepeatUnsupportedError('Unsupported BYDAY {} in MONTHLY/YEARLY repeat'.format(byday_rule))
         # Test to see if DTSTART matches RRULE
         if self.firstday_to_byweekdayinmonth(self.dtstart.replace(day=1)) != self.dtstart:
@@ -1146,6 +1150,10 @@ class RepeatInfo:
 class RepeatUnsupportedError(Exception):
     pass
 
+# Exception used to indicate a repeat can never occur, e.g. 32nd day of Jan
+class RepeatImpossibleError(Exception):
+    pass
+
 
 class RepeatIter_simpledelta:
     # Iterator class for RepeatInfo where we can just use a simple delta.
@@ -1332,6 +1340,8 @@ def repeats_in_range(ev:iEvent, start:dt_date, stop:dt_date) -> list:
         raise TypeError('Start/stop must be dates, not datetimes')
     try:
         r_info = RepeatInfo(ev, start, stop)
+    except RepeatImpossibleError:
+        return list() # empty list
     except RepeatUnsupportedError as err:
         # RepeatInfo doesn't handle this type of repeat.
         # Fall back to using rrule - more complete, but slower for simple repeats
