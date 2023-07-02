@@ -18,11 +18,13 @@ clipboard library manually: cd csrc; make; make cp.)
 Building clipboard library
 --------------------------
 This is a small C library required for cutting/copying entries. Built
-automatically with `./setup.py install`. Tested on Gemini, but probably
-needs fixing for other Linux distributions/Windows/MacOS. To build and
-copy to the correct location:
+automatically with `./setup.py install`. Tested on Gemini and Slackware,
+and probably works on other Linux distributions; might need tweaking
+for Windows/MacOS/BSD/other. To build by hand and copy to the correct
+location in the source tree:
 
     cd csrc
+    cmake .
     make
     make cp
 

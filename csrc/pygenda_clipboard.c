@@ -4,7 +4,7 @@
 // Allows Pygenda entries to be copied to the clipboard.
 // Note: Pasting is done in the Python code (pygenda_gui.py).
 //
-// Copyright (C) 2022 Matthew Lewis
+// Copyright (C) 2022,2023 Matthew Lewis
 //
 // This file is part of Pygenda.
 //
@@ -57,7 +57,7 @@ void cb_get_fn(GtkClipboard* clipboard, GtkSelectionData* selection_data, guint 
 		gtk_selection_data_set_text(selection_data, selectionStr[DATA_TXT_PLAIN], -1);
 		break;
 	case DATA_TXT_CALENDAR:
-		gtk_selection_data_set(selection_data, gdk_atom_intern("text/calendar", FALSE),8,selectionStr[type_idx], strlen(selectionStr[type_idx]));
+		gtk_selection_data_set(selection_data, gdk_atom_intern("text/calendar", FALSE), 8, (guchar*)selectionStr[type_idx], strlen(selectionStr[type_idx]));
 		break;
 	}
 }

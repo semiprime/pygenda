@@ -40,6 +40,7 @@ class PygendaEggInstall(bdist_egg):
         if platform == 'linux':
             print("Compiling clipboard library...")
             cdir = '{:s}/csrc'.format(ospath.dirname(__file__))
+            subprocess.run(['cmake','.'], cwd=cdir)
             subprocess.run(['make','clean'], cwd=cdir)
             subprocess.run(['make'], cwd=cdir)
             print("Copying clipboard library...")
