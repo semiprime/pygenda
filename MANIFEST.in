@@ -1,0 +1,12 @@
+# MANIFEST.in
+# Extra rules for files to include in/exclude in *sdist*
+
+include README.md
+include csrc/*.c
+include csrc/CMakeLists.txt
+prune docs
+prune test
+exclude pygenda/locale/*/LC_MESSAGES/pygenda.po
+global-exclude *.so
+global-exclude .gitignore
+global-exclude mypy.ini
