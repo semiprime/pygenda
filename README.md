@@ -122,7 +122,7 @@ Quick config on Gemini/other handhelds
 --------------------------------------
 If you're running Pygenda on a Gemini or similar PDA, the default font
 sizes will probably not be appropriate for the screen size. To fix
-this, use the custom CSS provided in docs/config-examples/gemini.css.
+this, use the custom CSS provided in pygenda/css/gemini.css.
 The easiest way to do this is to import the gemini.css file from your
 own ~/.config/pygenda/pygenda.css file, by adding the line:
 

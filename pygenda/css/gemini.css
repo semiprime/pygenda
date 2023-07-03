@@ -4,6 +4,11 @@ gemini.css
 Example user CSS file for Planet Computers' Gemini PDA. Include from
 ~/.config/pygenda/pygenda.css or copy & adapt as desired. Should also
 be suitable for similar products such as the Cosmo Communicator.
+
+At some point this may be loaded automatically. However, that will
+depend on code to detect the device, which should be fine, but I'd
+prefer to wait until there's more than one device that gets regular
+testing before adding it!
 ******************************/
 
 /* Remove transition animations - they make Gemini feel slow */
