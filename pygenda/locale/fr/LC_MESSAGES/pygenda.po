@@ -22,8 +22,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-27 20:08+0200\n"
-"PO-Revision-Date: 2023-06-27 20:08+0200\n"
+"POT-Creation-Date: 2023-07-04 22:46+0200\n"
+"PO-Revision-Date: 2023-07-04 22:46+0200\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -284,7 +284,11 @@ msgstr "Aller à"
 msgid "Go"
 msgstr "Y aller"
 
-#: pygenda_gui.py:953
+#: pygenda_gui.py:952
+msgid "Source code & documentation: "
+msgstr "Code source et documentation : "
+
+#: pygenda_gui.py:957
 msgid ""
 "A calendar/agenda application written in Python/GTK3. The UI is inspired by "
 "the Agenda apps on the Psion Series 3 and Series 5 PDAs.\n"

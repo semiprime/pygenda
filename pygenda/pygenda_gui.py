@@ -22,7 +22,7 @@
 
 from gi import require_version as gi_require_version
 gi_require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk, GLib, Gio
+from gi.repository import Gtk, Gdk, GdkPixbuf, GLib, Gio
 
 from datetime import date as dt_date, time as dt_time, datetime as dt_datetime, timedelta
 from icalendar import Calendar as iCalendar, Event as iEvent, Todo as iTodo
@@ -947,7 +947,11 @@ class GUI:
         dialog.set_program_name('Pygenda')
         dialog.set_copyright(u'Copyright © 2022,2023 Matthew Lewis')
         dialog.set_license_type(Gtk.License.GPL_3_0_ONLY)
-        dialog.set_logo_icon_name('x-office-calendar')
+        github_url = 'https://github.com/semiprime/pygenda'
+        dialog.set_website(github_url)
+        dialog.set_website_label(_('Source code & documentation: ')+github_url)
+        logo = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, 1, 1)
+        dialog.set_logo(logo)
         dialog.set_authors(('Matthew Lewis',))
         dialog.set_version('version {:s}'.format(__version__))
         dialog.set_comments(_(u'A calendar/agenda application written in Python/GTK3. The UI is inspired by the Agenda apps on the Psion Series 3 and Series 5 PDAs.\nWARNING: This is in-development code, released for testing and feedback. There will be bugs; please report them to: pygenda@semiprime.com.'))
