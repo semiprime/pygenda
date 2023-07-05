@@ -137,7 +137,7 @@ useful for devices with small screens. See "Configuration" above.
 
 Desktop/panel/menu launchers
 ----------------------------
-A sample `pygenda.desktop` file is provided in docs/config-examples/.
+A sample `pygenda.desktop` file is provided in pygenda/app/.
 This should help adding launch icons to the desktop menu/panels etc.
 For example, to add Pygenda to the desktop menu, copy (or create a
 link to) the pygenda.desktop file in the `/usr/share/applications/` or

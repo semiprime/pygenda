@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Pygenda
+Type=Application
+Comment=An agenda application to keep track of your appointments and to-dos
+Comment[fr]=Une application agenda pour noter vos rendez-vous et tâches
+Exec=python3 -m pygenda
+Icon=x-office-calendar
+Categories=Office
+Terminal=false
+StartupNotify=false
+Keywords=agenda;calendar;scheduling;todo;ical;appointments
