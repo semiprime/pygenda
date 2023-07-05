@@ -13,7 +13,7 @@ source directory, so any changes you make in the source are instantly
 available in the "installed" version.
 
 (Note that if you install in Develop mode, you'll need to build the
-clipboard library manually: cd csrc; make; make cp.)
+clipboard library manually, as in the section below.)
 
 Building clipboard library
 --------------------------
@@ -30,26 +30,31 @@ location in the source tree:
 
 Translating strings
 -------------------
-Create a locale/pygenda.pot template from .py and .glade source
-files. In the pygenda subdirectory:
+If you are adding a new language, copy an existing complete .po as a
+template (the French one is probably best choice) and replace the
+given translations with your own. Then skip to "generate .mo" at the
+end of this section.
+
+If you have added or changed strings, then you might need to generate
+a locale/pygenda.pot template. In the pygenda subdirectory:
 
     xgettext --package-name Pygenda --copyright-holder "Matthew Lewis" -k_ -kN_ -o locale/pygenda.pot *.py glade/*.glade
 
-Use .pot to make .po for each language.
+Use .pot to create/update .po for each language.
 
 Existing languages:
 
     cd locale
     msgmerge -U fr/LC_MESSAGES/pygenda.po pygenda.pot
 
-To add new languages:
+To add new languages (don't do this – use the copy method above):
 
     cd locale
     msginit -i pygenda.pot -o de/LC_MESSAGES/pygenda.po -l de_DE
 
 Check/edit the generated .po files, maybe adding translations.
 
-Process each .po to make .mo:
+Process each .po to generate the .mo:
 
     cd fr/LC_MESSAGES
     msgfmt pygenda.po -o pygenda.mo

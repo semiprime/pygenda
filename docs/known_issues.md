@@ -1,11 +1,11 @@
 Known Issues
 ============
-A list of known bugs in & to-dos for Pygenda.
+A list of known bugs in, and to-dos for, Pygenda.
 
-This is incomplete in-development code, released as a preview for
-developers. As such there are many major additions still to do, as
-well as numerous bugs. This is a (certainly incomplete) list to help
-keep track of these issues.
+This is in-development code, released for testing and feedback. As
+such there are many major features still to add, as well as numerous
+bugs. This is a (certainly incomplete) list to help keep track of
+these issues.
 
 Note also, that the code is released as-is and there is no guarantee
 of any sort.

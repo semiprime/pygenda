@@ -12,7 +12,8 @@ files or data stored on calendar servers).**
 
 There are currently **lots of missing/incomplete features** as well as
 **bugs**. For a list of known issues, see: [known_issues.md](docs/known_issues.md).
-If you find any new bugs, please send them to: pygenda@semiprime.com.
+If you find any new bugs, please send them to pygenda@semiprime.com,
+or raise them as issues on GitHub.
 
 *However*, it currently has Week, Year and Todo Views that are functional
 enough that the author is now using Pygenda as his main agenda, so
@@ -89,7 +90,7 @@ Dependencies
 ------------
 Python3. Version >=3.5 (because Gemini's "Gemian" Linux provides Python 3.5).
 
-* Install on Debian/Gemian: `sudo apt install python3`
+* Install on Debian/Gemian: `sudo apt install python3 python3-pip`
 
 GTK+3
 
@@ -159,6 +160,10 @@ For CalDAV configuration, see: [CalDAV.md](docs/CalDAV.md)
 
 The default ICS file is created in `~/.config/pygenda/pygenda.ics`
 but you can change this from the command line or config file.
+
+Contributing
+------------
+See: [Contributing.md](docs/Contributing.md)
 
 Alternatives
 ------------
