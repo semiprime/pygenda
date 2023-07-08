@@ -85,7 +85,7 @@ setup(
         "PyGObject",
         "python-dateutil",
         "icalendar",
-        "tzlocal",
+        "tzlocal!=2.*", # Gemian on GeminiPDA does not work with tzlocal 2.x
         "num2words",
     ],
     classifiers = [
