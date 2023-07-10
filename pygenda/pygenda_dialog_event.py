@@ -949,7 +949,9 @@ class EventDialogController:
         else:
             raise EventPropertyBeyondEditDialog('Editing repeat freq \'{}\' not (yet) supported'.format(rrfreq))
 
-        if rrfreq == 'MONTHLY':
+        if rrfreq == 'YEARLY':
+            cls._seed_reptab_yearly(rrule)
+        elif rrfreq == 'MONTHLY':
             cls._seed_reptab_monthly(rrule)
 
         if rrfreq == 'WEEKLY' and 'BYDAY' in rrule:
@@ -971,6 +973,19 @@ class EventDialogController:
             dt_st = cls.get_date_start() # Won't be none, because seeded
             cls.wid_rep_enddt.set_date(u if u>dt_st else dt_st)
             cls.rep_occs_determines_end = False
+
+
+    @classmethod
+    def _seed_reptab_yearly(cls, rrule:vRecur) -> None:
+        # Called when dialog is opened for a yearly repeating event
+        if 'BYYEARDAY' in rrule:
+            raise EventPropertyBeyondEditDialog('BYYEARDAY in YEARLY repeat not supported')
+        if 'BYWEEKNO' in rrule:
+            raise EventPropertyBeyondEditDialog('BYWEEKNO in YEARLY repeat not supported')
+        if 'BYMONTH' in rrule:
+            raise EventPropertyBeyondEditDialog('BYMONTH in YEARLY repeat not supported')
+        if 'BYDAY' in rrule:
+            raise EventPropertyBeyondEditDialog('BYDAY in YEARLY repeat not supported')
 
 
     @classmethod
