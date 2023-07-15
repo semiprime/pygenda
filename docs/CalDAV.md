@@ -18,14 +18,19 @@ Extra Pygenda dependencies for connecting to a CalDAV server
 ------------------------------------------------------------
 Python3 modules: caldav
 
-    pip3 install caldav # [there's probably an apt equivalent to this]
+    pip3 install caldav # [or apt install python3-caldav]
 
-Note: The Python caldav module has dependencies outside Python: libxml2
+Note 1: On the Gemini, new versions of the caldav module don't work,
+so you'll need to do:
+
+    pip3 install caldav==0.11.0
+
+Note 2: The Python caldav module has dependencies outside Python: libxml2
 & libxslt development. To install these on Debian/Gemian:
 
     sudo apt install libxml2-dev libxslt-dev
 
-Note 2: Installing caldav with pip3 on a Gemini takes a long time
+Note 3: Installing caldav with pip3 on a Gemini takes a long time
 (around ten minutes). In particular, I thought it had frozen when
 running setup.py for lxml.
 
