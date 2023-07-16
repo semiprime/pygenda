@@ -22,8 +22,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-04 22:46+0200\n"
-"PO-Revision-Date: 2023-07-04 22:46+0200\n"
+"POT-Creation-Date: 2023-07-16 22:58+0200\n"
+"PO-Revision-Date: 2023-07-16 22:58+0200\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -58,107 +58,123 @@ msgstr "Évènement"
 msgid "Todo"
 msgstr "Tâche"
 
-#: pygenda_dialog_entryprops.py:130
-msgid "Start date/time:"
-msgstr "Date/heure de commencement :"
-
-#: pygenda_dialog_entryprops.py:132
+#: pygenda_dialog_entryprops.py:126
 msgid "Start date:"
 msgstr "Date de commencement :"
 
-#: pygenda_dialog_entryprops.py:137
-msgid "End date/time:"
-msgstr "Date/heure de fin :"
+#: pygenda_dialog_entryprops.py:126
+msgid "Start date/time:"
+msgstr "Date/heure de commencement :"
 
-#: pygenda_dialog_entryprops.py:139
+#: pygenda_dialog_entryprops.py:127
 msgid "End date:"
 msgstr "Date de fin :"
 
-#: pygenda_dialog_entryprops.py:142 glade/dialog_event.glade:260
+#: pygenda_dialog_entryprops.py:127
+msgid "End date/time:"
+msgstr "Date/heure de fin :"
+
+#: pygenda_dialog_entryprops.py:130 glade/dialog_event.glade:260
 msgid "Duration:"
 msgstr "Durée :"
 
-#: pygenda_dialog_entryprops.py:150
+#: pygenda_dialog_entryprops.py:131
+msgid "Due date:"
+msgstr "Date limite :"
+
+#: pygenda_dialog_entryprops.py:131
+msgid "Due date/time:"
+msgstr "Date/heure limite :"
+
+#: pygenda_dialog_entryprops.py:132
+msgid "Completed date (noncompliant):"
+msgstr "Date d’achèvement (non-conforme) :"
+
+#: pygenda_dialog_entryprops.py:132
+msgid "Completed date/time:"
+msgstr "Date/heure d’achèvement :"
+
+#: pygenda_dialog_entryprops.py:151
 msgid " (timezone: {:s})"
 msgstr " (fuseau horaire : {:s})"
 
-#: pygenda_dialog_entryprops.py:162
+#: pygenda_dialog_entryprops.py:163
 msgid "interval:"
 msgstr "intervalle :"
 
-#: pygenda_dialog_entryprops.py:170
+#: pygenda_dialog_entryprops.py:171
 # Added by hand - not detected by gettext
 msgid "By month:"
 msgstr "Par mois :"
 
-#: pygenda_dialog_entryprops.py:170
+#: pygenda_dialog_entryprops.py:171
 # Added by hand - not detected by gettext
 msgid "By week number:"
 msgstr "Par numero de la semaine :"
 
-#: pygenda_dialog_entryprops.py:170
+#: pygenda_dialog_entryprops.py:171
 # Added by hand - not detected by gettext
 msgid "By year day:"
 msgstr "Par jour de l’année :"
 
-#: pygenda_dialog_entryprops.py:170
+#: pygenda_dialog_entryprops.py:171
 # Added by hand - not detected by gettext
 msgid "By month day:"
 msgstr "Par jour du mois :"
 
-#: pygenda_dialog_entryprops.py:170
+#: pygenda_dialog_entryprops.py:171
 # Added by hand - not detected by gettext
 msgid "By day:"
 msgstr "Par jour :"
 
-#: pygenda_dialog_entryprops.py:170
+#: pygenda_dialog_entryprops.py:171
 # Added by hand - not detected by gettext
 msgid "By hour:"
 msgstr "Par heure :"
 
-#: pygenda_dialog_entryprops.py:170
+#: pygenda_dialog_entryprops.py:171
 # Added by hand - not detected by gettext
 msgid "By minute:"
 msgstr "Par minute :"
 
-#: pygenda_dialog_entryprops.py:170
+#: pygenda_dialog_entryprops.py:171
 # Added by hand - not detected by gettext
 msgid "By second:"
 msgstr "Par seconde :"
 
-#: pygenda_dialog_entryprops.py:170
+#: pygenda_dialog_entryprops.py:171
 # Added by hand - not detected by gettext
 msgid "By set position:"
 msgstr "Par position dans série :"
 
-#: pygenda_dialog_entryprops.py:170
+#: pygenda_dialog_entryprops.py:171
 # Added by hand - not detected by gettext
 msgid "Week starts:"
 msgstr "La semaine commence :"
 
-#: pygenda_dialog_entryprops.py:170
+#: pygenda_dialog_entryprops.py:171
 # Added by hand - not detected by gettext
 msgid "Count:"
 msgstr "Compte :"
 
-#: pygenda_dialog_entryprops.py:175
+#: pygenda_dialog_entryprops.py:176
 msgid "Exception dates:"
 msgstr "Dates omises :"
 
-#: pygenda_dialog_entryprops.py:179
+#: pygenda_dialog_entryprops.py:180
 msgid ";"
 msgstr " ;"
 
-#: pygenda_dialog_entryprops.py:185 glade/dialog_event.glade:378
+#: pygenda_dialog_entryprops.py:186 glade/dialog_event.glade:378
 msgid "Repeats:"
 msgstr "Répétition :"
 
-#: pygenda_dialog_entryprops.py:196 glade/dialog_event.glade:915
+#: pygenda_dialog_entryprops.py:197 glade/dialog_event.glade:915
 #: glade/dialog_todo.glade:181
 msgid "Status:"
 msgstr "Statut :"
 
-#: pygenda_dialog_entryprops.py:216 pygenda_dialog_event.py:413
+#: pygenda_dialog_entryprops.py:217 pygenda_dialog_event.py:413
 # Added by hand - not detected by gettext
 msgid "Audio"
 msgstr "Audio"
@@ -169,19 +185,19 @@ msgstr "Afficher"
 msgid "Email"
 msgstr "E-mail"
 
-#: pygenda_dialog_entryprops.py:231 pygenda_dialog_event.py:421
+#: pygenda_dialog_entryprops.py:232 pygenda_dialog_event.py:421
 msgid "“{:s}”"
 msgstr "« {:s} »"
 
-#: pygenda_dialog_entryprops.py:235
+#: pygenda_dialog_entryprops.py:236
 msgid "Alarms:"
 msgstr "Alarmes :"
 
-#: pygenda_dialog_entryprops.py:248
+#: pygenda_dialog_entryprops.py:249
 msgid "Description ({}):"
 msgstr "Description ({}) :"
 
-#: pygenda_dialog_entryprops.py:250 pygenda_dialog_entryprops.py:253
+#: pygenda_dialog_entryprops.py:251 pygenda_dialog_entryprops.py:254
 #: glade/dialog_event.glade:107 glade/dialog_todo.glade:86
 msgid "Description:"
 msgstr "Description :"
@@ -230,21 +246,21 @@ msgstr "Nouvel\névènement"
 msgid "Edit Event"
 msgstr "Modifier évènement"
 
-#: pygenda_dialog_event.py:1059 glade/dialog_event.glade:396
+#: pygenda_dialog_event.py:1074 glade/dialog_event.glade:396
 #: glade/dialog_event.glade:659 glade/dialog_event.glade:933
 #: glade/dialog_todo.glade:159 glade/dialog_todo.glade:198
 msgid "None"
 msgstr "Rien"
 
-#: pygenda_dialog_event.py:1451
+#: pygenda_dialog_event.py:1466
 msgid "Exception dates"
 msgstr "Dates omises"
 
-#: pygenda_dialog_event.py:1468
+#: pygenda_dialog_event.py:1483
 msgid "Add date"
 msgstr "Ajouter date"
 
-#: pygenda_dialog_event.py:1489
+#: pygenda_dialog_event.py:1504
 msgid "Remove date(s)"
 msgstr "Retirer date(s)"
 
@@ -256,39 +272,39 @@ msgstr "Resultats de recherche"
 msgid "No results found"
 msgstr "Pas d’entrées trouvées"
 
-#: pygenda_dialog_todo.py:77
+#: pygenda_dialog_todo.py:84
 msgid "New To-do"
 msgstr "Nouvelle tâche"
 
-#: pygenda_dialog_todo.py:88
+#: pygenda_dialog_todo.py:95
 msgid "Edit To-do"
 msgstr "Modifier tâche"
 
-#: pygenda_gui.py:866
+#: pygenda_gui.py:877
 msgid "Delete Entry"
 msgstr "Supprimer l’entrée"
 
-#: pygenda_gui.py:872
+#: pygenda_gui.py:883
 msgid "Delete all repeats:\n“{:s}”?"
 msgstr "Supprimer toutes les entrées\n« {:s} » ?"
 
-#: pygenda_gui.py:874
+#: pygenda_gui.py:885
 msgid "Delete entry:\n“{:s}”?"
 msgstr "Supprimer l’entrée\n« {:s} » ?"
 
-#: pygenda_gui.py:902 glade/main.glade:550
+#: pygenda_gui.py:913 glade/main.glade:550
 msgid "Go To"
 msgstr "Aller à"
 
-#: pygenda_gui.py:914
+#: pygenda_gui.py:925
 msgid "Go"
 msgstr "Y aller"
 
-#: pygenda_gui.py:952
+#: pygenda_gui.py:963
 msgid "Source code & documentation: "
 msgstr "Code source et documentation : "
 
-#: pygenda_gui.py:957
+#: pygenda_gui.py:968
 msgid ""
 "A calendar/agenda application written in Python/GTK3. The UI is inspired by "
 "the Agenda apps on the Psion Series 3 and Series 5 PDAs.\n"

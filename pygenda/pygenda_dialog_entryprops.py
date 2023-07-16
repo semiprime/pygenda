@@ -123,23 +123,24 @@ class EntryPropertiesDialog:
 
     def _add_datetime_rows(self) -> None:
         # Add datetime start/end/duration properties to bottom of grid
-        if 'DTSTART' in self.entry:
-            dt_st = self.entry['DTSTART']
-            dt_st_dt = dt_st.dt
-            if isinstance(dt_st_dt, dt_datetime):
-                self._add_row(_('Start date/time:'), str(dt_st_dt)+self._tz_str(dt_st))
-            else:
-                self._add_row(_('Start date:'), str(dt_st_dt))
-        if 'DTEND' in self.entry:
-            dt_end = self.entry['DTEND']
-            dt_end_dt = dt_end.dt
-            if isinstance(dt_end_dt, dt_datetime):
-                self._add_row(_('End date/time:'), str(dt_end_dt)+self._tz_str(dt_end))
-            else:
-                self._add_row(_('End date:'), str(dt_end_dt))
+        self._add_datetime_row_if_exists('DTSTART', _('Start date:'), _('Start date/time:'))
+        self._add_datetime_row_if_exists('DTEND', _('End date:'), _('End date/time:'))
         if 'DURATION' in self.entry:
             dur = self.entry['DURATION'].dt
             self._add_row(_('Duration:'), str(dur))
+        self._add_datetime_row_if_exists('DUE', _('Due date:'), _('Due date/time:'))
+        self._add_datetime_row_if_exists('COMPLETED', _('Completed date (noncompliant):'), _('Completed date/time:'))
+
+
+    def _add_datetime_row_if_exists(self, ical_lab:str, ui_date_lab:str, ui_dt_lab:str) -> None:
+        # If ical_lab date/time property exists, add it to bottom of grid
+        if ical_lab in self.entry:
+            dt = self.entry[ical_lab]
+            dt_dt = dt.dt
+            if isinstance(dt_dt, dt_datetime):
+                self._add_row(ui_dt_lab, str(dt_dt)+self._tz_str(dt))
+            else:
+                self._add_row(ui_date_lab, str(dt_dt))
 
 
     @staticmethod
