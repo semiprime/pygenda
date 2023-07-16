@@ -50,6 +50,7 @@ TodoDialogController = None # type:Any
 FindDialogController = None # type:Any
 EntryPropertiesDialog = None # type:Any
 EventPropertyBeyondEditDialog = None # type:Any
+TodoPropertyBeyondEditDialog = None # type:Any
 
 
 # Singleton class for top-level GUI control
@@ -360,12 +361,12 @@ class GUI:
     def _init_dialogs() -> None:
         # Import and initialise dialog classes.
         # Doing imports here avoids circular dependencies.
-        global EventDialogController, EventPropertyBeyondEditDialog, TodoDialogController, EntryPropertiesDialog, FindDialogController
+        global EventDialogController, EventPropertyBeyondEditDialog, TodoDialogController, TodoPropertyBeyondEditDialog, EntryPropertiesDialog, FindDialogController
 
         from .pygenda_dialog_event import EventDialogController, EventPropertyBeyondEditDialog
         EventDialogController.init()
 
-        from .pygenda_dialog_todo import TodoDialogController
+        from .pygenda_dialog_todo import TodoDialogController, TodoPropertyBeyondEditDialog
         TodoDialogController.init() # Need to do this after Todo View init
 
         from .pygenda_dialog_find import FindDialogController
@@ -765,6 +766,16 @@ class GUI:
         except EventPropertyBeyondEditDialog as exc:
             print('Warning: {:s} - showing entry properties'.format(str(exc)), file=stderr)
             cls.dialog_showentryprops(en)
+
+
+    @classmethod
+    def edit_or_display_todo(cls, todo:iTodo, list_idx:int=None) -> None:
+        # Bring up dialog to edit todo item, or show details if not editable
+        try:
+            TodoDialogController.edit_todo(todo, list_idx)
+        except TodoPropertyBeyondEditDialog as exc:
+            print('Warning: {:s} - showing todo properties'.format(str(exc)), file=stderr)
+            cls.dialog_showentryprops(todo)
 
 
     @classmethod

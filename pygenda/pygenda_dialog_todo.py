@@ -34,6 +34,13 @@ from .pygenda_calendar import Calendar
 from .pygenda_entryinfo import EntryInfo
 
 
+# Exception used to indicate dialog can't display todo properties.
+# In these cases there is a danger of the user accidentally changing
+# the todo property.
+class TodoPropertyBeyondEditDialog(Exception):
+    pass
+
+
 # Singleton class to manage Todo dialog
 class TodoDialogController:
     dialog = None # type: Gtk.Dialog
@@ -110,6 +117,8 @@ class TodoDialogController:
             if 'PRIORITY' in todo:
                 p = int(todo['PRIORITY'])
                 cls.wid_priority.set_active(p if 1<=p<=9 else 0)
+            if 'DTSTART' in todo or 'DTEND' in todo or 'DUE' in todo or 'COMPETED' in todo:
+                raise TodoPropertyBeyondEditDialog('Editing todo with date not supported')
             if 'STATUS' in todo:
                 s = todo['STATUS']
                 if s in Calendar.STATUS_LIST_TODO:

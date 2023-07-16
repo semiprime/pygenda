@@ -590,7 +590,7 @@ class View_Todo(View):
         if en is None:
             TodoDialogController.new_todo(list_idx=cls.cursor_todo_list())
         else:
-            TodoDialogController.edit_todo(en, list_idx=cls.cursor_todo_list())
+            GUI.edit_or_display_todo(en, list_idx=cls.cursor_todo_list())
 
 
     @classmethod
