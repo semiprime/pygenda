@@ -671,12 +671,32 @@ class EventDialogController:
             if repon=='FROMEND':
                 bymtdy = dtst.day - monthrange(dtst.year,dtst.month)[1] - 1
             elif repon=='WEEKDAY':
-                dayocc = (dtst.day+6)//7
+                dayocc = cls._weekday_count_in_month(dtst)
                 bywkdy = cls.MAP_RDAY_TO_RRULEDAY[dtst.weekday()](dayocc)
             elif repon=='WEEKDAY_FROMEND':
-                dayocc = (dtst.day-monthrange(dtst.year,dtst.month)[1]-1)//7
+                dayocc = cls._weekday_fromend_in_month(dtst)
                 bywkdy = cls.MAP_RDAY_TO_RRULEDAY[dtst.weekday()](dayocc)
         return bymtdy,bywkdy
+
+
+    @staticmethod
+    def _weekday_count_in_month(dt:dt_date) -> int:
+        # Convenience function, returns "rrule-style" count of weekday in month.
+        # E.g. if dt is 3rd Monday in month, return 3.
+        return (dt.day+6)//7
+
+
+    @staticmethod
+    def _weekday_fromend_in_month(dt:dt_date) -> int:
+        # Convenience function, returns "from end" count of weekday in month.
+        # E.g. if dt is 2nd to last Monday in month, return -2.
+        return (dt.day-monthrange(dt.year,dt.month)[1]-1)//7
+
+
+    @staticmethod
+    def _weekday_abbr(dt:dt_date) -> str:
+        # Convenience function, returns rrule weekday abbreviation
+        return RepeatInfo.DAY_ABBR[dt.weekday()]
 
 
     @classmethod
@@ -711,9 +731,9 @@ class EventDialogController:
             cls.wid_repeaton_month.append('FROMEND',_('{:s} to last day of month').format(num2words(fromend+1,to='ordinal_num',lang=lang)))
         cls.wid_repeaton_month.append('WEEKDAY',_('{ord:s} {day:s} of month').format(ord=num2words((dt.day+6)//7,to='ordinal_num',lang=lang),day=daynm))
         if fromend < 7:
-	        cls.wid_repeaton_month.append('WEEKDAY_FROMEND',_('Last {day:s} of month').format(day=daynm))
+            cls.wid_repeaton_month.append('WEEKDAY_FROMEND',_('Last {day:s} of month').format(day=daynm))
         else:
-	        cls.wid_repeaton_month.append('WEEKDAY_FROMEND',_('{ord:s} to last {day:s} of month').format(ord=num2words(fromend//7+1,to='ordinal_num',lang=lang),day=daynm))
+            cls.wid_repeaton_month.append('WEEKDAY_FROMEND',_('{ord:s} to last {day:s} of month').format(ord=num2words(fromend//7+1,to='ordinal_num',lang=lang),day=daynm))
         cls.wid_repeaton_month.set_active(active) # restore saved value
 
 
@@ -1002,20 +1022,18 @@ class EventDialogController:
             byday = byday[0]
             byday_day = byday[-2:]
             dt_st = cls.get_date_start() # Won't be none, because seeded
-            if RepeatInfo.DAY_ABBR[dt_st.weekday()]!= byday_day:
+            if cls._weekday_abbr(dt_st) != byday_day:
                 raise EventPropertyBeyondEditDialog('Repeat BYDAY does not match start date')
             try:
                 byday_ord = int(byday[0:-2])
             except ValueError:
                 raise EventPropertyBeyondEditDialog('Non-integer value for BYDAY')
-            if byday_ord > 0:
-                if byday_ord != (dt_st.day+6)//7:
-                    raise EventPropertyBeyondEditDialog('Repeat BYDAY does not match start date')
+            if byday_ord == cls._weekday_count_in_month(dt_st):
                 cls.wid_repeaton_month.set_active_id('WEEKDAY')
-            else: # byday_ord<0
-                if byday_ord != (dt_st.day-monthrange(dt_st.year,dt_st.month)[1]-1)//7:
-                    raise EventPropertyBeyondEditDialog('Repeat BYDAY does not match start date')
+            elif byday_ord == cls._weekday_fromend_in_month(dt_st):
                 cls.wid_repeaton_month.set_active_id('WEEKDAY_FROMEND')
+            else:
+                raise EventPropertyBeyondEditDialog('Repeat BYDAY does not match start date')
         elif has_bymonthday:
             bymday = rrule['BYMONTHDAY']
             if len(bymday)!=1:
@@ -1139,12 +1157,12 @@ class EventDialogController:
                         bymonthday = dt.day - monthrange(dt.year,dt.month)[1] - 1 # type: ignore
                         bymonthday = str(bymonthday)
                     elif repon=='WEEKDAY':
-                        dayocc = (dt.day+6)//7
-                        dayabbr = RepeatInfo.DAY_ABBR[dt.weekday()]
+                        dayocc = cls._weekday_count_in_month(dt)
+                        dayabbr = cls._weekday_abbr(dt)
                         byday = str(dayocc)+dayabbr # e.g. '2SU' - 2nd Sunday
                     elif repon=='WEEKDAY_FROMEND':
-                        dayoccn = (dt.day-monthrange(dt.year,dt.month)[1]-1)//7
-                        dayabbr = RepeatInfo.DAY_ABBR[dt.weekday()]
+                        dayoccn = cls._weekday_fromend_in_month(dt)
+                        dayabbr = cls._weekday_abbr(dt)
                         byday = str(dayoccn)+dayabbr # e.g. '-2MO' - 2nd last Monday
             # If not "repeat forever", when repeats stop
             count = None
