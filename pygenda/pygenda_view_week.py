@@ -403,10 +403,18 @@ class View_Week(View_DayUnit_Base):
         # en_changes: bool indicating if displayed entries need updating too
         if cls._week_viewed != start_of_week(View._cursor_date):
             cls._set_label_text()
+            cls._reset_scrollers()
             en_changes = True
         if en_changes:
             cls._set_entry_text()
         cls._show_cursor()
+
+
+    @classmethod
+    def _reset_scrollers(cls) -> None:
+        # Resets all day vertical scrollbars to top
+        for s in cls._day_scroll:
+            s.get_vadjustment().set_value(0)
 
 
     @classmethod
