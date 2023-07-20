@@ -612,22 +612,12 @@ class EventDialogController:
         # Function to recalculate & update repeat Occurences count
         # from End Date.
         # Uses dateutil:rrule to do calculation.
-        try:
-            fr = cls.MAP_RTYPE_TO_RRULE[rtype]
-        except KeyError:
-            # !! Don't know how to sync
-            print('Warning: Sync for {} not implemented'.format(rtype), file=stderr)
-            return
-        if rtype=='MONTHLY':
-            bymtdy,bywkdy = cls._get_monthly_bymonthday_byweekday()
-        else:
-            bymtdy = None
-            bywkdy = None
-        dtst = cls.get_date_start() # Without time, because time breaks calc
-        interv = cls.get_repeat_interval()
         rend = cls.wid_rep_enddt.get_date_or_none()
-        if dtst is not None and rend is not None:
-            rr = du_rrule.rrule(fr, dtstart=dtst, interval=interv, until=rend, byweekday=bywkdy, bymonthday=bymtdy)
+        if rend is None:
+            # End date is invalid (e.g. 31st Feb), exit
+            return
+        rr = cls._get_rrule_for_sync(rtype, rend=rend)
+        if rr is not None:
             c = rr.count()
             if c>=0:
                 cls._set_occs_min(0 if c==0 else 1) # possibly allow "0"
@@ -639,25 +629,35 @@ class EventDialogController:
         # Function to synchronise End Date repeat field from Occurrences in
         # complex situations, e.g. leapday (29 Feb) or monthly late in month.
         # Use rrule class for these.
+        occs = cls.get_repeat_occurrences()
+        rr = cls._get_rrule_for_sync(rtype, occs=occs)
+        if rr is not None:
+            edt = list(rr)[-1]
+            cls.wid_rep_enddt.set_date(edt)
+
+
+    @classmethod
+    def _get_rrule_for_sync(cls, rtype:str, occs:int=None, rend:dt_date=None) -> Optional[du_rrule.rrule]:
+        # Return an rrule object suitable for calculating end date/no of occs.
+        # Only one of occs/rend must be None. Otherwise get infinite repeats.
+        dtst = cls.get_datetime_start()
+        if dtst is None:
+            # Start date is invalid (e.g. 31st Feb), exit
+            return None
         try:
             fr = cls.MAP_RTYPE_TO_RRULE[rtype]
         except KeyError:
             # !! Don't know how to sync
             print('Warning: Sync for {} not implemented'.format(rtype), file=stderr)
-            return
-        dtst = cls.get_datetime_start()
-        if dtst is None:
-            return
-        interv = cls.get_repeat_interval()
-        occs = cls.get_repeat_occurrences()
+            return None
         if rtype=='MONTHLY':
             bymtdy,bywkdy = cls._get_monthly_bymonthday_byweekday()
         else:
             bymtdy = None
             bywkdy = None
-        rr = du_rrule.rrule(fr, dtstart=dtst, interval=interv, count=occs, byweekday=bywkdy, bymonthday=bymtdy)
-        edt = list(rr)[-1]
-        cls.wid_rep_enddt.set_date(edt)
+        interv = cls.get_repeat_interval()
+        rr = du_rrule.rrule(fr, dtstart=dtst, interval=interv, count=occs, until=rend, bymonthday=bymtdy, byweekday=bywkdy)
+        return rr
 
 
     @classmethod
