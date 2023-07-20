@@ -90,8 +90,7 @@ class EventDialogController:
 
     wid_rep_type = None # type: Gtk.ComboBox
     revs_repeat = None
-    revs_repeaton_lab = None
-    revs_repeaton_month = None
+    revs_repeaton = None
     wid_rep_interval = None # type: Gtk.SpinButton
     wid_rep_forever = None # type: Gtk.CheckButton
     wid_repeaton_month = None # type: Gtk.ComboBox
@@ -207,8 +206,7 @@ class EventDialogController:
         # Called on app startup.
         cls.wid_rep_type = GUI._builder.get_object('combo_repeat_type')
         cls.revs_repeat = cls._revealers_from_ids('revealer_repeat_l','revealer_repeat_e')
-        cls.revs_repeaton_lab = cls._revealers_from_ids('revealer_repeaton_l')
-        cls.revs_repeaton_month = cls._revealers_from_ids('revealer_repeaton_month')
+        cls.revs_repeaton = cls._revealers_from_ids('revealer_repeaton_l','revealer_repeaton_opts')
 
         cls.wid_rep_interval = GUI._builder.get_object('repeat_interval')
         cls.wid_rep_forever = GUI._builder.get_object('repeat_forever')
@@ -359,8 +357,7 @@ class EventDialogController:
         st = wid.get_active()>0
         cls._do_multireveal(cls.revs_repeat, st)
         r_monthly = (wid.get_active_id()=='MONTHLY') # Boolean
-        cls._do_multireveal(cls.revs_repeaton_lab, r_monthly)
-        cls._do_multireveal(cls.revs_repeaton_month, r_monthly)
+        cls._do_multireveal(cls.revs_repeaton, r_monthly)
         # (We assume above that repeat-on combobox is already setup)
         cls._cancel_empty_desc_allowed()
         return True # don't propagate event
