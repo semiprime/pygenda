@@ -331,6 +331,7 @@ class GUI:
         cls._box_view_cont.reorder_child(cls._eventbox, view_pos)
         cls._eventbox.add(cls.view_widgets[cls._view_idx])
         cls._eventbox.connect('key-press-event', cls.keypress)
+        cls._eventbox.connect('key-release-event', cls.keyrelease)
         cls.view_widgets[cls._view_idx].grab_focus() # so it gets keypresses
         del(cls._box_view_cont) # don't need this anymore
 
@@ -525,6 +526,13 @@ class GUI:
                 cls.switch_view(None, cls._toggle_view_idx)
         else:
             cls.views[cls._view_idx].keypress(wid,ev)
+        return True # event handled - don't propagate
+
+
+    @classmethod
+    def keyrelease(cls, wid:Gtk.Widget, ev:Gdk.EventKey) -> bool:
+        # Called whenever a key is released
+        cls.views[cls._view_idx].keyrelease(wid,ev)
         return True # event handled - don't propagate
 
 

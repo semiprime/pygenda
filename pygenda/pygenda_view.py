@@ -101,6 +101,13 @@ class View:
 
 
     @classmethod
+    def keyrelease(cls, wid:Gtk.Widget, ev:Gdk.Event) -> None:
+        # Called (from GUI.keypress()) on key release event
+        # Default does nothing. Derived views may override.
+        pass
+
+
+    @classmethod
     def new_entry_from_example(cls, en:Union[iEvent,iTodo]) -> None:
         # Creates new entry based on entry en. Used for pasting entries.
         # Type of entry should depend on View (e.g. Todo View -> to-do item).

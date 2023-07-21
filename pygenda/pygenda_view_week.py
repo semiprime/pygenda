@@ -56,6 +56,7 @@ class View_Week(View_DayUnit_Base):
     _last_cursor = None
     _scroll_to_cursor_in_day = None
     _target_entry = None
+    _is_repeat_key = False
     CURSOR_STYLE = 'weekview_cursor'
 
     SHOW_LOC_ALWAYS = 1 # constant 'enum' for _show_location flag
@@ -445,18 +446,20 @@ class View_Week(View_DayUnit_Base):
     def _cursor_move_lt(cls) -> None:
         # Callback for user moving cursor left.
         i = day_in_week(View._cursor_date)
-        d = -7 if i<3 else (-3 if i==3 else -4)
+        d = -4 if i>3 else -3 if (not cls._is_repeat_key or i==3) else -7
         cls.cursor_inc(timedelta(days=d), 0)
         View._today_toggle_date = None
+        cls._is_repeat_key = True # for next time, unless cancelled by release
 
 
     @classmethod
     def _cursor_move_rt(cls) -> None:
         # Callback for user moving cursor right.
         i = day_in_week(View._cursor_date)
-        d = 4 if i<3 else 7
+        d = (4 if i<3 else 7) if cls._is_repeat_key else 4 if i<4 else 3
         cls.cursor_inc(timedelta(days=d), 0)
         View._today_toggle_date = None
+        cls._is_repeat_key = True # for next time, unless cancelled by release
 
 
     @classmethod
@@ -486,6 +489,13 @@ class View_Week(View_DayUnit_Base):
             if ev.state & (Gdk.ModifierType.CONTROL_MASK|Gdk.ModifierType.MOD1_MASK)==0 and Gdk.KEY_exclam <= ev.keyval <= Gdk.KEY_asciitilde:
                 date = cls.cursor_date()
                 GLib.idle_add(EventDialogController.new_event, chr(ev.keyval), date)
+
+
+    @classmethod
+    def keyrelease(cls, wid:Gtk.Widget, ev:Gdk.EventKey) -> None:
+        # Handle key release event.
+        # Cancels flag to indicate keypress is, in fact, a key repeat.
+        cls._is_repeat_key = False
 
 
     @classmethod
