@@ -104,41 +104,57 @@ class TodoDialogController:
 
 
     @classmethod
-    def _do_todo_dialog(cls, txt:str=None, todo:iTodo=None, list_idx:Optional[int]=0) -> Tuple[int,EntryInfo,int]:
+    def _do_todo_dialog(cls, todo:iTodo=None, txt:str=None, list_idx:Optional[int]=0) -> Tuple[int,EntryInfo,int]:
         # Do the core work displaying todo dialog and extracting result.
-        if list_idx==None: # View has not specified a default todo list
-            list_idx = 0
-        cls.wid_priority.set_active(0)
-        cls.wid_status.set_active(0)
-        if todo is not None:
-            # existing entry - take values
-            cls.wid_desc.set_text(todo['SUMMARY'] if 'SUMMARY' in todo else'')
-            cls.wid_desc.grab_focus()
-            if 'PRIORITY' in todo:
-                p = int(todo['PRIORITY'])
-                cls.wid_priority.set_active(p if 1<=p<=9 else 0)
-            if 'DTSTART' in todo or 'DTEND' in todo or 'DUE' in todo or 'COMPETED' in todo:
-                raise TodoPropertyBeyondEditDialog('Editing todo with date not supported')
-            if 'STATUS' in todo:
-                s = todo['STATUS']
-                if s in Calendar.STATUS_LIST_TODO:
-                    cls.wid_status.set_active_id(s)
-        elif txt is None:
-            cls.wid_desc.set_text('') # clear text
-        else:
-            cls.wid_desc.set_text(txt)
-            cls.wid_desc.set_position(len(txt))
-        cls.wid_todolist.set_active(list_idx)
-        cls.wid_desc.grab_focus_without_selecting()
-
+        cls._seed_fields(todo=todo, txt=txt, list_idx=list_idx)
         try:
             while True:
                 response = cls.dialog.run()
                 break
         finally:
             cls.dialog.hide()
-
         return response,cls._get_entryinfo(),cls.wid_todolist.get_active()
+
+
+    @classmethod
+    def _seed_fields(cls, todo:Optional[iTodo], txt:Optional[str], list_idx:Optional[int]=0) -> None:
+        # Initialise fields when dialog is opened.
+        # Data optionally from an existing todo, or text used as summary.
+
+        # First, set to default values (possibly overwritten later)
+        cls._set_fields_to_defaults()
+
+        if todo is not None:
+            # existing entry - take values
+            if 'SUMMARY' in todo:
+                cls.wid_desc.set_text(todo['SUMMARY'])
+            cls.wid_desc.grab_focus() # also selects contents
+            if 'PRIORITY' in todo:
+                p = int(todo['PRIORITY'])
+                if 1<=p<=9:
+                    cls.wid_priority.set_active(p)
+            if 'DTSTART' in todo or 'DTEND' in todo or 'DUE' in todo or 'COMPETED' in todo:
+                raise TodoPropertyBeyondEditDialog('Editing todo with date not supported')
+            if 'STATUS' in todo:
+                s = todo['STATUS']
+                if s in Calendar.STATUS_LIST_TODO:
+                    cls.wid_status.set_active_id(s)
+        elif txt is not None:
+            cls.wid_desc.set_text(txt)
+            cls.wid_desc.set_position(len(txt))
+
+        if list_idx is not None:
+            cls.wid_todolist.set_active(list_idx)
+
+
+    @classmethod
+    def _set_fields_to_defaults(cls) -> None:
+        # Set dialog fields to default values
+        cls.wid_desc.set_text('')
+        cls.wid_desc.grab_focus_without_selecting()
+        cls.wid_todolist.set_active(0)
+        cls.wid_priority.set_active(0)
+        cls.wid_status.set_active(0)
 
 
     @classmethod
