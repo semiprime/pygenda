@@ -637,7 +637,7 @@ class EventDialogController:
     def _get_rrule_for_sync(cls, rtype:str, occs:int=None, rend:dt_date=None) -> Optional[du_rrule.rrule]:
         # Return an rrule object suitable for calculating end date/no of occs.
         # Only one of occs/rend must be None. Otherwise get infinite repeats.
-        dtst = cls.get_datetime_start()
+        dtst = cls.get_date_start() # Without time - time breaks occs calc
         if dtst is None:
             # Start date is invalid (e.g. 31st Feb), exit
             return None
