@@ -256,7 +256,13 @@ class View_Todo(View):
                     mark_label.set_valign(Gtk.Align.START)
                     mark_label.get_style_context().add_class('todoview_marker')
                     row.add(mark_label)
-                    item_text = Gtk.Label(td['SUMMARY'] if 'SUMMARY' in td else '')
+                    txt = ''
+                    if 'DUE' in td:
+                        due_dt = td['DUE'].dt
+                        due_dt_st = due_dt.strftime(GUI.date_formatting_numeric)
+                        txt += '({:s} {:s}) '.format(_('Due:'), due_dt_st)
+                    txt += td['SUMMARY'] if 'SUMMARY' in td else ''
+                    item_text = Gtk.Label(txt)
                     item_text.get_style_context().add_class('todoview_itemtext')
                     item_text.set_xalign(0)
                     item_text.set_yalign(0)

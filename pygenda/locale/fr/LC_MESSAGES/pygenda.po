@@ -22,8 +22,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-16 22:58+0200\n"
-"PO-Revision-Date: 2023-07-16 22:58+0200\n"
+"POT-Creation-Date: 2023-07-25 23:35+0200\n"
+"PO-Revision-Date: 2023-07-25 23:35+0200\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -185,7 +185,7 @@ msgstr "Afficher"
 msgid "Email"
 msgstr "E-mail"
 
-#: pygenda_dialog_entryprops.py:232 pygenda_dialog_event.py:421
+#: pygenda_dialog_entryprops.py:232 pygenda_dialog_event.py:418
 msgid "“{:s}”"
 msgstr "« {:s} »"
 
@@ -202,65 +202,65 @@ msgstr "Description ({}) :"
 msgid "Description:"
 msgstr "Description :"
 
-#: pygenda_dialog_event.py:251
+#: pygenda_dialog_event.py:249
 msgid "Time before event"
 msgstr "Temps avant l’évènement"
 
-#: pygenda_dialog_event.py:252
+#: pygenda_dialog_event.py:250
 msgid "Action"
 msgstr "Action"
 
-#: pygenda_dialog_event.py:705
+#: pygenda_dialog_event.py:722
 msgid "1st day of month"
 msgstr "1er du mois"
 
-#: pygenda_dialog_event.py:707
+#: pygenda_dialog_event.py:724
 msgid "{ord:s} day of month"
 msgstr "{card:d} du mois"
 
-#: pygenda_dialog_event.py:709
+#: pygenda_dialog_event.py:726
 msgid "Last day of month"
 msgstr "Dernier jour du mois"
 
-#: pygenda_dialog_event.py:711
+#: pygenda_dialog_event.py:728
 msgid "{:s} to last day of month"
 msgstr "{:s} au dernier jour du mois"
 
-#: pygenda_dialog_event.py:712
+#: pygenda_dialog_event.py:729
 msgid "{ord:s} {day:s} of month"
 msgstr "{ord:s} {day:s} du mois"
 
-#: pygenda_dialog_event.py:714
+#: pygenda_dialog_event.py:731
 msgid "Last {day:s} of month"
 msgstr "Dernier {day:s} du mois"
 
-#: pygenda_dialog_event.py:716
+#: pygenda_dialog_event.py:733
 msgid "{ord:s} to last {day:s} of month"
 msgstr "{ord:s} au dernier {day:s} du mois"
 
-#: pygenda_dialog_event.py:723 glade/main.glade:500
+#: pygenda_dialog_event.py:740 glade/main.glade:500
 msgid "New Event"
 msgstr "Nouvel\névènement"
 
-#: pygenda_dialog_event.py:735
+#: pygenda_dialog_event.py:752
 msgid "Edit Event"
 msgstr "Modifier évènement"
 
-#: pygenda_dialog_event.py:1074 glade/dialog_event.glade:396
+#: pygenda_dialog_event.py:1089 glade/dialog_event.glade:396
 #: glade/dialog_event.glade:659 glade/dialog_event.glade:933
 #: glade/dialog_todo.glade:159 glade/dialog_todo.glade:198
 msgid "None"
 msgstr "Rien"
 
-#: pygenda_dialog_event.py:1466
+#: pygenda_dialog_event.py:1481
 msgid "Exception dates"
 msgstr "Dates omises"
 
-#: pygenda_dialog_event.py:1483
+#: pygenda_dialog_event.py:1498
 msgid "Add date"
 msgstr "Ajouter date"
 
-#: pygenda_dialog_event.py:1504
+#: pygenda_dialog_event.py:1519
 msgid "Remove date(s)"
 msgstr "Retirer date(s)"
 
@@ -280,31 +280,31 @@ msgstr "Nouvelle tâche"
 msgid "Edit To-do"
 msgstr "Modifier tâche"
 
-#: pygenda_gui.py:877
+#: pygenda_gui.py:885
 msgid "Delete Entry"
 msgstr "Supprimer l’entrée"
 
-#: pygenda_gui.py:883
+#: pygenda_gui.py:891
 msgid "Delete all repeats:\n“{:s}”?"
 msgstr "Supprimer toutes les entrées\n« {:s} » ?"
 
-#: pygenda_gui.py:885
+#: pygenda_gui.py:893
 msgid "Delete entry:\n“{:s}”?"
 msgstr "Supprimer l’entrée\n« {:s} » ?"
 
-#: pygenda_gui.py:913 glade/main.glade:550
+#: pygenda_gui.py:921 glade/main.glade:550
 msgid "Go To"
 msgstr "Aller à"
 
-#: pygenda_gui.py:925
+#: pygenda_gui.py:933
 msgid "Go"
 msgstr "Y aller"
 
-#: pygenda_gui.py:963
+#: pygenda_gui.py:971
 msgid "Source code & documentation: "
 msgstr "Code source et documentation : "
 
-#: pygenda_gui.py:968
+#: pygenda_gui.py:976
 msgid ""
 "A calendar/agenda application written in Python/GTK3. The UI is inspired by "
 "the Agenda apps on the Psion Series 3 and Series 5 PDAs.\n"
@@ -325,19 +325,23 @@ msgstr "Tâches"
 msgid "_Todo View"
 msgstr "Mode _Tâches"
 
-#: pygenda_view_week.py:66
+#: pygenda_view_todo.py:263
+msgid "Due:"
+msgstr "Limite :"
+
+#: pygenda_view_week.py:67
 msgid "_Week View"
 msgstr "Mode _Hebdomadaire"
 
-#: pygenda_view_week.py:71
+#: pygenda_view_week.py:72
 msgid "week_view_accel"
 msgstr "h"
 
-#: pygenda_view_week.py:204
+#: pygenda_view_week.py:205
 msgid "Week 53/Week 1"
 msgstr "Semaine 53/Semaine 1"
 
-#: pygenda_view_week.py:206
+#: pygenda_view_week.py:207
 msgid "Week {}"
 msgstr "Semaine {}"
 
