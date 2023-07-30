@@ -324,7 +324,7 @@ class EventDialogController:
         ti = cls.wid_timed_buttons[1].get_active()
         cls._do_multireveal(cls.revs_timedur, ti)
         cls._cancel_empty_desc_allowed()
-        return True # don't propagate event
+        return False # propagate event
 
 
     @classmethod
@@ -335,7 +335,7 @@ class EventDialogController:
         ad = cls.wid_timed_buttons[2].get_active()
         cls._do_multireveal(cls.revs_allday, ad)
         cls._cancel_empty_desc_allowed()
-        return True # don't propagate event
+        return False # propagate event
 
 
     @classmethod
@@ -346,7 +346,7 @@ class EventDialogController:
         if cls.wid_desc.get_text(): # if desc field is non-empty
             cls._cancel_empty_desc_allowed()
         cls._is_valid_event(set_style=False) # remove error styles if present
-        return True # don't propagate event
+        return False # propagate event
 
 
     @classmethod
@@ -360,7 +360,7 @@ class EventDialogController:
         cls._do_multireveal(cls.revs_repeaton, r_monthly)
         # (We assume above that repeat-on combobox is already setup)
         cls._cancel_empty_desc_allowed()
-        return True # don't propagate event
+        return False # propagate event
 
 
     @classmethod
@@ -382,7 +382,7 @@ class EventDialogController:
                     cls.wid_rep_occs.set_value(1)
 
         cls._cancel_empty_desc_allowed()
-        return True # don't propagate event
+        return False # propagate event
 
 
     @classmethod
@@ -396,7 +396,7 @@ class EventDialogController:
             # Also, user has interacted with settings, so expect a valid entry
             cls._cancel_empty_desc_allowed()
         cls._revealer_alarmlist.set_reveal_child(state)
-        return True # don't propagate event
+        return False # must propagate event for active CSS selector to apply
 
 
     @classmethod
@@ -500,7 +500,7 @@ class EventDialogController:
                 cls._unblock_tmdur_signals()
         cls._cancel_empty_desc_allowed()
         cls._is_valid_event(set_style=False) # remove error styles if present
-        return True # don't propagate event
+        return False # propagate event
 
 
     @classmethod
@@ -522,7 +522,7 @@ class EventDialogController:
             cls._unblock_rep_occend_signals()
         cls._cancel_empty_desc_allowed()
         cls._is_valid_event(set_style=False) # remove error styles if present
-        return True # don't propagate event
+        return False # propagate event
 
 
     @classmethod
@@ -703,7 +703,7 @@ class EventDialogController:
         cls._block_rep_occend_signals()
         cls._repon_wid_datesync()
         cls._unblock_rep_occend_signals()
-        return True # don't propagate event
+        return False # propagate event
 
 
     @classmethod
@@ -1351,14 +1351,14 @@ class EventDialogController:
             cls.exception_list = dates
             cls._set_label_rep_list()
         edc.destroy()
-        return True # event handled - don't propagate event
+        return False # propagate event
 
 
     @classmethod
     def alarms_understood(cls, *args) -> bool:
         # Handler for Alarms Understood button - show content
         cls.wid_alarmstack.set_visible_child_name('content')
-        return True # event handled - don't propagate event
+        return False # propagate event
 
 
     @classmethod
