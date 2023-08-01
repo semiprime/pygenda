@@ -74,8 +74,6 @@ Code fixes/additions are welcome. If you need some ideas:
 * Add a "Long description" or "Attendees" field to the Event Dialog
   (or any other property that you find useful).
 
-* Add a "Due date" field to the Todo Dialog.
-
 * Update the "Today" marker at midnight (or if the date changes).
 
 * Deleting a repeated item: Add the choice to "delete all occurrences"

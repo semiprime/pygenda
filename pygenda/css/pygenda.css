@@ -496,6 +496,17 @@ radio, check, buttonbox > button, .dialogbutton, combobox button, spinbutton, sw
 	padding:1px;
 }
 
+/* These rules for "hidden" elements fix GTK warnings about negative content
+   width for Date/Time widgets that are contained in revealers */
+.hidden {
+	border-width:0;
+	padding:0;
+}
+
+.hidden.dialog_error {
+	transition-duration:0;
+}
+
 radio:focus, check:focus, buttonbox > button:focus, .dialogbutton:focus, combobox button:focus, spinbutton:focus, switch:focus, notebook:focus tab:checked, .focus {
 	border-color:#398ee7;
 	border-width:2px;

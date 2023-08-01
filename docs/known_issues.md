@@ -22,11 +22,11 @@ Major
 * Many event properties are not implemented (details, attendees,
   attachments, etc.)
 
-* Many todo item properties are not implemented (due/expires date,
-  user tags, timed-but-undated, etc.)
+* Many todo item properties are not implemented (details, start date,
+  user tags, timed-but-undated (use daily repeating?), etc.)
 
-* Todo items can only be sorted by priority - add sort by-status,
-  by-date, manual...
+* Todo items can only be sorted by priority - add sort by duedate,
+  by status, manual...
 
 * Repeated event UI missing many elements (more complete repeat by
   BYMONTHDAY, BYSETPOS, Monday & Wednesday every week, first weekday
@@ -77,6 +77,10 @@ Medium
 * Need InfoPrints (a.k.a. toast notifications) for some situations
 
 * Todo items cannot be shown in Week or Year views
+
+* Todo due-dates display improvements: date without year; date with day;
+  date like "tomorrow", "today", "2 days", "yesterday!"; don't show if
+  completed/cancelled; formatting for today/overdue items.
 
 * When deleting a repeated event, all are deleted. Should offer option
   of deleting this one (better, also offer delete all from, all before...)

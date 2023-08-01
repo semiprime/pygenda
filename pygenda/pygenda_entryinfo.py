@@ -38,6 +38,7 @@ class EntryInfo:
     rep_exceptions = None
     categories = None
     priority = None
+    duedate = None
 
     TYPE_EVENT=0
     TYPE_TODO=1
@@ -98,6 +99,11 @@ class EntryInfo:
     def set_priority(self, pri:Optional[int]) -> None:
         # Set priority for this entry
         self.priority = pri if pri and 0<pri<=9 else None
+
+
+    def set_duedate(self, dt:Optional[dt_datetime]) -> None:
+        # Set duetime for this entry (should be a todo)
+        self.duedate = dt
 
 
     def add_alarm(self, alarm_info:'AlarmInfo') -> None:

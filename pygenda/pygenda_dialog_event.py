@@ -815,8 +815,10 @@ class EventDialogController:
 
     @classmethod
     def _set_fields_to_defaults(cls, date:Optional[dt_date]) -> None:
-        # Set dialog fields to default values
-        # 'date' is an optional argument, usually the cursor date
+        # Set dialog fields to default values.
+        # 'date' is an optional argument, usually the cursor date.
+        # If you change this, also change _fields_are_defaults()
+        # and maybe _is_valid_event() & _reset_err_style() below.
 
         # Desc. This is not a user interaction, so block signal
         cls.wid_desc.handler_block(cls._wid_desc_changed_handler)
@@ -1198,6 +1200,7 @@ class EventDialogController:
         # CSS class to the widget, so the error is visibly indicated.
         # If the event is valid then it removes the error style, so
         # the error indication will disappear (regardless of set_style).
+        # Note: If you change this, also update _reset_err_style() below.
 
         ret = True
         # Check description is good (optional)

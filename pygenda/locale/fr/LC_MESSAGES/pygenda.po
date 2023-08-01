@@ -22,8 +22,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-25 23:35+0200\n"
-"PO-Revision-Date: 2023-07-25 23:35+0200\n"
+"POT-Creation-Date: 2023-07-31 23:39+0200\n"
+"PO-Revision-Date: 2023-07-31 23:39+0200\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -78,7 +78,7 @@ msgstr "Date/heure de fin :"
 msgid "Duration:"
 msgstr "Durée :"
 
-#: pygenda_dialog_entryprops.py:131
+#: pygenda_dialog_entryprops.py:131 glade/dialog_todo.glade:181
 msgid "Due date:"
 msgstr "Date limite :"
 
@@ -170,7 +170,7 @@ msgid "Repeats:"
 msgstr "Répétition :"
 
 #: pygenda_dialog_entryprops.py:197 glade/dialog_event.glade:915
-#: glade/dialog_todo.glade:181
+#: glade/dialog_todo.glade:231
 msgid "Status:"
 msgstr "Statut :"
 
@@ -246,21 +246,21 @@ msgstr "Nouvel\névènement"
 msgid "Edit Event"
 msgstr "Modifier évènement"
 
-#: pygenda_dialog_event.py:1089 glade/dialog_event.glade:396
+#: pygenda_dialog_event.py:1091 glade/dialog_event.glade:396
 #: glade/dialog_event.glade:659 glade/dialog_event.glade:933
-#: glade/dialog_todo.glade:159 glade/dialog_todo.glade:198
+#: glade/dialog_todo.glade:159 glade/dialog_todo.glade:248
 msgid "None"
 msgstr "Rien"
 
-#: pygenda_dialog_event.py:1481
+#: pygenda_dialog_event.py:1484
 msgid "Exception dates"
 msgstr "Dates omises"
 
-#: pygenda_dialog_event.py:1498
+#: pygenda_dialog_event.py:1501
 msgid "Add date"
 msgstr "Ajouter date"
 
-#: pygenda_dialog_event.py:1519
+#: pygenda_dialog_event.py:1522
 msgid "Remove date(s)"
 msgstr "Retirer date(s)"
 
@@ -272,11 +272,11 @@ msgstr "Resultats de recherche"
 msgid "No results found"
 msgstr "Pas d’entrées trouvées"
 
-#: pygenda_dialog_todo.py:84
+#: pygenda_dialog_todo.py:116
 msgid "New To-do"
 msgstr "Nouvelle tâche"
 
-#: pygenda_dialog_todo.py:95
+#: pygenda_dialog_todo.py:127
 msgid "Edit To-do"
 msgstr "Modifier tâche"
 
@@ -467,7 +467,7 @@ msgstr "Lieu :"
 msgid "Tentative"
 msgstr "Provisoire"
 
-#: glade/dialog_event.glade:935 glade/dialog_todo.glade:202
+#: glade/dialog_event.glade:935 glade/dialog_todo.glade:252
 msgid "Cancelled"
 msgstr "Annulé"
 
@@ -511,15 +511,15 @@ msgstr "1 (la plus haute)"
 msgid "9 (Lowest)"
 msgstr "9 (la plus basse)"
 
-#: glade/dialog_todo.glade:199
+#: glade/dialog_todo.glade:249
 msgid "Action required"
 msgstr "Action requise"
 
-#: glade/dialog_todo.glade:200
+#: glade/dialog_todo.glade:250
 msgid "In progress"
 msgstr "En cours"
 
-#: glade/dialog_todo.glade:201
+#: glade/dialog_todo.glade:251
 msgid "Completed"
 msgstr "Achevé"
 
