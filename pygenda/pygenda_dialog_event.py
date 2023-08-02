@@ -70,12 +70,6 @@ class EventDialogController:
     wid_date = None # type: WidgetDate
     wid_tabs = None # type: Gtk.Notebook
 
-    # _empty_desc_allowed has three possible values:
-    #   None - empty desc allowed in dialog (signals delete event)
-    #   True - empty desc allowed, but can turn False!
-    #   False - empty desc not allowed in dialog (e.g. new event)
-    _empty_desc_allowed = None # type: Optional[bool]
-
     wid_timed_buttons = None # type: Gtk.Box
     # Create widgets for time & duration fields
     wid_time = WidgetTime(dt_time(hour=9))
@@ -110,6 +104,7 @@ class EventDialogController:
     dur_determines_end = False
     exception_list = [] # type: List[dt_date]
 
+    show_alarm_warning = True
     wid_alarmstack = None # type: Gtk.Stack
     wid_alarmset = None # type: Gtk.Switch
     _revealer_alarmlist = None # type: Gtk.Revealer
@@ -239,6 +234,7 @@ class EventDialogController:
     def _init_alarmfields(cls) -> None:
         # Initialise widgets etc in the Event dialog under the "Alarm" tab.
         # Called on app startup.
+        cls.show_alarm_warning = Config.get_bool('new_event','show_alarm_warning')
         cls.wid_alarmstack = GUI._builder.get_object('alarm-stack')
         cls.wid_alarmset = GUI._builder.get_object('alarm-set')
         cls._revealer_alarmlist = GUI._builder.get_object('revealer_alarmlist')
@@ -309,42 +305,27 @@ class EventDialogController:
 
 
     @classmethod
-    def _cancel_empty_desc_allowed(cls) -> None:
-        # Change _empty_desc_allowed True->False
-        # Leave unchanged if is None
-        if cls._empty_desc_allowed:
-            cls._empty_desc_allowed = False
-
-
-    @classmethod
     def _do_timed_toggle(cls, wid:Gtk.RadioButton) -> bool:
         # Callback. Called when "timed" radio button changes state.
-        # Reveals/hides appropriate sub-obtions, and flags that
-        # dialog state had been changed.
+        # Reveals/hides appropriate sub-obtions.
         ti = cls.wid_timed_buttons[1].get_active()
         cls._do_multireveal(cls.revs_timedur, ti)
-        cls._cancel_empty_desc_allowed()
         return False # propagate event
 
 
     @classmethod
     def _do_allday_toggle(cls, wid:Gtk.RadioButton) -> bool:
         # Callback. Called when "all day" radio button changes state.
-        # Reveals/hides appropriate sub-obtions, and flags that
-        # dialog state had been changed.
+        # Reveals/hides appropriate sub-obtions.
         ad = cls.wid_timed_buttons[2].get_active()
         cls._do_multireveal(cls.revs_allday, ad)
-        cls._cancel_empty_desc_allowed()
         return False # propagate event
 
 
     @classmethod
     def _desc_changed(cls, wid:Gtk.Entry) -> bool:
         # Callback. Called when event description is changed by user.
-        # Flags that dialog state had been changed.
         # Removes error state styling if it is no longer needed.
-        if cls.wid_desc.get_text(): # if desc field is non-empty
-            cls._cancel_empty_desc_allowed()
         cls._is_valid_event(set_style=False) # remove error styles if present
         return False # propagate event
 
@@ -359,7 +340,6 @@ class EventDialogController:
         r_monthly = (wid.get_active_id()=='MONTHLY') # Boolean
         cls._do_multireveal(cls.revs_repeaton, r_monthly)
         # (We assume above that repeat-on combobox is already setup)
-        cls._cancel_empty_desc_allowed()
         return False # propagate event
 
 
@@ -381,7 +361,6 @@ class EventDialogController:
                     cls.wid_rep_enddt.set_date(sdt)
                     cls.wid_rep_occs.set_value(1)
 
-        cls._cancel_empty_desc_allowed()
         return False # propagate event
 
 
@@ -393,8 +372,6 @@ class EventDialogController:
             # User just enabled alarms, so if no alarms, create default ones
             cls._add_alarm(AlarmInfo(-cls._default_alarm_before,action='AUDIO'))
             cls._add_alarm(AlarmInfo(-cls._default_alarm_before,action='DISPLAY',desc=cls.wid_desc.get_text()))
-            # Also, user has interacted with settings, so expect a valid entry
-            cls._cancel_empty_desc_allowed()
         cls._revealer_alarmlist.set_reveal_child(state)
         return False # must propagate event for active CSS selector to apply
 
@@ -498,7 +475,6 @@ class EventDialogController:
                     cls.wid_dur.set_duration(end_dttm - st_dttm)
             finally:
                 cls._unblock_tmdur_signals()
-        cls._cancel_empty_desc_allowed()
         cls._is_valid_event(set_style=False) # remove error styles if present
         return False # propagate event
 
@@ -520,7 +496,6 @@ class EventDialogController:
             cls._sync_rep_occs_end()
         finally:
             cls._unblock_rep_occend_signals()
-        cls._cancel_empty_desc_allowed()
         cls._is_valid_event(set_style=False) # remove error styles if present
         return False # propagate event
 
@@ -738,7 +713,6 @@ class EventDialogController:
     def new_event(cls, txt:str=None, date:dt_date=None) -> None:
         # Called to implement "new event" from GUI, e.g. menu
         cls.dialog.set_title(_('New Event'))
-        cls._empty_desc_allowed = True # initially allowed, can switch to False
         response,ei = cls._do_event_dialog(txt=txt, date=date)
         if response==Gtk.ResponseType.OK and ei.desc:
             ev = Calendar.new_entry(ei)
@@ -750,7 +724,6 @@ class EventDialogController:
     def edit_event(cls, event:iEvent, subtab:int=None) -> None:
         # Called to implement "edit event" from GUI
         cls.dialog.set_title(_('Edit Event'))
-        cls._empty_desc_allowed = None # empty desc always allowed (for delete)
         response,ei = cls._do_event_dialog(event=event, subtab=subtab)
         if response==Gtk.ResponseType.OK:
             if ei.desc:
@@ -758,6 +731,9 @@ class EventDialogController:
                 GUI.cursor_goto_event(event)
                 GUI.view_redraw(en_changes=True)
             else: # Description text has been deleted in dialog
+                # This should now be impossible since the removal of
+                # _empty_desc_allowed flag. Leaving in as a "just in case".
+                print('Warning: Dialog with empty description accepted as valid. Fall back to offering delete option.', file=stderr)
                 GUI.dialog_deleteentry(event)
 
 
@@ -779,12 +755,19 @@ class EventDialogController:
         # Unblock signals when dialog is active (user interaction -> updates)
         cls._unblock_tmdur_signals()
         cls._unblock_rep_occend_signals()
+        discard_on_empty = (event is None) # True if creating a new event
         try:
             while True:
                 response = cls.dialog.run()
-                if response!=Gtk.ResponseType.OK or cls._is_valid_event(set_style=True):
+                if response!=Gtk.ResponseType.OK:
                     break
-                cls._cancel_empty_desc_allowed() # after OK, desc required
+                if discard_on_empty and cls._fields_are_defaults():
+                    # New event & nothing entered, so discard as a null entry
+                    response = Gtk.ResponseType.CANCEL
+                    break
+                if cls._is_valid_event(set_style=True):
+                    break
+                discard_on_empty = False # only allow discard first time
         finally:
             # re-block signals
             cls._block_tmdur_signals()
@@ -846,7 +829,7 @@ class EventDialogController:
         # No need to set wid_rep_enddt because it will be synced when revealed
 
         # Alarm tab
-        if Config.get_bool('new_event','show_alarm_warning'):
+        if cls.show_alarm_warning:
             cls.wid_alarmstack.set_visible_child_name('warning')
         cls.wid_alarmset.set_active(False)
         cls.alarmlist_model.clear()
@@ -1112,6 +1095,28 @@ class EventDialogController:
 
 
     @classmethod
+    def _fields_are_defaults(cls) -> bool:
+        # Return True if all fields are defaults, False if any non-default
+        if cls.wid_desc.get_text():
+            return False
+        if cls.get_date_start() is None: # Date has been edited & is invalid
+            return False
+        if not cls.wid_timed_buttons[0].get_active():
+            return False
+        if cls.wid_rep_type.get_active() != 0:
+            return False
+        if cls.show_alarm_warning and cls.wid_alarmstack.get_visible_child_name() != 'warning':
+            return False
+        if cls.wid_alarmset.get_active():
+            return False
+        if cls.wid_location.get_text():
+            return False
+        if cls.wid_status.get_active() != 0:
+            return False
+        return True
+
+
+    @classmethod
     def _get_entryinfo(cls) -> EntryInfo:
         # Decipher dialog fields and return info as an EntryInfo object.
         desc = cls.wid_desc.get_text()
@@ -1205,7 +1210,7 @@ class EventDialogController:
         ret = True
         # Check description is good (optional)
         ctx = cls.wid_desc.get_style_context()
-        if cls._empty_desc_allowed==False and not cls.wid_desc.get_text(): # is empty string
+        if not cls.wid_desc.get_text(): # is empty string
             ret = False
             if set_style:
                 ctx.add_class(GUI.STYLE_ERR)
