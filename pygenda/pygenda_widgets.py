@@ -135,7 +135,7 @@ class _WidgetDateTimeBase(Gtk.Box):
             sel_bnds = False
 
         # Move left/right
-        if at_st and ev.keyval==Gdk.KEY_Left and idx>0:
+        if at_st and idx>0 and (ev.keyval==Gdk.KEY_Left or (not sel_bnds and ev.keyval==Gdk.KEY_BackSpace)):
             self._elts[idx-1].grab_focus()
             return True
         if at_end and ev.keyval==Gdk.KEY_Right and idx+1<len(self._elts):
