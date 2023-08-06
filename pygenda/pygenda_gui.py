@@ -478,7 +478,7 @@ class GUI:
     @classmethod
     def _init_comboboxes(cls) -> None:
         # Connect ComboBox events to handlers for extra features.
-        for cb_id in ('combo_repeat_type','combo_repeaton_month','combo_status','combo_todo_list','combo_todo_priority','combo_todo_status'):
+        for cb_id in ('combo_repeat_type','combo_repeaton_year','combo_repeaton_month','combo_status','combo_todo_list','combo_todo_priority','combo_todo_status'):
             cb = cls._builder.get_object(cb_id)
             cb.connect('key-press-event', cls._combobox_keypress)
 

@@ -34,6 +34,7 @@ class EntryInfo:
     rep_count = None
     rep_until = None
     rep_byday = None
+    rep_bymonth = None
     rep_bymonthday = None
     rep_exceptions = None
     categories = None
@@ -76,7 +77,7 @@ class EntryInfo:
         assert dur is None or self.end_dt is None
         self.duration = dur
 
-    def set_repeat_info(self, reptype:str, interval:int=None, count:int=None, until:dt_date=None, byday:str=None, bymonthday:str=None, except_list=None) -> None:
+    def set_repeat_info(self, reptype:str, interval:int=None, count:int=None, until:dt_date=None, byday:str=None, bymonth:str=None, bymonthday:str=None, except_list=None) -> None:
         # Set repeat details for this Entry
         assert until is None or count is None
         self.rep_type = reptype
@@ -84,6 +85,7 @@ class EntryInfo:
         self.rep_count = count
         self.rep_until = until
         self.rep_byday = byday # e.g. '-1MO' = last Monday
+        self.rep_bymonth = bymonth # e.g. '2' = February
         self.rep_bymonthday = bymonthday # e.g. '-2' = second to last day
         self.rep_exceptions = except_list
 

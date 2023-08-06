@@ -376,6 +376,8 @@ class Calendar:
             rr_options['COUNT'] = [e_inf.rep_count]
         if e_inf.rep_byday is not None:
             rr_options['BYDAY'] = [e_inf.rep_byday]
+        if e_inf.rep_bymonth is not None:
+            rr_options['BYMONTH'] = [e_inf.rep_bymonth]
         if e_inf.rep_bymonthday is not None:
             rr_options['BYMONTHDAY'] = [e_inf.rep_bymonthday]
         ev.add('RRULE', rr_options)

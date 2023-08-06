@@ -432,17 +432,48 @@
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
 												<child>
-													<object class="GtkComboBoxText" id="combo_repeaton_month">
+													<object class="GtkBox">
 														<property name="visible">True</property>
 														<property name="can-focus">False</property>
-														<property name="halign">start</property>
-														<property name="active">0</property>
-														<items>
-															<item id="STD">Xth day of month</item>
-															<item id="FROMEND">Xth to last day of month</item>
-															<item id="WEEKDAY">Xth WEEKDAY of month</item>
-															<item id="WEEKDAY_FROMEND">Xth to last WEEKDAY of month</item>
-														</items>
+														<property name="orientation">vertical</property>
+														<property name="homogeneous">True</property>
+														<child>
+															<object class="GtkComboBoxText" id="combo_repeaton_year">
+																<property name="visible">True</property>
+																<property name="can-focus">False</property>
+																<property name="halign">start</property>
+																<property name="active">0</property>
+																<items>
+																	<item id="STD">Xth MONTH</item>
+																	<item id="WEEKDAY">Xth WEEKDAY of MONTH</item>
+																	<item id="WEEKDAY_FROMEND">Xth to last WEEKDAY of MONTH</item>
+																</items>
+															</object>
+															<packing>
+																<property name="expand">False</property>
+																<property name="fill">True</property>
+																<property name="position">0</property>
+															</packing>
+														</child>
+														<child>
+															<object class="GtkComboBoxText" id="combo_repeaton_month">
+																<property name="visible">True</property>
+																<property name="can-focus">False</property>
+																<property name="halign">start</property>
+																<property name="active">0</property>
+																<items>
+																	<item id="STD">Xth day of month</item>
+																	<item id="FROMEND">Xth to last day of month</item>
+																	<item id="WEEKDAY">Xth WEEKDAY of month</item>
+																	<item id="WEEKDAY_FROMEND">Xth to last WEEKDAY of month</item>
+																</items>
+															</object>
+															<packing>
+																<property name="expand">False</property>
+																<property name="fill">True</property>
+																<property name="position">1</property>
+															</packing>
+														</child>
 													</object>
 												</child>
 											</object>
