@@ -110,6 +110,8 @@ Medium
 * Ctrl+z does not work to undo in text entry fields. (Surprisingly, GTK3
   does not take care of this. Need to wait for GTK4? Port to QT??)
 
+* An undo/redo function would be useful
+
 * Copying/cutting entries doesn't work on all platforms. This functionality
   relies on a small C library, due to limits of Python GObject module.
   Builds on my devices and on Gemini. Needs looking at for other Linux
@@ -164,6 +166,16 @@ Medium
   is now correct. This doesn't happen with CalDAV server, because in
   CalendarConnectorCalDAV::add_entry() it re-creates a new ics entry
   and (crucially) parses it, which gives the correct time.
+
+* It would be better if the device was detected automatically at launch
+  and the appropriate CSS loaded, rather than the user having to setup
+  a user CSS to import the appropriate device CSS. (Before doing this,
+  we should test on, and have CSS for, more than two platforms.)
+
+* It's sometimes easy to accidentally cancel edits to an entry. One
+  possible factor is that up/down navigation in the dialog by default
+  takes the focus to the Cancel button. Maybe add a "Discard changes?"
+  dialog if changes have been made and editing is cancelled.
 
 Minor
 -----
