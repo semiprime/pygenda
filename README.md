@@ -59,10 +59,45 @@ with Pygenda (see COPYING file). If not, see <https://www.gnu.org/licenses/>.
 
 Run/install
 -----------
-(See note about dependencies below.)
+**Gemini PDA** (**possibly the Cosmo too**, but I don't have one to test):
+See the [Gemini quickstart guide](docs/quickstart-geminipda.md) for
+installing the latest release (recommended).
 
-To run without installing, cd to the root directory of the project (containing
-this readme), and run:
+The sections below are for those running from source (e.g. from a
+GitHub clone), or who want to know more technical details.
+
+Dependencies
+------------
+Python3. Version >=3.5 (because Gemini's "Gemian" Linux provides Python 3.5).
+
+* Install on Debian: `sudo apt install python3 python3-pip`
+
+GTK+3:
+
+* Install on Debian: `sudo apt install gtk+3`
+
+If you are running a recent version of pip then the required Python
+modules should be installed automatically, so you can skip to the next
+section. If you want to check by hand, the required modules are:
+PyGObject3 (for gi), icalendar, python-dateutil, tzlocal, num2words.
+
+* Install on Debian: `sudo apt install python3-gi python3-icalendar python3-dateutil python3-tzlocal python3-num2words`
+* Or install them using pip3: `pip3 install [--user] pygobject icalendar python-dateutil tzlocal num2words`
+
+Note: On Gemian on the Gemini, with Python3.5, pip3 installed tzlocal
+version 2.x, which did not work, giving errors like "No such file or
+directory: 'getprop'" at startup. You may therefore like to specify
+another version of tzlocal (v1.5.1 should work).
+
+That should be enough for basic usage of pygenda, but if you want to
+use a CalDAV server (recommended for real use) there are some extra
+dependencies. See setup details in: [CalDAV.md](docs/CalDAV.md)
+
+Launching Pygenda
+-----------------
+If you have installed the dependencies by hand then you can run
+Pygenda directly from the root directory of the project (containing
+this readme), with the command:
 
 	python3 -m pygenda
 
@@ -72,11 +107,12 @@ Better/recommended: install the Python module with (for example)...
 
 (You can uninstall the module with `pip3 uninstall pygenda`.)
 
-NOTE: Gemian (Debian port for Gemini PDA) doesn't install the Python module
-dependencies. The reason for this appears to be old pip/setuptools on Gemian.
-I recommend installing these dependencies manually – see "Dependencies" below.
+NOTE: Gemian on the Gemini PDA doesn't install the Python module
+dependencies. To get it to do this, either update pip (see the
+[Gemini quickstart](docs/quickstart-geminipda.md)) or install
+the dependencies by hand (see "Dependencies" above).
 
-Then you can now run Pygenda from anywhere with:
+Now you can now run Pygenda from anywhere with:
 
 	python3 -m pygenda
 
@@ -85,31 +121,6 @@ There are a few command-line options, which you can view using:
 	python3 -m pygenda --help
 
 For more complete settings, see "Configuration", below.
-
-Dependencies
-------------
-Python3. Version >=3.5 (because Gemini's "Gemian" Linux provides Python 3.5).
-
-* Install on Debian/Gemian: `sudo apt install python3 python3-pip`
-
-GTK+3
-
-* Install on Debian: `sudo apt install gtk+3`
-
-Python3 modules: PyGObject3 (for gi), icalendar, python-dateutil, tzlocal, num2words
-
-* Install on Debian: `sudo apt install python3-gi python3-icalendar python3-dateutil python3-tzlocal python3-num2words`
-* Or install them using pip3: `pip3 install [--user] pygobject icalendar python-dateutil tzlocal num2words`
-
-Note: When I tested on Gemian on the Gemini, pip3 installed tzlocal
-version 2.1, which did not work (although versions 1 to 4 worked on a
-Linux laptop). If you get errors like "No such file or directory:
-'getprop'" at startup, try installing a different version of tzlocal
-with either apt or pip3 (v1.5.1 should work on Gemian with Python 3.5).
-
-That should be enough to start Pygenda, but if you want to use a
-CalDAV server (recommended for real use) there are some extra
-dependencies. See setup details in: [CalDAV.md](docs/CalDAV.md)
 
 Configuration
 -------------
@@ -140,11 +151,8 @@ Desktop/panel/menu launchers
 ----------------------------
 A sample `pygenda.desktop` file is provided in pygenda/app/.
 This should help adding launch icons to the desktop menu/panels etc.
-For example, to add Pygenda to the desktop menu, copy (or create a
-link to) the pygenda.desktop file in the `/usr/share/applications/` or
-`~/.local/share/applications/` directory; to add a launcher to the
-LXQt panel, edit the `~/.config/lxqt/panel.conf` file and add a line
-in the [quicklaunch] section (& restart LXQt).
+For information about how to add a launcher to your desktop menu
+or add a panel launcher in LXQt, see the [Gemini quickstart guide](docs/quickstart-geminipda.md).
 
 Usage
 -----

@@ -2,22 +2,32 @@ Pygenda for Gemini PDA "Quick Start" Guide
 ==========================================
 This guide will lead you through installation and basic configuration
 of the most recent release of Pygenda on a Gemini PDA running Gemian
-Linux. It is intended for users who want to install/run/test Pygenda.
+Linux (the instructions might work with a Cosmo Communicator too, but
+I haven't been able to test this – I would be grateful to hear from
+anyone who can test this guide on a Cosmo).
 
+The guide is intended for users who want to install/run/test Pygenda.
 If you want to contribute to or modify Pygenda, then you probably want
 to get the latest version from GitHub (which is usually a little ahead
-of the latest release). This guide may be useful to refer to for
-sensible options.
+of the latest official release). This guide may be useful to refer to
+for initial configuration.
 
 Note that Pygenda is alpha software, and as such has **lots of
 missing/incomplete features** as well as **bugs**. It is released for
 testing and feedback purposes, but you may also find it useful.
 
+This guide may seem rather long. This is partly because Gemian Linux
+has not been updated for several years, so it is necessary to make
+some changes so that standard Debian packages can be installed. If you
+are using these instructions to help you install Pygenda on a different
+(relatively up-to-date) Linux distribution, then it should be simpler
+than described here: there will be no need to edit the apt sources
+files or update pip.
+
 Preliminaries
 -------------
 First, check that you have the correct device and operating system for
-this guide: the Gemini PDA made my Planet Computers (it might work on
-other Planet Computers devices – feedback welcome). This should be
+this guide: the Gemini PDA made my Planet Computers. This should be
 running Gemian Linux (a version of Debian), *not* Android.
 
 To check your Gemian (Debian) version, open a command prompt on the
