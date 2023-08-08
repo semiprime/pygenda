@@ -74,7 +74,7 @@ def print_vevent(desc, date, time=None, endtime=None, daycount=None, repeat=None
     print('END:VEVENT', end='\r\n')
 
 
-def print_vtodo(desc, cat=None, priority=None, status=None, date=None):
+def print_vtodo(desc, cat=None, priority=None, status=None, duedate=None):
     print('BEGIN:VTODO', end='\r\n')
     print('SUMMARY:{:s}'.format(desc), end='\r\n')
     if cat is not None:
@@ -83,10 +83,10 @@ def print_vtodo(desc, cat=None, priority=None, status=None, date=None):
         print('PRIORITY:{:d}'.format(priority), end='\r\n')
     if status is not None:
         print('STATUS:{:s}'.format(status), end='\r\n')
-    if date is not None:
-        if isinstance(date, str):
-            date = date.strptime(date,'%Y-%m-%d').date()
-        print('DTSTART;VALUE=DATE:{:04d}{:02d}{:02d}'.format(date.year, date.month, date.day), end='\r\n')
+    if duedate is not None:
+        if isinstance(duedate, str):
+            duedate = datetime.strptime(duedate,'%Y-%m-%d')
+        print('DUE;VALUE=DATE:{:04d}{:02d}{:02d}'.format(duedate.year, duedate.month, duedate.day), end='\r\n')
     print_stamp_uid()
     print('END:VTODO', end='\r\n')
 
@@ -219,7 +219,7 @@ print_vevent('Thai with Jay+Rich?', '{:04d}-{:02d}-{:02d}'.format(YEAR, 3, 14),s
 #list3_filter = holiday
 
 print_vtodo('Book flu vaccinations')
-print_vtodo('Renew domain names')
+print_vtodo('Renew domain names', duedate='{:04d}-09-19'.format(YEAR))
 print_vtodo('Phone bank')
 
 # Exercises
