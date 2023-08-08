@@ -22,8 +22,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-05 20:20+0200\n"
-"PO-Revision-Date: 2023-08-05 20:20+0200\n"
+"POT-Creation-Date: 2023-08-08 19:45+0200\n"
+"PO-Revision-Date: 2023-08-08 19:45+0200\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -372,6 +372,10 @@ msgstr ""
 "ATTENTION : Cette application est en cours de développement et elle est "
 "publiée à des fins de test et feedback. Il y aura des bogues ; veuillez les "
 "rapporter à : pygenda@semiprime.com."
+
+#: pygenda_gui.py:977
+msgid "Thanks for testing &amp; feedback"
+msgstr "Merci pour les tests et les feedbacks"
 
 #: pygenda_view_todo.py:44
 msgid "To-do"

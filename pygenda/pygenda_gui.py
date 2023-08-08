@@ -974,6 +974,7 @@ class GUI:
         dialog.set_authors(('Matthew Lewis',))
         dialog.set_version('version {:s}'.format(__version__))
         dialog.set_comments(_(u'A calendar/agenda application written in Python/GTK3. The UI is inspired by the Agenda apps on the Psion Series 3 and Series 5 PDAs.\nWARNING: This is in-development code, released for testing and feedback. There will be bugs; please report them to: pygenda@semiprime.com.'))
+        dialog.add_credit_section(_('Thanks for testing &amp; feedback'),('Edward Hasbrouck', 'Neil Sands'))
         dialog.show_all()
         dialog.run()
         dialog.destroy()

@@ -90,6 +90,11 @@ See [known_issues.md](known_issues.md) for more!
 
 The file [Development.md](Development.md) contains some development hints.
 
+If you contribute a change, please do add your name or pseudonym to
+the Contributors section in the About dialog, or let us know your
+preferred name and we'll add it. (If you'd rather not be listed,
+that's fine too.)
+
 Graphic design
 --------------
 If you know CSS, you can help improve the graphic design/layout.
