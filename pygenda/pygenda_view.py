@@ -202,18 +202,22 @@ class View:
         return lab
 
 
+    ICON_NOTES = u'✉' # alternatives: ◻☐🀙⊟🗈🗎▤, enclosing square⃞ with ≡
+    ICON_ALARM = u'♫' # alternatives: alarm clock ⏰ (U+23F0), bell 🕭,🔔 (U+1F56D,U+1F514), speaker 🔊
+    ICON_REPEAT = u'⟳'
+
     @staticmethod
     def entry_icons(ev:iCal.Event, prefix_space:bool) -> str:
         # Returns string of icons for entry (repeat, alarm...)
-        alarm = u'♫' # alternatives: alarm clock ⏰ (U+23F0), bell 🕭,🔔 (U+1F56D,U+1F514), speaker 🔊
-        repeat = u'⟳'
         icons = ''
+        if 'DESCRIPTION' in ev:
+            icons += View.ICON_NOTES
         if ev.walk('VALARM'):
-            icons += alarm
+            icons += View.ICON_ALARM
         if 'RRULE' in ev:
-            icons += repeat
+            icons += View.ICON_REPEAT
         if prefix_space and icons:
-            icons = ' {:s}'.format(icons)
+            icons = u' {:s}'.format(icons) # thin space
         return icons
 
 
