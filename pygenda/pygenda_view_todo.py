@@ -262,6 +262,7 @@ class View_Todo(View):
                         due_dt_st = due_dt.strftime(GUI.date_formatting_numeric)
                         txt += '({:s} {:s}) '.format(_('Due:'), due_dt_st)
                     txt += td['SUMMARY'] if 'SUMMARY' in td else ''
+                    txt += cls.entry_icons(td, True)
                     item_text = Gtk.Label(txt)
                     item_text.get_style_context().add_class('todoview_itemtext')
                     item_text.set_xalign(0)

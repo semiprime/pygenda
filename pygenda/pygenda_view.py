@@ -207,14 +207,14 @@ class View:
     ICON_REPEAT = u'⟳'
 
     @staticmethod
-    def entry_icons(ev:iCal.Event, prefix_space:bool) -> str:
+    def entry_icons(en:Union[iEvent,iTodo], prefix_space:bool) -> str:
         # Returns string of icons for entry (repeat, alarm...)
         icons = ''
-        if 'DESCRIPTION' in ev:
+        if 'DESCRIPTION' in en:
             icons += View.ICON_NOTES
-        if ev.walk('VALARM'):
+        if en.walk('VALARM'):
             icons += View.ICON_ALARM
-        if 'RRULE' in ev:
+        if 'RRULE' in en:
             icons += View.ICON_REPEAT
         if prefix_space and icons:
             icons = u' {:s}'.format(icons) # thin space
