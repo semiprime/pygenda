@@ -602,7 +602,14 @@ class View_Year(View_DayUnit_Base):
     def click_grid(cls, wid:Gtk.Widget, ev:Gdk.EventButton) -> bool:
         # Callback. Called whenever day grid is clicked/tapped.
         # Move grid (main) cursor to cell that was clicked.
-        x = int(cls.GRID_COLUMNS*ev.x/wid.get_allocated_width())
+        base_cwid,ex_count = divmod(wid.get_allocated_width(), cls.GRID_COLUMNS)
+        # GTK will layout the left-most ex_count cells with width base_cwid+1.
+        # The remaining cells with width base_cwid.
+        wid_ex = (base_cwid+1)*ex_count # total width of left-side "wide" cells
+        if ev.x <= wid_ex:
+            x = int(ev.x/(base_cwid+1))
+        else:
+            x = ex_count + int((ev.x-wid_ex)/base_cwid)
         y = int(cls.GRID_ROWS*ev.y/wid.get_allocated_height())
         dt = cls._cell_to_date_clamped(x, y, cls._year_viewed)
         GLib.idle_add(cls._jump_to_date, dt, priority=GLib.PRIORITY_HIGH_IDLE+30)
