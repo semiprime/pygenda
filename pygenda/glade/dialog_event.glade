@@ -927,7 +927,6 @@ A separate alarm handler is required for alarms to activate.
 											<object class="GtkEntry" id="entry_dialogevent_location">
 												<property name="visible">True</property>
 												<property name="can-focus">True</property>
-												<property name="has-focus">True</property>
 												<property name="hexpand">True</property>
 												<property name="activates-default">True</property>
 												<style>
