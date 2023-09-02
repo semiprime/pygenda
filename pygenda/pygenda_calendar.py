@@ -562,10 +562,11 @@ class Calendar:
 
     @staticmethod
     def _todo_sortindex_priority(t:iTodo) -> int:
-        # Return sort key(s) used to sort todos by priority
+        # Return sort keys used to sort todos by priority
         key_pri = t['PRIORITY'] if 'PRIORITY' in t else 10
+        key_dtime = date_to_datetime(t['DUE'].dt).timestamp() if 'DUE' in t else float('inf')
         key_ctime = t['CREATED'].dt.timestamp() if 'CREATED' in t else 0
-        return key_pri, key_ctime
+        return key_pri, key_dtime, key_ctime
 
 
     @classmethod
