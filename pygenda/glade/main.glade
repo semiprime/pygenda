@@ -189,6 +189,7 @@
 												<property name="label" translatable="yes">Show _Properties</property>
 												<property name="use-underline">True</property>
 												<signal name="activate" handler="menuitem_show_entry_props" swapped="no"/>
+												<accelerator key="Return" signal="activate" modifiers="GDK_CONTROL_MASK"/>
 											</object>
 										</child>
 										<child>
