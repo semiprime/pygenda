@@ -208,6 +208,11 @@ entry, spinbutton, date_entry, time_entry, duration_entry {
 	min-height:1.6em;
 }
 
+/* Set height of Repeats tab, so expanding it doesn't expand Event dialog */
+#grid-repeats {
+	min-height:24.1ex;
+}
+
 /* Make buttons bigger (for easier touchscreen use) */
 buttonbox > button {
 	padding:5px;

@@ -550,6 +550,11 @@ notebook:focus tab:checked {
 	padding-right:10px;
 }
 
+/* Set height of Repeats tab, so expanding it doesn't expand Event dialog */
+#grid-repeats {
+	min-height:30.2ex; /* Works for my laptop - might need tweaking */
+}
+
 .llabel {
 	min-height:30px;
 	padding-right:0.4ex;

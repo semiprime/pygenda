@@ -369,6 +369,7 @@
 								<child>
 									<!-- n-columns=2 n-rows=3 -->
 									<object class="GtkGrid">
+										<property name="name">grid-repeats</property>
 										<property name="visible">True</property>
 										<property name="can-focus">False</property>
 										<child>
@@ -973,7 +974,6 @@ A separate alarm handler is required for alarms to activate.
 										</child>
 										<child>
 											<object class="GtkLabel">
-												<property name="height-request">170</property><!-- !! Hack to set dialog height for Gemini !! -->
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
 												<property name="hexpand">True</property>
