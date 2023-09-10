@@ -40,6 +40,7 @@ class EntryInfo:
     categories = None
     priority = None
     duedate = None
+    longdesc = None
 
     TYPE_EVENT=0
     TYPE_TODO=1
@@ -111,6 +112,11 @@ class EntryInfo:
     def add_alarm(self, alarm_info:'AlarmInfo') -> None:
         # Add alarm for this entry
         self.alarms.append(deepcopy(alarm_info))
+
+
+    def set_longdesc(self, ldesc:Optional[str]) -> None:
+        # Set long description for this entry
+        self.longdesc = ldesc
 
 
 class AlarmInfo:

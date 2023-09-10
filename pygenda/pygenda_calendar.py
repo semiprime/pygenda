@@ -152,6 +152,8 @@ class Calendar:
             en.add('PRIORITY', e_inf.priority)
         if e_inf.duedate:
             en.add('DUE', e_inf.duedate)
+        if e_inf.longdesc:
+            en.add('DESCRIPTION', e_inf.longdesc)
 
         cls._entry_set_alarms_from_info(en, e_inf)
 
@@ -229,6 +231,8 @@ class Calendar:
                 en.add('STATUS', exen_status)
         if 'DUE' in exen:
             en.add('DUE', exen['DUE'])
+        if 'DESCRIPTION' in exen:
+            en.add('DESCRIPTION', exen['DESCRIPTION'])
 
         en = cls.calConnector.add_entry(en) # Write to store
 
@@ -255,6 +259,7 @@ class Calendar:
         cls._update_entry(en, 'SUMMARY', e_inf.desc)
         cls._update_entry(en, 'PRIORITY', e_inf.priority)
         cls._update_entry(en, 'DUE', e_inf.duedate)
+        cls._update_entry(en, 'DESCRIPTION', e_inf.longdesc)
 
         # For Categories, we need to convert to a list,
         # to work around bug passing set to old icalendar.
