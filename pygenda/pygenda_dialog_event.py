@@ -114,8 +114,10 @@ class EventDialogController:
     alarmlist_model = None # type: Gtk.ListStore
     _default_alarm_before = None # type: timedelta
 
-    wid_status = None # type: Gtk.ComboBox
     wid_location = None # type: Gtk.Entry
+    wid_status = None # type: Gtk.ComboBox
+    buf_notes = None # type: Gtk.TextBuffer
+    buf_notes_scroller = None # type: Gtk.ScrolledWindow
 
     # Set defaults for config
     Config.set_defaults('new_event',{
@@ -143,6 +145,9 @@ class EventDialogController:
             'alarmset_changed': cls._do_alarmset_toggle,
             'alarmlist_focusout': cls._alarmlist_focusloss,
             'alarmlist_keypress': cls._alarmlist_keypress,
+            'notes_focusin': cls._notes_focus,
+            'notes_focusout': cls._notes_focusloss,
+            'notes_keypress': cls._notes_keypress,
             }
         GUI._builder.connect_signals(HANDLERS)
 
@@ -258,8 +263,11 @@ class EventDialogController:
     def _init_detailfields(cls) -> None:
         # Initialise widgets etc in the Event dialog under the "Details" tab.
         # Called on app startup.
-        cls.wid_status = GUI._builder.get_object('combo_status')
         cls.wid_location = GUI._builder.get_object('entry_dialogevent_location')
+        cls.wid_status = GUI._builder.get_object('combo_status')
+        wid_notes = GUI._builder.get_object('textview_dialogevent_notes')
+        cls.buf_notes = wid_notes.get_buffer()
+        cls.buf_notes_scroller = wid_notes.get_parent()
 
 
     @classmethod
@@ -897,8 +905,9 @@ class EventDialogController:
         cls.alarmlist_model.clear()
 
         # Details tab
-        cls.wid_status.set_active(0)
         cls.wid_location.set_text('')
+        cls.wid_status.set_active(0)
+        cls.buf_notes.set_text('')
 
 
     @classmethod
@@ -936,10 +945,15 @@ class EventDialogController:
             cls._seed_alarmstab(valarms)
 
         # Details tab
-        if 'STATUS' in event and event['STATUS'] in Calendar.STATUS_LIST_EVENT:
-            cls.wid_status.set_active_id(event['STATUS'])
         if 'LOCATION' in event:
             cls.wid_location.set_text(event['LOCATION'])
+        if 'STATUS' in event and event['STATUS'] in Calendar.STATUS_LIST_EVENT:
+            cls.wid_status.set_active_id(event['STATUS'])
+        if 'DESCRIPTION' in event:
+            cls.buf_notes.set_text(event['DESCRIPTION'])
+            # Move cursor & scollbar to start:
+            cls.buf_notes.place_cursor(cls.buf_notes.get_start_iter())
+            cls.buf_notes_scroller.get_vadjustment().set_value(0)
 
         cls._sync_rep_occs_end()
 
@@ -1204,6 +1218,8 @@ class EventDialogController:
             return False
         if cls.wid_status.get_active() != 0:
             return False
+        if cls.buf_notes.get_text(cls.buf_notes.get_start_iter(), cls.buf_notes.get_end_iter(), False):
+            return False
         return True
 
 
@@ -1212,8 +1228,8 @@ class EventDialogController:
         # Decipher dialog fields and return info as an EntryInfo object.
         desc = cls.wid_desc.get_text()
         dt = cls.get_datetime_start()
-        stat = cls.wid_status.get_active_id()
         loc = cls.wid_location.get_text()
+        stat = cls.wid_status.get_active_id()
         ei = EntryInfo(desc=desc, start_dt=dt, status=stat, location=loc)
         if cls.wid_timed_buttons[2].get_active():
             # "Day entry" selected, read number of days from widget
@@ -1231,6 +1247,10 @@ class EventDialogController:
         if cls.wid_alarmset.get_active():
             for al in cls.alarmlist_model:
                 ei.add_alarm(al[0])
+
+        ldesc = cls.buf_notes.get_text(cls.buf_notes.get_start_iter(), cls.buf_notes.get_end_iter(), False)
+        if ldesc:
+            ei.set_longdesc(ldesc)
 
         return ei
 
@@ -1533,10 +1553,42 @@ class EventDialogController:
             return True # Don't propagate event
         elif ev.keyval==Gdk.KEY_Return:
             # Manually trigger default event on dialog box
-            dlg = wid.get_toplevel()
-            if dlg:
-                dlg.response(Gtk.ResponseType.OK)
+            cls.dialog.response(Gtk.ResponseType.OK)
             return True # Don't propagate event
+
+        return False # Propagate event
+
+
+    @classmethod
+    def _notes_focus(cls, entry:Gtk.Widget, ev:Gdk.EventFocus) -> bool:
+        # Handler for notes fields getting focus.
+        # Set style (on parent element to include scrollbar)
+        cls.buf_notes_scroller.get_style_context().add_class('focus')
+        return False # propagate event
+
+
+    @classmethod
+    def _notes_focusloss(cls, entry:Gtk.Widget, ev:Gdk.EventFocus) -> bool:
+        # Handler for notes field losing focus
+        cls.buf_notes_scroller.get_style_context().remove_class('focus')
+        return False # propagate event
+
+
+    @classmethod
+    def _notes_keypress(cls, wid:Gtk.Widget, ev:Gdk.EventKey) -> bool:
+        # Handler for key-press/repeat when notes field is focused
+        if ev.keyval == Gdk.KEY_Up:
+            # If cursor at start of text, need to handle navigation
+            cur = cls.buf_notes.get_property('cursor-position')
+            if cur==0:
+                cls.wid_status.grab_focus()
+                return True # Event handled, don't propagate
+        elif ev.keyval==Gdk.KEY_Return and ev.state&(Gdk.ModifierType.SHIFT_MASK|Gdk.ModifierType.CONTROL_MASK)==0: # not shift or control
+            # Manually trigger default event on dialog box
+            cls.dialog.response(Gtk.ResponseType.OK)
+            return True # Don't propagate event
+        # !! We should handle other navigation too (KEY_Down). However,
+        # !! UI is still in a state of flux, so leaving that out for now.
 
         return False # Propagate event
 
@@ -1552,7 +1604,7 @@ class EventDialogController:
 
 
     @classmethod
-    def _alarmlist_focusloss(cls, wid:Gtk.Widget, ev:Gdk.EventKey) -> bool:
+    def _alarmlist_focusloss(cls, wid:Gtk.Widget, ev:Gdk.EventFocus) -> bool:
         # Handler for alarmlist losing focus.
         # Removes highlight/selection.
         # !! Maybe I'm overlooking something obvious, but I can't find

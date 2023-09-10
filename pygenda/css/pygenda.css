@@ -525,16 +525,32 @@ buttonbox > button, .dialogbutton {
 	transition-delay:0s;
 }
 
-.textentry {
+.textentry, .longtextentry {
 	border-width:1px;
 	padding:1px 5px;
 	min-width:15em;
 }
 
-.textentry:focus {
+.textentry:focus, .longtextentry.focus {
 	border-color:#398ee7;
 	border-width:2px;
-	padding:0px 4px;
+	padding:0 4px;
+}
+
+.longtextentry {
+	padding-right:1px;
+	background:white;
+	border-radius:3px;
+	min-height:6.4em;
+}
+
+.longtextentry > textview {
+	padding-top:.3ex;
+	padding-bottom:.2ex;
+}
+
+.longtextentry.focus {
+	padding-right:0;
 }
 
 /* Tabs need a bit more formatting */

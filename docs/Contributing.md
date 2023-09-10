@@ -69,10 +69,10 @@ New features
 ------------
 Code fixes/additions are welcome. If you need some ideas:
 
-* Add an "Attendees" field to the Entry Properties Dialog.
+* Add a "URL" or an "Attendees" field to the Entry Properties Dialog.
 
-* Add a "Long description" or "Attendees" field to the Event Dialog
-  (or any other property that you find useful).
+* Add a "URL" or an "Attendees" field to the Event Dialog (or a field
+  for any other property that you find useful).
 
 * Update the "Today" marker at midnight (or if the date changes).
 

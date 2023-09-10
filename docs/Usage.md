@@ -49,6 +49,9 @@ Usage is intended to be intuitive, but a few things are worth noting:
 
 * Hint: To convert To-dos into Events, or vice-versa, cut & paste them.
 
+* In the "Notes" field in the Event dialog, shift(or ctrl)+enter gives
+  a new line (just enter will confirm the dialog).
+
 * Setting alarms is currently under development and testing is welcome.
   (Note: sounding/displaying/sending alarms will be the job of a
   different program - an alarm handler. Pygenda does not, and will not,

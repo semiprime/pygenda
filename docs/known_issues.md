@@ -19,8 +19,8 @@ Major
   current details. (Note: a separate alarm program should handle the
   actual alarm notifications.)
 
-* Many event properties are not implemented (details, attendees,
-  attachments, etc.)
+* Several event properties are not implemented (attendees, url,
+  user tags, attachments, etc.)
 
 * Many todo item properties are not implemented (details, start date,
   user tags, timed-but-undated (use daily repeating?), etc.)
@@ -217,6 +217,10 @@ Minor
 * In untranslated languages, there can be some awkward mixing of languages
   of fixed and generated content (e.g. "2. to last Sonntag of month")
 
+* Newline behaviour in Notes field in Event dialog is not user-friendly.
+  Possible improvements: display a note in the field when it is empty;
+  a config option to swap with/without-modifier behaviours.
+
 * In code, various places marked with '!!' indicating known bugs or
   temporary/placeholder implementations.
 
@@ -246,6 +250,9 @@ Cosmetic
 
 * In Event dialog, Repeats tab, "Repeat until" label doesn't seem to align
   quite correctly with the field content.
+
+* In Event dialog, in Notes field, the scroll-bar does not go to the border:
+  there is a 1-pixel gap.
 
 Testing
 -------
