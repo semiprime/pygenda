@@ -44,15 +44,23 @@ class TodoPropertyBeyondEditDialog(Exception):
 
 
 # Singleton class to manage Todo dialog
+# !! There's overlap between this class and the EventDialogController class.
+# !! Consider merging the shared elements.
 class TodoDialogController:
     dialog = None # type: Gtk.Dialog
     wid_desc = None # type: Gtk.Entry
     wid_todolist = None # type: Gtk.ComboBoxText
     wid_priority = None # type: Gtk.ComboBoxText
+    wid_status = None # type: Gtk.ComboBoxText
+    wid_tabs = None # type: Gtk.Notebook
+
     wid_duedate_switch = None # type: Gtk.Switch
     revealer_duedate = None # type:Gtk.Revealer
     wid_duedate = None # type:WidgetDate
-    wid_status = None # type: Gtk.ComboBoxText
+
+    buf_notes = None # type: Gtk.TextBuffer
+    buf_notes_scroller = None # type: Gtk.ScrolledWindow
+
     list_default_cats = None # type: list
 
     @classmethod
@@ -62,6 +70,14 @@ class TodoDialogController:
 
         # Load glade file
         GUI.load_glade_file('dialog_todo.glade')
+
+        # Connect signal handlers
+        HANDLERS = {
+            'notes_focusin': cls._notes_focus,
+            'notes_focusout': cls._notes_focusloss,
+            'notes_keypress': cls._notes_keypress,
+            }
+        GUI._builder.connect_signals(HANDLERS)
 
         # Get some references to dialog elements in glade
         cls.dialog = GUI._builder.get_object('dialog_todo')
@@ -73,7 +89,9 @@ class TodoDialogController:
         cls._init_todolists()
         cls.wid_priority = GUI._builder.get_object('combo_todo_priority')
         cls.wid_status = GUI._builder.get_object('combo_todo_status')
+        cls.wid_tabs = GUI._builder.get_object('dialogtodo_tabs')
         cls._init_duedate()
+        cls._init_notes()
 
 
     @classmethod
@@ -96,6 +114,15 @@ class TodoDialogController:
         cls.wid_duedate.connect('changed', cls._validated_field_changed)
         cls.wid_duedate_switch.connect('state-set', cls._toggle_duedate)
         cls.wid_duedate.get_style_context().add_class('hidden') # Remove -ve width warnings
+
+
+    @classmethod
+    def _init_notes(cls) -> None:
+        # Get references to notes widget.
+        # Called on app startup.
+        wid_notes = GUI._builder.get_object('textview_dialogtodo_notes')
+        cls.buf_notes = wid_notes.get_buffer()
+        cls.buf_notes_scroller = wid_notes.get_parent()
 
 
     @classmethod
@@ -139,6 +166,7 @@ class TodoDialogController:
     def _do_todo_dialog(cls, todo:iTodo=None, txt:str=None, list_idx:Optional[int]=0) -> Tuple[int,EntryInfo,int]:
         # Do the core work displaying todo dialog and extracting result.
         cls._seed_fields(todo=todo, txt=txt, list_idx=list_idx)
+        cls.wid_tabs.set_current_page(0) # first tab
         cls._reset_err_style() # clear error highlights
         discard_on_empty = (todo is None) # True if creating a new todo entry
         try:
@@ -185,9 +213,10 @@ class TodoDialogController:
         cls.wid_desc.grab_focus_without_selecting()
         cls.wid_todolist.set_active(0)
         cls.wid_priority.set_active(0)
+        cls.wid_status.set_active(0)
         cls.wid_duedate_switch.set_active(False)
         cls.wid_duedate.set_date(None) # today
-        cls.wid_status.set_active(0)
+        cls.buf_notes.set_text('')
 
 
     @classmethod
@@ -230,6 +259,11 @@ class TodoDialogController:
             s = todo['STATUS']
             if s in Calendar.STATUS_LIST_TODO:
                 cls.wid_status.set_active_id(s)
+        if 'DESCRIPTION' in todo:
+            cls.buf_notes.set_text(todo['DESCRIPTION'])
+            # Move cursor & scollbar to start:
+            cls.buf_notes.place_cursor(cls.buf_notes.get_start_iter())
+            cls.buf_notes_scroller.get_vadjustment().set_value(0)
 
 
     @classmethod
@@ -296,4 +330,39 @@ class TodoDialogController:
         if cls.wid_duedate_switch.get_active():
             ei.set_duedate(cls.wid_duedate.get_date_or_none())
         ei.set_priority(cls.wid_priority.get_active())
+        ldesc = cls.buf_notes.get_text(cls.buf_notes.get_start_iter(), cls.buf_notes.get_end_iter(), False)
+        if ldesc:
+            ei.set_longdesc(ldesc)
         return ei
+
+
+    @classmethod
+    def _notes_focus(cls, entry:Gtk.Widget, ev:Gdk.EventFocus) -> bool:
+        # Handler for notes fields getting focus.
+        # Set style (on parent element to include scrollbar)
+        cls.buf_notes_scroller.get_style_context().add_class('focus')
+        return False # propagate event
+
+
+    @classmethod
+    def _notes_focusloss(cls, entry:Gtk.Widget, ev:Gdk.EventFocus) -> bool:
+        # Handler for notes field losing focus
+        cls.buf_notes_scroller.get_style_context().remove_class('focus')
+        return False # propagate event
+
+
+    @classmethod
+    def _notes_keypress(cls, wid:Gtk.Widget, ev:Gdk.EventKey) -> bool:
+        # Handler for key-press/repeat when notes field is focused
+        if ev.keyval == Gdk.KEY_Up:
+            # If cursor at start of text, need to handle navigation
+            cur = cls.buf_notes.get_property('cursor-position')
+            if cur==0:
+                cls.wid_tabs.grab_focus()
+                return True # Event handled, don't propagate
+        elif ev.keyval==Gdk.KEY_Return and ev.state&(Gdk.ModifierType.SHIFT_MASK|Gdk.ModifierType.CONTROL_MASK)==0: # not shift or control
+            # Manually trigger default event on dialog box
+            cls.dialog.response(Gtk.ResponseType.OK)
+            return True # Don't propagate event
+
+        return False # Propagate event

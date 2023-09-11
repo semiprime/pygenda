@@ -22,8 +22,8 @@ Major
 * Several event properties are not implemented (attendees, url,
   user tags, attachments, etc.)
 
-* Many todo item properties are not implemented (details, start date,
-  user tags, timed-but-undated (use daily repeating?), etc.)
+* Many todo item properties are not implemented (start date, user tags,
+  timed-but-undated (use daily repeating?), etc.)
 
 * Todo items can only be sorted by priority - add sort by duedate,
   by status, manual...
@@ -217,9 +217,12 @@ Minor
 * In untranslated languages, there can be some awkward mixing of languages
   of fixed and generated content (e.g. "2. to last Sonntag of month")
 
-* Newline behaviour in Notes field in Event dialog is not user-friendly.
-  Possible improvements: display a note in the field when it is empty;
-  a config option to swap with/without-modifier behaviours.
+* Newline behaviour in the Notes field in Event and Todo dialogs is not
+  user-friendly. Possible improvements: display a note in the field when it
+  is empty; a config option to swap with/without-modifier behaviours.
+
+* There are accelerators to go to Time/Repeats/Alarm... subtabs for Event
+  editing. The same should exist for Todo editing.
 
 * In code, various places marked with '!!' indicating known bugs or
   temporary/placeholder implementations.
@@ -251,8 +254,8 @@ Cosmetic
 * In Event dialog, Repeats tab, "Repeat until" label doesn't seem to align
   quite correctly with the field content.
 
-* In Event dialog, in Notes field, the scroll-bar does not go to the border:
-  there is a 1-pixel gap.
+* In Event and Todo dialogs, in Notes field, the scrollbar does not go to
+  the border: there is a 1-pixel gap.
 
 Testing
 -------

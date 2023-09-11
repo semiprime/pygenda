@@ -178,56 +178,6 @@
 								<property name="visible">True</property>
 								<property name="can-focus">False</property>
 								<property name="halign">end</property>
-								<property name="label" translatable="yes">Due date:</property>
-								<style>
-									<class name="llabel"/>
-								</style>
-							</object>
-							<packing>
-								<property name="left-attach">0</property>
-								<property name="top-attach">3</property>
-							</packing>
-						</child>
-						<child>
-							<object class="GtkBox">
-								<property name="visible">True</property>
-								<property name="can-focus">False</property>
-								<child>
-									<object class="GtkSwitch" id="switch_todo_duedate">
-										<property name="visible">True</property>
-										<property name="can-focus">True</property>
-										<property name="halign">start</property>
-										<property name="valign">center</property>
-									</object>
-									<packing>
-										<property name="expand">False</property>
-										<property name="fill">True</property>
-										<property name="position">0</property>
-									</packing>
-								</child>
-								<child>
-									<object class="GtkRevealer" id="revealer_duedate">
-										<property name="visible">True</property>
-										<property name="can-focus">False</property>
-										<property name="transition-type">none</property>
-									</object>
-									<packing>
-										<property name="expand">False</property>
-										<property name="fill">True</property>
-										<property name="position">1</property>
-									</packing>
-								</child>
-							</object>
-							<packing>
-								<property name="left-attach">1</property>
-								<property name="top-attach">3</property>
-							</packing>
-						</child>
-						<child>
-							<object class="GtkLabel">
-								<property name="visible">True</property>
-								<property name="can-focus">False</property>
-								<property name="halign">end</property>
 								<property name="label" translatable="yes">Status:</property>
 								<style>
 									<class name="llabel"/>
@@ -235,7 +185,7 @@
 							</object>
 							<packing>
 								<property name="left-attach">0</property>
-								<property name="top-attach">4</property>
+								<property name="top-attach">3</property>
 							</packing>
 						</child>
 						<child>
@@ -254,7 +204,153 @@
 							</object>
 							<packing>
 								<property name="left-attach">1</property>
+								<property name="top-attach">3</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkNotebook" id="dialogtodo_tabs">
+								<property name="visible">True</property>
+								<property name="can-focus">True</property>
+								<child>
+									<!-- n-columns=2 n-rows=1 -->
+									<object class="GtkGrid">
+										<property name="visible">True</property>
+										<property name="can-focus">False</property>
+										<child>
+											<object class="GtkLabel">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="halign">end</property>
+												<property name="label" translatable="yes">Due date:</property>
+												<style>
+													<class name="llabel"/>
+												</style>
+											</object>
+											<packing>
+												<property name="left-attach">0</property>
+												<property name="top-attach">0</property>
+											</packing>
+										</child>
+										<child>
+											<object class="GtkBox">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<child>
+													<object class="GtkSwitch" id="switch_todo_duedate">
+														<property name="visible">True</property>
+														<property name="can-focus">True</property>
+														<property name="halign">start</property>
+														<property name="valign">center</property>
+													</object>
+													<packing>
+														<property name="expand">False</property>
+														<property name="fill">True</property>
+														<property name="position">0</property>
+													</packing>
+												</child>
+												<child>
+													<object class="GtkRevealer" id="revealer_duedate">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="transition-type">none</property>
+													</object>
+													<packing>
+														<property name="expand">False</property>
+														<property name="fill">True</property>
+														<property name="position">1</property>
+													</packing>
+												</child>
+											</object>
+											<packing>
+												<property name="left-attach">1</property>
+												<property name="top-attach">0</property>
+											</packing>
+										</child>
+									</object>
+								</child>
+								<child type="tab">
+									<object class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="can-focus">False</property>
+										<property name="label" translatable="yes">Dates/Times</property>
+									</object>
+									<packing>
+										<property name="tab-fill">False</property>
+									</packing>
+								</child>
+								<child>
+									<!-- n-columns=2 n-rows=1 -->
+									<object class="GtkGrid">
+										<property name="visible">True</property>
+										<property name="can-focus">False</property>
+										<child>
+											<object class="GtkLabel">
+												<property name="visible">True</property>
+												<property name="can-focus">False</property>
+												<property name="halign">end</property>
+												<property name="valign">start</property>
+												<property name="label" translatable="yes">Notes:</property>
+												<style>
+													<class name="llabel"/>
+												</style>
+											</object>
+											<packing>
+												<property name="left-attach">0</property>
+												<property name="top-attach">0</property>
+											</packing>
+										</child>
+										<child>
+											<object class="GtkScrolledWindow">
+												<property name="visible">True</property>
+												<property name="can-focus">True</property>
+												<property name="hexpand">True</property>
+												<property name="vexpand">True</property>
+												<property name="hscrollbar-policy">never</property>
+												<property name="vscrollbar-policy">always</property>
+												<property name="shadow-type">in</property>
+												<property name="kinetic-scrolling">False</property>
+												<property name="overlay-scrolling">False</property>
+												<child>
+													<object class="GtkTextView" id="textview_dialogtodo_notes">
+														<property name="visible">True</property>
+														<property name="can-focus">True</property>
+														<property name="wrap-mode">word-char</property>
+														<property name="accepts-tab">False</property>
+														<signal name="focus-in-event" handler="notes_focusin" swapped="no"/>
+														<signal name="focus-out-event" handler="notes_focusout" swapped="no"/>
+														<signal name="key-press-event" handler="notes_keypress" swapped="no"/>
+													</object>
+												</child>
+												<style>
+													<class name="longtextentry"/>
+												</style>
+											</object>
+											<packing>
+												<property name="left-attach">1</property>
+												<property name="top-attach">0</property>
+											</packing>
+										</child>
+									</object>
+									<packing>
+										<property name="position">1</property>
+									</packing>
+								</child>
+								<child type="tab">
+									<object class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="can-focus">False</property>
+										<property name="label" translatable="yes">Details</property>
+									</object>
+									<packing>
+										<property name="position">1</property>
+										<property name="tab-fill">False</property>
+									</packing>
+								</child>
+							</object>
+							<packing>
+								<property name="left-attach">0</property>
 								<property name="top-attach">4</property>
+								<property name="width">2</property>
 							</packing>
 						</child>
 					</object>

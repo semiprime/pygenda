@@ -22,8 +22,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-09 23:32+0200\n"
-"PO-Revision-Date: 2023-09-09 23:32+0200\n"
+"POT-Creation-Date: 2023-09-11 23:13+0200\n"
+"PO-Revision-Date: 2023-09-11 23:13+0200\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -78,7 +78,7 @@ msgstr "Date/heure de fin :"
 msgid "Duration:"
 msgstr "Durée :"
 
-#: pygenda_dialog_entryprops.py:131 glade/dialog_todo.glade:181
+#: pygenda_dialog_entryprops.py:131 glade/dialog_todo.glade:224
 msgid "Due date:"
 msgstr "Date limite :"
 
@@ -170,11 +170,11 @@ msgid "Repeats:"
 msgstr "Répétition :"
 
 #: pygenda_dialog_entryprops.py:197 glade/dialog_event.glade:946
-#: glade/dialog_todo.glade:231
+#: glade/dialog_todo.glade:181
 msgid "Status:"
 msgstr "Statut :"
 
-#: pygenda_dialog_entryprops.py:217 pygenda_dialog_event.py:420
+#: pygenda_dialog_entryprops.py:217 pygenda_dialog_event.py:405
 # Added by hand - not detected by gettext
 msgid "Audio"
 msgstr "Audio"
@@ -304,7 +304,7 @@ msgstr "Modifier évènement"
 
 #: pygenda_dialog_event.py:1179 glade/dialog_event.glade:397
 #: glade/dialog_event.glade:691 glade/dialog_event.glade:964
-#: glade/dialog_todo.glade:159 glade/dialog_todo.glade:248
+#: glade/dialog_todo.glade:159 glade/dialog_todo.glade:198
 msgid "None"
 msgstr "Rien"
 
@@ -328,11 +328,11 @@ msgstr "Resultats de recherche"
 msgid "No results found"
 msgstr "Pas d’entrées trouvées"
 
-#: pygenda_dialog_todo.py:116
+#: pygenda_dialog_todo.py:143
 msgid "New To-do"
 msgstr "Nouvelle tâche"
 
-#: pygenda_dialog_todo.py:127
+#: pygenda_dialog_todo.py:154
 msgid "Edit To-do"
 msgstr "Modifier tâche"
 
@@ -527,7 +527,7 @@ msgstr "Lieu :"
 msgid "Tentative"
 msgstr "Provisoire"
 
-#: glade/dialog_event.glade:966 glade/dialog_todo.glade:252
+#: glade/dialog_event.glade:966 glade/dialog_todo.glade:202
 msgid "Cancelled"
 msgstr "Annulé"
 
@@ -535,11 +535,11 @@ msgstr "Annulé"
 msgid "Confirmed"
 msgstr "Confirmé"
 
-#: glade/dialog_event.glade:980
+#: glade/dialog_event.glade:980 glade/dialog_todo.glade:292
 msgid "Notes:"
 msgstr "Notes :"
 
-#: glade/dialog_event.glade:1030
+#: glade/dialog_event.glade:1030 glade/dialog_todo.glade:342
 msgid "Details"
 msgstr "Détails"
 
@@ -567,17 +567,21 @@ msgstr "1 (la plus haute)"
 msgid "9 (Lowest)"
 msgstr "9 (la plus basse)"
 
-#: glade/dialog_todo.glade:249
+#: glade/dialog_todo.glade:199
 msgid "Action required"
 msgstr "Action requise"
 
-#: glade/dialog_todo.glade:250
+#: glade/dialog_todo.glade:200
 msgid "In progress"
 msgstr "En cours"
 
-#: glade/dialog_todo.glade:251
+#: glade/dialog_todo.glade:201
 msgid "Completed"
 msgstr "Achevé"
+
+#: glade/dialog_todo.glade:275
+msgid "Dates/Times"
+msgstr "Dates/Heures"
 
 #: glade/main.glade:53
 msgid "_File"
