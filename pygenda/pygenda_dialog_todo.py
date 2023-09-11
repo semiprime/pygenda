@@ -167,26 +167,7 @@ class TodoDialogController:
         cls._set_fields_to_defaults()
 
         if todo is not None:
-            # existing entry - take values
-            if 'SUMMARY' in todo:
-                cls.wid_desc.set_text(todo['SUMMARY'])
-            cls.wid_desc.grab_focus() # also selects contents
-            if 'PRIORITY' in todo:
-                p = int(todo['PRIORITY'])
-                if 1<=p<=9:
-                    cls.wid_priority.set_active(p)
-            if 'DUE' in todo:
-                due = todo['DUE'].dt
-                if isinstance(due,dt_datetime):
-                    raise TodoPropertyBeyondEditDialog('Editing todo with date+time DUE not supported')
-                cls.wid_duedate_switch.set_active(True)
-                cls.wid_duedate.set_date(due)
-            if 'DTSTART' in todo or 'DTEND' in todo or 'COMPETED' in todo:
-                raise TodoPropertyBeyondEditDialog('Editing todo with unsupported date property')
-            if 'STATUS' in todo:
-                s = todo['STATUS']
-                if s in Calendar.STATUS_LIST_TODO:
-                    cls.wid_status.set_active_id(s)
+            cls._set_fields_from_todo(todo)
         elif txt is not None:
             cls.wid_desc.set_text(txt)
             cls.wid_desc.set_position(len(txt))
@@ -224,6 +205,31 @@ class TodoDialogController:
         if cls.wid_status.get_active()!=0:
             return False
         return True
+
+
+    @classmethod
+    def _set_fields_from_todo(cls, todo:iTodo) -> None:
+        # Set dialog fields from a given todo item.
+        # Assumes values have already been set to default values.
+        if 'SUMMARY' in todo:
+            cls.wid_desc.set_text(todo['SUMMARY'])
+        cls.wid_desc.grab_focus() # also selects contents
+        if 'PRIORITY' in todo:
+            p = int(todo['PRIORITY'])
+            if 1<=p<=9:
+                cls.wid_priority.set_active(p)
+        if 'DUE' in todo:
+            due = todo['DUE'].dt
+            if isinstance(due,dt_datetime):
+                raise TodoPropertyBeyondEditDialog('Editing todo with date+time DUE not supported')
+            cls.wid_duedate_switch.set_active(True)
+            cls.wid_duedate.set_date(due)
+        if 'DTSTART' in todo or 'DTEND' in todo or 'COMPETED' in todo:
+            raise TodoPropertyBeyondEditDialog('Editing todo with unsupported date property')
+        if 'STATUS' in todo:
+            s = todo['STATUS']
+            if s in Calendar.STATUS_LIST_TODO:
+                cls.wid_status.set_active_id(s)
 
 
     @classmethod
