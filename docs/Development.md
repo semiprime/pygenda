@@ -28,6 +28,11 @@ location in the source tree:
     make
     make cp
 
+Build dependencies are: a C compiler, CMake (or you could build from
+the command-line), and GTK3 development files (if these are not already
+installed, it's probably package `libgtk-3-dev` or `gtk+3.0-dev` in your
+package manager).
+
 Translating strings
 -------------------
 If you are adding a new language, copy an existing complete .po as a

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(pygenda_clipboard)
+project(pygenda_clipboard C)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK REQUIRED gtk+-3.0)
