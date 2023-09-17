@@ -80,7 +80,6 @@ setup(
     package_data = {'': ['glade/*.glade', 'css/*.css', 'css/*.svg', 'libpygenda_clipboard.so', 'locale/*/LC_MESSAGES/pygenda.mo', 'app/pygenda.desktop']}, # files for bdists
     license = "GPLv3 only",
     python_requires = ">=3.5",
-    setup_requires = ["pycairo"], # For PyGObject
     install_requires = [
         "PyGObject",
         "python-dateutil",
