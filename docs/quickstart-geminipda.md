@@ -143,9 +143,11 @@ to enter here, depending on your preferences. Here's a reasonable
 basic configuration, which you can modify as required:
 
     [global]
-    24hr = True # False is default
+    24hr = True
     
     [startup]
+    # You probably want the UI either maximised or full-screen,
+    # so choose one of the following to be True...
     maximize = True
     fullscreen = False
     
@@ -155,11 +157,13 @@ basic configuration, which you can modify as required:
     
     [todo_view]
     list0_filter = UNCATEGORIZED
-    list1_title = Shopping list  # Displayed name
-    list1_filter = shopping  # tag to use in icalendar file (not displayed)
+    list1_title = Shopping list
+    list1_filter = shopping
     # ...and so on for additional todo lists: list2_title, list2_filter etc.
+    # listN_title gives the todo list name as displayed in the UI.
+    # listN_filter gives the tag to use internally in the icalendar data.
 
-(Text after a `#` symbol is a comment, so it can be changed or omitted.
+(Lines starting with a `#` are comments, so can be changed or omitted.
 For other settings, see [defaults.ini](config-examples/defaults.ini).)
 
 As before, save the file and exit: ctrl+o (confirm filename), ctrl+x.
