@@ -80,7 +80,7 @@ Code fixes/additions are welcome. If you need some ideas:
   or "delete only this occurrence" when the user tries to delete a
   repeating item.
 
-* Allow the user to customise the soft buttons.
+* Allow the user to customise the softkeys.
 
 * Add a custom iterator to speed up calculation of repeated entries
   (choose some type of repeat that currently displays a "Notice:
@@ -101,7 +101,7 @@ If you know CSS, you can help improve the graphic design/layout.
 
 We'd also welcome custom icons to improve the visual aspect of the
 application (e.g. icons to show events in Year View, an app icon,
-icons for the soft buttons). Contact us about this first (also, no
+icons for the softkeys). Contact us about this first (also, no
 AI-generated icons, please).
 
 Documentation

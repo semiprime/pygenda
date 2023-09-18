@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # pygenda_gui.py
-# Top-level GUI code and shared elements (e.g. menu, soft buttons)
+# Top-level GUI code and shared elements (e.g. menu, soft keys)
 #
 # Copyright (C) 2022,2023 Matthew Lewis
 #
@@ -119,7 +119,9 @@ class GUI:
         'maximize': False,
         'fullscreen': False,
         'view': False,
-        'softbutton_display': '',
+        })
+    Config.set_defaults('softkeys',{
+        'display': '',
         })
 
     # Constructor
@@ -217,12 +219,12 @@ class GUI:
         except:
             pass
 
-        # Set position/display of softbuttons before showing loading indicator
-        cfig_sbut = Config.get('startup','softbutton_display').lower()
+        # Set position/display of soft keys before showing loading indicator
+        cfig_skey = Config.get('softkeys','display').lower()
         bbut = cls._builder.get_object('box_buttons')
-        if cfig_sbut == 'hide':
+        if cfig_skey == 'hide':
             bbut.hide()
-        elif cfig_sbut == 'left':
+        elif cfig_skey == 'left':
             cls._box_view_cont.reorder_child(bbut,0)
         else:
             cls._box_view_cont.reorder_child(bbut,1)
@@ -343,7 +345,7 @@ class GUI:
         cls._init_comboboxes()
         cls._init_entryboxes()
 
-        # Menu bar & softbutton bar made insensitive in .glade for startup.
+        # Menu bar & softkey bar made insensitive in .glade for startup.
         # We make them sensitive here before activating view.
         cls._builder.get_object('menu_bar').set_sensitive(True)
         cls._builder.get_object('box_buttons').set_sensitive(True)
@@ -626,7 +628,7 @@ class GUI:
 
     @classmethod
     def switch_view(cls, wid:Gtk.Widget, idx:int=None, redraw:bool=True) -> bool:
-        # Callback from UI widget (e.g. menu, softbutton) to change view.
+        # Callback from UI widget (e.g. menu, softkey) to change view.
         # idx = index of new view (otherwise goes to next view in list)
         if idx is None:
             # Go to next view in list
@@ -707,7 +709,7 @@ class GUI:
 
     @classmethod
     def handler_newevent(cls, *args) -> bool:
-        # Callback for "Create new event" signal (menu, softbutton)
+        # Callback for "Create new event" signal (menu, softkey)
         date = cls.views[cls._view_idx].cursor_date()
         EventDialogController.new_event(date=date)
         return True # don't propagate event
@@ -998,7 +1000,7 @@ class GUI:
 
     @classmethod
     def zoom_button(cls, wid:Gtk.Widget, ev:Gdk.EventKey) -> bool:
-        # Zoom handler for Zoom soft-button
+        # Zoom handler for Zoom softkey
         cls.zoom(-1 if ev.state&(Gdk.ModifierType.SHIFT_MASK|Gdk.ModifierType.CONTROL_MASK) else +1)
         return True # don't propagate event
 
