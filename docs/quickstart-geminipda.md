@@ -149,11 +149,15 @@ basic configuration, which you can modify as required:
     maximize = True
     fullscreen = False
     
+    [softkeys]
+    # Hide icons because the old LXQt icons don't look great
+    show_icons = False
+    
     [todo_view]
     list0_filter = UNCATEGORIZED
     list1_title = Shopping list  # Displayed name
     list1_filter = shopping  # tag to use in icalendar file (not displayed)
-    # ... list2_title, list2_filter etc.
+    # ...and so on for additional todo lists: list2_title, list2_filter etc.
 
 (Text after a `#` symbol is a comment, so it can be changed or omitted.
 For other settings, see [defaults.ini](config-examples/defaults.ini).)
@@ -212,15 +216,15 @@ end of the file:
     type=quicklaunch
     alignment=Left
     apps\size=1
-	apps\1\desktop=/home/gemini/.local/lib/python3.5/site-packages/pygenda/app/pygenda.desktop
+    apps\1\desktop=/home/gemini/.local/lib/python3.5/site-packages/pygenda/app/pygenda.desktop
 
 There should already be a reference to the plugin `quicklaunch` in one
 of the `panelX` sections. For example:
 
     [panel1]
-	...
-	plugins=... quicklaunch, ...
-	...
+    ...
+    plugins=... quicklaunch, ...
+    ...
 
 If this does not exist, then you will need to add it to the list of
 plugins for your chosen panel.

@@ -117,7 +117,7 @@ Medium
   Builds on my devices and on Gemini. Needs looking at for other Linux
   distributions and Windows/MacOS.
 
-* Soft buttons need work. (Customisable, choose good defaults, add icons?)
+* Softkeys should be user-customisable
 
 * Date/time widgets are not easy to click (tap) on since most of the area
   does not respond to mouse clicks

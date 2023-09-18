@@ -495,11 +495,37 @@
 										<property name="receives-default">False</property>
 										<signal name="clicked" handler="button0_clicked" swapped="no"/>
 										<child>
-											<object class="GtkLabel">
+											<object class="GtkBox">
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
-												<property name="label" translatable="yes">New Event</property>
-												<property name="justify">center</property>
+												<property name="valign">center</property>
+												<property name="orientation">vertical</property>
+												<child>
+													<object class="GtkImage">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="stock">gtk-add</property>
+														<property name="icon_size">3</property>
+													</object>
+													<packing>
+														<property name="expand">False</property>
+														<property name="fill">True</property>
+														<property name="position">0</property>
+													</packing>
+												</child>
+												<child>
+													<object class="GtkLabel">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="label" translatable="yes">New Event</property>
+														<property name="justify">center</property>
+													</object>
+													<packing>
+														<property name="expand">False</property>
+														<property name="fill">True</property>
+														<property name="position">1</property>
+													</packing>
+												</child>
 											</object>
 										</child>
 										<style>
@@ -520,11 +546,37 @@
 										<property name="receives-default">False</property>
 										<signal name="clicked" handler="button1_clicked" swapped="no"/>
 										<child>
-											<object class="GtkLabel">
+											<object class="GtkBox">
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
-												<property name="label" translatable="yes">View</property>
-												<property name="justify">center</property>
+												<property name="valign">center</property>
+												<property name="orientation">vertical</property>
+												<child>
+													<object class="GtkImage">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="icon-name">x-office-calendar</property>
+														<property name="icon_size">3</property>
+													</object>
+													<packing>
+														<property name="expand">False</property>
+														<property name="fill">True</property>
+														<property name="position">0</property>
+													</packing>
+												</child>
+												<child>
+													<object class="GtkLabel">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="label" translatable="yes">View</property>
+														<property name="justify">center</property>
+													</object>
+													<packing>
+														<property name="expand">False</property>
+														<property name="fill">True</property>
+														<property name="position">1</property>
+													</packing>
+												</child>
 											</object>
 										</child>
 										<style>
@@ -545,11 +597,37 @@
 										<property name="receives-default">False</property>
 										<signal name="clicked" handler="button2_clicked" swapped="no"/>
 										<child>
-											<object class="GtkLabel">
+											<object class="GtkBox">
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
-												<property name="label" translatable="yes">Go To</property>
-												<property name="justify">center</property>
+												<property name="valign">center</property>
+												<property name="orientation">vertical</property>
+												<child>
+													<object class="GtkImage">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="stock">gtk-jump-to</property>
+														<property name="icon_size">3</property>
+													</object>
+													<packing>
+														<property name="expand">False</property>
+														<property name="fill">True</property>
+														<property name="position">0</property>
+													</packing>
+												</child>
+												<child>
+													<object class="GtkLabel">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="label" translatable="yes">Go To</property>
+														<property name="justify">center</property>
+													</object>
+													<packing>
+														<property name="expand">False</property>
+														<property name="fill">True</property>
+														<property name="position">1</property>
+													</packing>
+												</child>
 											</object>
 										</child>
 										<style>
@@ -570,11 +648,37 @@
 										<property name="receives-default">False</property>
 										<signal name="button-release-event" handler="button3_clicked" swapped="no"/>
 										<child>
-											<object class="GtkLabel">
+											<object class="GtkBox">
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
-												<property name="label" translatable="yes">Zoom</property>
-												<property name="justify">center</property>
+												<property name="valign">center</property>
+												<property name="orientation">vertical</property>
+												<child>
+													<object class="GtkImage">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="stock">gtk-zoom-in</property>
+														<property name="icon_size">3</property>
+													</object>
+													<packing>
+														<property name="expand">False</property>
+														<property name="fill">True</property>
+														<property name="position">0</property>
+													</packing>
+												</child>
+												<child>
+													<object class="GtkLabel">
+														<property name="visible">True</property>
+														<property name="can-focus">False</property>
+														<property name="label" translatable="yes">Zoom</property>
+														<property name="justify">center</property>
+													</object>
+													<packing>
+														<property name="expand">False</property>
+														<property name="fill">True</property>
+														<property name="position">1</property>
+													</packing>
+												</child>
 											</object>
 										</child>
 										<style>

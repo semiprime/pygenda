@@ -122,6 +122,7 @@ class GUI:
         })
     Config.set_defaults('softkeys',{
         'display': '',
+        'show_icons': True,
         })
 
     # Constructor
@@ -228,6 +229,9 @@ class GUI:
             cls._box_view_cont.reorder_child(bbut,0)
         else:
             cls._box_view_cont.reorder_child(bbut,1)
+
+        if not Config.get_bool('softkeys','show_icons'):
+           bbut.foreach(lambda a: a.get_child().get_children()[0].hide())
 
         # Delay further initialisation so we can display GUI/window early
         cls._window.show()
