@@ -86,6 +86,7 @@ class View_Week(View_DayUnit_Base):
         cls._init_keymap()
         cls._init_config()
         cls.init_zoom('week_view', cls._topbox.get_style_context())
+        cls._init_gestures()
         return cls._topbox
 
 
@@ -175,6 +176,26 @@ class View_Week(View_DayUnit_Base):
         show_loc = Config.get('week_view','show_event_location')
         map = {'always':cls.SHOW_LOC_ALWAYS, 'never':0}
         cls._show_location = map[show_loc] if show_loc in map else 0
+
+
+    @classmethod
+    def _init_gestures(cls) -> None:
+        # Initialise swipe gesture. Called from init().
+        cls.gest_swipe = Gtk.GestureSwipe(widget=cls._topbox)
+        cls.gest_swipe.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
+        cls.gest_swipe.set_touch_only(True)
+        cls.gest_swipe.connect('swipe', cls._swipe_handler)
+
+
+    @classmethod
+    def _swipe_handler(cls, gest:Gtk.GestureSwipe, vx:float, vy:float) -> None:
+        # Callback for swipe gestures (for navigation)
+        VLIM = 100 # !! Magic number for now (?should use start/stop pos?)
+        abs_vx = abs(vx)
+        if abs_vx > VLIM and abs(vy)*2 < abs_vx:
+            cls.cursor_inc(timedelta(days=7 if vx<0 else -7), 0)
+        # I don't think this type (GCallback) returns a value (unlike
+        # other signal handlers, which return bools). So don't return anything.
 
 
     @classmethod

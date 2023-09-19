@@ -190,8 +190,6 @@ Minor
 * Would be nice to be able to edit dates with a calendar interface
   (Like pressing tab in S5)
 
-* Week view: no touchscreen way to go forward/back a week (use swipe??)
-
 * Ctrl+Left-Shift+X/C/V/N don't work on Gemini (UI eats keypress?)
   Workaround: Use Right-Shift.
 
