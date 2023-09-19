@@ -100,6 +100,8 @@ class View_Year(View_DayUnit_Base):
             }
         GUI._builder.connect_signals(HANDLERS)
 
+        cls._init_gestures()
+
         return cls._topbox
 
 
@@ -167,6 +169,27 @@ class View_Year(View_DayUnit_Base):
         show_loc = Config.get('year_view','show_event_location')
         map = {'always':cls.SHOW_LOC_ALWAYS, 'never':0}
         cls._show_location = map[show_loc] if show_loc in map else 0
+
+
+    @classmethod
+    def _init_gestures(cls) -> None:
+        # Initialise swipe gesture. Called from init().
+        yge = GUI._builder.get_object('year_grid_events')
+        cls.gest_swipe = Gtk.GestureSwipe(widget=yge)
+        cls.gest_swipe.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
+        cls.gest_swipe.set_touch_only(True)
+        cls.gest_swipe.connect('swipe', cls._swipe_handler)
+
+
+    @classmethod
+    def _swipe_handler(cls, gest:Gtk.GestureSwipe, vx:float, vy:float) -> None:
+        # Callback for swipe gestures (for navigation)
+        VLIM = 70 # !! Magic number for now (?should use start/stop pos?)
+        abs_vy = abs(vy)
+        if abs_vy > VLIM and abs(vx)*2 < abs_vy:
+            cls._cursor_move_pgupdn(1 if vy<0 else -1)
+        # I don't think this type (GCallback) returns a value (unlike
+        # other signal handlers, which return bools). So don't return anything.
 
 
     @classmethod
