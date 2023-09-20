@@ -585,6 +585,7 @@ notebook:focus tab:checked {
 
 .plabel {
 	min-height:1.4em;
+	min-width:8em;
 	padding-right:0.4ex;
 	padding-left:0.4ex;
 }

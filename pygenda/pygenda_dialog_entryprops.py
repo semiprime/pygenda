@@ -94,7 +94,7 @@ class EntryPropertiesDialog:
         cont_lab.set_halign(Gtk.Align.START)
         cont_lab.set_yalign(0)
         cont_lab.set_xalign(0)
-        propnm_lab.get_style_context().add_class(GUI.STYLE_TXTPROP)
+        cont_lab.get_style_context().add_class(GUI.STYLE_TXTPROP)
         if wrap:
             cont_lab.set_line_wrap(True)
             cont_lab.set_line_wrap_mode(PWrapMode.WORD_CHAR)
