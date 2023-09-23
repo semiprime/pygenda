@@ -46,6 +46,8 @@ from .pygenda_entryinfo import EntryInfo
 # Interface base class to connect to different data sources.
 # Used by Calendar class (below).
 class CalendarConnector:
+    cal = None # type:iCalendar
+
     def add_entry(self, entry:Union[iEvent,iTodo]) -> Union[iEvent,iTodo]:
         # Add a new entry component to the calendar data and store it.
         # Return reference to new entry (possibly different to one passed in).
@@ -66,6 +68,7 @@ class Calendar:
     STATUS_LIST_EVENT = ('TENTATIVE','CONFIRMED','CANCELLED')
     STATUS_LIST_TODO = ('NEEDS-ACTION','IN-PROCESS','COMPLETED','CANCELLED')
 
+    calConnector = None # type:CalendarConnector
     _entry_norep_list_sorted = None
     _entry_rep_list = None
     _todo_list = None
@@ -332,7 +335,7 @@ class Calendar:
         if elname in en:
             del(en[elname])
         if val is not None:
-	        en.add(elname, val)
+            en.add(elname, val)
 
 
     @staticmethod
