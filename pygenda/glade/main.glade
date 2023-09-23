@@ -20,6 +20,16 @@
 -->
 <interface>
 	<requires lib="gtk+" version="3.20"/>
+	<object class="GtkImage" id="image-add-ev">
+		<property name="visible">True</property>
+		<property name="can-focus">False</property>
+		<property name="stock">gtk-add</property>
+	</object>
+	<object class="GtkImage" id="image-add-td">
+		<property name="visible">True</property>
+		<property name="can-focus">False</property>
+		<property name="stock">gtk-add</property>
+	</object>
 	<object class="GtkImage" id="image-delete">
 		<property name="visible">True</property>
 		<property name="can-focus">False</property>
@@ -29,6 +39,16 @@
 		<property name="visible">True</property>
 		<property name="can-focus">False</property>
 		<property name="stock">gtk-find</property>
+	</object>
+	<object class="GtkImage" id="image-goto">
+		<property name="visible">True</property>
+		<property name="can-focus">False</property>
+		<property name="stock">gtk-jump-to</property>
+	</object>
+	<object class="GtkImage" id="image-view">
+		<property name="visible">True</property>
+		<property name="can-focus">False</property>
+		<property name="icon-name">x-office-calendar</property>
 	</object>
 	<object class="GtkApplicationWindow" id="window_main">
 		<property name="can-focus">False</property>
@@ -163,21 +183,25 @@
 										<property name="visible">True</property>
 										<property name="can-focus">False</property>
 										<child>
-											<object class="GtkMenuItem">
+											<object class="GtkImageMenuItem">
+												<property name="label" translatable="yes">_New Event…</property>
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
-												<property name="label" translatable="yes">_New Event…</property>
 												<property name="use-underline">True</property>
+												<property name="image">image-add-ev</property>
+												<property name="use-stock">False</property>
 												<signal name="activate" handler="menuitem_newevent" swapped="no"/>
 												<accelerator key="n" signal="activate" modifiers="GDK_CONTROL_MASK"/>
 											</object>
 										</child>
 										<child>
-											<object class="GtkMenuItem">
+											<object class="GtkImageMenuItem">
+												<property name="label" translatable="yes">New _To-do…</property>
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
-												<property name="label" translatable="yes">New _To-do…</property>
 												<property name="use-underline">True</property>
+												<property name="image">image-add-td</property>
+												<property name="use-stock">False</property>
 												<signal name="activate" handler="menuitem_newtodo" swapped="no"/>
 												<accelerator key="m" signal="activate" modifiers="GDK_CONTROL_MASK"/>
 											</object>
@@ -343,11 +367,13 @@
 										<property name="visible">True</property>
 										<property name="can-focus">False</property>
 										<child>
-											<object class="GtkMenuItem">
+											<object class="GtkImageMenuItem">
+												<property name="label" translatable="yes">_View Mode</property>
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
-												<property name="label" translatable="yes">_View Mode</property>
 												<property name="use-underline">True</property>
+												<property name="image">image-view</property>
+												<property name="use-stock">False</property>
 												<child type="submenu">
 													<object class="GtkMenu" id="menu_views_list">
 														<property name="visible">True</property>
@@ -420,11 +446,13 @@
 										<property name="visible">True</property>
 										<property name="can-focus">False</property>
 										<child>
-											<object class="GtkMenuItem">
+											<object class="GtkImageMenuItem">
+												<property name="label" translatable="yes">_Go To…</property>
 												<property name="visible">True</property>
 												<property name="can-focus">False</property>
-												<property name="label" translatable="yes">_Go To…</property>
 												<property name="use-underline">True</property>
+												<property name="image">image-goto</property>
+												<property name="use-stock">False</property>
 												<signal name="activate" handler="menuitem_goto" swapped="no"/>
 												<accelerator key="g" signal="activate" modifiers="GDK_CONTROL_MASK"/>
 											</object>
