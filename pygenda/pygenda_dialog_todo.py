@@ -337,7 +337,7 @@ class TodoDialogController:
 
 
     @classmethod
-    def _notes_focus(cls, entry:Gtk.Widget, ev:Gdk.EventFocus) -> bool:
+    def _notes_focus(cls, wid:Gtk.Widget, ev:Gdk.EventFocus) -> bool:
         # Handler for notes fields getting focus.
         # Set style (on parent element to include scrollbar)
         cls.buf_notes_scroller.get_style_context().add_class('focus')
@@ -345,7 +345,7 @@ class TodoDialogController:
 
 
     @classmethod
-    def _notes_focusloss(cls, entry:Gtk.Widget, ev:Gdk.EventFocus) -> bool:
+    def _notes_focusloss(cls, wid:Gtk.Widget, ev:Gdk.EventFocus) -> bool:
         # Handler for notes field losing focus
         cls.buf_notes_scroller.get_style_context().remove_class('focus')
         return False # propagate event
