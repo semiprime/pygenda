@@ -79,10 +79,10 @@ GTK+3:
 If you are running a recent version of pip then the required Python
 modules should be installed automatically, so you can skip to the next
 section. If you want to check by hand, the required modules are:
-PyGObject3 (for gi), icalendar, python-dateutil, tzlocal, num2words.
+PyGObject3 (for gi), pycairo, icalendar, python-dateutil, tzlocal, num2words.
 
-* Install on Debian: `sudo apt install python3-gi python3-icalendar python3-dateutil python3-tzlocal python3-num2words`
-* Or install them using pip3: `pip3 install [--user] pygobject icalendar python-dateutil tzlocal num2words`
+* Install on Debian: `sudo apt install python3-gi python3-cairo python3-icalendar python3-dateutil python3-tzlocal python3-num2words`
+* Or install them using pip3: `pip3 install [--user] pygobject pycairo icalendar python-dateutil tzlocal num2words`
 
 Note: On Gemian on the Gemini, with Python3.5, pip3 installed tzlocal
 version 2.x, which did not work, giving errors like "No such file or

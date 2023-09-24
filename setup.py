@@ -82,6 +82,7 @@ setup(
     python_requires = ">=3.5",
     install_requires = [
         "PyGObject",
+        "pycairo",
         "python-dateutil",
         "icalendar",
         "tzlocal!=2.*", # Gemian on GeminiPDA does not work with tzlocal 2.x
