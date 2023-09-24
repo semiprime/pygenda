@@ -22,8 +22,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-11 23:13+0200\n"
-"PO-Revision-Date: 2023-09-11 23:13+0200\n"
+"POT-Creation-Date: 2023-09-24 22:56+0200\n"
+"PO-Revision-Date: 2023-09-24 22:56+0200\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -294,7 +294,7 @@ msgstr "Dernier {day:s} du mois"
 msgid "{ord:s} to last {day:s} of month"
 msgstr "{ord:s} au dernier {day:s} du mois"
 
-#: pygenda_dialog_event.py:783 glade/main.glade:501
+#: pygenda_dialog_event.py:783 glade/main.glade:548
 msgid "New Event"
 msgstr "Nouvel\névènement"
 
@@ -336,31 +336,31 @@ msgstr "Nouvelle tâche"
 msgid "Edit To-do"
 msgstr "Modifier tâche"
 
-#: pygenda_gui.py:885
+#: pygenda_gui.py:891
 msgid "Delete Entry"
 msgstr "Supprimer l’entrée"
 
-#: pygenda_gui.py:891
+#: pygenda_gui.py:897
 msgid "Delete all repeats:\n“{:s}”?"
 msgstr "Supprimer toutes les entrées\n« {:s} » ?"
 
-#: pygenda_gui.py:893
+#: pygenda_gui.py:899
 msgid "Delete entry:\n“{:s}”?"
 msgstr "Supprimer l’entrée\n« {:s} » ?"
 
-#: pygenda_gui.py:921 glade/main.glade:551
+#: pygenda_gui.py:927 glade/main.glade:650
 msgid "Go To"
 msgstr "Aller à"
 
-#: pygenda_gui.py:933
+#: pygenda_gui.py:939
 msgid "Go"
 msgstr "Y aller"
 
-#: pygenda_gui.py:971
+#: pygenda_gui.py:977
 msgid "Source code & documentation: "
 msgstr "Code source et documentation : "
 
-#: pygenda_gui.py:976
+#: pygenda_gui.py:982
 msgid ""
 "A calendar/agenda application written in Python/GTK3. The UI is inspired by "
 "the Agenda apps on the Psion Series 3 and Series 5 PDAs.\n"
@@ -373,7 +373,7 @@ msgstr ""
 "publiée à des fins de test et feedback. Il y aura des bogues ; veuillez les "
 "rapporter à : pygenda@semiprime.com."
 
-#: pygenda_gui.py:977
+#: pygenda_gui.py:983
 msgid "Thanks for testing &amp; feedback"
 msgstr "Merci pour les tests et les feedbacks"
 
@@ -397,11 +397,11 @@ msgstr "Mode _Hebdomadaire"
 msgid "week_view_accel"
 msgstr "h"
 
-#: pygenda_view_week.py:205
+#: pygenda_view_week.py:226
 msgid "Week 53/Week 1"
 msgstr "Semaine 53/Semaine 1"
 
-#: pygenda_view_week.py:207
+#: pygenda_view_week.py:228
 msgid "Week {}"
 msgstr "Semaine {}"
 
@@ -583,118 +583,118 @@ msgstr "Achevé"
 msgid "Dates/Times"
 msgstr "Dates/Heures"
 
-#: glade/main.glade:53
+#: glade/main.glade:73
 msgid "_File"
 msgstr "_Fichier"
 
-#: glade/main.glade:64
+#: glade/main.glade:84
 msgid "_Import File"
 msgstr "_Importer fichier"
 
-#: glade/main.glade:93
+#: glade/main.glade:113
 msgid "_Edit"
 msgstr "É_dition"
 
-#: glade/main.glade:140
+#: glade/main.glade:160
 msgid "_Delete…"
 msgstr "_Supprimer…"
 
-#: glade/main.glade:159
+#: glade/main.glade:179
 msgid "E_ntry"
 msgstr "E_ntrée"
 
-#: glade/main.glade:169
+#: glade/main.glade:187
 msgid "_New Event…"
 msgstr "_Nouvel évènement…"
 
-#: glade/main.glade:179
+#: glade/main.glade:199
 msgid "New _To-do…"
 msgstr "Nouvelle _tâche…"
 
-#: glade/main.glade:189
+#: glade/main.glade:213
 msgid "Show _Properties"
 msgstr "Afficher _propriétés"
 
-#: glade/main.glade:205
+#: glade/main.glade:229
 msgid "Edit _Time…"
 msgstr "Modifier _heure…"
 
-#: glade/main.glade:215
+#: glade/main.glade:239
 msgid "Edit _Repeats…"
 msgstr "Modifier _répétitions…"
 
-#: glade/main.glade:225
+#: glade/main.glade:249
 msgid "Edit _Alarms…"
 msgstr "Modifier _alarmes…"
 
-#: glade/main.glade:235
+#: glade/main.glade:259
 msgid "Edit _Details…"
 msgstr "Modifier _détails…"
 
-#: glade/main.glade:251
+#: glade/main.glade:275
 msgid "Set _Status"
 msgstr "_Statut"
 
-#: glade/main.glade:261
+#: glade/main.glade:285
 msgid "_None"
 msgstr "_Rien"
 
-#: glade/main.glade:271
+#: glade/main.glade:295
 msgid "_Confirmed"
 msgstr "_Confirmé"
 
-#: glade/main.glade:281
+#: glade/main.glade:305
 msgid "_Action required"
 msgstr "_Action requise"
 
-#: glade/main.glade:291
+#: glade/main.glade:315
 msgid "In _progress"
 msgstr "En _cours"
 
-#: glade/main.glade:301
+#: glade/main.glade:325
 msgid "_Completed"
 msgstr "_Achevé"
 
-#: glade/main.glade:311
+#: glade/main.glade:335
 msgid "Cance_lled"
 msgstr "_Annulé"
 
-#: glade/main.glade:321
+#: glade/main.glade:345
 msgid "_Tentative"
 msgstr "_Provisoire"
 
-#: glade/main.glade:339
+#: glade/main.glade:363
 msgid "_View"
 msgstr "_Afficharge"
 
-#: glade/main.glade:349
+#: glade/main.glade:371
 msgid "_View Mode"
 msgstr "_Mode"
 
-#: glade/main.glade:359
+#: glade/main.glade:385
 msgid "Switch _View"
 msgstr "Changer mode"
 
-#: glade/main.glade:416
+#: glade/main.glade:442
 msgid "_Tools"
 msgstr "_Outils"
 
-#: glade/main.glade:426
+#: glade/main.glade:450
 msgid "_Go To…"
 msgstr "_Aller à…"
 
-#: glade/main.glade:434
+#: glade/main.glade:462
 msgid "_Find…"
 msgstr "_Rechercher…"
 
-#: glade/main.glade:452
+#: glade/main.glade:480
 msgid "_Help"
 msgstr "Aid_e"
 
-#: glade/main.glade:526
+#: glade/main.glade:599
 msgid "View"
 msgstr "Mode"
 
-#: glade/main.glade:576
+#: glade/main.glade:701
 msgid "Zoom"
 msgstr "Zoom"
