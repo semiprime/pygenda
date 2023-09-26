@@ -700,7 +700,7 @@ class GUI:
     # Main
     @classmethod
     def main(cls) -> None:
-        # Run the man Gtk loop
+        # Run the main Gtk loop
         Gtk.main()
 
 
