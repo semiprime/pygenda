@@ -43,6 +43,12 @@ Major
   by making all occurrences exceptions; keyboard navigation in menu
   is not intuitive.
 
+* When editing repeated entries, what is the best behaviour if, for
+  example, the 5th occurrence is an exception (or is cancelled, or
+  the time for that one repeat is different) and the start date is
+  changed. Should the exception be moved? How should this be communicated
+  to the user?
+
 * Multi-day events (i.e. ones that span multiple days) only displayed
   on first day. (In progress - started on Week View.) (Future: config
   option "next_day_crossover" to determine if an even crosses over.)
@@ -72,7 +78,8 @@ Medium
 ------
 * How to handle setting the status of a repeating event? (E.g., a
   reasonable use-case would be to cancel just one occurrence of a
-  repeating event. How is this done with ical?)
+  repeating event. Need to use RECURRENCE-ID in icalendar, see
+  https://icalendar.org/iCalendar-RFC-5545/3-8-4-4-recurrence-id.html)
 
 * Need InfoPrints (a.k.a. toast notifications) for some situations
 
@@ -176,6 +183,14 @@ Medium
   possible factor is that up/down navigation in the dialog by default
   takes the focus to the Cancel button. Maybe add a "Discard changes?"
   dialog if changes have been made and editing is cancelled.
+
+* On the Gemini, touchscreen taps in Week View in the left pane get the
+  wrong x-coordinate. The result of this is that individual entries are
+  not correctly selected if taps are to the left of the space. This
+  seems to be a bug in GTK, and does not happen with GTK3.24 (desktop).
+
+* There's no portrait mode. This would be particularly useful on "transformer"
+  phones like the Astro Slide.
 
 Minor
 -----
