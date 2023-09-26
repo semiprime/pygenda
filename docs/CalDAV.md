@@ -69,7 +69,8 @@ After configuring Pygenda to use the Radicale server (below), if
 you're happy with this setup, you can put your Radicale settings in
 `.config/radicale/config` and run radicale on startup. E.g. in LXQt on
 the Gemini, go to LXQT Configuration Center -> Session Settings ->
-Autostart, and add the command "`python3 -m radicale`".
+Autostart, and add the command "`python3 -m radicale`" (this will write
+a .desktop file in `~/.config/autostart/`).
 
 Configuring Pygenda to use the local Radicale (or another) server
 -----------------------------------------------------------------

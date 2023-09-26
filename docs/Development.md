@@ -18,20 +18,21 @@ clipboard library manually, as in the section below.)
 Building clipboard library
 --------------------------
 This is a small C library required for cutting/copying entries. Built
-automatically with `./setup.py install`. Tested on Gemini and Slackware,
-and probably works on other Linux distributions; might need tweaking
-for Windows/MacOS/BSD/other. To build by hand and copy to the correct
-location in the source tree:
+automatically with `./setup.py install`. Tested on Gemian, postmarketOS
+and Slackware, and probably works on other Linux distributions. It might
+need tweaking for Windows/MacOS/BSD/other. To build by hand and copy to
+the correct location in the source tree:
 
     cd csrc
     cmake .
     make
     make cp
 
-Build dependencies are: a C compiler, CMake (or you could build from
-the command-line), and GTK3 development files (if these are not already
-installed, it's probably package `libgtk-3-dev` or `gtk+3.0-dev` in your
-package manager).
+Build dependencies are: a C compiler, make, CMake (or you could build
+by calling your compiler directly), development files for your libc
+(e.g. `libc-dev`, or `musl-dev` on postmarketOS) and GTK3 development
+files (if these are not already installed, it's probably package
+`libgtk-3-dev` or `gtk+3.0-dev` in your package manager).
 
 Translating strings
 -------------------
@@ -74,14 +75,15 @@ Checklist for releases
 * Create various events & todo items. Close & reopen Pygenda and check
   they are still there (with ics file & CalDAV server).
 * Check copy/cut/paste works, including e.g. event date/time, multi-day events,
-  event status, with alarms, todo pasted as event & vice-versa, text pasted
+  event status, with alarms, with notes, todo pasted as event & vice-versa,
+  text pasted
 * Regenerate .po and .mo localisation files (see above)
 * Check at least one non-English language
 * Check any ics files in validator, e.g. https://icalendar.org/validator.html
 * Run test_repeats.py unit tests.
 * Check all test files (testxx_*.ics & generated files) display correctly
 * Check darkmode & backgrounds CSS still work
-* Check mouse clicks/touchscreen taps work (all views)
+* Check mouse clicks/touchscreen taps/swipes work (all views)
 * Check start_week_day!=Monday still works (all views)
 * Increase version number
 
@@ -119,3 +121,15 @@ Can test setup.py by using a virtual Python environment:
   # (Optionally install caldav and check pygenda can use it)
   deactivate
   rm -r venv_dir
+
+Logging
+-------
+To log errors when Pygenda is launched from an icon, change the
+.desktop file used to launch Pygenda so that the Exec line reads:
+
+  Exec=bash -c "python3 -m pygenda 2>>FULL_PATH_OF_PYGENDA_LOG_FILE"
+
+You may also want to log errors from whatever server you are using.
+For Radicale, edit the .desktop file in ~/.config/autostart/:
+
+  Exec=bash -c "python3 -m radicale 2>>FULL_PATH_OF_RADICALE_LOG_FILE"
