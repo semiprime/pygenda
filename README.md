@@ -72,9 +72,9 @@ Python3. Version >=3.5 (because Gemini's "Gemian" Linux provides Python 3.5).
 
 * Install on Debian: `sudo apt install python3 python3-pip`
 
-GTK+3:
+GTK+3 library:
 
-* Install on Debian: `sudo apt install gtk+3`
+* Install on Debian: `sudo apt install libgtk+3`
 
 If you are running a recent version of pip then the required Python
 modules should be installed automatically, so you can skip to the next
