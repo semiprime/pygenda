@@ -1,5 +1,5 @@
-Pygenda for Gemini PDA "Quick Start" Guide
-==========================================
+Pygenda "Quick Start" Guide for the Gemini PDA
+==============================================
 This guide will lead you through installation and basic configuration
 of the most recent release of Pygenda on a Gemini PDA running Gemian
 Linux (the instructions might work with a Cosmo Communicator too, but

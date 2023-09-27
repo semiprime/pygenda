@@ -59,9 +59,11 @@ with Pygenda (see COPYING file). If not, see <https://www.gnu.org/licenses/>.
 
 Run/install
 -----------
-**Gemini PDA** (**possibly the Cosmo too**, but I don't have one to test):
-See the [Gemini quickstart guide](docs/quickstart-geminipda.md) for
-installing the latest release (recommended).
+The simplest way to get started is to follow one of the following "quick start"
+guides (only a few devices, so far):
+
+* [**Gemini PDA**](docs/quickstart-geminipda.md) (possibly the **Cosmo Communicator** too, but I don't have one to test)
+* [**PostmarketOS**](docs/quickstart-postmarketOS.md)
 
 The sections below are for those running from source (e.g. from a
 GitHub clone), or who want to know more technical details.
