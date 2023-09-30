@@ -61,8 +61,8 @@ class Config:
 
         # Read 'file' from command line, write to config store as ics_file
         if cl_args.file:
-            cls.set('calendar', 'ics_file', cl_args.file)
-            cls.set('calendar', 'caldav_server', None)
+            cls.set('calendar', 'type', 'icalfile')
+            cls.set('calendar', 'filename', cl_args.file)
         if cl_args.view is not None:
             cls.set('startup','view',cl_args.view.lower())
 

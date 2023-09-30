@@ -79,36 +79,45 @@ class Calendar:
         # Can take a long time, since it loads/sorts calendar data.
         # Best called in background after GUI is started, or startup can be slow.
         Config.set_defaults('calendar',{
-            'ics_file': None,
-            'caldav_server': None,
-            'caldav_username': None,
-            'caldav_password': None,
-            'caldav_calendar': None
+            'type': 'icalfile',
         })
 
         # Read config values to get type of data source connector
-        filename = Config.get('calendar','ics_file')
-        caldav_server = Config.get('calendar','caldav_server')
-        if caldav_server is not None:
-            # Use either server or file, not both (at least for now)
-            assert(filename is None)
-            user = Config.get('calendar','caldav_username')
-            passwd = Config.get('calendar','caldav_password')
-            calname = Config.get('calendar','caldav_calendar')
-            cls.calConnector = CalendarConnectorCalDAV(caldav_server,user,passwd,calname)
-        else:
-            # If no server given, use an ics file.
-            # Use either the provided filename or a default name.
-            if filename is None:
-                filename = '{}/{}'.format(Config.conf_dirname,Config.DEFAULT_ICS_FILENAME)
-            else:
-                # Expand '~' (so it can be used in config file)
-                filename =  os_path.expanduser(filename)
-            # Create a connector for that file
-            cls.calConnector = CalendarConnectorICSfile(filename)
-
+        CTMAP = {
+            'icalfile': cls._parse_config_icalfile,
+            'caldav': cls._parse_config_caldav,
+            }
+        caltype = Config.get('calendar','type').lower()
+        assert(caltype in CTMAP)
+        cls.calConnector = CTMAP[caltype]()
         if cls.calConnector.cal.is_broken:
-            print('Warning: Non-conformant ical file', file=stderr)
+            print('Warning: Non-conformant ical data', file=stderr)
+
+
+    @staticmethod
+    def _parse_config_icalfile() -> CalendarConnector:
+        # Reads config setting for an icalfile and returns an
+        # appropriate calendar connector object
+        filename = Config.get('calendar','filename')
+        # Use either the provided filename or a default name.
+        if filename is None:
+             filename = '{}/{}'.format(Config.conf_dirname,Config.DEFAULT_ICS_FILENAME)
+        else:
+             # Expand '~' (so it can be used in config file)
+             filename =  os_path.expanduser(filename)
+        # Create a connector for that file
+        return CalendarConnectorICSfile(filename)
+
+
+    @staticmethod
+    def _parse_config_caldav() -> CalendarConnector:
+        # Reads config setting for a CalDAV server and returns an
+        # appropriate calendar connector object
+        caldav_server = Config.get('calendar','server')
+        user = Config.get('calendar','username')
+        passwd = Config.get('calendar','password')
+        calname = Config.get('calendar','calendar')
+        return CalendarConnectorCalDAV(caldav_server,user,passwd,calname)
 
 
     @staticmethod

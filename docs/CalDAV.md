@@ -77,11 +77,12 @@ Configuring Pygenda to use the local Radicale (or another) server
 Edit/create your `~/.config/pygenda/pygenda.ini` file. Edit/add:
 
     [calendar]
-    caldav_server=http://localhost:5232/
-    caldav_username=CALDAV_USERNAME
+    type = caldav
+    server = http://localhost:5232/
+    username = CALDAV_USERNAME
     # Optional:
-    caldav_password=PASSWORD # Plaintext, so don't reuse your bank password...
-    caldav_calendar=CALENDAR_NAME # Not needed if there's only one calendar
+    password = PASSWORD # Plaintext, so don't reuse your bank password...
+    calendar = CALENDAR_NAME # Not needed if there's only one calendar
 
 It should be clear how to adjust these configuration options if you use
 a different CalDAV server.
