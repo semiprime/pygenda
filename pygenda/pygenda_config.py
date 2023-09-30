@@ -3,7 +3,7 @@
 # pygenda_config.py
 # Provides the Config class, to access configuration settings.
 #
-# Copyright (C) 2022 Matthew Lewis
+# Copyright (C) 2022,2023 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -26,7 +26,7 @@ from pathlib import Path
 import configparser
 from sys import stderr
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Any
 
 
 # Singleton class to handle config from .ini file & command line
@@ -36,6 +36,8 @@ class Config:
     DEFAULT_CONFIG_FILE = CONFIG_DIR + '/pygenda.ini'
     DEFAULT_ICS_FILENAME = 'pygenda.ics' # Put this here to avoid cyclic dep.
 
+    date = None
+    conf_dirname = None
 
     @classmethod
     def init(cls) -> None:
@@ -88,10 +90,14 @@ class Config:
 
 
     @classmethod
-    def get(cls, section:str, option:str):
+    def get(cls, section:str, option:str) -> Any:
         # Generic method to get a config option.
         # Return type can be Any(?) - often str, also bool, None.
-        return cls._cparser.get(section,option)
+        try:
+            v = cls._cparser.get(section,option) # type:Any
+        except(configparser.NoOptionError, configparser.NoSectionError):
+            v = None
+        return v
 
 
     @classmethod
@@ -107,7 +113,7 @@ class Config:
     def get_float(cls, section:str, option:str) -> Optional[float]:
         # Get a config option as a float.
         # Return None if the value can't be interpreted as a float.
-        v = cls._cparser.get(section,option)
+        v = cls.get(section, option)
         if v is None or v=='':
             return None
         return cls._cparser.getfloat(section,option)
@@ -117,7 +123,7 @@ class Config:
     def get_int(cls, section:str, option:str) -> Optional[int]:
         # Get a config option as an int.
         # Return None if the value can't be interpreted as an int.
-        v = cls._cparser.get(section,option)
+        v = cls.get(section, option)
         if v is None or v=='':
             return None
         return cls._cparser.getint(section,option)
@@ -127,7 +133,7 @@ class Config:
     def get_bool(cls, section:str, option:str) -> Optional[bool]:
         # Get a config option as a bool.
         # Return None if the value can't be interpreted as a bool.
-        v = cls._cparser.get(section,option)
+        v = cls.get(section, option)
         if v is None or v=='':
             return None
         if isinstance(v, bool):

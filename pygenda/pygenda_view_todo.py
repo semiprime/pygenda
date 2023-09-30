@@ -89,14 +89,10 @@ class View_Todo(View):
         cls._list_filters = []
         cls._list_default_cats = []
         while True:
-            try:
-                title = Config.get('todo_view','list{}_title'.format(i))
-            except:
+            title = Config.get('todo_view','list{}_title'.format(i))
+            if title is None:
                 break
-            try:
-                filt = Config.get('todo_view','list{}_filter'.format(i))
-            except:
-                filt = None
+            filt = Config.get('todo_view','list{}_filter'.format(i))
             cls._list_titles.append(title)
             cls._list_filters.append(filt)
             cls._list_default_cats.append(cls._default_cats_from_filter(filt))
