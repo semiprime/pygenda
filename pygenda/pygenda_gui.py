@@ -212,11 +212,11 @@ class GUI:
         # Setup CSS provider(s) now so "loading" notice is styled
         css_prov = Gtk.CssProvider()
         css_prov.load_from_path(cls._CSS_FILE_APP)
-        Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), css_prov, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+        Gtk.StyleContext.add_provider_for_screen(cls._window.get_screen(), css_prov, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
         try:
             css_prov_u = Gtk.CssProvider()
             css_prov_u.load_from_path(cls._CSS_FILE_USER)
-            Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), css_prov_u, Gtk.STYLE_PROVIDER_PRIORITY_USER)
+            Gtk.StyleContext.add_provider_for_screen(cls._window.get_screen(), css_prov_u, Gtk.STYLE_PROVIDER_PRIORITY_USER)
         except:
             pass
 
