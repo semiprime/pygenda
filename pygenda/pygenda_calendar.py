@@ -32,7 +32,7 @@ from os import stat as os_stat, chmod as os_chmod, rename as os_rename, path as 
 import stat
 from time import monotonic as time_monotonic
 import tempfile
-from typing import Optional, Union
+from typing import Optional, Union, Tuple
 from copy import deepcopy
 from math import ceil
 from calendar import monthrange
@@ -578,7 +578,7 @@ class Calendar:
 
 
     @staticmethod
-    def _todo_sortindex_priority(t:iTodo) -> int:
+    def _todo_sortindex_priority(t:iTodo) -> Tuple[int,dt_datetime,dt_datetime]:
         # Return sort keys used to sort todos by priority
         key_pri = t['PRIORITY'] if 'PRIORITY' in t else 10
         key_dtime = date_to_datetime(t['DUE'].dt).timestamp() if 'DUE' in t else float('inf')
