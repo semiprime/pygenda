@@ -34,7 +34,7 @@ class Config:
     _cparser = configparser.RawConfigParser()
     CONFIG_DIR = GLib.get_user_config_dir() + '/pygenda'
     DEFAULT_CONFIG_FILE = CONFIG_DIR + '/pygenda.ini'
-    DEFAULT_ICS_FILENAME = 'pygenda.ics' # Put this here to avoid cyclic dep.
+    DEFAULT_ICAL_FILENAME = 'pygenda.ics' # Put this here to avoid cyclic dep.
 
     date = None
     conf_dirname = None
@@ -59,7 +59,7 @@ class Config:
         # Store the dirname so it can be used by other components
         cls.conf_dirname = Path(config_file).parent.as_posix()
 
-        # Read 'file' from command line, write to config store as ics_file
+        # Read 'file' from command line (iCal file)
         if cl_args.file:
             cls.set('calendar', 'type', 'icalfile')
             cls.set('calendar', 'filename', cl_args.file)
@@ -84,7 +84,7 @@ class Config:
         parser = argparse.ArgumentParser(description=__doc__)
         parser.add_argument('-c', '--config', metavar='FILE', type=str, default=None, help='Config file. Default: {:s}'.format(Config.DEFAULT_CONFIG_FILE))
         parser.add_argument('-d', '--date', metavar='DATE', type=str, default=None, help='Cursor startup date (YYYY-MM-DD)')
-        parser.add_argument('-f', '--file', metavar='FILE', type=str, default=None, help='Calendar file. Default: {:s} in config directory'.format(Config.DEFAULT_ICS_FILENAME))
+        parser.add_argument('-f', '--file', metavar='FILE', type=str, default=None, help='Calendar file. Default: {:s} in config directory'.format(Config.DEFAULT_ICAL_FILENAME))
         parser.add_argument('-v', '--view', metavar='VIEW', type=str, default=None, help='Opening view')
         return parser.parse_args()
 

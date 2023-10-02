@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # pygenda_calendar.py
-# Connects to agenda data provider - either an ics file or CalDAV server.
+# Connects to agenda data provider - either an iCal file or CalDAV server.
 #
 # Copyright (C) 2022,2023 Matthew Lewis
 #
@@ -101,12 +101,12 @@ class Calendar:
         filename = Config.get('calendar','filename')
         # Use either the provided filename or a default name.
         if filename is None:
-             filename = '{}/{}'.format(Config.conf_dirname,Config.DEFAULT_ICS_FILENAME)
+             filename = '{}/{}'.format(Config.conf_dirname,Config.DEFAULT_ICAL_FILENAME)
         else:
              # Expand '~' (so it can be used in config file)
              filename =  os_path.expanduser(filename)
         # Create a connector for that file
-        return CalendarConnectorICSfile(filename)
+        return CalendarConnectorICalFile(filename)
 
 
     @staticmethod
@@ -266,16 +266,16 @@ class Calendar:
 
         # DateTime utcnow() function doesn't include TZ, so use now(tz.utc)
         utcnow =  dt_datetime.now(timezone.utc)
-        cls._update_entry(en, 'DTSTAMP', utcnow)
-        cls._update_entry(en, 'LAST-MODIFIED', utcnow)
-        cls._update_entry(en, 'SUMMARY', e_inf.desc)
-        cls._update_entry(en, 'PRIORITY', e_inf.priority)
-        cls._update_entry(en, 'DUE', e_inf.duedate)
-        cls._update_entry(en, 'DESCRIPTION', e_inf.longdesc)
+        cls._update_entry_field(en, 'DTSTAMP', utcnow)
+        cls._update_entry_field(en, 'LAST-MODIFIED', utcnow)
+        cls._update_entry_field(en, 'SUMMARY', e_inf.desc)
+        cls._update_entry_field(en, 'PRIORITY', e_inf.priority)
+        cls._update_entry_field(en, 'DUE', e_inf.duedate)
+        cls._update_entry_field(en, 'DESCRIPTION', e_inf.longdesc)
 
         # For Categories, we need to convert to a list,
         # to work around bug passing set to old icalendar.
-        cls._update_entry(en, 'CATEGORIES', None if e_inf.categories is None else list(e_inf.categories))
+        cls._update_entry_field(en, 'CATEGORIES', None if e_inf.categories is None else list(e_inf.categories))
 
         # DTSTART - delete & re-add so type (DATE vs. DATE-TIME) is correct
         # (Also, Q: if comparing DTSTARTs with different TZs, how does != work?)
@@ -286,8 +286,8 @@ class Calendar:
             en.add('DTSTART', e_inf.start_dt)
 
         # Duration or Endtime - first delete existing
-        cls._clear_entry(en, 'DURATION')
-        cls._clear_entry(en, 'DTEND')
+        cls._del_entry_field(en, 'DURATION')
+        cls._del_entry_field(en, 'DTEND')
         # Then add new end time/duration (if needed)
         cls._event_add_end_dur_from_info(en, e_inf)
 
@@ -298,7 +298,7 @@ class Calendar:
         elif had_date:
             # Previously had start time, but no repeats
             clear_norep = True
-        cls._clear_entry(en, 'EXDATE')
+        cls._del_entry_field(en, 'EXDATE')
         if e_inf.rep_type is not None and e_inf.rep_inter>0:
             cls._event_add_repeat_from_info(en, e_inf)
             clear_rep = True
@@ -328,23 +328,23 @@ class Calendar:
 
 
     @staticmethod
-    def _clear_entry(en:Union[iEvent,iTodo], elname:str) -> None:
-        # Helper function to delete an entry value if it exists.
-        if elname in en:
-            del(en[elname])
+    def _del_entry_field(en:Union[iEvent,iTodo], fname:str) -> None:
+        # Helper function to delete an entry field if it exists.
+        if fname in en:
+            del(en[fname])
 
 
     @staticmethod
-    def _update_entry(en:Union[iEvent,iTodo], elname:str, val) -> None:
-        # Helper function to update an entry value, or add if it doesn't
+    def _update_entry_field(en:Union[iEvent,iTodo], fname:str, val) -> None:
+        # Helper function to update an entry field, or add if it doesn't
         # exist. Use delete-and-recreate since seems more reliable
         # (e.g. for datetimes, some combinations of modules lose the
-        # timezone marker if you do en[elname]=val).
+        # timezone marker if you do en[fname]=val).
         # Note: if val is None, then existing entry is deleted.
-        if elname in en:
-            del(en[elname])
+        if fname in en:
+            del(en[fname])
         if val is not None:
-            en.add(elname, val)
+            en.add(fname, val)
 
 
     @staticmethod
@@ -426,14 +426,14 @@ class Calendar:
     @staticmethod
     def _entry_set_status_from_info(en:Union[iEvent,iTodo], e_inf:EntryInfo) -> None:
         # Set entry status (cancelled, tentative etc.) from e_inf.
-        Calendar._clear_entry(en, 'STATUS')
+        Calendar._del_entry_field(en, 'STATUS')
         Calendar._add_status_entry(en, e_inf.status)
 
 
     @staticmethod
     def _event_set_location_from_info(ev:iEvent, e_inf:EntryInfo) -> None:
         # Set event location (text string) from e_inf.
-        Calendar._clear_entry(ev, 'LOCATION')
+        Calendar._del_entry_field(ev, 'LOCATION')
         if e_inf.location:
             ev.add('LOCATION', e_inf.location)
 
@@ -502,11 +502,11 @@ class Calendar:
         # Only allows spec'ed values.
         if stat=='COMPLETED':
             # PERCENT-COMPLETE automatically set to 100, so can delete
-            Calendar._clear_entry(entry, 'PERCENT-COMPLETE')
+            Calendar._del_entry_field(entry, 'PERCENT-COMPLETE')
         else:
             if 'PERCENT-COMPLETE' in entry and entry['PERCENT-COMPLETE']==100:
                 entry['PERCENT-COMPLETE'] = 99 # Stop it being == 100
-            Calendar._clear_entry(entry, 'COMPLETED')
+            Calendar._del_entry_field(entry, 'COMPLETED')
         if (isinstance(entry,iEvent) and stat in Calendar.STATUS_LIST_EVENT) or (
             isinstance(entry,iTodo) and stat in Calendar.STATUS_LIST_TODO):
                 entry.add('STATUS', stat)
@@ -631,9 +631,9 @@ class Calendar:
 
 
 #
-# Connector class for ICS files
+# Connector class for iCal files
 #
-class CalendarConnectorICSfile(CalendarConnector):
+class CalendarConnectorICalFile(CalendarConnector):
     BACKUP_PERIOD = 90 # seconds
     BACKUP_EXT = 'bak'
     NEWFILE_EXT = 'new'
