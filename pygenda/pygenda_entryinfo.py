@@ -45,8 +45,9 @@ class EntryInfo:
     TYPE_EVENT=0
     TYPE_TODO=1
 
-    def __init__(self, type:int=TYPE_EVENT, desc:str=None, start_dt:dt_date=None, end_dt:dt_date=None, duration:timedelta=None, status:str=None, location:str=None):
+    def __init__(self, type:int=TYPE_EVENT, cal_idx:int=0, desc:str=None, start_dt:dt_date=None, end_dt:dt_date=None, duration:timedelta=None, status:str=None, location:str=None):
         self.type = type
+        self.cal_idx = cal_idx
         self.desc = '' if desc is None else desc
         self.start_dt = start_dt # date or datetime
         self.set_end_dt(end_dt)
@@ -77,6 +78,7 @@ class EntryInfo:
         # Set entry duration, checking no end date/time has been set
         assert dur is None or self.end_dt is None
         self.duration = dur
+
 
     def set_repeat_info(self, reptype:str, interval:int=None, count:int=None, until:dt_date=None, byday:str=None, bymonth:str=None, bymonthday:str=None, except_list=None) -> None:
         # Set repeat details for this Entry

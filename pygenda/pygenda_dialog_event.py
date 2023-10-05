@@ -68,6 +68,7 @@ class EventDialogController:
     wid_desc = None # type: Gtk.Entry
     _wid_desc_changed_handler = 0
     wid_date = None # type: WidgetDate
+    wid_calendar = None # type: Gtk.ComboBox
     wid_tabs = None # type: Gtk.Notebook
 
     wid_timed_buttons = None # type: Gtk.Box
@@ -167,11 +168,26 @@ class EventDialogController:
         cls.wid_date.show_all()
 
         # Init other groups of widgets
+        cls._init_calendarfields()
         cls._init_timefields()
         cls._init_repeatfields()
         cls._init_alarmfields()
         cls._init_detailfields()
         cls._init_navigation()
+
+
+    @classmethod
+    def _init_calendarfields(cls) -> None:
+        # Initialise calendar combo-box.
+        # Called on app startup.
+        cls.wid_calendar = GUI._builder.get_object('combo_event_calendar')
+        cal_list = Calendar.calendar_displaynames_event()
+        for id,dn in cal_list:
+            cls.wid_calendar.append(str(id), dn)
+        if len(cal_list) <= 1:
+            # Hide option if there's only one choice
+            cls.wid_calendar.hide()
+            GUI._builder.get_object('label_event_calendar').hide()
 
 
     @classmethod
@@ -878,6 +894,9 @@ class EventDialogController:
         cls.wid_desc.handler_unblock(cls._wid_desc_changed_handler) # unblock
         cls.wid_date.set_date(dt_date.today() if date is None else date)
 
+        # Calendar
+        cls.wid_calendar.set_active(0)
+
         # Time tab
         cls.wid_timed_buttons[0].set_active(True) # Sends signal to hide fields
         tm9 = dt_time(hour=9)
@@ -931,6 +950,8 @@ class EventDialogController:
         if 'SUMMARY' in event:
             cls.wid_desc.set_text(event['SUMMARY'])
         cls.wid_desc.grab_focus() # also selects text in field
+
+        cls.wid_calendar.set_active_id(str(event._cal_idx))
 
         # Date & Time tab
         cls._seed_date_timetab(event)
@@ -1226,11 +1247,12 @@ class EventDialogController:
     @classmethod
     def _get_entryinfo(cls) -> EntryInfo:
         # Decipher dialog fields and return info as an EntryInfo object.
+        cal_idx = int(cls.wid_calendar.get_active_id())
         desc = cls.wid_desc.get_text()
         dt = cls.get_datetime_start()
         loc = cls.wid_location.get_text()
         stat = cls.wid_status.get_active_id()
-        ei = EntryInfo(desc=desc, start_dt=dt, status=stat, location=loc)
+        ei = EntryInfo(cal_idx=cal_idx, desc=desc, start_dt=dt, status=stat, location=loc)
         if cls.wid_timed_buttons[2].get_active():
             # "Day entry" selected, read number of days from widget
             d = max(1,int(cls.wid_allday_count.get_value()))

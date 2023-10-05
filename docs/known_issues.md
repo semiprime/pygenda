@@ -70,12 +70,11 @@ Major
 * No "Import" function (e.g. to import iCal events from an email).
   Also, how do we share events - "export"?
 
-* Only one calendar source can be used at a time. (Maybe allow multiple
-  CalDAV calendars, each with own style element, so can be coloured
-  differently by CSS. No support for multiple .ics files?)
-
 Medium
 ------
+* Support for multiple calendar sources is basic. To add: styling,
+  set default calendar, read-only calendars.
+
 * How to handle setting the status of a repeating event? (E.g., a
   reasonable use-case would be to cancel just one occurrence of a
   repeating event. Need to use RECURRENCE-ID in icalendar, see

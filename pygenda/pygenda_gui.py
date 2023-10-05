@@ -257,7 +257,12 @@ class GUI:
     @staticmethod
     def init_cal(task:Gio.Task, src_obj, t_data, cancel:Gio.Cancellable)->None:
         # Wrapper around Calendar.init(), so we can call it in a GTask thread.
-        Calendar.init()
+        try:
+            Calendar.init()
+        except:
+            print('Error while creating calendar(s)', file=stderr)
+            Gtk.main_quit()
+            raise
         task.return_int(0)
 
     @classmethod
@@ -271,6 +276,10 @@ class GUI:
         # Fallback for Gio version < 2.36 (hence needed for Gemini).
         try:
             Calendar.init()
+        except:
+            print('Error while creating calendar(s)', file=stderr)
+            Gtk.main_quit()
+            raise
         finally:
             GUI._starting_cal = False
         return False # indicates task complete
@@ -311,9 +320,9 @@ class GUI:
         cls._box_view_cont.remove(cls._loading_indicator)
         del(cls._loading_indicator) # should be only remaining reference
 
-        # Check that calendar initialised/connected properly
-        if not hasattr(Calendar, 'calConnector') or not Calendar.calConnector:
-            print('Error: Calendar could not be initialized', file=stderr)
+        # Check that at least one calendar initialised/connected properly
+        if len(Calendar.calConnectors) == 0:
+            print('Error: No calendars created', file=stderr)
             Gtk.main_quit()
             return
 
@@ -484,7 +493,7 @@ class GUI:
     @classmethod
     def _init_comboboxes(cls) -> None:
         # Connect ComboBox events to handlers for extra features.
-        for cb_id in ('combo_repeat_type','combo_repeaton_year','combo_repeaton_month','combo_status','combo_todo_list','combo_todo_priority','combo_todo_status'):
+        for cb_id in ('combo_event_calendar','combo_repeat_type','combo_repeaton_year','combo_repeaton_month','combo_status','combo_todo_list','combo_todo_calendar','combo_todo_priority','combo_todo_status'):
             cb = cls._builder.get_object(cb_id)
             cb.connect('key-press-event', cls._combobox_keypress)
 

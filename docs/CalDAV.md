@@ -81,11 +81,30 @@ Edit/create your `~/.config/pygenda/pygenda.ini` file. Edit/add:
     server = http://localhost:5232/
     username = CALDAV_USERNAME
     # Optional:
+    display_name = Personal # The name you want displayed in the Pygenda UI
     password = PASSWORD # Plaintext, so don't reuse your bank password...
     calendar = CALENDAR_NAME # Not needed if there's only one calendar
 
 It should be clear how to adjust these configuration options if you use
 a different CalDAV server.
+
+If you would like to add further calendars (i.e. sources/stores for
+calendar data), these can be placed in sections titled `calendar1`,
+`calendar2`, etc. Example:
+
+    [calendar1]
+    type = caldav
+    display_name = Work
+    server = http://localhost:5232/
+    username = skroob
+    password = 12345 # I have the same combination on my luggage
+    calendar = Work
+    
+    [calendar2]
+    # Holiday list downloaded from https://....
+    type = icalfile
+    display_name = Holidays
+    filename = ~/.config/pygenda/holidays_UK.ics
 
 Synchronising devices
 ---------------------

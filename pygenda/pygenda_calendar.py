@@ -32,7 +32,7 @@ from os import stat as os_stat, chmod as os_chmod, rename as os_rename, path as 
 import stat
 from time import monotonic as time_monotonic
 import tempfile
-from typing import Optional, Union, Tuple
+from typing import Optional, Union, Tuple, List
 from copy import deepcopy
 from math import ceil
 from calendar import monthrange
@@ -47,6 +47,7 @@ from .pygenda_entryinfo import EntryInfo
 # Used by Calendar class (below).
 class CalendarConnector:
     cal = None # type:iCalendar
+    displayname = None # type:str
 
     def add_entry(self, entry:Union[iEvent,iTodo]) -> Union[iEvent,iTodo]:
         # Add a new entry component to the calendar data and store it.
@@ -68,7 +69,7 @@ class Calendar:
     STATUS_LIST_EVENT = ('TENTATIVE','CONFIRMED','CANCELLED')
     STATUS_LIST_TODO = ('NEEDS-ACTION','IN-PROCESS','COMPLETED','CANCELLED')
 
-    calConnector = None # type:CalendarConnector
+    calConnectors = [] # type:List[CalendarConnector]
     _entry_norep_list_sorted = None
     _entry_rep_list = None
     _todo_list = None
@@ -78,27 +79,56 @@ class Calendar:
         # Calendar connector initialisation.
         # Can take a long time, since it loads/sorts calendar data.
         # Best called in background after GUI is started, or startup can be slow.
-        Config.set_defaults('calendar',{
-            'type': 'icalfile',
-        })
 
-        # Read config values to get type of data source connector
+        # Map calendar types to config parsing functions
         CTMAP = {
             'icalfile': cls._parse_config_icalfile,
             'caldav': cls._parse_config_caldav,
             }
-        caltype = Config.get('calendar','type').lower()
-        assert(caltype in CTMAP)
-        cls.calConnector = CTMAP[caltype]()
-        if cls.calConnector.cal.is_broken:
-            print('Warning: Non-conformant ical data', file=stderr)
+
+        # Local function to save duplicating code
+        def do_parse(sect:str, caltype:str) -> None:
+            caltype = caltype.lower()
+            assert(caltype in CTMAP)
+            conn = CTMAP[caltype](sect)
+            if conn.cal.is_broken:
+                print('Warning: Non-conformant ical data, '+sect, file=stderr)
+            # Set display name
+            dn = Config.get(sect, 'display_name')
+            conn.displayname = sect if dn is None else dn
+            # Add _cal_idx attribute so we can find calendar from entry
+            calidx = len(cls.calConnectors)
+            for ev in conn.cal.walk('VEVENT'):
+                ev._cal_idx = calidx
+            for td in conn.cal.walk('VTODO'):
+                td._cal_idx = calidx
+            # Finally, append our new connector to the list
+            cls.calConnectors.append(conn)
+
+        caltype = Config.get('calendar','type')
+        if caltype is not None:
+            do_parse('calendar', caltype)
+
+        # look for 'calendar1', 'calendar2' etc.
+        i = len(cls.calConnectors) # if no 'calendar' start at 'calendar0'
+        while True:
+            sect = 'calendar'+str(i)
+            caltype = Config.get(sect, 'type')
+            if caltype is None:
+                break
+            do_parse(sect, caltype)
+            i += 1
+
+        if i==0:
+            # No calendar or calendar0 - default to a file
+            do_parse('calendar', 'icalfile')
 
 
     @staticmethod
-    def _parse_config_icalfile() -> CalendarConnector:
+    def _parse_config_icalfile(calsect:str) -> CalendarConnector:
         # Reads config setting for an icalfile and returns an
         # appropriate calendar connector object
-        filename = Config.get('calendar','filename')
+        filename = Config.get(calsect,'filename')
         # Use either the provided filename or a default name.
         if filename is None:
              filename = '{}/{}'.format(Config.conf_dirname,Config.DEFAULT_ICAL_FILENAME)
@@ -110,13 +140,13 @@ class Calendar:
 
 
     @staticmethod
-    def _parse_config_caldav() -> CalendarConnector:
+    def _parse_config_caldav(calsect:str) -> CalendarConnector:
         # Reads config setting for a CalDAV server and returns an
         # appropriate calendar connector object
-        caldav_server = Config.get('calendar','server')
-        user = Config.get('calendar','username')
-        passwd = Config.get('calendar','password')
-        calname = Config.get('calendar','calendar')
+        caldav_server = Config.get(calsect, 'server')
+        user = Config.get(calsect, 'username')
+        passwd = Config.get(calsect, 'password')
+        calname = Config.get(calsect, 'calendar')
         return CalendarConnectorCalDAV(caldav_server,user,passwd,calname)
 
 
@@ -125,6 +155,29 @@ class Calendar:
         # Generate a UID for iCal elements (required element)
         uid = uuid1() # based on MAC addr, time & random element
         return str(uid)
+
+
+    @classmethod
+    def calendar_displaynames_event(cls) -> List:
+        # Returns display names for calendars for storing Events.
+        # To be used, for example, in the Event dialog.
+        dnlist = [ (i,cls.calConnectors[i].displayname) for i in range(len(cls.calConnectors)) ]
+        return dnlist
+
+
+    @classmethod
+    def calendar_displaynames_todo(cls) -> List:
+        # Returns display names for calendars for storing Todos.
+        # To be used, for example, in the Todo dialog.
+        dnlist = [ (i,cls.calConnectors[i].displayname) for i in range(len(cls.calConnectors)) ]
+        return dnlist
+
+
+    @classmethod
+    def calendar_displayname(cls, en:Union[iEvent,iTodo]) -> str:
+        # Returns display names for given entry en
+        dn = cls.calConnectors[en._cal_idx].displayname # type:str
+        return dn
 
 
     @classmethod
@@ -169,12 +222,13 @@ class Calendar:
 
         cls._entry_set_alarms_from_info(en, e_inf)
 
-        entry = cls.calConnector.add_entry(en) # Write to store
+        entry = cls.calConnectors[e_inf.cal_idx].add_entry(en) # Write to store
+        entry._cal_idx = e_inf.cal_idx
         return entry
 
 
     @classmethod
-    def new_entry_from_example(cls, exen:Union[iEvent,iTodo], e_type:int=None, dt_start:dt_date=None, e_cats:Union[list,bool,None]=True)-> Union[iEvent,iTodo]:
+    def new_entry_from_example(cls, exen:Union[iEvent,iTodo], e_type:int=None, dt_start:dt_date=None, e_cats:Union[list,bool,None]=True, cal_idx:int=None)-> Union[iEvent,iTodo]:
         # Add a new iCal entry to store given an iEvent as a "template".
         # Replace UID, timestamp etc. to make it a new event.
         # Potentially change type of entry to e_type.
@@ -246,7 +300,11 @@ class Calendar:
         if 'DESCRIPTION' in exen:
             en.add('DESCRIPTION', exen['DESCRIPTION'])
 
-        en = cls.calConnector.add_entry(en) # Write to store
+        if cal_idx is None:
+            cal_idx = 0 # !! Should make this the default calendar
+
+        en = cls.calConnectors[cal_idx].add_entry(en) # Write to store
+        en._cal_idx = cal_idx
 
         if new_dt_start is not None:
             cls._entry_norep_list_sorted = None # Clear norep cache as modified
@@ -324,7 +382,15 @@ class Calendar:
         if e_inf.type==EntryInfo.TYPE_TODO or isinstance(en, iTodo):
             cls._todo_list = None
 
-        cls.calConnector.update_entry(en) # Write to store
+        if en._cal_idx == e_inf.cal_idx:
+            cls.calConnectors[e_inf.cal_idx].update_entry(en) # Write to store
+        else:
+            # Need to move entry to new calendar.
+            # Write new then delete old - to reduce chance of data loss.
+            old_cal_idx = en._cal_idx
+            new_en = cls.calConnectors[e_inf.cal_idx].add_entry(en)
+            new_en._cal_idx = e_inf.cal_idx
+            cls.calConnectors[old_cal_idx].delete_entry(en)
 
 
     @staticmethod
@@ -480,7 +546,7 @@ class Calendar:
                 cls._entry_norep_list_sorted = None
         if type(entry)==iTodo:
             cls._todo_list = None
-        cls.calConnector.delete_entry(entry)
+        cls.calConnectors[entry._cal_idx].delete_entry(entry)
 
 
     @classmethod
@@ -492,7 +558,7 @@ class Calendar:
                 stat = None # If on, we toggle it off
             del(entry['STATUS'])
         cls._add_status_entry(entry, stat)
-        cls.calConnector.update_entry(entry) # Write to store
+        cls.calConnectors[entry._cal_idx].update_entry(entry) # Write to store
 
 
     @staticmethod
@@ -517,8 +583,10 @@ class Calendar:
         # Re-build _entry_norep_list_sorted, if it has been cleared (==None)
         if cls._entry_norep_list_sorted is None:
             # Get events with no repeat rule
-            evs = cls.calConnector.cal.walk('VEVENT')
-            cls._entry_norep_list_sorted = [e for e in evs if 'RRULE' not in e]
+            cls._entry_norep_list_sorted = []
+            for conn in cls.calConnectors:
+                evs = conn.cal.walk('VEVENT')
+                cls._entry_norep_list_sorted.extend([e for e in evs if 'RRULE' not in e])
             cls._entry_norep_list_sorted.sort()
 
 
@@ -528,8 +596,10 @@ class Calendar:
         # Possible optimisation: sort most -> least frequent
         # (so don't get last one inserting loads into array) 
         if cls._entry_rep_list is None:
-            evs = cls.calConnector.cal.walk('VEVENT')
-            cls._entry_rep_list = [e for e in evs if 'RRULE' in e and e['RRULE'] is not None]
+            cls._entry_rep_list = []
+            for conn in cls.calConnectors:
+                evs = conn.cal.walk('VEVENT')
+                cls._entry_rep_list.extend([e for e in evs if 'RRULE' in e and e['RRULE'] is not None])
 
 
     @classmethod
@@ -572,7 +642,9 @@ class Calendar:
         # Re-build _todo_list, if it has been cleared (==None)
         if cls._todo_list is None:
             # Get events with no repeat rule & sort
-            cls._todo_list = cls.calConnector.cal.walk('VTODO')
+            cls._todo_list = []
+            for conn in cls.calConnectors:
+                cls._todo_list.extend(conn.cal.walk('VTODO'))
             # !! Should really sort elsewhere - in View??
             cls._todo_list.sort(key=cls._todo_sortindex_priority)
 

@@ -50,6 +50,7 @@ class TodoDialogController:
     dialog = None # type: Gtk.Dialog
     wid_desc = None # type: Gtk.Entry
     wid_todolist = None # type: Gtk.ComboBoxText
+    wid_calendar = None # type: Gtk.ComboBox
     wid_priority = None # type: Gtk.ComboBoxText
     wid_status = None # type: Gtk.ComboBoxText
     wid_tabs = None # type: Gtk.Notebook
@@ -90,6 +91,7 @@ class TodoDialogController:
         cls.wid_priority = GUI._builder.get_object('combo_todo_priority')
         cls.wid_status = GUI._builder.get_object('combo_todo_status')
         cls.wid_tabs = GUI._builder.get_object('dialogtodo_tabs')
+        cls._init_calendarfields()
         cls._init_duedate()
         cls._init_notes()
 
@@ -101,6 +103,20 @@ class TodoDialogController:
         todo_titles, cls.list_default_cats = GUI.todo_titles_default_cats()
         for t in todo_titles:
             cls.wid_todolist.append_text(t)
+
+
+    @classmethod
+    def _init_calendarfields(cls) -> None:
+        # Initialise calendar combo-box.
+        # Called on app startup.
+        cls.wid_calendar = GUI._builder.get_object('combo_todo_calendar')
+        cal_list = Calendar.calendar_displaynames_todo()
+        for id,dn in cal_list:
+            cls.wid_calendar.append(str(id), dn)
+        if len(cal_list) <= 1:
+            # Hide option if there's only one choice
+            cls.wid_calendar.hide()
+            GUI._builder.get_object('label_todo_calendar').hide()
 
 
     @classmethod
@@ -212,6 +228,7 @@ class TodoDialogController:
         cls.wid_desc.set_text('')
         cls.wid_desc.grab_focus_without_selecting()
         cls.wid_todolist.set_active(0)
+        cls.wid_calendar.set_active(0)
         cls.wid_priority.set_active(0)
         cls.wid_status.set_active(0)
         cls.wid_duedate_switch.set_active(False)
@@ -243,6 +260,7 @@ class TodoDialogController:
         if 'SUMMARY' in todo:
             cls.wid_desc.set_text(todo['SUMMARY'])
         cls.wid_desc.grab_focus() # also selects contents
+        cls.wid_calendar.set_active_id(str(todo._cal_idx))
         if 'PRIORITY' in todo:
             p = int(todo['PRIORITY'])
             if 1<=p<=9:
@@ -324,7 +342,8 @@ class TodoDialogController:
         # Decipher entry fields and return info as an EntryInfo object.
         desc = cls.wid_desc.get_text()
         stat = cls.wid_status.get_active_id()
-        ei = EntryInfo(type=EntryInfo.TYPE_TODO, desc=desc, status=stat)
+        cal_idx = int(cls.wid_calendar.get_active_id())
+        ei = EntryInfo(type=EntryInfo.TYPE_TODO, cal_idx=cal_idx, desc=desc, status=stat)
         list_idx = cls.wid_todolist.get_active()
         ei.set_categories(cls.list_default_cats[list_idx])
         if cls.wid_duedate_switch.get_active():

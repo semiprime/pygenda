@@ -75,6 +75,7 @@ class EntryPropertiesDialog:
         # Fill the dialog with properties of self.entry
         self._add_property_row('SUMMARY')
         self._add_type_row()
+        self._add_calendar_row()
         self._add_datetime_rows()
         self._add_rrule_row()
         self._add_property_row('PRIORITY')
@@ -119,6 +120,12 @@ class EntryPropertiesDialog:
             typestr = typestr[afterdot:endquote]
             if typestr in self.ENTRY_TYPES:
                 self._add_row(_('Type:'), _(typestr))
+
+
+    def _add_calendar_row(self) -> None:
+        # Add Calendar (i.e. name of data store) property to bottom of grid
+        dn = Calendar.calendar_displayname(self.entry)
+        self._add_row(_('Calendar:'), dn)
 
 
     def _add_datetime_rows(self) -> None:
