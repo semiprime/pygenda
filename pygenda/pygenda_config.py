@@ -65,6 +65,7 @@ class Config:
             cls.set('calendar', 'filename', cl_args.file)
             cls.set('calendar', 'display_name', 'iCal File')
             cls.set('calendar', 'readonly', None)
+            cls.set('calendar', 'entry_type', None)
             cls.set('calendar1', 'type', None) # so only specified file opened
         if cl_args.view is not None:
             cls.set('startup','view',cl_args.view.lower())

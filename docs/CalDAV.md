@@ -106,6 +106,7 @@ calendar data), these can be placed in sections titled `calendar1`,
     display_name = Holidays
     filename = ~/.config/pygenda/holidays_UK.ics
     readonly = True
+    entry_type = event
 
 Synchronising devices
 ---------------------

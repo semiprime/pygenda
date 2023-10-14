@@ -51,10 +51,21 @@ class CalendarConnector:
     flags = 0
 
     READONLY = 1
+    TYPE_EVENT = 2
+    TYPE_TODO = 4
+    TYPE_ALL = 6
 
     def is_readonly(self) -> bool:
         # Return True if connector is read-only
         return (self.flags & CalendarConnector.READONLY)!=0
+
+    def stores_events(self) -> bool:
+        # Return True if calendar stores events
+        return (self.flags & CalendarConnector.TYPE_EVENT)!=0
+
+    def stores_todos(self) -> bool:
+        # Return True if calendar stores todo entries
+        return (self.flags & CalendarConnector.TYPE_TODO)!=0
 
     def add_entry(self, entry:Union[iEvent,iTodo]) -> Union[iEvent,iTodo]:
         # Add a new entry component to the calendar data and store it.
@@ -95,23 +106,46 @@ class Calendar:
             'caldav': cls._parse_config_caldav,
             }
 
+        # Map entry types to flags
+        ETMAP = {
+            'event': CalendarConnector.TYPE_EVENT,
+            'todo': CalendarConnector.TYPE_TODO,
+            'all': CalendarConnector.TYPE_ALL
+            }
+
         # Local function to save duplicating code
         def do_parse(sect:str, caltype:str) -> None:
             caltype = caltype.lower()
             assert(caltype in CTMAP)
+
+            # Compute flags from config
             flags = CalendarConnector.READONLY if Config.get_bool(sect,'readonly') else 0
+            entype = Config.get(sect,'entry_type')
+            if entype is None:
+                flags |= CalendarConnector.TYPE_ALL
+            else:
+                entype = entype.lower()
+                assert(entype in ETMAP)
+                flags |= ETMAP[entype]
+
+            # Create new connector
             conn = CTMAP[caltype](sect, flags)
             if conn.cal.is_broken:
                 print('Warning: Non-conformant ical data, '+sect, file=stderr)
+
             # Set display name
             dn = Config.get(sect, 'display_name')
             conn.displayname = sect if dn is None else dn
+
             # Add _cal_idx attribute so we can find calendar from entry
             calidx = len(cls.calConnectors)
-            for ev in conn.cal.walk('VEVENT'):
-                ev._cal_idx = calidx
-            for td in conn.cal.walk('VTODO'):
-                td._cal_idx = calidx
+            if conn.stores_events():
+                for ev in conn.cal.walk('VEVENT'):
+                    ev._cal_idx = calidx
+            if conn.stores_todos():
+                for td in conn.cal.walk('VTODO'):
+                    td._cal_idx = calidx
+
             # Finally, append our new connector to the list
             cls.calConnectors.append(conn)
 
@@ -136,13 +170,15 @@ class Calendar:
 
         # Set default connectors for events and todos if not already set
         if cls._default_connector_event is None:
-            for i,c in enumerate(cls.calConnectors): # type:ignore[unreachable]
-                if not c.is_readonly():
+            mask = CalendarConnector.READONLY | CalendarConnector.TYPE_EVENT # type:ignore[unreachable]
+            for i,c in enumerate(cls.calConnectors):
+                if c.flags&mask == CalendarConnector.TYPE_EVENT:
                     cls._default_connector_event = i
                     break
         if cls._default_connector_todo is None:
-            for i,c in enumerate(cls.calConnectors): # type:ignore[unreachable]
-                if not c.is_readonly():
+            mask = CalendarConnector.READONLY | CalendarConnector.TYPE_TODO # type:ignore[unreachable]
+            for i,c in enumerate(cls.calConnectors):
+                if c.flags&mask == CalendarConnector.TYPE_TODO:
                     cls._default_connector_todo = i
                     break
 
@@ -184,7 +220,8 @@ class Calendar:
     def calendar_displaynames_event_rw(cls) -> List:
         # Returns display names for calendars for storing Events.
         # To be used, for example, in the Event dialog.
-        dnlist = [ (i,cls.calConnectors[i].displayname) for i in range(len(cls.calConnectors)) if not cls.calConnectors[i].is_readonly() ]
+        mask = CalendarConnector.READONLY | CalendarConnector.TYPE_EVENT
+        dnlist = [ (i,c.displayname) for i,c in enumerate(cls.calConnectors) if (c.flags & mask)==CalendarConnector.TYPE_EVENT ]
         return dnlist
 
 
@@ -192,7 +229,8 @@ class Calendar:
     def calendar_displaynames_todo_rw(cls) -> List:
         # Returns display names for calendars for storing Todos.
         # To be used, for example, in the Todo dialog.
-        dnlist = [ (i,cls.calConnectors[i].displayname) for i in range(len(cls.calConnectors)) if not cls.calConnectors[i].is_readonly() ]
+        mask = CalendarConnector.READONLY | CalendarConnector.TYPE_TODO
+        dnlist = [ (i,c.displayname) for i,c in enumerate(cls.calConnectors) if (c.flags & mask)==CalendarConnector.TYPE_TODO ]
         return dnlist
 
 
@@ -218,8 +256,12 @@ class Calendar:
             raise ValueError('Tried to add entry to calendar set as read-only')
 
         if e_inf.type==EntryInfo.TYPE_EVENT:
+            if not cls.calConnectors[e_inf.cal_idx].stores_events():
+                raise ValueError('Tried to add event to calendar that doesn\'t store events')
             en = iEvent()
         elif e_inf.type==EntryInfo.TYPE_TODO:
+            if not cls.calConnectors[e_inf.cal_idx].stores_todos():
+                raise ValueError('Tried to add todo to calendar that doesn\'t store todos')
             en = iTodo()
             cls._todo_list = None # Clear todo cache as modified
         else:
@@ -275,11 +317,15 @@ class Calendar:
             en_is_event = True
             if cal_idx is None:
                 cal_idx = cls._default_connector_event
+            if not cls.calConnectors[cal_idx].stores_events():
+                raise ValueError('Tried to add event to calendar that doesn\'t store events')
             en = iEvent()
         elif e_type==EntryInfo.TYPE_TODO or (e_type is None and isinstance(exen,iTodo)):
             en_is_event = False
             if cal_idx is None:
                 cal_idx = cls._default_connector_todo
+            if not cls.calConnectors[cal_idx].stores_todos():
+                raise ValueError('Tried to add todo to calendar that doesn\'t store todos')
             en = iTodo()
         else:
             raise ValueError('Unrecognized iCal entry type')
@@ -361,6 +407,15 @@ class Calendar:
             raise ValueError('Tried to update entry from calendar set readonly')
         if cls.calConnectors[e_inf.cal_idx].is_readonly():
             raise ValueError('Tried to update entry into calendar set readonly')
+
+        if isinstance(en, iEvent):
+            if not cls.calConnectors[e_inf.cal_idx].stores_events():
+                raise ValueError('Tried to update event into calendar that doesn\'t store events')
+        elif isinstance(en, iTodo):
+            if not cls.calConnectors[e_inf.cal_idx].stores_todos():
+                raise ValueError('Tried to update todo into calendar that doesn\'t store todos')
+        else:
+            raise ValueError('Unrecognized entry type')
 
         clear_rep = False
         clear_norep = False
@@ -637,8 +692,9 @@ class Calendar:
             # Get events with no repeat rule
             cls._entry_norep_list_sorted = []
             for conn in cls.calConnectors:
-                evs = conn.cal.walk('VEVENT')
-                cls._entry_norep_list_sorted.extend([e for e in evs if 'RRULE' not in e])
+                if conn.stores_events():
+                    evs = conn.cal.walk('VEVENT')
+                    cls._entry_norep_list_sorted.extend([e for e in evs if 'RRULE' not in e])
             cls._entry_norep_list_sorted.sort()
 
 
@@ -650,8 +706,9 @@ class Calendar:
         if cls._entry_rep_list is None:
             cls._entry_rep_list = []
             for conn in cls.calConnectors:
-                evs = conn.cal.walk('VEVENT')
-                cls._entry_rep_list.extend([e for e in evs if 'RRULE' in e and e['RRULE'] is not None])
+                if conn.stores_events():
+                    evs = conn.cal.walk('VEVENT')
+                    cls._entry_rep_list.extend([e for e in evs if 'RRULE' in e and e['RRULE'] is not None])
 
 
     @classmethod
@@ -696,7 +753,8 @@ class Calendar:
             # Get events with no repeat rule & sort
             cls._todo_list = []
             for conn in cls.calConnectors:
-                cls._todo_list.extend(conn.cal.walk('VTODO'))
+                if conn.stores_todos():
+                    cls._todo_list.extend(conn.cal.walk('VTODO'))
             # !! Should really sort elsewhere - in View??
             cls._todo_list.sort(key=cls._todo_sortindex_priority)
 
@@ -766,6 +824,9 @@ class CalendarConnectorICalFile(CalendarConnector):
         self._filename = filename
         self.flags = flags
         if Path(filename).exists():
+            # We want to read all entries here, even ones we can't handle
+            # (e.g. journal entries), so that when the iCal data is written
+            # back to the file nothing is lost.
             with open(filename, 'rb') as file:
                 self.cal = iCalendar.from_ical(file.read())
             if os_stat(filename).st_mode&stat.S_IWUSR == 0:
@@ -868,21 +929,23 @@ class CalendarConnectorCalDAV(CalendarConnector):
                     raise
                 self.calendar = principal.make_calendar(name=calname)
 
-        # Make list of references to events for convenient access
-        events = self.calendar.events()
         self.cal = iCalendar()
-        for ev in events:
-            # Each icalendar_instance is a calendar containing the event.
-            # We want to extract the event itself, so walk() & take the first.
-            vevent = ev.icalendar_instance.walk('VEVENT')[0]
-            vevent.__conn_entry = ev # Sneakily add ev, for rapid access later
-            self.cal.add_component(vevent)
+        # Make list of references to events for convenient access
+        if self.stores_events():
+            events = self.calendar.events()
+            for ev in events:
+                # Each icalendar_instance is a calendar containing the event.
+                # We want to extract the event itself, so walk() & take the 1st.
+                vevent = ev.icalendar_instance.walk('VEVENT')[0]
+                vevent.__conn_entry = ev # Sneakily add ev, for rapid access
+                self.cal.add_component(vevent)
         # ... and todos
-        todos = self.calendar.todos(sort_keys=(), include_completed=True)
-        for td in todos:
-            vtodo = td.icalendar_instance.walk('VTODO')[0]
-            vtodo.__conn_entry = td # Sneakily add td, for rapid access later
-            self.cal.add_component(vtodo)
+        if self.stores_todos():
+            todos = self.calendar.todos(sort_keys=(), include_completed=True)
+            for td in todos:
+                vtodo = td.icalendar_instance.walk('VTODO')[0]
+                vtodo.__conn_entry = td # Sneakily add td, for rapid access
+                self.cal.add_component(vtodo)
 
 
     def add_entry(self, entry:Union[iEvent,iTodo]) -> Union[iEvent,iTodo]:
