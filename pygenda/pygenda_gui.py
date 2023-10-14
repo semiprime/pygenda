@@ -80,6 +80,7 @@ class GUI:
 
     _menu_elt_fullscreen = None # type: Gtk.Widget
     _menu_elts_entry = None # type: Tuple[Gtk.Widget,...]
+    _menu_elts_entry_modify = None # type: Tuple[Gtk.Widget,...]
     _menu_elts_event = None # type: Tuple[Gtk.Widget,...]
     _menu_elts_stat_event = None # type: Tuple[Gtk.Widget,...]
     _menu_elts_stat_todo = None # type: Tuple[Gtk.Widget,...]
@@ -95,6 +96,11 @@ class GUI:
     date_formatting_textabb_noyear = ''
 
     _plus_minus_zoom = False
+
+    # Flags to indicate if UI should allow creating events/todos.
+    # Set at startup. False if, for example, all calendars are readonly.
+    create_events = False
+    create_todos = False
 
     # For startup
     _starting_cal = True
@@ -151,10 +157,12 @@ class GUI:
             cls.toggle_fullscreen()
 
         # Get handles to menu items to enable/disable when on/not on an entry
-        cls._menu_elts_entry = cls._get_objs_by_id(('menuelt-cut','menuelt-copy','menuelt-delete','menuelt-show-entry-props','menuelt-set-status'))
+        cls._menu_elts_entry = cls._get_objs_by_id(('menuelt-copy','menuelt-show-entry-props'))
+        cls._menu_elts_entry_modify = cls._get_objs_by_id(('menuelt-cut','menuelt-delete','menuelt-set-status'))
         cls._menu_elts_event = cls._get_objs_by_id(('menuelt-edit-time','menuelt-edit-reps','menuelt-edit-alarm','menuelt-edit-details'))
         cls._menu_elts_stat_event = cls._get_objs_by_id(('menuelt-status-confirmed','menuelt-status-tentative'))
         cls._menu_elts_stat_todo = cls._get_objs_by_id(('menuelt-status-needsaction','menuelt-status-inprocess','menuelt-status-completed'))
+        cls._menu_elts_create = cls._get_objs_by_id(('menuelt-paste',))
 
         # Handle SIGINT (e.g. from ctrl+C) etc.
         GLib.unix_signal_add(GLib.PRIORITY_DEFAULT_IDLE, signal.SIGINT, cls.exit)
@@ -325,6 +333,18 @@ class GUI:
             print('Error: No calendars created', file=stderr)
             Gtk.main_quit()
             return
+
+        # Check to see if calendar read-only settings means that we can't
+        # create any events or to-dos. Disable menu items etc accordingly.
+        cls.create_events = len(Calendar.calendar_displaynames_event_rw())!=0
+        cls.create_todos = len(Calendar.calendar_displaynames_todo_rw())!=0
+        if not cls.create_events:
+            cls._builder.get_object('menuelt-new-event').set_sensitive(False)
+            cls._builder.get_object('button0').set_sensitive(False)
+        if not cls.create_todos:
+            cls._builder.get_object('menuelt-new-todo').set_sensitive(False)
+        if not cls.create_events and not cls.create_todos:
+            cls._builder.get_object('menuelt-paste').set_sensitive(False)
 
         cls._init_views()
 
@@ -507,13 +527,17 @@ class GUI:
 
 
     @classmethod
-    def set_menu_elts(cls, on_event:bool=False, on_todo:bool=False) -> None:
+    def set_menu_elts(cls, on_event:bool=False, on_todo:bool=False, read_only:bool=False, can_create_here=False) -> None:
         # Called from Views as the cursor is moved. Enables/disables/hides
         # menu items appropriate for the current cursor item.
         for id in cls._menu_elts_entry:
             id.set_sensitive(on_event or on_todo)
+        for id in cls._menu_elts_entry_modify:
+            id.set_sensitive((not read_only) and (on_event or on_todo))
         for id in cls._menu_elts_event:
-            id.set_sensitive(on_event)
+            id.set_sensitive((not read_only) and on_event)
+        for id in cls._menu_elts_create:
+            id.set_sensitive(can_create_here)
         if on_event:
             for id in cls._menu_elts_stat_event:
                 id.show()
@@ -784,20 +808,26 @@ class GUI:
     @classmethod
     def edit_or_display_event(cls, en:iEvent, subtab:int=None) -> None:
         # Bring up dialog to edit event, or show details if not editable
-        try:
-            EventDialogController.edit_event(en, subtab)
-        except EventPropertyBeyondEditDialog as exc:
-            print('Warning: {:s} - showing entry properties'.format(str(exc)), file=stderr)
+        if not Calendar.calendar_readonly(en):
+            try:
+                EventDialogController.edit_event(en, subtab)
+            except EventPropertyBeyondEditDialog as exc:
+                print('Warning: {:s} - showing entry properties'.format(str(exc)), file=stderr)
+                cls.dialog_showentryprops(en)
+        else:
             cls.dialog_showentryprops(en)
 
 
     @classmethod
     def edit_or_display_todo(cls, todo:iTodo, list_idx:int=None) -> None:
         # Bring up dialog to edit todo item, or show details if not editable
-        try:
-            TodoDialogController.edit_todo(todo, list_idx)
-        except TodoPropertyBeyondEditDialog as exc:
-            print('Warning: {:s} - showing todo properties'.format(str(exc)), file=stderr)
+        if not Calendar.calendar_readonly(todo):
+            try:
+                TodoDialogController.edit_todo(todo, list_idx)
+            except TodoPropertyBeyondEditDialog as exc:
+                print('Warning: {:s} - showing todo properties'.format(str(exc)), file=stderr)
+                cls.dialog_showentryprops(todo)
+        else:
             cls.dialog_showentryprops(todo)
 
 

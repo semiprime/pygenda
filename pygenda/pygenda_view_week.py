@@ -361,7 +361,12 @@ class View_Week(View_DayUnit_Base):
             cls._scroll_to_cursor_in_day = dy # to be read in draw handler
         else:
             cls._scroll_to_cursor_in_day = None
-        GUI.set_menu_elts(on_event=(ecount!=0)) # Enable/disable hide menu items
+
+        # Enable/disable menu items
+        on_ev = (ecount!=0)
+        ro = on_ev and Calendar.calendar_readonly(cls.get_cursor_entry())
+        cch = GUI.create_events
+        GUI.set_menu_elts(on_event=on_ev, read_only=ro, can_create_here=cch)
 
 
     @classmethod
@@ -507,7 +512,7 @@ class View_Week(View_DayUnit_Base):
         except KeyError:
             # If it's a character key, take as first of new entry
             # !! Bug: only works for ASCII characters
-            if ev.state & (Gdk.ModifierType.CONTROL_MASK|Gdk.ModifierType.MOD1_MASK)==0 and Gdk.KEY_exclam <= ev.keyval <= Gdk.KEY_asciitilde:
+            if GUI.create_events and ev.state & (Gdk.ModifierType.CONTROL_MASK|Gdk.ModifierType.MOD1_MASK)==0 and Gdk.KEY_exclam <= ev.keyval <= Gdk.KEY_asciitilde:
                 date = cls.cursor_date()
                 GLib.idle_add(EventDialogController.new_event, chr(ev.keyval), date)
 

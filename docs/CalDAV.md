@@ -105,6 +105,7 @@ calendar data), these can be placed in sections titled `calendar1`,
     type = icalfile
     display_name = Holidays
     filename = ~/.config/pygenda/holidays_UK.ics
+    readonly = True
 
 Synchronising devices
 ---------------------

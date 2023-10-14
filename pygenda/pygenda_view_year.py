@@ -350,10 +350,11 @@ class View_Year(View_DayUnit_Base):
     @classmethod
     def _show_entry_cursor(cls) -> None:
         # Set style to display entry cursor (= cursor in lower section of view)
+        cch = GUI.create_events
         if cls._date_content_count==0:
             # No entries for day - return
             View._cursor_idx_in_date = 0
-            GUI.set_menu_elts(on_event=False) # Disable menu items
+            GUI.set_menu_elts(on_event=False, can_create_here=cch) # Menu items
             return
         i = View._cursor_idx_in_date
         if i<0 or i>=cls._date_content_count:
@@ -364,7 +365,9 @@ class View_Year(View_DayUnit_Base):
         ctx.add_class(cls.ENTRY_CURSOR_STYLE)
         cls._last_entry_cursor = i
         cls._scroll_to_cursor_required = True # to be read in draw handler
-        GUI.set_menu_elts(on_event=True) # Enable menu items
+        # Enable/disable menu items
+        ro = Calendar.calendar_readonly(cls.get_cursor_entry())
+        GUI.set_menu_elts(on_event=True, read_only=ro, can_create_here=cch)
 
 
     @classmethod
@@ -616,7 +619,7 @@ class View_Year(View_DayUnit_Base):
             return # If it gets here without errors, we're done
         except KeyError:
             pass
-        if ev.state & (Gdk.ModifierType.CONTROL_MASK|Gdk.ModifierType.MOD1_MASK)==0 and Gdk.KEY_exclam <= ev.keyval <= Gdk.KEY_asciitilde:
+        if GUI.create_events and ev.state & (Gdk.ModifierType.CONTROL_MASK|Gdk.ModifierType.MOD1_MASK)==0 and Gdk.KEY_exclam <= ev.keyval <= Gdk.KEY_asciitilde:
             date = cls.cursor_date()
             GLib.idle_add(EventDialogController.new_event, chr(ev.keyval), date, priority=GLib.PRIORITY_HIGH_IDLE+30)
 

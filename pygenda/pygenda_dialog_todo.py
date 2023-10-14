@@ -110,7 +110,7 @@ class TodoDialogController:
         # Initialise calendar combo-box.
         # Called on app startup.
         cls.wid_calendar = GUI._builder.get_object('combo_todo_calendar')
-        cal_list = Calendar.calendar_displaynames_todo()
+        cal_list = Calendar.calendar_displaynames_todo_rw()
         for id,dn in cal_list:
             cls.wid_calendar.append(str(id), dn)
         if len(cal_list) <= 1:

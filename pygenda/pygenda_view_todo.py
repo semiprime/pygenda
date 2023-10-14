@@ -433,9 +433,15 @@ class View_Todo(View):
             ctx.add_class(cls.CURSOR_STYLE)
         cls._last_cursor_list = cls._cursor_list
         cls._last_cursor_idx_in_list = cls._cursor_idx_in_list
+
+        # Enable/disable menu items
+        ot = (icount!=0)
+        ro = ot and Calendar.calendar_readonly(cls.get_cursor_entry())
+        cch = GUI.create_todos
+        GUI.set_menu_elts(on_todo=ot, read_only=ro, can_create_here=cch)
+
         # Add scroll call to idle, in case column widths not yet determined
         cls._scroll_to_cursor_required = True
-        GUI.set_menu_elts(on_todo=(icount!=0)) # Enable/disable hide menu items
 
         # If cursor is offscreen, need signal that a redraw is needed
         cls._topboxscroll.get_child().queue_draw()
@@ -535,7 +541,7 @@ class View_Todo(View):
         except KeyError:
             # If it's a character key, take as first of new todo
             # !! Bug: only works for ASCII characters
-            if ev.state & (Gdk.ModifierType.CONTROL_MASK|Gdk.ModifierType.MOD1_MASK)==0 and Gdk.KEY_exclam <= ev.keyval <= Gdk.KEY_asciitilde:
+            if GUI.create_todos and ev.state & (Gdk.ModifierType.CONTROL_MASK|Gdk.ModifierType.MOD1_MASK)==0 and Gdk.KEY_exclam <= ev.keyval <= Gdk.KEY_asciitilde:
                 GLib.idle_add(lambda x: TodoDialogController.new_todo(txt=x, list_idx=cls.cursor_todo_list()), chr(ev.keyval))
 
 
@@ -590,10 +596,10 @@ class View_Todo(View):
         # or to create a new todo if the cursor is not on entry.
         # Assigned to the 'Enter' key.
         en = cls.get_cursor_entry()
-        if en is None:
-            TodoDialogController.new_todo(list_idx=cls.cursor_todo_list())
-        else:
+        if en is not None:
             GUI.edit_or_display_todo(en, list_idx=cls.cursor_todo_list())
+        elif GUI.create_todos:
+            TodoDialogController.new_todo(list_idx=cls.cursor_todo_list())
 
 
     @classmethod

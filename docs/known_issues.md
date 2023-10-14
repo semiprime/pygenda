@@ -73,7 +73,7 @@ Major
 Medium
 ------
 * Support for multiple calendar sources is basic. To add: styling,
-  set default calendar, read-only calendars.
+  set default calendar.
 
 * How to handle setting the status of a repeating event? (E.g., a
   reasonable use-case would be to cancel just one occurrence of a

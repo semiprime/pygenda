@@ -48,6 +48,13 @@ from .pygenda_entryinfo import EntryInfo
 class CalendarConnector:
     cal = None # type:iCalendar
     displayname = None # type:str
+    flags = 0
+
+    READONLY = 1
+
+    def is_readonly(self) -> bool:
+        # Return True if connector is read-only
+        return (self.flags & CalendarConnector.READONLY)!=0
 
     def add_entry(self, entry:Union[iEvent,iTodo]) -> Union[iEvent,iTodo]:
         # Add a new entry component to the calendar data and store it.
@@ -70,6 +77,8 @@ class Calendar:
     STATUS_LIST_TODO = ('NEEDS-ACTION','IN-PROCESS','COMPLETED','CANCELLED')
 
     calConnectors = [] # type:List[CalendarConnector]
+    _default_connector_event = None # type:int
+    _default_connector_todo = None # type:int
     _entry_norep_list_sorted = None
     _entry_rep_list = None
     _todo_list = None
@@ -90,7 +99,8 @@ class Calendar:
         def do_parse(sect:str, caltype:str) -> None:
             caltype = caltype.lower()
             assert(caltype in CTMAP)
-            conn = CTMAP[caltype](sect)
+            flags = CalendarConnector.READONLY if Config.get_bool(sect,'readonly') else 0
+            conn = CTMAP[caltype](sect, flags)
             if conn.cal.is_broken:
                 print('Warning: Non-conformant ical data, '+sect, file=stderr)
             # Set display name
@@ -104,6 +114,7 @@ class Calendar:
                 td._cal_idx = calidx
             # Finally, append our new connector to the list
             cls.calConnectors.append(conn)
+
 
         caltype = Config.get('calendar','type')
         if caltype is not None:
@@ -123,9 +134,21 @@ class Calendar:
             # No calendar or calendar0 - default to a file
             do_parse('calendar', 'icalfile')
 
+        # Set default connectors for events and todos if not already set
+        if cls._default_connector_event is None:
+            for i,c in enumerate(cls.calConnectors): # type:ignore[unreachable]
+                if not c.is_readonly():
+                    cls._default_connector_event = i
+                    break
+        if cls._default_connector_todo is None:
+            for i,c in enumerate(cls.calConnectors): # type:ignore[unreachable]
+                if not c.is_readonly():
+                    cls._default_connector_todo = i
+                    break
+
 
     @staticmethod
-    def _parse_config_icalfile(calsect:str) -> CalendarConnector:
+    def _parse_config_icalfile(calsect:str, flags:int) -> CalendarConnector:
         # Reads config setting for an icalfile and returns an
         # appropriate calendar connector object
         filename = Config.get(calsect,'filename')
@@ -136,18 +159,18 @@ class Calendar:
              # Expand '~' (so it can be used in config file)
              filename =  os_path.expanduser(filename)
         # Create a connector for that file
-        return CalendarConnectorICalFile(filename)
+        return CalendarConnectorICalFile(filename, flags)
 
 
     @staticmethod
-    def _parse_config_caldav(calsect:str) -> CalendarConnector:
+    def _parse_config_caldav(calsect:str, flags:int) -> CalendarConnector:
         # Reads config setting for a CalDAV server and returns an
         # appropriate calendar connector object
         caldav_server = Config.get(calsect, 'server')
         user = Config.get(calsect, 'username')
         passwd = Config.get(calsect, 'password')
         calname = Config.get(calsect, 'calendar')
-        return CalendarConnectorCalDAV(caldav_server,user,passwd,calname)
+        return CalendarConnectorCalDAV(caldav_server,user,passwd,calname,flags)
 
 
     @staticmethod
@@ -158,18 +181,18 @@ class Calendar:
 
 
     @classmethod
-    def calendar_displaynames_event(cls) -> List:
+    def calendar_displaynames_event_rw(cls) -> List:
         # Returns display names for calendars for storing Events.
         # To be used, for example, in the Event dialog.
-        dnlist = [ (i,cls.calConnectors[i].displayname) for i in range(len(cls.calConnectors)) ]
+        dnlist = [ (i,cls.calConnectors[i].displayname) for i in range(len(cls.calConnectors)) if not cls.calConnectors[i].is_readonly() ]
         return dnlist
 
 
     @classmethod
-    def calendar_displaynames_todo(cls) -> List:
+    def calendar_displaynames_todo_rw(cls) -> List:
         # Returns display names for calendars for storing Todos.
         # To be used, for example, in the Todo dialog.
-        dnlist = [ (i,cls.calConnectors[i].displayname) for i in range(len(cls.calConnectors)) ]
+        dnlist = [ (i,cls.calConnectors[i].displayname) for i in range(len(cls.calConnectors)) if not cls.calConnectors[i].is_readonly() ]
         return dnlist
 
 
@@ -181,9 +204,19 @@ class Calendar:
 
 
     @classmethod
+    def calendar_readonly(cls, en:Union[iEvent,iTodo]) -> bool:
+        # Returns True if calendar of entry is readonly
+        ro = cls.calConnectors[en._cal_idx].is_readonly() # type:bool
+        return ro
+
+
+    @classmethod
     def new_entry(cls, e_inf:EntryInfo) -> Union[iEvent,iTodo]:
         # Add a new iCal entry with content from entry info object
         # Return a reference to the new entry.
+        if cls.calConnectors[e_inf.cal_idx].is_readonly():
+            raise ValueError('Tried to add entry to calendar set as read-only')
+
         if e_inf.type==EntryInfo.TYPE_EVENT:
             en = iEvent()
         elif e_inf.type==EntryInfo.TYPE_TODO:
@@ -237,14 +270,23 @@ class Calendar:
         #   False/None: "no categories", list[str]: "Use these categories").
         # Used to implement pasting events into new days/timeslots.
         # Return a reference to the new entry.
+
         if e_type==EntryInfo.TYPE_EVENT or (e_type is None and isinstance(exen,iEvent)):
-            en = iEvent()
             en_is_event = True
+            if cal_idx is None:
+                cal_idx = cls._default_connector_event
+            en = iEvent()
         elif e_type==EntryInfo.TYPE_TODO or (e_type is None and isinstance(exen,iTodo)):
-            en = iTodo()
             en_is_event = False
+            if cal_idx is None:
+                cal_idx = cls._default_connector_todo
+            en = iTodo()
         else:
             raise ValueError('Unrecognized iCal entry type')
+
+        if cls.calConnectors[cal_idx].is_readonly():
+            raise ValueError('Tried to add entry to calendar set as read-only')
+
         en.add('UID', Calendar.gen_uid()) # Required
         utcnow = dt_datetime.now(timezone.utc)
         en.add('DTSTAMP', utcnow) # Required
@@ -300,9 +342,6 @@ class Calendar:
         if 'DESCRIPTION' in exen:
             en.add('DESCRIPTION', exen['DESCRIPTION'])
 
-        if cal_idx is None:
-            cal_idx = 0 # !! Should make this the default calendar
-
         en = cls.calConnectors[cal_idx].add_entry(en) # Write to store
         en._cal_idx = cal_idx
 
@@ -316,6 +355,13 @@ class Calendar:
     @classmethod
     def update_entry(cls, en:Union[iEvent,iTodo], e_inf:EntryInfo) -> None:
         # Update entry using details from EntryInfo e_inf.
+
+        # First check entry is not in or being moved to a read-only calendar
+        if cls.calendar_readonly(en):
+            raise ValueError('Tried to update entry from calendar set readonly')
+        if cls.calConnectors[e_inf.cal_idx].is_readonly():
+            raise ValueError('Tried to update entry into calendar set readonly')
+
         clear_rep = False
         clear_norep = False
 
@@ -538,6 +584,9 @@ class Calendar:
     @classmethod
     def delete_entry(cls, entry:Union[iEvent,iTodo]) -> None:
         # Delete given entry.
+        if cls.calendar_readonly(entry):
+            raise ValueError('Tried to delete entry from calendar set readonly')
+
         # Need to clear cache containing the entry...
         if 'DTSTART' in entry:
             if 'RRULE' in entry:
@@ -546,6 +595,7 @@ class Calendar:
                 cls._entry_norep_list_sorted = None
         if type(entry)==iTodo:
             cls._todo_list = None
+
         cls.calConnectors[entry._cal_idx].delete_entry(entry)
 
 
@@ -553,6 +603,8 @@ class Calendar:
     def set_toggle_status_entry(cls, entry:Union[iEvent,iTodo], stat:Optional[str]) -> None:
         # Set entry STATUS to stat & save entry.
         # If STATUS is set and equals stat, toggle it off.
+        if cls.calendar_readonly(entry):
+            raise ValueError('Tried to update status of entry in read-only calendar')
         if 'STATUS' in entry:
             if stat==entry['STATUS']:
                 stat = None # If on, we toggle it off
@@ -710,11 +762,17 @@ class CalendarConnectorICalFile(CalendarConnector):
     BACKUP_EXT = 'bak'
     NEWFILE_EXT = 'new'
 
-    def __init__(self, filename:str):
+    def __init__(self, filename:str, flags:int):
         self._filename = filename
+        self.flags = flags
         if Path(filename).exists():
             with open(filename, 'rb') as file:
                 self.cal = iCalendar.from_ical(file.read())
+            if os_stat(filename).st_mode&stat.S_IWUSR == 0:
+                # File is readonly, set flags so this is respected
+                self.flags |= CalendarConnector.READONLY
+        elif self.is_readonly():
+            raise ValueError('Can\'t create an iCal file in read-only mode')
         else: # Create empty calendar file
             self.cal = iCalendar()
             # These aren't added automatically and spec requires them:
@@ -781,7 +839,7 @@ class CalendarConnectorICalFile(CalendarConnector):
 # range of a week took more than 3 seconds (0.5 seconds on a laptop).
 #
 class CalendarConnectorCalDAV(CalendarConnector):
-    def __init__(self, url:str, user:str, passwd:str, calname:Optional[str]):
+    def __init__(self, url:str, user:str, passwd:str, calname:Optional[str], flags:int):
         import caldav # Postponed import, so Pygenda can be used without caldav
 
         client = caldav.DAVClient(url=url, username=user, password=passwd)
@@ -790,10 +848,14 @@ class CalendarConnectorCalDAV(CalendarConnector):
         except Exception as excep:
             print('Error: Can\'t connect to CalDAV server at {:s}. Message: {:s}'.format(url,str(excep)), file=stderr)
             raise
+
+        self.flags = flags
         if calname is None:
             calendars = principal.calendars()
             if len(calendars) > 0:
                 self.calendar = calendars[0]
+            elif self.is_readonly():
+                raise ValueError('No CalDAV calendars found; can\'t create in read-only mode')
             else:
                 # Create a calendar with default name
                 self.calendar = principal.make_calendar(name='pygenda')
@@ -802,6 +864,8 @@ class CalendarConnectorCalDAV(CalendarConnector):
             try:
                 self.calendar = principal.calendar(calname)
             except caldav.lib.error.NotFoundError:
+                if self.is_readonly():
+                    raise
                 self.calendar = principal.make_calendar(name=calname)
 
         # Make list of references to events for convenient access

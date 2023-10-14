@@ -360,11 +360,11 @@ class View_DayUnit_Base(View):
         # or to create a new entry if the cursor is not on entry.
         # Assigned to the 'Enter' key in Week and Year views.
         en = cls.get_cursor_entry()
-        if en is None:
+        if en is not None:
+            GUI.edit_or_display_event(en)
+        elif GUI.create_events:
             date = cls.cursor_date()
             EventDialogController.new_event(date=date)
-        else:
-            GUI.edit_or_display_event(en)
 
 
     @classmethod
