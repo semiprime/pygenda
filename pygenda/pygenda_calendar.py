@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 #
 # pygenda_calendar.py
-# Connects to agenda data provider - either an iCal file or CalDAV server.
+# Connects to agenda data provider - either an iCal file, a CalDAV server,
+# or an Evolution Data Server.
 #
 # Copyright (C) 2022,2023 Matthew Lewis
 #
@@ -104,6 +105,7 @@ class Calendar:
         CTMAP = {
             'icalfile': cls._parse_config_icalfile,
             'caldav': cls._parse_config_caldav,
+            'evolution': cls._parse_config_evolution,
             }
 
         # Map entry types to flags
@@ -207,6 +209,12 @@ class Calendar:
         passwd = Config.get(calsect, 'password')
         calname = Config.get(calsect, 'calendar')
         return CalendarConnectorCalDAV(caldav_server,user,passwd,calname,flags)
+
+
+    @staticmethod
+    def _parse_config_evolution(calsect:str, flags:int) -> CalendarConnector:
+        uid = Config.get(calsect, 'uid')
+        return CalendarConnectorEvolution(uid, flags)
 
 
     @staticmethod
@@ -880,7 +888,8 @@ class CalendarConnectorICalFile(CalendarConnector):
 
 
     def update_entry(self, entry:Union[iEvent,iTodo]) -> None:
-        # entry is a component of the file data, so it's already updated.
+        # Update an entry component in the calendar data and store it.
+        # Entry is a component of the file data, so it's already updated.
         # We just need to write the file data.
         self._save_file()
 
@@ -971,6 +980,7 @@ class CalendarConnectorCalDAV(CalendarConnector):
 
 
     def update_entry(self, entry:Union[iEvent,iTodo]) -> None:
+        # Update an entry component in the calendar data and store it.
         # Entry struct has been modified, so can just send update to server.
         try:
             entry.__conn_entry.save() # Write to server
@@ -989,6 +999,109 @@ class CalendarConnectorCalDAV(CalendarConnector):
             # !! While code is in development, just exit on failure.
             # May change to something "friendlier" later...
             print('Error deleting entry on CalDAV server. Message: {:s}'.format(str(excep)), file=stderr)
+            exit(-1)
+        self.cal.subcomponents.remove(entry) # delete local copy
+
+
+#
+# Connector class for Evolution Data server
+#
+class CalendarConnectorEvolution(CalendarConnector):
+    CONNECTION_TIMEOUT = 5
+    __eds_client = None # type:ECal.Client # type:ignore[name-defined]
+
+    def __init__(self, uid:Optional[str], flags:int):
+        # Postponed import
+        global ECal, ICalGLib
+        from gi import require_version as gi_require_version
+        gi_require_version('EDataServer', '1.2')
+        from gi.repository import EDataServer
+        gi_require_version('ECal', '2.0')
+        from gi.repository import ECal
+        gi_require_version('ICalGLib', '3.0')
+        from gi.repository import ICalGLib
+
+        self.flags = flags
+        if self.stores_events() == self.stores_todos():
+            raise ValueError('Evolution calendar needs to store exactly one of Events or Todos')
+
+        registry = EDataServer.SourceRegistry.new_sync()
+        # Get enabled sources storing the correct type
+        if self.stores_events():
+            extn = EDataServer.SOURCE_EXTENSION_CALENDAR
+            src_type = ECal.ClientSourceType.EVENTS # type:ignore[name-defined]
+        else:
+            extn = EDataServer.SOURCE_EXTENSION_TASK_LIST
+            src_type = ECal.ClientSourceType.TASKS # type:ignore[name-defined]
+
+        if uid is None:
+            # Provide a list of uids to help the user
+            print('Warning: Calendar uid not set, please choose from the list below', file=stderr)
+            srcs = EDataServer.SourceRegistry.list_enabled(registry, extn)
+            for src in srcs:
+                print('  ', src.get_uid(), ':', src.get_display_name(), file=stderr)
+            raise ValueError('EDS calendar uid not set')
+
+        src = EDataServer.SourceRegistry.ref_source(registry, uid)
+        if src is None:
+            raise ValueError('EDS calendar uid "{:s}" not found'.format(uid))
+        if not EDataServer.SourceRegistry.check_enabled(registry, src):
+            raise ValueError('EDS calendar uid "{:s}" not enabled'.format(uid))
+
+        self.__eds_client = ECal.Client().connect_sync(source=src, source_type=src_type, wait_for_connected_seconds=self.CONNECTION_TIMEOUT) # type:ignore[name-defined]
+        if self.__eds_client is None:
+            raise ValueError('Error connecting to EDS calendar uid "{:s}"'.format(uid))
+
+        if not src.get_writable():
+            self.flags |= CalendarConnector.READONLY
+
+        suc,comps = self.__eds_client.get_object_list_sync('#t')# Search #t=True
+        if not suc:
+            raise ValueError('Failed getting components from EDS calendar')
+
+        # Create an iCalendar object from the retrieved components
+        self.cal = iCalendar()
+        for comp in comps:
+            ical_comp = iCalendar.from_ical(comp.as_ical_string())
+            self.cal.add_component(ical_comp)
+
+
+    def add_entry(self, entry:Union[iEvent,iTodo]) -> Union[iEvent,iTodo]:
+        # Create a new entry component on the server, and locally.
+        en_str = entry.to_ical().decode('utf-8')
+        comp = ICalGLib.Component.new_from_string(en_str) # type:ignore[name-defined]
+        suc = self.__eds_client.create_object_sync(comp, ECal.OperationFlags.NONE) # type:ignore[name-defined]
+        if not suc:
+            # !! While code is in development, just exit on failure.
+            # May change to something "friendlier" later...
+            print('Error creating entry on Evolution Data Server')
+            exit(-1)
+
+        # Save to local store
+        self.cal.add_component(entry)
+        return entry
+
+
+    def update_entry(self, entry:Union[iEvent,iTodo]) -> None:
+        # Update an entry component in the calendar data and store it.
+        # Entry struct has been modified, so can just send update to server.
+        en_str = entry.to_ical().decode('utf-8')
+        comp = ICalGLib.Component.new_from_string(en_str) # type:ignore[name-defined]
+        suc = self.__eds_client.modify_object_sync(comp, ECal.ObjModType.ALL, ECal.OperationFlags.NONE) # type:ignore[name-defined]
+        if not suc:
+            # !! While code is in development, just exit on failure.
+            # May change to something "friendlier" later...
+            print('Error updating entry on Evolution Data Server')
+            exit(-1)
+
+
+    def delete_entry(self, entry:Union[iEvent,iTodo]) -> None:
+        # Delete entry component from server and in local copy.
+        suc = self.__eds_client.remove_object_sync(entry['UID'], None, ECal.ObjModType.ALL, ECal.OperationFlags.NONE) # type:ignore[name-defined]
+        if not suc:
+            # !! While code is in development, just exit on failure.
+            # May change to something "friendlier" later...
+            print('Error deleting entry on Evolution Data Server')
             exit(-1)
         self.cal.subcomponents.remove(entry) # delete local copy
 
