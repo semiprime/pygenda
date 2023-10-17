@@ -136,7 +136,7 @@ Save the file and exit: ctrl+o (confirm filename), ctrl+x.
 
 Now edit the Pygenda configuration file:
 
-    nano ~/.config/pygenda/pygenda.ini
+    nano ~/.config/pygenda/user.ini
 
 Again, this should open an empty file. You have some choice about what
 to enter here, depending on your preferences. Here's a reasonable

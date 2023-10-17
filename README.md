@@ -126,7 +126,7 @@ For more complete settings, see "Configuration", below.
 
 Configuration
 -------------
-Configuration settings go in file: `~/.config/pygenda/pygenda.ini`
+Configuration settings go in file: `~/.config/pygenda/user.ini`
 
 Custom CSS goes in: `~/.config/pygenda/pygenda.css`
 

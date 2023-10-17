@@ -81,7 +81,7 @@ Configuration
 Enter the following to edit the Pygenda ini file:
 
     mkdir -p ~/.config/pygenda/
-    nano ~/.config/pygenda/pygenda.ini
+    nano ~/.config/pygenda/user.ini
 
 (You can use vi or emacs or a text editor other than nano if you want.)
 

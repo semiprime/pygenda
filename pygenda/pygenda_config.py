@@ -34,10 +34,10 @@ class Config:
     _cparser = configparser.RawConfigParser()
     CONFIG_DIR = GLib.get_user_config_dir() + '/pygenda'
     DEFAULT_CONFIG_FILE = CONFIG_DIR + '/pygenda.ini'
+    DEFAULT_CONFIG_FILE_USER = CONFIG_DIR + '/user.ini'
     DEFAULT_ICAL_FILENAME = 'pygenda.ics' # Put this here to avoid cyclic dep.
 
     date = None
-    conf_dirname = None
 
     @classmethod
     def init(cls) -> None:
@@ -49,15 +49,13 @@ class Config:
         # Now read the config file
         default_config = not config_file
         if default_config:
-            config_file = cls.DEFAULT_CONFIG_FILE
+            config_file = (cls.DEFAULT_CONFIG_FILE,cls.DEFAULT_CONFIG_FILE_USER)
             # If using default, create directory if it doesn't exist
-            Path(config_file).parent.mkdir(parents=True, exist_ok=True)
+            Path(cls.CONFIG_DIR).mkdir(parents=True, exist_ok=True)
         if not cls._cparser.read(config_file):
             if not default_config:
                 print("Configuration file {:s} not found".format(config_file), file=stderr)
                 exit(-1)
-        # Store the dirname so it can be used by other components
-        cls.conf_dirname = Path(config_file).parent.as_posix()
 
         # Read 'file' from command line (iCal file)
         if cl_args.file:

@@ -74,7 +74,7 @@ a .desktop file in `~/.config/autostart/`).
 
 Configuring Pygenda to use the local Radicale (or another) server
 -----------------------------------------------------------------
-Edit/create your `~/.config/pygenda/pygenda.ini` file. Edit/add:
+Edit/create your `~/.config/pygenda/user.ini` file. Edit/add:
 
     [calendar]
     type = caldav
