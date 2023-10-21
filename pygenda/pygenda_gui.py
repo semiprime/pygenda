@@ -84,6 +84,7 @@ class GUI:
     _menu_elts_event = None # type: Tuple[Gtk.Widget,...]
     _menu_elts_stat_event = None # type: Tuple[Gtk.Widget,...]
     _menu_elts_stat_todo = None # type: Tuple[Gtk.Widget,...]
+    _menu_elts_create = None # type: Tuple[Gtk.Widget,...]
 
     _image_leave_fs = Gtk.Image.new_from_icon_name('gtk-leave-fullscreen',Gtk.IconSize.MENU)
     _image_enter_fs = None # type: Gtk.Widget
