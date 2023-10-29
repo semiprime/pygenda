@@ -165,9 +165,39 @@ from the user's ~/.local/share/applications directory:
 
 Evolution Data Server
 ---------------------
-Connecting to the Evolution Data Server is a work-in-progress.
-It should be ready very soon, and configuration instructions will
-appear here!
+The default setting stores calendar data in a file. This is OK for
+testing and requires no setup. However, for real use you should store
+the data in a server. An Evolution Data Server (EDS) is the natural
+choice on PostmarketOS.
+
+Another option: you can store data in a CalDAV server. This is probably
+not advisable unless you have a specific requirement. If you are using
+a remote CalDAV server, it would be better to set that up as a backend
+for EDS.
+
+First, install EDS (it is installed by default, but best to check):
+
+    sudo apk add evolution-data-server
+
+Then add the following to your `~/.config/pygenda/user.ini` file:
+
+    [calendar]
+    display_name = Personal
+    type = evolution
+    entry_type = event
+    uid = system-calendar
+    
+    [calendar1]
+    display_name = Todos
+    type = evolution
+    entry_type = todo
+    uid = system-task-list
+
+(The above example uses the default system calendar and task-list.
+If you use different ones, provide their uids in place of the values
+used above.)
+
+For more details/options, see [Evolution_Data_Server.md](Evolution_Data_Server.md).
 
 Finally
 -------

@@ -73,13 +73,15 @@ Checklist for releases
 * If any new dependencies are required, add them to setup.py
 * Check setup.py install works & the installed module runs correctly
 * Create various events & todo items. Close & reopen Pygenda and check
-  they are still there (with ics file & CalDAV server).
+  they are still there (with iCal file, EDS, & CalDAV server).
 * Check copy/cut/paste works, including e.g. event date/time, multi-day events,
   event status, with alarms, with notes, todo pasted as event & vice-versa,
   text pasted
+* Check readonly calendars work - missing from calendar dropdown, can't edit
+  entries, if all readonly then can't create entries
 * Regenerate .po and .mo localisation files (see above)
 * Check at least one non-English language
-* Check any ics files in validator, e.g. https://icalendar.org/validator.html
+* Check any iCal files in validator, e.g. https://icalendar.org/validator.html
 * Run test_repeats.py unit tests.
 * Check all test files (testxx_*.ics & generated files) display correctly
 * Check darkmode & backgrounds CSS still work

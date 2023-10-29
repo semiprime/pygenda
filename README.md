@@ -92,8 +92,8 @@ directory: 'getprop'" at startup. You may therefore like to specify
 another version of tzlocal (v1.5.1 should work).
 
 That should be enough for basic usage of pygenda, but if you want to
-use a CalDAV server (recommended for real use) there are some extra
-dependencies. See setup details in: [CalDAV.md](docs/CalDAV.md)
+use a CalDAV server there are some extra dependencies. See setup
+details in: [CalDAV.md](docs/CalDAV.md)
 
 Launching Pygenda
 -----------------
@@ -160,15 +160,19 @@ Usage
 -----
 See: [Usage.md](docs/Usage.md)
 
-Calendar data storage – a CalDAV server is recommended
-------------------------------------------------------
-Calendar data can be stored as an ICS file, or via a CalDAV server.
-The ICS file is the default, because it works without configuration,
-but a CalDAV server is recommended for real use.
+Calendar data storage – a server is recommended
+-----------------------------------------------
+Calendar data can be stored as an iCal file, or via a CalDAV server,
+or via an Evolution Data Server (EDS). An iCal file is the default,
+because it works without configuration, but a server is recommended
+for real use. Using EDS is simpler than a CalDAV server and will
+probably be the preferred way going forward. However, it is new and
+less well tested than using CalDAV, so it might be more buggy.
 
-For CalDAV configuration, see: [CalDAV.md](docs/CalDAV.md)
+* CalDAV configuration: [CalDAV.md](docs/CalDAV.md)
+* EDS configuration: [Evolution_Data_Server.md](docs/Evolution_Data_Server.md)
 
-The default ICS file is created in `~/.config/pygenda/pygenda.ics`
+The default iCal file is created in `~/.config/pygenda/pygenda.ics`
 but you can change this from the command line or config file.
 
 Contributing

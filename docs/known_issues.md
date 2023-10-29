@@ -269,6 +269,8 @@ Cosmetic
 * In Event and Todo dialogs, in Notes field, the scrollbar does not go to
   the border: there is a 1-pixel gap.
 
+* When using EDS calendars, there are error messages like: `e-data-server-CRITICAL: client_set_source: assertion 'E_IS_SOURCE (source)' failed`.
+
 Testing
 -------
 * Need to test that iCal files/data can be read by other applications and

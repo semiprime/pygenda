@@ -3,10 +3,11 @@ Pygenda CalDAV use & configuration
 
 Data storage
 ------------
-Agenda data can be stored as an ICS file or via a CalDAV server. An
-ICS file is good for testing, but has a number of downsides (possible
-data loss if multiple programs try to write to the file, slowdown
-updating large agendas). A CalDAV server is recommended.
+Agenda data can be stored as an iCal file, or via a CalDAV server or an
+Evolution Data Server (EDS). An iCal file is good for testing, but has
+a number of downsides (possible data loss if multiple programs try to
+write to the file, slowdown updating large agendas). A server is
+recommended.
 
 This document describes how to set up Pygenda to use a CalDAV server.
 
