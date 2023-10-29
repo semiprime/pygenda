@@ -110,26 +110,27 @@ Debugging
 Test setup
 ----------
 Can test setup.py by using a virtual Python environment:
-  python3 -m venv venv_dir
-  source venv_dir/bin/activate
-  cd PYGENDA_SRC_DIR
-  ./setup.py install
-  # Check no install errors
-  cd ~
-  # Check pygenda runs with file
-  python3 -m pygenda -f test.ics
-  # (Optionally install caldav and check pygenda can use it)
-  deactivate
-  rm -r venv_dir
+
+    python3 -m venv venv_dir
+    source venv_dir/bin/activate
+    cd PYGENDA_SRC_DIR
+    ./setup.py install
+    # Check no install errors
+    cd ~
+    # Check pygenda runs with file
+    python3 -m pygenda -f test.ics
+    # (Optionally install caldav and check pygenda can use it)
+    deactivate
+    rm -r venv_dir
 
 Logging
 -------
 To log errors when Pygenda is launched from an icon, change the
 .desktop file used to launch Pygenda so that the Exec line reads:
 
-  Exec=bash -c "python3 -m pygenda 2>>FULL_PATH_OF_PYGENDA_LOG_FILE"
+    Exec=bash -c "python3 -m pygenda 2>>FULL_PATH_OF_PYGENDA_LOG_FILE"
 
 You may also want to log errors from whatever server you are using.
 For Radicale, edit the .desktop file in ~/.config/autostart/:
 
-  Exec=bash -c "python3 -m radicale 2>>FULL_PATH_OF_RADICALE_LOG_FILE"
+    Exec=bash -c "python3 -m radicale 2>>FULL_PATH_OF_RADICALE_LOG_FILE"
