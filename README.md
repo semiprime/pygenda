@@ -62,57 +62,48 @@ Run/install
 The simplest way to get started is to follow one of the following "quick start"
 guides (only a few devices, so far):
 
-* [**Gemini PDA**](docs/quickstart-geminipda.md) (possibly the **Cosmo Communicator** too, but I don't have one to test)
+* [**Gemini PDA**](docs/quickstart-geminipda.md) running Gemian (possibly the **Cosmo Communicator** too, but I don't have one to test)
 * [**PostmarketOS**](docs/quickstart-postmarketOS.md)
+* [**Debian-like systems**](docs/quickstart-debianlike.md) e.g. Raspberry Pi OS (but see above for Gemian)
 
 The sections below are for those running from source (e.g. from a
 GitHub clone), or who want to know more technical details.
 
 Dependencies
 ------------
-Python3. Version >=3.5 (because Gemini's "Gemian" Linux provides Python 3.5).
+* Python3. Version >=3.5 (because Gemini's "Gemian" Linux provides Python 3.5).
+* GTK+3 library
+* Python libraries: PyGObject3 (for gi), pycairo, icalendar, python-dateutil, tzlocal, num2words.
 
-* Install on Debian: `sudo apt install python3 python3-pip`
+If you want to access a CalDAV server from Pygenda there are some
+extra dependencies. See setup details in: [CalDAV.md](docs/CalDAV.md)
 
-GTK+3 library:
+If possible, install the Python libraries from the OS repositories.
+This should reduce the chance of pip3 installing a version of a
+library that is not compatible with other OS components.
 
-* Install on Debian: `sudo apt install libgtk+3`
+Installing
+----------
+If you have pip installed, this is the simplest way to get the latest
+release (best for testing). The "quickstart" guides above can serve
+as a guide.
 
-If you are running a recent version of pip then the required Python
-modules should be installed automatically, so you can skip to the next
-section. If you want to check by hand, the required modules are:
-PyGObject3 (for gi), pycairo, icalendar, python-dateutil, tzlocal, num2words.
+If you want to try the latest development code (best for contributing)
+then get the version from GitHub.
 
-* Install on Debian: `sudo apt install python3-gi python3-cairo python3-icalendar python3-dateutil python3-tzlocal python3-num2words`
-* Or install them using pip3: `pip3 install [--user] pygobject pycairo icalendar python-dateutil tzlocal num2words`
-
-Note: On Gemian on the Gemini, with Python3.5, pip3 installed tzlocal
-version 2.x, which did not work, giving errors like "No such file or
-directory: 'getprop'" at startup. You may therefore like to specify
-another version of tzlocal (v1.5.1 should work).
-
-That should be enough for basic usage of pygenda, but if you want to
-use a CalDAV server there are some extra dependencies. See setup
-details in: [CalDAV.md](docs/CalDAV.md)
-
-Launching Pygenda
------------------
-If you have installed the dependencies by hand then you can run
-Pygenda directly from the root directory of the project (containing
-this readme), with the command:
+Launching Pygenda from Source
+-----------------------------
+If you have installed the dependencies then you can run Pygenda
+directly from the root directory of the project (containing this
+readme), with the command:
 
 	python3 -m pygenda
 
 Better/recommended: install the Python module with (for example)...
 
-	./setup.py install --user
+	./setup.py develop --user
 
 (You can uninstall the module with `pip3 uninstall pygenda`.)
-
-NOTE: Gemian on the Gemini PDA doesn't install the Python module
-dependencies. To get it to do this, either update pip (see the
-[Gemini quickstart](docs/quickstart-geminipda.md)) or install
-the dependencies by hand (see "Dependencies" above).
 
 Now you can now run Pygenda from anywhere with:
 
@@ -132,29 +123,26 @@ Custom CSS goes in: `~/.config/pygenda/pygenda.css`
 
 More information: [docs/config-examples/README.md](docs/config-examples/README.md)
 
-Quick config on Gemini/other handhelds
---------------------------------------
-If you're running Pygenda on a Gemini or similar PDA, the default font
-sizes will probably not be appropriate for the screen size. To fix
-this, use the custom CSS provided in pygenda/css/gemini.css.
-The easiest way to do this is to import the gemini.css file from your
-own ~/.config/pygenda/pygenda.css file, by adding the line:
+Handheld config
+---------------
+If you're running Pygenda on a handheld device, the default font sizes
+etc. will probably not be appropriate for the screen size. These can
+be fixed by providing custom CSS. An example for the Gemini PDA is in
+`pygenda/css/gemini.css`. It it works as provided, then it can be
+imported into your `~/.config/pygenda/pygenda.css` file by adding the
+line:
 
 	@import "PATH_TO_GEMINI_CSS_FILE";
 
-You can then add your own custom CSS after this. (This way, if you
-git pull an update to the Pygenda source, then you'll automatically
-get any new css rules included in the new version.)
-
 The "startup/maximized" and "startup/fullscreen" options are also
-useful for devices with small screens. See "Configuration" above.
+useful for devices with small screens.
 
 Desktop/panel/menu launchers
 ----------------------------
-A sample `pygenda.desktop` file is provided in pygenda/app/.
-This should help adding launch icons to the desktop menu/panels etc.
-For information about how to add a launcher to your desktop menu
-or add a panel launcher in LXQt, see the [Gemini quickstart guide](docs/quickstart-geminipda.md).
+A sample `pygenda.desktop` file is provided in pygenda/app/. This
+should help adding launch icons to the desktop menu/panels etc.
+For example, to add it to your menu, create a softlink from
+`~/.local/share/applications/`.
 
 Usage
 -----
