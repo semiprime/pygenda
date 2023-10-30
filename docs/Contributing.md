@@ -40,9 +40,9 @@ a PR on GitHub (please check that you agree with the licence – see
 
 Other devices
 -------------
-Currently we test on Linux desktop (Slackware, Xfce) and Gemian (a
-Debian port) on Gemini PDA. It would be useful to hear from people
-testing on other platforms.
+Currently we test primarily on Linux desktop (Slackware, Xfce) and
+Gemian (a Debian port) on Gemini PDA. It would be useful to hear from
+people testing on other platforms.
 
 If you do run on another platform, then you probably need to provide a
 custom CSS file (to specify font sizes etc). Please consider contributing

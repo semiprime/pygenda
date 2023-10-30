@@ -3,22 +3,32 @@ Pygenda "Quick Start" Guide for PostmarketOS
 This guide will lead you through installation and basic configuration
 of the most recent release of Pygenda on PostmarketOS (a Linux-based
 operating system for mobile devices such as phones). It is intended
-for users who want to install/run/test Pygenda.
+for users who want to test Pygenda.
 
 If you want to contribute to or modify Pygenda, then you probably want
 to get the latest version from GitHub (which is usually a little ahead
 of the latest release). This guide may be useful to refer to for
-initial configuration.
+configuration.
 
-Pygenda is designed for devices with a physical keyboard (e.g. a Gemini PDA,
-a Nokia N900, a Chromebook, or a PinePhone with its keyboard attachment).
-It will likely not be very usable on devices with a virtual keyboard.
-Unfortunately, I've not been able to test Pygenda on a postmarketOS device
-with a keyboard, so would welcome feedback at pygenda@semiprime.com.
+Pygenda is designed for devices with a physical keyboard, for example
+a Gemini PDA, a Chromebook, or a PinePhone with its keyboard attachment.
+In theory a Nokia N900 would be great, but I suspect it will be too
+slow – please let me know if you try.
 
-Note that Pygenda is alpha software, and as such has **lots of
-missing/incomplete features** as well as **bugs**. It is released for
-testing and feedback purposes, but you may also find it useful.
+Unfortunately, I've only been able to test Pygenda on a postmarketOS
+device without a keyboard. On that device, basic display of entries
+and navigation worked. However, while entry was possible, it was not
+very usable. I'm not sure how much this was due to the lack of a
+keyboard (which meant that a virtual keyboard kept obscuring the UI),
+how much was due to my choice of UI environment (I chose Phosh, mainly
+because it was small; a more desktop-like UI might be more appropriate
+for Pygenda), how much was due to my old phone not being a great
+platform for pmOS, and how much of it was due to Pygenda.
+
+Because of this, currently Pygenda on postmarketOS should be considered
+**experimental**. This guide is to encourage testing (and feedback) on
+its current state – including on device/UI combinations that I cannot
+test. Feedback can be sent to pygenda@semiprime.com.
 
 This guide has been tested on a Wileyfox Swift ('crackling') device
 running PostmarketOS 23.06 with Phosh 0.30.0 (pre-built postmarketOS
@@ -26,19 +36,12 @@ image, id 20230912-0014, with python3-3.11.5-r0 and gtk+3.0-3.24.38-r1).
 
 Known issues
 ------------
-I've only recently started testing on postmarketOS, so it's not yet at
-parity with other platforms. Also, postmarketOS and the Phosh UI are
-both under development, so bugs are expected.
-
-In addition, the main targets for Pygenda are devices with a physical
-keyboard and a landscape display. Hence certain elements of the UI do
-not work well in portrait mode or with a touchscreen keyboard.
-
 Known issues specific to postmarketOS (with Phosh) include:
 
-* Translations are not loaded for strings in .glade files (i.e. most of the UI)
-* The menu behaves badly (and inconsistently) when using the touchscreen: submenus often do not appear
-* Sometimes the UI stops responding to taps (I'm not sure when this occurs)
+* Translations are not loaded for strings in .glade files (i.e. most of the UI).
+* The menu behaves badly (and inconsistently) when using the touchscreen: submenus often do not appear.
+* Sometimes the UI stops responding to taps (I'm not sure when this occurs).
+* There's no portrait mode.
 
 Install dependencies
 --------------------
@@ -59,6 +62,9 @@ components. If you are already using different versions of these modules,
 you may want to stick with those versions. Alternatively, you may want to
 keep the Pygenda module dependencies separate from the OS modules by
 running Pygenda in a Python virtual environment.)
+
+(Note 2: If you decide to install pycairo via pip, you will need GCC
+installed, and maybe some other build tools.)
 
 Install Pygenda
 ---------------
