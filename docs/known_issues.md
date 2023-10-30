@@ -20,7 +20,7 @@ Major
   actual alarm notifications.)
 
 * Several event properties are not implemented (attendees, url,
-  user tags, attachments, etc.)
+  transparency (i.e. free/busy), user tags, attachments, etc.)
 
 * Many todo item properties are not implemented (start date, user tags,
   timed-but-undated (use daily repeating?), etc.)
@@ -60,7 +60,7 @@ Major
   also deleting repeated events - currently all repeats are deleted.)
 
 * Creating/updating new entries in large calendars is unusably slow.
-  (In tests, with .ics file, file writing is slow; with CalDAV server
+  (In tests, with iCal file, file writing is slow; with CalDAV server
   re-sorting the lists is slow.)
 
 * "Find" function is rudimentary/placeholder (no options, just searches
@@ -87,6 +87,10 @@ Medium
 * Todo due-dates display improvements: date without year; date with day;
   date like "tomorrow", "today", "2 days", "yesterday!"; don't show if
   completed/cancelled; formatting for today/overdue items.
+
+* A natural way to organise todo lists is to have a dedicated calendar
+  source for each todo list. There is currently no support for this
+  (except manually placing items in each calendar).
 
 * When deleting a repeated event, all are deleted. Should offer option
   of deleting this one (better, also offer delete all from, all before...)
@@ -161,16 +165,16 @@ Medium
 * "Today" marked in views is not updated if day changes (e.g. midnight
   crossover, switch on device in new day, device time(zone) changed).
 
-* For calendars saved in .ics file. Copy/pasting an event with a timezone
+* For calendars saved in iCal file. Copy/pasting an event with a timezone
   to a date with a different DST, time displayed (local time) is an hour
-  off. This fixes itself if Pygenda is restarted (so .ics file is re-read).
+  off. This fixes itself if Pygenda is restarted (so iCal file is re-read).
   Probable cause: In new_entry_from_example(), tzinfo of event includes
   timezone name ('Europe/London' etc) and utc offset. When new time is
   calculated it uses utc offset, but stores the timezone name. Hence
   initial display is incorrect, but when event is re-parsed it uses
   the timezone name and re-does calculation of utc offset, so time
   is now correct. This doesn't happen with CalDAV server, because in
-  CalendarConnectorCalDAV::add_entry() it re-creates a new ics entry
+  CalendarConnectorCalDAV::add_entry() it re-creates a new iCal entry
   and (crucially) parses it, which gives the correct time.
 
 * It would be better if the device was detected automatically at launch
@@ -187,9 +191,17 @@ Medium
   wrong x-coordinate. The result of this is that individual entries are
   not correctly selected if taps are to the left of the space. This
   seems to be a bug in GTK, and does not happen with GTK3.24 (desktop).
+  Added: The same bug occurs on postmarketOS, and that uses GTK3.24.
+  Maybe it's connected with the touchscreen?
 
 * There's no portrait mode. This would be particularly useful on "transformer"
   phones like the Astro Slide.
+
+* If a single instance of Pygenda opens one iCal file twice (e.g. once for
+  events, once for todos) there is potential for data loss when saving.
+  (This can also happen if different programs open the same iCal file.)
+  Not sure about the best way to handle this situation. Might be solved
+  if Pygenda can detect changes in the file and re-read it.
 
 Minor
 -----
@@ -209,6 +221,7 @@ Minor
 
 * Anniversary event year (e.g. "20 years") not displayed (they're
   just annual repeats). (Maybe add category "Anniversary"?)
+  (Symbian seem to have used X-EPOCAGENDAENTRYTYPE:ANNIVERSARY)
 
 * Event dialog needs some indication if tab contents are non-default
   (e.g. if there are repeats, alarms - maybe show a tick in the tab handle)
@@ -218,8 +231,8 @@ Minor
 
 * Menu shortcuts set in glade are not translated (e.g. aller à = ctrl+g)
 
-* If using a .ics file and multiple instances edit the same file, data
-  can be lost (note: using .ics file is not recommended => minor)
+* If using a iCal file and multiple instances edit the same file, data
+  can be lost (note: using iCal file is not recommended => minor)
 
 * In comboboxes, when in "popped out" state, +/-/</> keys don't work
 
