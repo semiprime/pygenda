@@ -6,4 +6,4 @@
 # For valid/suggested versioning schemes, see:
 # https://packaging.python.org/guides/distributing-packages-using-setuptools/#choosing-a-versioning-scheme
 
-__version__ = '0.3.0'
+__version__ = '0.3.1-dev0'
