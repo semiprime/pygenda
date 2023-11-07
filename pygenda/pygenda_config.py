@@ -84,7 +84,7 @@ class Config:
     def _read_arguments() -> argparse.Namespace:
         # Helper function to parse & return command-line arguments.
         parser = argparse.ArgumentParser(description=__doc__)
-        parser.add_argument('-c', '--config', metavar='FILE', type=str, default=None, help='Config file. Default: {:s}'.format(Config.DEFAULT_CONFIG_FILE))
+        parser.add_argument('-c', '--config', metavar='FILE', type=str, default=None, help='Config file. Default: {:s}, {:s}'.format(Config.DEFAULT_CONFIG_FILE,Config.DEFAULT_CONFIG_FILE_USER))
         parser.add_argument('-d', '--date', metavar='DATE', type=str, default=None, help='Cursor startup date (YYYY-MM-DD)')
         parser.add_argument('-f', '--file', metavar='FILE', type=str, default=None, help='Calendar file. Default: {:s} in config directory'.format(Config.DEFAULT_ICAL_FILENAME))
         parser.add_argument('-v', '--view', metavar='VIEW', type=str, default=None, help='Opening view')
