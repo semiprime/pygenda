@@ -191,13 +191,11 @@ First, install EDS (it is installed by default, but best to check):
 Then add the following to your `~/.config/pygenda/user.ini` file:
 
     [calendar]
-    display_name = Personal
     type = evolution
     entry_type = event
     uid = system-calendar
     
     [calendar1]
-    display_name = Todos
     type = evolution
     entry_type = todo
     uid = system-task-list
@@ -205,6 +203,9 @@ Then add the following to your `~/.config/pygenda/user.ini` file:
 (The above example uses the default system calendar and task-list.
 If you use different ones, provide their uids in place of the values
 used above.)
+
+You can optionally add a `display_name = SOME_NAME` line to either
+calendar if you want to override the name provided by EDS.
 
 For more details/options, see [Evolution_Data_Server.md](Evolution_Data_Server.md).
 

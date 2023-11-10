@@ -135,9 +135,12 @@ class Calendar:
             if conn.cal.is_broken:
                 print('Warning: Non-conformant ical data, '+sect, file=stderr)
 
-            # Set display name
+            # Set display name (might already be set by constructor)
             dn = Config.get(sect, 'display_name')
-            conn.displayname = sect if dn is None else dn
+            if dn is not None:
+                conn.displayname = dn
+            elif not conn.displayname: # Don't want empty display name
+                conn.displayname = sect
 
             # Add _cal_idx attribute so we can find calendar from entry
             calidx = len(cls.calConnectors)
@@ -1052,6 +1055,8 @@ class CalendarConnectorEvolution(CalendarConnector):
         if self.__eds_client is None:
             raise ValueError('Error connecting to EDS calendar uid "{:s}"'.format(uid))
 
+        # Read source properties to set some connector properties
+        self.displayname = src.get_display_name()
         if not src.get_writable():
             self.flags |= CalendarConnector.READONLY
 

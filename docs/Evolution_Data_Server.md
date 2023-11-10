@@ -41,13 +41,11 @@ Edit/create your `~/.config/pygenda/user.ini` file. For the default
 "Personal" calendar and task list, add the following:
 
     [calendar]
-    display_name = Personal
     type = evolution
     entry_type = event
     uid = system-calendar
     
     [calendar1]
-    display_name = Todos
     type = evolution
     entry_type = todo
     uid = system-task-list
@@ -56,6 +54,9 @@ If you use different calendars or task lists from the defaults, you
 will need to provide the uid. If you don't know the uid, omit it in
 the config, and start Pygenda from the command-line. A list of uids
 will be shown in the terminal.
+
+You can optionally add a `display_name = SOME_NAME` line to either
+calendar if you want to override the name provided by EDS.
 
 You can add further calendars to Pygenda, these should be placed in
 sections titled `calendar2`, `calendar3`, etc. Example:
@@ -97,7 +98,7 @@ like:
     
     [Alarms]
     IncludeMe=true
-
+    
     [Conflict Search]
     IncludeMe=true
 
