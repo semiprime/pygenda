@@ -36,10 +36,11 @@ image, id 20230912-0014, with python3-3.11.5-r0 and gtk+3.0-3.24.38-r1).
 
 Known issues
 ------------
-Known issues specific to postmarketOS (with Phosh) include:
+Known issues specific to postmarketOS (observed on Phosh) include:
 
 * Translations are not loaded for strings in .glade files (i.e. most of the UI).
-* The menu behaves badly (and inconsistently) when using the touchscreen: submenus often do not appear.
+* The menubar behaves badly when using the touchscreen: submenus sometimes do not appear (seems to happen in other GTK3 apps too, but not GTK4?).
+* The menubar is even more broken in fullscreen mode, or when app is maximised and the titlebar is hidden.
 * Sometimes the UI stops responding to taps (I'm not sure when this occurs).
 * There's no portrait mode.
 
@@ -97,14 +98,16 @@ configuration that you can select from or modify as required:
 
     [global]
     24hr = True
-    hide_titlebar_when_maximized = True
+    # The hide_titlebar option_when_maximized seems to break the menu
+    # under Phosh, but might be useful in other UI environments.
+    # hide_titlebar_when_maximized = True
     
     [startup]
     # Fullscreen UIs are often preferable on handheld devices.
     # The fullscreen and maximised are two possible options for this.
     # Their behaviour might differ depending on the UI of the device.
-    fullscreen = True
-    # maximize = True
+    # fullscreen = True
+    maximize = True
     
     [todo_view]
     list0_filter = UNCATEGORIZED
