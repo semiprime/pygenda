@@ -198,7 +198,7 @@ class GUI:
             'menuitem_goto': cls.dialog_goto,
             'menuitem_find': cls.handler_find,
             'menuitem_about': cls.dialog_about,
-            'button0_clicked': cls.handler_newevent,
+            'button0_clicked': cls.handler_newentry,
             'button1_clicked': cls.switch_view,
             'button2_clicked': cls.dialog_goto,
             'button3_clicked': cls.zoom_button,
@@ -747,7 +747,7 @@ class GUI:
 
     @classmethod
     def handler_newevent(cls, *args) -> bool:
-        # Callback for "Create new event" signal (menu, softkey)
+        # Callback for "Create new event" signal (menu)
         date = cls.views[cls._view_idx].cursor_date()
         EventDialogController.new_event(date=date)
         return True # don't propagate event
@@ -758,6 +758,14 @@ class GUI:
         lst = cls.views[cls._view_idx].cursor_todo_list()
         TodoDialogController.new_todo(list_idx=lst)
         return True # don't propagate event
+
+    @classmethod
+    def handler_newentry(cls, *args) -> bool:
+        # Callback for "Create new entry" signal (softkey)
+        # Create new event or new todo, depending on the View.
+        if cls.views[cls._view_idx].default_entry_is_todo():
+            return cls.handler_newtodo(cls, *args)
+        return cls.handler_newevent(cls, *args)
 
     @classmethod
     def handler_find(cls, *args) -> bool:

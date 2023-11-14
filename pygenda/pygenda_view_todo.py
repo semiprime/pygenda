@@ -183,6 +183,12 @@ class View_Todo(View):
 
 
     @classmethod
+    def default_entry_is_todo(cls) -> bool:
+        # Returns True: creating an "entry" in Todo View -> new Todo
+        return True
+
+
+    @classmethod
     def new_entry_from_example(cls, en:Union[iEvent,iTodo]) -> None:
         # Creates new entry based on entry en. Used for pasting entries.
         # Type of entry depends on View (e.g. Todo View -> to-do item).

@@ -23,7 +23,7 @@ msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-22 23:04+0200\n"
-"PO-Revision-Date: 2023-10-22 23:04+0200\n"
+"PO-Revision-Date: 2023-11-14 22:12+0200\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -295,7 +295,7 @@ msgstr "Dernier {day:s} du mois"
 msgid "{ord:s} to last {day:s} of month"
 msgstr "{ord:s} au dernier {day:s} du mois"
 
-#: pygenda_dialog_event.py:799 glade/main.glade:548
+#: pygenda_dialog_event.py:799
 msgid "New Event"
 msgstr "Nouvel évènement"
 
@@ -691,6 +691,10 @@ msgstr "_Rechercher…"
 #: glade/main.glade:480
 msgid "_Help"
 msgstr "Aid_e"
+
+#: glade/main.glade:548
+msgid "New Entry"
+msgstr "Nouvelle entrée"
 
 #: glade/main.glade:601
 msgid "View"

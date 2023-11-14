@@ -108,6 +108,14 @@ class View:
 
 
     @classmethod
+    def default_entry_is_todo(cls) -> bool:
+        # Returns True if creating an "entry" in this view would
+        # mean creating a Todo item.
+        # Default is False - an "entry" would be an Event.
+        return False
+
+
+    @classmethod
     def new_entry_from_example(cls, en:Union[iEvent,iTodo]) -> None:
         # Creates new entry based on entry en. Used for pasting entries.
         # Type of entry should depend on View (e.g. Todo View -> to-do item).
@@ -157,7 +165,7 @@ class View:
     @classmethod
     def cursor_goto_event(cls, ev:iEvent) -> bool:
         # Move cursor to given event.
-        # Return True if can (False if can't) jump to todo in this view.
+        # Return True if can (False if can't) jump to event in this view.
         # Default implementation does nothing & returns False.
         return False
 
