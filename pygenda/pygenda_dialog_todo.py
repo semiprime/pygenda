@@ -271,7 +271,7 @@ class TodoDialogController:
                 raise TodoPropertyBeyondEditDialog('Editing todo with date+time DUE not supported')
             cls.wid_duedate_switch.set_active(True)
             cls.wid_duedate.set_date(due)
-        if 'DTSTART' in todo or 'DTEND' in todo or 'COMPETED' in todo:
+        if 'DTSTART' in todo or 'DTEND' in todo or 'COMPLETED' in todo:
             raise TodoPropertyBeyondEditDialog('Editing todo with unsupported date property')
         if 'STATUS' in todo:
             s = todo['STATUS']
