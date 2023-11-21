@@ -644,6 +644,8 @@ class Calendar:
                 v_alm.add('SUMMARY', summ)
             if attee is not None:
                 v_alm.add('ATTENDEE', attee)
+            if al.attach is not None:
+                v_alm.add('ATTACH', al.attach)
             en.add_component(v_alm)
 
 

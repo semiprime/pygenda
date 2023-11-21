@@ -237,6 +237,9 @@ class EntryPropertiesDialog:
                                 # Spec says only one description
                                 a_info += '\n'
                                 a_info += _(u'“{:s}”').format(a['DESCRIPTION'])
+                        if act=='Audio' and 'ATTACH' in a:
+                            a_info += '\n'
+                            a_info += a['ATTACH']
                 else:
                     # No Trigger (so breaks specs)
                     a_info += 'Unspecified'

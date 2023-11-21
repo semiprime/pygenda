@@ -122,9 +122,10 @@ class EntryInfo:
 
 
 class AlarmInfo:
-    def __init__(self, tdelta:timedelta, action:str, desc:str=None, summary:str=None, attendee:str=None):
+    def __init__(self, tdelta:timedelta, action:str, desc:str=None, summary:str=None, attendee:str=None, attach:str=None):
         self.tdelta = tdelta # Note: -ve -> before entry; +ve -> after entry
         self.action = action
         self.desc = desc
         self.summary = summary
         self.attendee = attendee
+        self.attach = attach

@@ -125,6 +125,7 @@ class EventDialogController:
         'show_alarm_warning': True,
         'timed_default_alarm_before': '15m',
         'default_alarm_emailaddr': None,
+        'default_alarm_audiofile': None,
         })
 
     @classmethod
@@ -401,7 +402,7 @@ class EventDialogController:
         # Reveals/hides alarm list.
         if state and len(cls.alarmlist_model)==0:
             # User just enabled alarms, so if no alarms, create default ones
-            cls._add_alarm(AlarmInfo(-cls._default_alarm_before,action='AUDIO'))
+            cls._add_alarm(AlarmInfo(-cls._default_alarm_before,action='AUDIO',attach=Config.get('new_event','default_alarm_audiofile')))
             cls._add_alarm(AlarmInfo(-cls._default_alarm_before,action='DISPLAY',desc=cls.wid_desc.get_text()))
         cls._revealer_alarmlist.set_reveal_child(state)
         return False # must propagate event for active CSS selector to apply
@@ -419,7 +420,10 @@ class EventDialogController:
         # Sets alarm in alarm list for row given by itr
         act = a_info.action.capitalize()
         desc = _(act)
-        if act=='Email':
+        if act=='Audio':
+            if a_info.attach is not None: # sound file
+                desc += ' (' + a_info.attach.split('/')[-1] + ')'
+        elif act=='Email':
             desc += ' (' + a_info.attendee + ')'
         elif act=='Display' and a_info.desc is not None:
             desc += ' '
@@ -1212,9 +1216,10 @@ class EventDialogController:
                 desc = valarm['DESCRIPTION'] if 'DESCRIPTION' in valarm else None
                 summ = valarm['SUMMARY'] if 'SUMMARY' in valarm else None
                 attee = valarm['ATTENDEE'] if 'ATTENDEE' in valarm else None
+                attach = valarm['ATTACH'] if 'ATTACH' in valarm else None
                 if isinstance(attee, list):
                     raise EventPropertyBeyondEditDialog('Can\'t edit alarm with >1 email addresses')
-                a_info = AlarmInfo(pretime, action=act, desc=desc, summary=summ, attendee=attee)
+                a_info = AlarmInfo(pretime, action=act, desc=desc, summary=summ, attendee=attee, attach=attach)
                 cls._add_alarm(a_info)
         if len(cls.alarmlist_model):
             cls.wid_alarmset.set_active(True)
@@ -1549,8 +1554,10 @@ class EventDialogController:
                 a_info.desc = None
                 a_info.summary = None
                 a_info.attendee = None
+                a_info.attach = None
                 if ev.keyval==Gdk.KEY_a:
                     a_info.action = 'AUDIO'
+                    a_info.attach = Config.get('new_event','default_alarm_audiofile')
                 elif ev.keyval==Gdk.KEY_d:
                     a_info.action = 'DISPLAY'
                     a_info.desc = cls.wid_desc.get_text()
@@ -1570,7 +1577,8 @@ class EventDialogController:
             return True # Don't propagate event
         elif ev.keyval==Gdk.KEY_n:
             # Add new alarm to list, Audio since it's the most basic type
-            cls._add_alarm(AlarmInfo(-cls._default_alarm_before,action='AUDIO'))
+            al = AlarmInfo(-cls._default_alarm_before, action='AUDIO', attach=Config.get('new_event','default_alarm_audiofile'))
+            cls._add_alarm(al)
             wid.set_cursor(len(cls.alarmlist_model)-1) # Move cursor to new row
             return True # Don't propagate event
         elif ev.keyval==Gdk.KEY_Return:
