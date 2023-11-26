@@ -20,8 +20,6 @@
 # along with Pygenda. If not, see <https://www.gnu.org/licenses/>.
 
 
-from gi import require_version as gi_require_version
-gi_require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GLib
 from gi.repository.Pango import WrapMode as PWrapMode
 
