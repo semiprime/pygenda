@@ -278,10 +278,7 @@ class Calendar:
         else:
             raise ValueError('Unrecognized entry type')
         en.add('UID', Calendar.gen_uid()) # Required
-        # DateTime utcnow() function doesn't include TZ, so use now(tz.utc)
-        utcnow = dt_datetime.now(timezone.utc)
-        en.add('DTSTAMP', utcnow) # Required
-        en.add('CREATED', utcnow) # Optional
+        cls._update_timestamps(en, is_new=True)
         en.add('SUMMARY', e_inf.desc)
 
         if e_inf.start_dt is not None:
@@ -345,10 +342,8 @@ class Calendar:
             raise ValueError('Tried to add entry to calendar set as read-only')
 
         en.add('UID', Calendar.gen_uid()) # Required
-        utcnow = dt_datetime.now(timezone.utc)
-        en.add('DTSTAMP', utcnow) # Required
-        # Since it has a new UID, we consider it a new entry
-        en.add('CREATED', utcnow) # Optional
+        cls._update_timestamps(en, is_new=True)
+
         summ = exen['SUMMARY'] if 'SUMMARY' in exen else None
         if not summ:
             summ = 'New entry' # fallback summary
@@ -434,10 +429,7 @@ class Calendar:
         if 'UID' not in en:
             en.add('UID', Calendar.gen_uid()) # Should be present
 
-        # DateTime utcnow() function doesn't include TZ, so use now(tz.utc)
-        utcnow =  dt_datetime.now(timezone.utc)
-        cls._update_entry_field(en, 'DTSTAMP', utcnow)
-        cls._update_entry_field(en, 'LAST-MODIFIED', utcnow)
+        cls._update_timestamps(en, is_new=False)
         cls._update_entry_field(en, 'SUMMARY', e_inf.desc)
         cls._update_entry_field(en, 'PRIORITY', e_inf.priority)
         cls._update_entry_field(en, 'DUE', e_inf.duedate)
@@ -523,6 +515,20 @@ class Calendar:
             del(en[fname])
         if val is not None:
             en.add(fname, val)
+
+
+    @staticmethod
+    def _update_timestamps(en:Union[iEvent,iTodo], is_new:bool) -> None:
+        # Update entry fields recording modified time: DTSTAMP.
+        # if is_new, add CREATED; if not new, update LAST-MODIFIED.
+        # All these fields use UTC.
+        # DateTime utcnow() function doesn't include TZ, so use now(tz.utc)
+        utcnow =  dt_datetime.now(timezone.utc)
+        Calendar._update_entry_field(en, 'DTSTAMP', utcnow) # Required elt
+        if is_new:
+            en.add('CREATED', utcnow) # Optional elt
+        else:
+            Calendar._update_entry_field(en, 'LAST-MODIFIED', utcnow) # Opt
 
 
     @staticmethod
@@ -677,7 +683,11 @@ class Calendar:
             if stat==entry['STATUS']:
                 stat = None # If on, we toggle it off
             del(entry['STATUS'])
+        elif stat is None:
+            # No existing status & requesting set to none, so do nothing
+            return
         cls._add_status_entry(entry, stat)
+        cls._update_timestamps(entry, is_new=False)
         cls.calConnectors[entry._cal_idx].update_entry(entry) # Write to store
 
 
@@ -685,7 +695,7 @@ class Calendar:
     def _add_status_entry(entry:Union[iEvent,iTodo], stat:Optional[str]) -> None:
         # Set entry STATUS to stat.
         # Assumes entry['STATUS'] does not exist.
-        # Only allows spec'ed values.
+        # Only allows spec'ed values (o/w leaves unchanged).
         if stat=='COMPLETED':
             # PERCENT-COMPLETE automatically set to 100, so can delete
             Calendar._del_entry_field(entry, 'PERCENT-COMPLETE')
@@ -693,8 +703,8 @@ class Calendar:
             if 'PERCENT-COMPLETE' in entry and entry['PERCENT-COMPLETE']==100:
                 entry['PERCENT-COMPLETE'] = 99 # Stop it being == 100
             Calendar._del_entry_field(entry, 'COMPLETED')
-        if (isinstance(entry,iEvent) and stat in Calendar.STATUS_LIST_EVENT) or (
-            isinstance(entry,iTodo) and stat in Calendar.STATUS_LIST_TODO):
+        if (isinstance(entry,iEvent) and stat in Calendar.STATUS_LIST_EVENT) \
+           or (isinstance(entry,iTodo) and stat in Calendar.STATUS_LIST_TODO):
                 entry.add('STATUS', stat)
 
 
