@@ -26,7 +26,7 @@ from datetime import date, time, datetime, timedelta, tzinfo
 from dateutil import tz as du_tz
 from tzlocal import get_localzone
 import locale
-from typing import Tuple
+from typing import Tuple, Any
 
 from .pygenda_config import Config
 
@@ -48,14 +48,24 @@ def datetime_to_time(dt:date):
         return False
 
 
-# For many repeat types, we need to have a timezone that is "aware" of
+# For some calculations, we need to have a timezone that is "aware" of
 # summer time changes to make correct, e.g. hourly, calculations
-LOCAL_TZ = get_localzone()
-if not hasattr(LOCAL_TZ,'unwrap_shim') and hasattr(LOCAL_TZ,'zone'):
+_local_tz = get_localzone()
+if not hasattr(_local_tz,'unwrap_shim') and hasattr(_local_tz,'zone'):
     # Old tzlocal API, so need to create tzinfo object
-    LOCAL_TZ = du_tz.gettz(LOCAL_TZ.zone)
+    _local_tz = du_tz.gettz(_local_tz.zone)
 # Alternative for Linuxes:
-#LOCAL_TZ = du_tz.tzfile('/etc/localtime')
+#_local_tz = du_tz.tzfile('/etc/localtime')
+
+def get_local_tz() -> Any:
+    # Getter. Can be assumed to return a zoneinfo object.
+    return _local_tz
+
+def _set_local_tz(zinfo:Any) -> None:
+    # Setter for test code - so we can run tests in different time zones.
+    # Users should set time from the system, not an agenda app!
+    global _local_tz
+    _local_tz = zinfo
 
 
 def date_to_datetime(dt:date, tz:tzinfo=None) -> datetime:
@@ -64,7 +74,7 @@ def date_to_datetime(dt:date, tz:tzinfo=None) -> datetime:
     # Hence this function can be used to guarantee we have datetime with a timezone
     dt_ret= dt if isinstance(dt,datetime) else datetime(dt.year,dt.month,dt.day)
     if tz and dt_ret.tzinfo is None:
-        dt_ret = dt_ret.replace(tzinfo=LOCAL_TZ if tz is True else tz)
+        dt_ret = dt_ret.replace(tzinfo=_local_tz if tz is True else tz)
     return dt_ret
 
 

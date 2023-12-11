@@ -40,7 +40,7 @@ from calendar import monthrange
 
 # Pygenda components
 from .pygenda_config import Config
-from .pygenda_util import dt_lt, dt_lte, datetime_to_date, date_to_datetime, LOCAL_TZ
+from .pygenda_util import dt_lt, dt_lte, datetime_to_date, date_to_datetime, get_local_tz
 from .pygenda_entryinfo import EntryInfo
 
 
@@ -1541,7 +1541,7 @@ class RepeatIter_simpledelta:
             if not self.rinfo.is_exdate(self.dt):
                 break
         if self.rinfo.subday_rpt:
-            r = r.astimezone(LOCAL_TZ)
+            r = r.astimezone(get_local_tz())
         return r
 
 
@@ -1567,7 +1567,7 @@ class RepeatIter_multidelta(RepeatIter_simpledelta):
             if not self.rinfo.is_exdate(self.dt):
                 break
         if self.rinfo.subday_rpt:
-            r = r.astimezone(LOCAL_TZ)
+            r = r.astimezone(get_local_tz())
         return r
 
 
@@ -1593,7 +1593,7 @@ class RepeatIter_byweekdayinmonth(RepeatIter_simpledelta):
             if not self.rinfo.is_exdate(self.dt_toret):
                 break
         if self.rinfo.subday_rpt:
-            ret = ret.astimezone(LOCAL_TZ)
+            ret = ret.astimezone(get_local_tz())
         return ret
 
 
@@ -1681,7 +1681,7 @@ def repeats_in_range_with_rrstr(ev:iEvent, start:dt_date, stop:dt_date) -> list:
         ret = [d.date() for d in ret]
     elif is_hr_min_sec:
         # After doing calculations in UTC, convert results to local time
-        ret = [d.astimezone(LOCAL_TZ) for d in ret]
+        ret = [d.astimezone(get_local_tz()) for d in ret]
     if has_exd:
         exdate_list = Calendar.caldatetime_tree_to_dt_list(ev['EXDATE'])
         for exdt in exdate_list:
