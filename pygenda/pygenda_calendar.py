@@ -88,7 +88,7 @@ class Calendar:
     STATUS_LIST_EVENT = ('TENTATIVE','CONFIRMED','CANCELLED')
     STATUS_LIST_TODO = ('NEEDS-ACTION','IN-PROCESS','COMPLETED','CANCELLED')
 
-    calConnectors = [] # type:List[CalendarConnector]
+    calConnectors = None # type:List[CalendarConnector]
     _default_connector_event = None # type:int
     _default_connector_todo = None # type:int
     _entry_norep_list_sorted = None
@@ -154,6 +154,15 @@ class Calendar:
             # Finally, append our new connector to the list
             cls.calConnectors.append(conn)
 
+
+        # Re-initialise connections and saved lists so init()
+        # can be called more tn once if necessary
+        cls.calConnectors = []
+        cls._default_connector_event = None # type:ignore[assignment]
+        cls._default_connector_todo = None # type:ignore[assignment]
+        cls._entry_norep_list_sorted = None
+        cls._entry_rep_list = None
+        cls._todo_list = None
 
         caltype = Config.get('calendar','type')
         if caltype is not None:
