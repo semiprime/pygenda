@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
+# test_repeats.py
 # Run unit tests for repeating entry calculations in Pygenda
 #
-# Copyright (C) 2022 Matthew Lewis
+# Copyright (C) 2022,2023 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -33,8 +34,9 @@ from tzlocal import get_localzone
 import sys
 sys.path.append('..')
 
-# Import the module we want to test...
+# Import pygenda modules...
 from pygenda.pygenda_calendar import repeats_in_range
+from pygenda.pygenda_util import get_local_tz, _set_local_tz as set_local_tz
 
 
 # Set this to True to skip some slow tests.
@@ -44,12 +46,22 @@ QUICK_TEST = False
 
 class TestRepeats(unittest.TestCase):
     maxDiff = None # show unlimited chars when showing diffs
-    LOCAL_TZ = get_localzone()
-    if not hasattr(LOCAL_TZ,'unwrap_shim') and hasattr(LOCAL_TZ,'zone'):
-        # Old tzlocal API, so need to create tzinfo object
-        LOCAL_TZ = tz.gettz(LOCAL_TZ.zone)
 
-    def test_yearly_basic(self) -> None:
+    @classmethod
+    def setUpClass(cls):
+        # Called once before all tests
+        # Save local timezone, so running tests will test in your tz
+        cls.local_tz_saved = get_local_tz()
+
+
+    def setUp(self) -> None:
+        # This is called before each individual test function
+        # Reset timezone for next test (might be changed in test)
+        set_local_tz(self.local_tz_saved)
+
+
+    #@unittest.skip
+    def test_01_yearly_basic(self) -> None:
         # Create simple yearly repeating event
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -67,7 +79,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(1990,2,10), date(2002,12,13), 13)
 
 
-    def test_yearly_timed(self) -> None:
+    #@unittest.skip
+    def test_02_yearly_timed(self) -> None:
         # Create timed yearly repeating event
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -85,7 +98,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(3126,2,10), date(3208,12,5), 82)
 
 
-    def test_yearly_interval(self) -> None:
+    #@unittest.skip
+    def test_03_yearly_interval(self) -> None:
         # Create yearly event with interval>1
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -101,7 +115,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(1980,1,1), date(2050,1,1),17)
 
 
-    def test_yearly_zerointerval(self) -> None:
+    #@unittest.skip
+    def test_04_yearly_zerointerval(self) -> None:
         # Create yearly event with interval==0 (i.e. bad event)
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -116,7 +131,8 @@ class TestRepeats(unittest.TestCase):
         self.assertRaises(ValueError, repeats_in_range, event, date(2001,1,1), date(2002,1,1))
 
 
-    def test_yearly_interval_leapday(self) -> None:
+    #@unittest.skip
+    def test_05_yearly_interval_leapday(self) -> None:
         # Create yearly repeating event (on leapday, interval 6)
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -135,7 +151,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(1960,1,1), date(2050,1,1), 8)
 
 
-    def test_yearly_count(self) -> None:
+    #@unittest.skip
+    def test_06_yearly_count(self) -> None:
         # Create yearly repeating event with occurence count
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -156,7 +173,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(1983,11,16), date(1984,11,17), 2)
 
 
-    def test_yearly_until(self) -> None:
+    #@unittest.skip
+    def test_07_yearly_until(self) -> None:
         # Create yearly repeating event with repeat-until
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -178,10 +196,17 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(1970,1,1), date(1975,1,1), 1)
 
 
-    def test_yearly_timezone(self) -> None:
+    #@unittest.skip
+    def test_08_yearly_timezone(self) -> None:
         # Create timed yearly repeating event with timezone
         tz_SAM = tz.gettz('Pacific/Samoa') # UTC-11
         self.assertTrue(tz_SAM) # check not None
+
+        # Check to see if local timezone more west than event timezone,
+        # and if so change local tz to something "neutral".
+        if get_local_tz().utcoffset(datetime(2021,8,1,1))<=timedelta(hours=-10):
+            set_local_tz(tz.gettz('Europe/London'))
+
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
             datetime(1960,12,31,23,16,4,tzinfo=tz_SAM),
@@ -200,7 +225,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(3066,1,1), date(3066,1,7), 1)
 
 
-    def test_yearly_thanksgiving(self) -> None:
+    #@unittest.skip
+    def test_09_yearly_thanksgiving(self) -> None:
         # Create yearly repeating event on weekday of month.
         # Thanksgiving (US) - 4th Thursday of November.
         event = self.create_event(
@@ -226,7 +252,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(3014,1,1), date(3015,1,1), 1)
 
 
-    def test_yearly_invalid_day(self) -> None:
+    #@unittest.skip
+    def test_10_yearly_invalid_day(self) -> None:
         # Create yearly repeating event with a bad BYDAY argument
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -244,7 +271,8 @@ class TestRepeats(unittest.TestCase):
         self.assertRaises(ValueError, repeats_in_range, event, date(2023,4,26), date(2023,4,27))
 
 
-    def test_yearly_bydayinmonth_timed(self) -> None:
+    #@unittest.skip
+    def test_11_yearly_bydayinmonth_timed(self) -> None:
         # Create yearly repeating event on weekday-of-month with time.
         # Also throw in some exdates.
         event = self.create_event(
@@ -275,7 +303,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2030,1,1), date(2031,1,1), 1)
 
 
-    def test_yearly_bydayinmonth_twice(self) -> None:
+    #@unittest.skip
+    def test_12_yearly_bydayinmonth_twice(self) -> None:
         # Create yearly repeating event on two months
         # Thanksgiving (US) - 4th Thursday of November.
         event = self.create_event(
@@ -309,10 +338,20 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2050,1,1), date(2051,1,1), 2)
 
 
-    def test_yearly_bydayinmonth_timed_timezone_until(self) -> None:
+    #@unittest.skip
+    def test_13_yearly_bydayinmonth_timed_timezone_until(self) -> None:
         # Create bi-annual repeating event on weekday-of-month with time + zone.
+
+        # We want to test somewhere that is ahead of local time, so
+        # let's take the most easterly timezone we know of.
         tz_NZ = tz.gettz('Pacific/Auckland')
         self.assertTrue(tz_NZ) # check not None
+
+        # Check to see if local timezone is same as/more east than event timezone,
+        # and if so change local tz to something "neutral".
+        if get_local_tz().utcoffset(datetime(2021,8,1,1))==timedelta(hours=12):
+            set_local_tz(tz.gettz('Europe/London'))
+
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
             datetime(1982,11,17,0,16,tzinfo=tz_NZ),
@@ -346,10 +385,17 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2026,11,17), date(2026,11,18), 1)
 
 
-    def test_yearly_bydayinmonth_timed_timezone_count(self) -> None:
+    #@unittest.skip
+    def test_14_yearly_bydayinmonth_timed_timezone_count(self) -> None:
         # Create bi-annual repeating event on weekday-of-month with time + zone.
         tz_SAM = tz.gettz('Pacific/Samoa') # UTC-11
         self.assertTrue(tz_SAM) # check not None
+
+        # Check to see if local time more west than event timezone,
+        # and if so change local tz to something "neutral".
+        if get_local_tz().utcoffset(datetime(2021,8,1,1))<=timedelta(hours=-11):
+            set_local_tz(tz.gettz('Europe/London'))
+
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
             datetime(1997,8,9,23,16,tzinfo=tz_SAM),
@@ -370,7 +416,6 @@ class TestRepeats(unittest.TestCase):
         # Test non-null periods
         # Note events will seem to fall 1 day behind of Saturday, because
         # of timezone (unless test is run in Samoa...).
-        # Not sure of best way to improve this test.
         self.check_count_rrule(event, date(1997,1,1), date(1998,1,1), 1)
         self.check_count_rrule(event, date(1997,8,10), date(1997,8,11), 1)
         self.check_count_rrule(event, date(2002,1,1), date(2003,1,1), 1)
@@ -384,7 +429,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2092,8,10), date(2092,8,11), 1)
 
 
-    def test_yearly_bydayinmonth_nonincludedstart(self) -> None:
+    #@unittest.skip
+    def test_15_yearly_bydayinmonth_nonincludedstart(self) -> None:
         # Create yearly byday/month repeat where DTSTART is not a repeat date.
         # According to the spec this should not happen & behaviour is undefined.
         # https://icalendar.org/iCalendar-RFC-5545/3-8-5-3-recurrence-rule.html
@@ -408,7 +454,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2037,1,1), date(2038,1,1), 1)
 
 
-    def test_yearly_bydayinmonth_starting_gt28(self) -> None:
+    #@unittest.skip
+    def test_16_yearly_bydayinmonth_starting_gt28(self) -> None:
         # Create repeating event "by last Mon in month" starting >28th
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -434,7 +481,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2050,1,31), date(2050,2,1), 1)
 
 
-    def test_yearly_bydayinmonth_fifth(self) -> None:
+    #@unittest.skip
+    def test_17_yearly_bydayinmonth_fifth(self) -> None:
         # Create tri-yearly repeating event "by 5th Wednesday in month".
         # (This will use the dateutil.rrule module internally.)
         event = self.create_event(
@@ -483,7 +531,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2045,1,1), date(2046,1,1), 1)
 
 
-    def test_yearly_bydayinmonth_leapday(self) -> None:
+    #@unittest.skip
+    def test_18_yearly_bydayinmonth_leapday(self) -> None:
         # Create repeating event "by last x in month" starting leapday
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -523,7 +572,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2020,2,28), date(2020,2,29), 1)
 
 
-    def test_yearly_dayinyear_lt5(self) -> None:
+    #@unittest.skip
+    def test_19_yearly_dayinyear_lt5(self) -> None:
         # Yearly repeat by second Saturday in year
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -547,7 +597,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2025,1,11), date(2025,1,12), 1)
 
 
-    def test_yearly_dayinyear_gt5(self) -> None:
+    #@unittest.skip
+    def test_20_yearly_dayinyear_gt5(self) -> None:
         # Yearly repeat by ninth Tuesday in year (to check >5 works)
         # Note: >=10 seems to hit a bug in icalendar module (v4.0.9)
         event = self.create_event(
@@ -573,7 +624,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2025,3,4), date(2025,3,5), 1)
 
 
-    def test_yearly_us_presidential_elections(self) -> None:
+    #@unittest.skip
+    def test_21_yearly_us_presidential_elections(self) -> None:
         # Four-yearly repeat by Tuesday following first Mon in November
         # Example from RFC:
         # https://icalendar.org/iCalendar-RFC-5545/3-8-5-3-recurrence-rule.html
@@ -597,7 +649,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2012,1,1), date(2013,1,1), 1)
 
 
-    def test_monthly_basic(self) -> None:
+    #@unittest.skip
+    def test_22_monthly_basic(self) -> None:
         # Create simple monthly repeating event
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -614,7 +667,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2000,1,1), date(2001,1,1), 12)
 
 
-    def test_monthly_endofmonth(self) -> None:
+    #@unittest.skip
+    def test_23_monthly_endofmonth(self) -> None:
         # Create monthly repeating event starting at end of month
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -630,7 +684,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2010,1,1), date(2010,2,1), 1)
 
 
-    def test_monthly_biginterval(self) -> None:
+    #@unittest.skip
+    def test_24_monthly_biginterval(self) -> None:
         # Create monthly repeating event with big interval not divisible by 12
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -662,7 +717,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2010,12,20), date(2010,12,21), 1)
 
 
-    def test_monthly_biginterval_29th(self) -> None:
+    #@unittest.skip
+    def test_25_monthly_biginterval_29th(self) -> None:
         # Create monthly repeating event with big interval falling on 29th
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -693,7 +749,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2010,12,29), date(2010,12,30), 1)
 
 
-    def test_monthly_timed_exdate(self) -> None:
+    #@unittest.skip
+    def test_26_monthly_timed_exdate(self) -> None:
         # Create timed monthly repeating event
         # (with the potential to fall on a leap-day)
         event = self.create_event(
@@ -718,7 +775,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2112,1,1), date(2113,1,1), 12)
 
 
-    def test_monthly_timed_29th_exdate(self) -> None:
+    #@unittest.skip
+    def test_27_monthly_timed_29th_exdate(self) -> None:
         # Create timed monthly repeating event
         # (with the potential to fall on a leap-day)
         event = self.create_event(
@@ -743,7 +801,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2112,1,1), date(2113,1,1), 12)
 
 
-    def test_monthly_interval_29th(self) -> None:
+    #@unittest.skip
+    def test_28_monthly_interval_29th(self) -> None:
         # Create monthly repeating event on 29th, with interval>1
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -763,7 +822,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(1999,1,1), date(2010,1,1), 14)
 
 
-    def test_monthly_count(self) -> None:
+    #@unittest.skip
+    def test_29_monthly_count(self) -> None:
         # Create monthly repeating event with occurence count
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -784,7 +844,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2019,1,1), date(2020,1,1), 3)
 
 
-    def test_monthly_interval_until(self) -> None:
+    #@unittest.skip
+    def test_30_monthly_interval_until(self) -> None:
         # Create bi-monthly repeating event with repeat-until
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -805,7 +866,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(1970,1,1), date(1990,1,1), 18)
 
 
-    def test_monthly_timezone_until(self) -> None:
+    #@unittest.skip
+    def test_31_monthly_timezone_until(self) -> None:
         # Create timed monthly repeating event with timezone
         tz_SY = tz.gettz('Australia/Sydney')
         self.assertTrue(tz_SY) # check not None
@@ -813,6 +875,11 @@ class TestRepeats(unittest.TestCase):
             'Event {}'.format(sys._getframe().f_code.co_name),
             datetime(2023,1,30,17,33,tzinfo=tz_SY),
             rrule = {'FREQ':['MONTHLY'],'UNTIL':[datetime(2030,7,30,17,33,tzinfo=tz_SY)]})
+
+        # Check to see if local timezone so far west dates move,
+        # and if so change local tz to something "neutral".
+        if get_local_tz().utcoffset(datetime(2021,8,1,1))<=timedelta(hours=-7):
+            set_local_tz(tz.gettz('Europe/London'))
 
         # Test null periods
         self.check_count(event, date(2022,1,1), date(2023,1,1), 0)
@@ -828,7 +895,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2030,1,1), date(2030,7,31), 6)
 
 
-    def test_monthly_timezone_until_movesday(self) -> None:
+    #@unittest.skip
+    def test_32_monthly_timezone_until_movesday(self) -> None:
         # Create timed monthly repeating event with timezone.
         # Set timezone far west & late in day, so for most local
         # timezones it is shifted into the next day.
@@ -838,6 +906,11 @@ class TestRepeats(unittest.TestCase):
             'Event {}'.format(sys._getframe().f_code.co_name),
             datetime(2023,1,30,23,18,tzinfo=tz_AN),
             rrule = {'FREQ':['MONTHLY'],'UNTIL':[datetime(2030,7,30,23,18,tzinfo=tz_AN)]})
+
+        # Check to see if local time more west than event zone,
+        # and if so change local tz to something "neutral".
+        if get_local_tz().utcoffset(datetime(2021,8,1,1))<=timedelta(hours=-8):
+            set_local_tz(tz.gettz('Europe/London'))
 
         # Test null periods
         self.check_count(event, date(2022,1,1), date(2023,1,1), 0)
@@ -857,7 +930,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2030,1,1), date(2030,8,1), 6)
 
 
-    def test_monthly_byday(self) -> None:
+    #@unittest.skip
+    def test_33_monthly_byday(self) -> None:
         # Create monthly repeating event "by 2nd to last Friday"
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -884,7 +958,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2080,1,1), date(2081,1,1), 12)
 
 
-    def test_monthly_byday_nonincludedstart(self) -> None:
+    #@unittest.skip
+    def test_34_monthly_byday_nonincludedstart(self) -> None:
         # Create monthly byday repeat where DTSTART is not a repeat date.
         # According to the spec this should not happen & behaviour is undefined.
         # https://icalendar.org/iCalendar-RFC-5545/3-8-5-3-recurrence-rule.html
@@ -909,7 +984,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2023,1,1), date(2024,1,1), 12)
 
 
-    def test_monthly_byday_multiday(self) -> None:
+    #@unittest.skip
+    def test_35_monthly_byday_multiday(self) -> None:
         # Create monthly repeating event "by last Sunday"
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -939,7 +1015,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2121,1,1), date(2122,1,1), 12)
 
 
-    def test_monthly_byday_timed(self) -> None:
+    #@unittest.skip
+    def test_36_monthly_byday_timed(self) -> None:
         # Create bi-monthly repeating event "by 2nd to last Monday" with time
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -961,7 +1038,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2050,9,19), date(2050,9,20), 1)
 
 
-    def test_monthly_byday_timed_duration(self) -> None:
+    #@unittest.skip
+    def test_37_monthly_byday_timed_duration(self) -> None:
         # Create monthly repeating event "byday" with time + duration
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -997,10 +1075,17 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2114,6,21), date(2114,6,22), 1)
 
 
-    def test_monthly_byday_timed_timezone(self) -> None:
+    #@unittest.skip
+    def test_38_monthly_byday_timed_timezone(self) -> None:
         # Create tri-monthly repeating event "by 2nd Thursday" with time+zone
         tz_AD = tz.gettz('Australia/Adelaide')
         self.assertTrue(tz_AD) # check not None
+
+        # Check to see if local timetime is as far east as event timezone,
+        # and if so change local tz to something "neutral".
+        if get_local_tz().utcoffset(datetime(2021,1,1,1))>=timedelta(hours=10):
+            set_local_tz(tz.gettz('Europe/London'))
+
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
             datetime(1986,12,11,1,28, tzinfo=tz_AD),
@@ -1033,7 +1118,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2038,12,8), date(2038,12,9), 1)
 
 
-    def test_monthly_byday_count(self) -> None:
+    #@unittest.skip
+    def test_39_monthly_byday_count(self) -> None:
         # Create monthly repeating event "by 3rd Thursday" with count
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1058,7 +1144,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2020,1,1), date(2021,1,1), 5)
 
 
-    def test_monthly_byday_timed_count(self) -> None:
+    #@unittest.skip
+    def test_40_monthly_byday_timed_count(self) -> None:
         # Create timed bi-monthly repeating event "by last Sunday" with count
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1085,7 +1172,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2030,10,27), date(2030,10,28), 1)
 
 
-    def test_monthly_byday_until(self) -> None:
+    #@unittest.skip
+    def test_41_monthly_byday_until(self) -> None:
         # Create 5-monthly repeating event "by 2nd last Monday" with until.
         # Put an exdate in too, to make sure they work with custom iterator.
         event = self.create_event(
@@ -1119,7 +1207,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2003,4,21), date(2003,4,22), 1)
 
 
-    def test_monthly_byday_timed_until(self) -> None:
+    #@unittest.skip
+    def test_42_monthly_byday_timed_until(self) -> None:
         # Create monthly timed repeating event "by 1st Sunday" with until
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1187,7 +1276,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count(event, date(2015,10,5), date(2015,10,12), 0)
 
 
-    def test_monthly_byday_starting_gt28(self) -> None:
+    #@unittest.skip
+    def test_43_monthly_byday_starting_gt28(self) -> None:
         # Create repeating event "by last Friday in month" starting >28th
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1213,7 +1303,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2143,3,29), date(2143,3,30), 1)
 
 
-    def test_monthly_byday_fifth(self) -> None:
+    #@unittest.skip
+    def test_44_monthly_byday_fifth(self) -> None:
         # Create bi-monthly repeating event "by 5th Friday in month".
         # (This will use the dateutil.rrule module internally.)
         event = self.create_event(
@@ -1238,7 +1329,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2008,2,1), date(2008,3,1), 1) # Feb
 
 
-    def test_monthly_byday_fifthlast(self) -> None:
+    #@unittest.skip
+    def test_45_monthly_byday_fifthlast(self) -> None:
         # Create monthly repeating event "by 5th last Monday in month".
         # (This will use the dateutil.rrule module internally.)
         event = self.create_event(
@@ -1266,7 +1358,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2024,1,1), date(2025,1,1), 5)
 
 
-    def test_monthly_byday_leapday(self) -> None:
+    #@unittest.skip
+    def test_46_monthly_byday_leapday(self) -> None:
         # Create repeating event "by last x in month" starting leapday
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1300,7 +1393,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2003,1,1), date(2004,1,1), 2)
 
 
-    def test_monthly_tuesdaysinmonth(self) -> None:
+    #@unittest.skip
+    def test_47_monthly_tuesdaysinmonth(self) -> None:
         # Use monthly/byday to repeat on all Tuesdays every other month
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1325,7 +1419,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2002,1,1), date(2003,1,1), 26)
 
 
-    def test_monthly_friday13th(self) -> None:
+    #@unittest.skip
+    def test_48_monthly_friday13th(self) -> None:
         # Create monthly/byday to repeat every Friday 13th
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1355,7 +1450,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2011,1,1), date(2012,1,1), 1)
 
 
-    def test_weekly_basic(self) -> None:
+    #@unittest.skip
+    def test_49_weekly_basic(self) -> None:
         # Create simple weekly repeating event
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1374,7 +1470,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2060,2,10), date(2060,10,17), 35)
 
 
-    def test_weekly_timed(self) -> None:
+    #@unittest.skip
+    def test_50_weekly_timed(self) -> None:
         # Create weekly repeating event at midnight
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1396,7 +1493,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(5050,1,1), date(5051,1,1), 52)
 
 
-    def test_weekly_interval(self) -> None:
+    #@unittest.skip
+    def test_51_weekly_interval(self) -> None:
         # Create weekly repeating event with interval>1
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1414,7 +1512,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2004,1,1), date(2004,4,1), 5)
 
 
-    def test_weekly_interval_timed(self) -> None:
+    #@unittest.skip
+    def test_52_weekly_interval_timed(self) -> None:
         # Create timed tri-weekly repeating event
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1433,7 +1532,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2023,1,1), date(2024,1,1), 17)
 
 
-    def test_weekly_count(self) -> None:
+    #@unittest.skip
+    def test_53_weekly_count(self) -> None:
         # Create bi-weekly repeating event with occurence count
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1453,7 +1553,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2013,6,28), date(2014,1,1), 2)
 
 
-    def test_weekly_interval_until(self) -> None:
+    #@unittest.skip
+    def test_54_weekly_interval_until(self) -> None:
         # Create weekly repeating event with repeat-until
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1473,14 +1574,21 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2031,11,11), date(2033,5,15), 78)
 
 
-    def test_weekly_timezone_until(self) -> None:
+    #@unittest.skip
+    def test_55_weekly_timezone_until(self) -> None:
         # Create timed weekly repeating event with timezone
         tz_NY = tz.gettz('America/New_York')
         self.assertTrue(tz_NY) # check not None
+
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
             datetime(2020,2,15,11,13,tzinfo=tz_NY),
             rrule = {'FREQ':['WEEKLY'],'UNTIL':[datetime(2022,7,16,11,19,tzinfo=tz_NY)]})
+
+        # Check to see if local time more west than event timezone,
+        # and if so change local tz to something "neutral".
+        if get_local_tz().utcoffset(datetime(2021,8,1,1))>=timedelta(hours=6):
+            set_local_tz(tz.gettz('Europe/London'))
 
         # Test null periods
         self.check_count(event, date(2019,1,1), date(2020,2,15), 0)
@@ -1496,7 +1604,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2022,1,1), date(2023,1,1), 29)
 
 
-    def test_weekly_twice(self) -> None:
+    #@unittest.skip
+    def test_56_weekly_twice(self) -> None:
         # Create twice weekly repeating event on Tuesday & Thursday
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1516,7 +1625,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2024,1,1), date(2025,1,1), 105)
 
 
-    def test_weekly_invalid_day(self) -> None:
+    #@unittest.skip
+    def test_57_weekly_invalid_day(self) -> None:
         # Create weekly repeating event with a bad BYDAY argument
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1534,7 +1644,8 @@ class TestRepeats(unittest.TestCase):
         self.assertRaises(ValueError, repeats_in_range, event, date(2023,4,26), date(2023,4,27))
 
 
-    def test_weekly_thrice_exdate(self) -> None:
+    #@unittest.skip
+    def test_58_weekly_thrice_exdate(self) -> None:
         # Create thrice biweekly repeating event with exception dates
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1557,7 +1668,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2025,1,1), date(2026,1,1), 78)
 
 
-    def test_daily_basic(self) -> None:
+    #@unittest.skip
+    def test_59_daily_basic(self) -> None:
         # Create simple daily repeating event
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1576,7 +1688,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2001,1,1), date(2002,1,1), 365)
 
 
-    def test_daily_byday(self) -> None:
+    #@unittest.skip
+    def test_60_daily_byday(self) -> None:
         # Create daily repeating event with a 'byday' rule.
         # (Not even sure what the correct behaviour is here - hoping
         # dateutil.rrule is correct!)
@@ -1596,7 +1709,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2001,1,1), date(2002,1,1), 52)
 
 
-    def test_daily_interval(self) -> None:
+    #@unittest.skip
+    def test_61_daily_interval(self) -> None:
         # Create daily repeating event with interval>1
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1612,7 +1726,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(1999,11,9), date(2000,2,29), 38)
 
 
-    def test_daily_interval_timed(self) -> None:
+    #@unittest.skip
+    def test_62_daily_interval_timed(self) -> None:
         # Create timed daily repeating event
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1632,7 +1747,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2025,1,1), date(2026,1,1), 73)
 
 
-    def test_daily_interval_count(self) -> None:
+    #@unittest.skip
+    def test_63_daily_interval_count(self) -> None:
         # Create daily repeating event with occurence count
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1651,7 +1767,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(1988,1,1), date(1989,1,1), 28)
 
 
-    def test_daily_interval_until(self) -> None:
+    #@unittest.skip
+    def test_64_daily_interval_until(self) -> None:
         # Create daily repeating event with repeat-until
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1671,7 +1788,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2018,1,1), date(2023,1,1), 92)
 
 
-    def test_daily_timezone(self) -> None:
+    #@unittest.skip
+    def test_65_daily_timezone(self) -> None:
         # Create timed daily repeating event with timezone
         tz_MAD = tz.gettz('Europe/Madrid')
         self.assertTrue(tz_MAD) # check not None
@@ -1688,7 +1806,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2014,1,1), date(2015,1,1), 82)
 
 
-    def test_hourly_basic(self) -> None:
+    #@unittest.skip
+    def test_66_hourly_basic(self) -> None:
         # Create simple hourly repeating event (with a start time)
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1704,7 +1823,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2000,12,31), date(2001,1,2), 48)
 
 
-    def test_hourly_untimed(self) -> None:
+    #@unittest.skip
+    def test_67_hourly_untimed(self) -> None:
         # Create simple hourly repeating event with no time
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1721,8 +1841,16 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2001,2,10), date(2001,2,11), 24)
 
 
-    def test_hourly_interval_timed(self) -> None:
+    #@unittest.skip
+    def test_68_hourly_interval_timed(self) -> None:
         # Create hourly repeating event with interval>1
+
+        # Want to test this works with daylight-saving, so set local
+        # timezone to one where were know when DST happens.
+        tz_BER = tz.gettz('Europe/Berlin')
+        self.assertTrue(tz_BER) # check not None
+        set_local_tz(tz_BER)
+
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
             datetime(2010,10,30,17,57), # time 17:57, day before clocks go back
@@ -1740,7 +1868,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2010,1,1), date(2011,1,1), 300)
 
 
-    def test_hourly_interval_untimed(self) -> None:
+    #@unittest.skip
+    def test_69_hourly_interval_untimed(self) -> None:
         # Create hourly repeating event with interval>1, but no start time
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1756,7 +1885,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2011,11,15), date(2011,11,16), 3)
 
 
-    def test_hourly_interval_count(self) -> None:
+    #@unittest.skip
+    def test_70_hourly_interval_count(self) -> None:
         # Create hourly repeating event with occurence count
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1775,7 +1905,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(1968,5,1), date(1968,5,8), 6)
 
 
-    def test_hourly_interval_until(self) -> None:
+    #@unittest.skip
+    def test_71_hourly_interval_until(self) -> None:
         # Create hourly repeating event with repeat-until
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1795,7 +1926,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2022,7,5), date(2022,7,6), 1)
 
 
-    def test_minutely_basic(self) -> None:
+    #@unittest.skip
+    def test_72_minutely_basic(self) -> None:
         # Create simple minutely repeating event (with a start time)
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1811,7 +1943,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2015,5,1), date(2015,5,2), 60*24)
 
 
-    def test_minutely_untimed(self) -> None:
+    #@unittest.skip
+    def test_73_minutely_untimed(self) -> None:
         # Create minutely repeating event with no start time
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1828,7 +1961,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2025,6,12), date(2025,6,15), 60*48)
 
 
-    def test_minutely_interval(self) -> None:
+    #@unittest.skip
+    def test_74_minutely_interval(self) -> None:
         # Create minutely repeating event with interval>1
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1845,7 +1979,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2019,6,12), date(2019,6,14), 126)
 
 
-    def test_minutely_interval_count(self) -> None:
+    #@unittest.skip
+    def test_75_minutely_interval_count(self) -> None:
         # Create minutely repeating event with occurence count
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1869,8 +2004,10 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(1999,5,1), date(1999,6,1), 106)
 
 
-    def test_minutely_interval_until(self) -> None:
+    #@unittest.skip
+    def test_76_minutely_interval_until(self) -> None:
         # Create minutely repeating event with repeat-until
+
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
             datetime(2024,3,22,6,38,4), # Time 6:38:04
@@ -1890,7 +2027,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2024,8,1), date(2024,9,1), 16)
 
 
-    def test_secondly_basic(self) -> None:
+    #@unittest.skip
+    def test_77_secondly_basic(self) -> None:
         # Create simple repeating event (with a start time)
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1915,7 +2053,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count(event, date(2017,12,31), date(2018,1,2), 60*60*48)
 
 
-    def test_secondly_untimed(self) -> None:
+    #@unittest.skip
+    def test_78_secondly_untimed(self) -> None:
         # Create secondly repeating event with no start time
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1937,7 +2076,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count(event, date(2137,6,12), date(2137,6,14), 60*60*48)
 
 
-    def test_secondly_interval(self) -> None:
+    #@unittest.skip
+    def test_79_secondly_interval(self) -> None:
         # Create secondly repeating event with interval>1
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1959,7 +2099,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2034,1,1), date(2035,1,1), 14193)
 
 
-    def test_secondly_interval_count(self) -> None:
+    #@unittest.skip
+    def test_80_secondly_interval_count(self) -> None:
         # Create secondly repeating event with occurence count
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -1983,7 +2124,8 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2026,1,1), date(2027,1,1), 19)
 
 
-    def test_secondly_interval_until(self) -> None:
+    #@unittest.skip
+    def test_81_secondly_interval_until(self) -> None:
         # Create secondly repeating event with repeat-until
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
@@ -2050,7 +2192,7 @@ class TestRepeats(unittest.TestCase):
             # Need to specify UNTIL value in UTC
             until = ev_rr['UNTIL'][0]
             if isinstance(until,datetime) and until.tzinfo is None:
-                until = until.replace(tzinfo=self.LOCAL_TZ)
+                until = until.replace(tzinfo=get_local_tz())
             if isinstance(until,datetime):
                 until = until.astimezone(tz.gettz('UTC')) # Convert to UTC
                 ev_rr['UNTIL'][0] = until
@@ -2062,7 +2204,7 @@ class TestRepeats(unittest.TestCase):
             event_st = datetime(event_st.year,event_st.month,event_st.day)
             timed_event = True
         if timed_event and event_st.tzinfo is None:
-            event_st = event_st.replace(tzinfo=self.LOCAL_TZ)
+            event_st = event_st.replace(tzinfo=get_local_tz())
         if hr_min_sec_rep:
             # We might need to handle things like summer time starting.
             # So we work in UTC and then convert back later.
@@ -2081,7 +2223,7 @@ class TestRepeats(unittest.TestCase):
                     else:
                         exdt = datetime.combine(exd.dt, event_st.time())
                     if exdt.tzinfo is None:
-                        exdt = exdt.replace(tzinfo=self.LOCAL_TZ)
+                        exdt = exdt.replace(tzinfo=get_local_tz())
                     rr.exdate(exdt)
             else:
                 # Untimed, but rr.exdate() requires datetime objects
@@ -2094,8 +2236,8 @@ class TestRepeats(unittest.TestCase):
         dt_st_for_rrule = datetime(dt_st.year, dt_st.month, dt_st.day)
         dt_end_for_rrule = datetime(dt_end.year, dt_end.month, dt_end.day) - timedelta(microseconds=1)
         if timed_event:
-            dt_st_for_rrule = dt_st_for_rrule.astimezone(self.LOCAL_TZ) if dt_st_for_rrule.tzinfo else dt_st_for_rrule.replace(tzinfo=self.LOCAL_TZ)
-            dt_end_for_rrule = dt_end_for_rrule.astimezone(self.LOCAL_TZ) if dt_end_for_rrule.tzinfo else dt_end_for_rrule.replace(tzinfo=self.LOCAL_TZ)
+            dt_st_for_rrule = dt_st_for_rrule.astimezone(get_local_tz()) if dt_st_for_rrule.tzinfo else dt_st_for_rrule.replace(tzinfo=get_local_tz())
+            dt_end_for_rrule = dt_end_for_rrule.astimezone(get_local_tz()) if dt_end_for_rrule.tzinfo else dt_end_for_rrule.replace(tzinfo=get_local_tz())
 
         from_rrule = rr.between(after=dt_st_for_rrule, before=dt_end_for_rrule, inc=True)
 
