@@ -561,10 +561,15 @@ class Calendar:
             elif e_inf.duration is not None and isinstance(e_inf.duration, timedelta):
                 if e_inf.duration.total_seconds()>0: # require duration > 0
                     ev.add('DURATION', e_inf.duration)
-        elif isinstance(e_inf.start_dt, dt_date) and isinstance(e_inf.end_dt, dt_date):
-            # start & end are both dates (not times) => this is a day entry
-            if e_inf.end_dt > e_inf.start_dt: # sanity check
-                ev.add('DTEND', e_inf.end_dt)
+        elif isinstance(e_inf.start_dt, dt_date):
+            # start is a date (not time) => this might be a day entry
+            if isinstance(e_inf.end_dt, dt_date):
+                if e_inf.end_dt >= e_inf.start_dt: # sanity check
+                    ev.add('DTEND', e_inf.end_dt)
+            elif isinstance(e_inf.duration, timedelta):
+                # RFC 5545 Sect 3.8.2.5 says duration must be whole no of days
+                if e_inf.duration.seconds == e_inf.duration.microseconds == 0:
+                    ev.add('DURATION', e_inf.duration)
 
 
     @staticmethod
