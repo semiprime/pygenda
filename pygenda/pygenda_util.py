@@ -26,7 +26,7 @@ from datetime import date, time, datetime, timedelta, tzinfo
 from dateutil import tz as du_tz
 from tzlocal import get_localzone
 import locale
-from typing import Tuple, Any
+from typing import Tuple, Any, Union
 
 from .pygenda_config import Config
 
@@ -68,7 +68,7 @@ def _set_local_tz(zinfo:Any) -> None:
     _local_tz = zinfo
 
 
-def date_to_datetime(dt:date, tz:tzinfo=None) -> datetime:
+def date_to_datetime(dt:date, tz:Union[tzinfo,bool]=None) -> datetime:
     # Return datetime from dt argument. Set time to midnight if no time.
     # If tz parameter is not None/False, and dt has no timezone, add tz (True -> add local timezone)
     # Hence this function can be used to guarantee we have datetime with a timezone
@@ -171,7 +171,7 @@ def day_in_week(dt:date) -> int:
     return (day-start_day)%7
 
 
-def start_of_week(dt:date) -> int:
+def start_of_week(dt:date) -> date:
     # Return first day of week containing dt
     # Depends on config setting global/start_week_day
     return dt - timedelta(days=day_in_week(dt))
