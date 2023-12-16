@@ -40,7 +40,7 @@ from calendar import monthrange
 
 # Pygenda components
 from .pygenda_config import Config
-from .pygenda_util import dt_lt, dt_lte, datetime_to_date, date_to_datetime, get_local_tz
+from .pygenda_util import dt_lt, dt_lte, datetime_to_date, date_to_datetime, get_local_tz, dt_add_delta
 from .pygenda_entryinfo import EntryInfo
 
 
@@ -93,6 +93,7 @@ class Calendar:
     _default_connector_todo = None # type:int
     _entry_norep_list_sorted = None
     _entry_rep_list = None
+    _entry_norep_xover_list_sorted = None # type:Optional[list]
     _todo_list = None
 
     @classmethod
@@ -162,6 +163,7 @@ class Calendar:
         cls._default_connector_todo = None # type:ignore[assignment]
         cls._entry_norep_list_sorted = None
         cls._entry_rep_list = None
+        cls._entry_norep_xover_list_sorted = None
         cls._todo_list = None
 
         caltype = Config.get('calendar','type')
@@ -299,6 +301,8 @@ class Calendar:
                 cls._entry_rep_list = None # Clear rep cache as modified
             else:
                 cls._entry_norep_list_sorted = None # Clear norep cache, mod'd
+                if cls._is_xover_entry(en):
+                    cls._entry_norep_xover_list_sorted = None
 
         cls._entry_set_status_from_info(en, e_inf)
         cls._event_set_location_from_info(en, e_inf)
@@ -408,6 +412,8 @@ class Calendar:
 
         if new_dt_start is not None:
             cls._entry_norep_list_sorted = None # Clear norep cache as modified
+            if cls._is_xover_entry(en):
+                cls._entry_norep_xover_list_sorted = None
         if not en_is_event: # is Todo
             cls._todo_list = None # Clear todo cache as modified
         return en
@@ -490,6 +496,7 @@ class Calendar:
         # This needs optimising - some cases cause too much cache flushing !!
         if clear_norep:
             cls._entry_norep_list_sorted = None
+            cls._entry_norep_xover_list_sorted = None
         if clear_rep:
             cls._entry_rep_list = None
         if e_inf.type==EntryInfo.TYPE_TODO or isinstance(en, iTodo):
@@ -681,6 +688,7 @@ class Calendar:
                 cls._entry_rep_list = None
             else:
                 cls._entry_norep_list_sorted = None
+                cls._entry_norep_xover_list_sorted = None
         if type(entry)==iTodo:
             cls._todo_list = None
 
@@ -749,6 +757,40 @@ class Calendar:
 
 
     @classmethod
+    def _update_entry_norep_xover_list_sorted(cls) -> None:
+        # Re-build _entry_norep_xover_list_sorted, if it is cleared (==None)
+        if cls._entry_norep_xover_list_sorted is None:
+            cls._entry_norep_xover_list_sorted = []
+            for conn in cls.calConnectors:
+                evs = conn.cal.walk('vEvent')
+                cls._entry_norep_xover_list_sorted.extend([e for e in evs if 'RRULE' not in e and cls._is_xover_entry(e)])
+            cls._entry_norep_xover_list_sorted.sort()
+
+
+    @staticmethod
+    def _is_xover_entry(e:iEvent) -> bool:
+        # Helper function to determine if simple/non-repeating entry
+        # crosses over from one (localtime) day to the next
+        if 'DTEND' in e:
+            st = e['DTSTART'].dt
+            end = e['DTEND'].dt
+            if isinstance(st, dt_datetime):
+                st = date_to_datetime(st, True).astimezone(get_local_tz())
+                end = date_to_datetime(end, True).astimezone(get_local_tz())
+        elif 'DURATION' in e:
+            st = e['DTSTART'].dt
+            if isinstance(st, dt_datetime):
+                st = date_to_datetime(st, True).astimezone(get_local_tz())
+            end = dt_add_delta(st, e['DURATION'].dt)
+        else:
+            return False
+        enddate = datetime_to_date(end)
+        if not isinstance(end,dt_datetime) or end.time()==dt_time(hour=0,minute=0,second=0):
+            enddate -= timedelta(days=1)
+        return datetime_to_date(st) < enddate # type:ignore[no-any-return]
+
+
+    @classmethod
     def occurrence_list(cls, start:dt_date, stop:dt_date, include_single:bool=True, include_repeated:bool=True) -> list:
         # Return list of occurences in range start <= . < stop.
         # Designed to be called by View classes to get events in range.
@@ -780,6 +822,26 @@ class Calendar:
             cls._update_entry_rep_list()
             for e in cls._entry_rep_list:
                 merge_repeating_entries_sort(ret_list,e,start,stop)
+        return ret_list
+
+
+    @classmethod
+    def ongoing_list(cls, dt:dt_date, include_single:bool=True, include_repeated:bool=True) -> list:
+        # Return list of events that are ongoing at datetime 'dt'
+        ret_list = []
+        if include_single:
+            # Naive implementation - scope for optimisation here!!
+            cls._update_entry_norep_xover_list_sorted()
+            for e in cls._entry_norep_xover_list_sorted:#type:ignore[union-attr]
+                e_st = e['DTSTART'].dt
+                if dt_lte(dt, e_st):
+                    break # List is sorted, so we can stop search here
+                if 'DTEND' in e:
+                    e_end = e['DTEND'].dt
+                else: # 'DURATION' in e
+                    e_end = dt_add_delta(e_st, e['DURATION'].dt)
+                if dt_lt(dt, e_end):
+                    ret_list.append((e,e_st))
         return ret_list
 
 

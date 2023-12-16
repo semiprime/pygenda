@@ -82,7 +82,7 @@ Checklist for releases
 * Regenerate .po and .mo localisation files (see above)
 * Check at least one non-English language
 * Check any iCal files in validator, e.g. https://icalendar.org/validator.html
-* Run test_repeats.py unit tests.
+* Run test_repeats.py & test_ongoing.py unit tests
 * Check all test files (testxx_*.ics & generated files) display correctly
 * Check darkmode & backgrounds CSS still work
 * Check mouse clicks/touchscreen taps/swipes work (all views)

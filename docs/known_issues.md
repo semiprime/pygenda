@@ -51,7 +51,7 @@ Major
 
 * Multi-day events (i.e. ones that span multiple days) only displayed
   on first day. (In progress - started on Week View.) (Future: config
-  option "next_day_crossover" to determine if an even crosses over.)
+  option "next_day_crossover" to determine if an entry crosses over.)
 
 * Cutting repeating events is not implemented. (Not sure how to do UI -
   probably need to bring up a dialog "Cut just this occurrence, or all
@@ -289,8 +289,9 @@ Testing
 * Need to test that iCal files/data can be read by other applications and
   Pygenda can read files/data from other applications.
 
-* Need to expand unit testing (currently just test_repeats.py) and other
-  tests (currently just manually checking a few test*.ics files).
+* Need to expand unit testing (currently just test_repeats.py and
+  test_ongoing.py) and other tests (currently just manually checking a
+  few test*.ics files).
 
 * Need to test with corrupt iCal files. (Including when files become
   corrupt while the program is running.) Use a fuzzer?

@@ -22,7 +22,7 @@
 
 from calendar import day_abbr,month_abbr
 from icalendar import cal as iCal
-from datetime import date, time, datetime, timedelta, tzinfo
+from datetime import date, time, datetime, timedelta, tzinfo, timezone
 from dateutil import tz as du_tz
 from tzlocal import get_localzone
 import locale
@@ -207,6 +207,22 @@ def _entry_lt(self, other) -> bool:
 # Attach method to classes so it can be used to sort
 iCal.Event.__lt__ = _entry_lt
 iCal.Todo.__lt__ = _entry_lt
+
+
+def dt_add_delta(dt:date, delta:timedelta) -> datetime:
+    # Return dt+delta, taking into account things like daylight savings
+    # changeover etc.
+    r = date_to_datetime(dt, True)
+    if delta.days:
+        # Add days with timezone - at DST crossover days can have 23/25 hours
+        r += timedelta(days=delta.days)
+        delta = timedelta(seconds=delta.seconds,microseconds=delta.microseconds)
+    # Add seconds in UTC because then there's no DST to worry about
+    r_utc = r.astimezone(timezone.utc)
+    r_utc += delta
+    # Convert back to localtime for return
+    r = r_utc.astimezone(_local_tz)
+    return r
 
 
 def guess_date_ord_from_locale() -> str:

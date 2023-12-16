@@ -261,7 +261,7 @@ class View_Week(View_DayUnit_Base):
         except StopIteration:
             occ = None
         if cls._show_ongoing:
-            ongoing = [] # !! Replace with call to calendar
+            ongoing = Calendar.ongoing_list(dt)
             rollover_dt = dt # Might want this to be 2am or something
         oneday = timedelta(days=1)
         for i in range(7):
