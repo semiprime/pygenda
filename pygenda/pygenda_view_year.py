@@ -167,6 +167,9 @@ class View_Year(View_DayUnit_Base):
         show_loc = Config.get('year_view','show_event_location')
         map = {'always':cls.SHOW_LOC_ALWAYS, 'never':0}
         cls._show_location = map[show_loc] if show_loc in map else 0
+        cls._loc_max_chars = Config.get_int('year_view','location_max_chars')
+        if cls._loc_max_chars is None:
+            cls._loc_max_chars = 0
 
 
     @classmethod
@@ -329,7 +332,7 @@ class View_Year(View_DayUnit_Base):
             ctx.add_class('yearview_marker') # add style for CSS
             row.add(mark_label)
             # Create entry content label & add to row
-            cont_label = cls.entry_text_label(occ[0], occ_dt_sta, occ_dt_end, add_location=cls._show_location)
+            cont_label = cls.entry_text_label(occ[0], occ_dt_sta, occ_dt_end, add_location=cls._show_location, loc_max_chars=cls._loc_max_chars)
             cont_label.set_hexpand(True) # Also sets hexpand_set to True
             row.add(cont_label)
             cls._date_content.add(row)

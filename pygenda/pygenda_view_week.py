@@ -55,8 +55,8 @@ class View_Week(View_DayUnit_Base):
     _scroll_to_cursor_in_day = None
     _target_entry = None
     _is_repeat_key = False
-    CURSOR_STYLE = 'weekview_cursor'
 
+    CURSOR_STYLE = 'weekview_cursor'
     SHOW_LOC_ALWAYS = 1 # constant 'enum' for _show_location flag
 
     @staticmethod
@@ -174,6 +174,9 @@ class View_Week(View_DayUnit_Base):
         show_loc = Config.get('week_view','show_event_location')
         map = {'always':cls.SHOW_LOC_ALWAYS, 'never':0}
         cls._show_location = map[show_loc] if show_loc in map else 0
+        cls._loc_max_chars = Config.get_int('week_view','location_max_chars')
+        if cls._loc_max_chars is None:
+            cls._loc_max_chars = 0
 
 
     @classmethod
@@ -326,7 +329,7 @@ class View_Week(View_DayUnit_Base):
         ctx.add_class('weekview_marker') # add style for CSS
         row.add(mark_label)
         # Create entry content label & add to row
-        cont_label = cls.entry_text_label(ev, dt_st, dt_end, add_location=show_loc)
+        cont_label = cls.entry_text_label(ev, dt_st, dt_end, add_location=show_loc, loc_max_chars=cls._loc_max_chars)
         cont_label.set_hexpand(True) # Also sets hexpand_set to True
         row.add(cont_label)
         cls._day_rows[dayidx].add(row)
