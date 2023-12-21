@@ -81,25 +81,34 @@ class EntryPropertiesDialog:
         self._add_property_row('LOCATION')
         self._add_alarm_rows()
         self._add_description_rows()
+        self._add_url_row()
+        self._add_categories_row()
 
 
-    def _add_row(self, label:str, cont:str, wrap:bool=False) -> None:
-        # Add text to bottom of grid in the form "label cont"
+    def _add_row(self, label:str, cont:Union[str,Gtk.Widget], wrap:bool=False) -> None:
+        # Add text to bottom of grid in the form "label cont".
+        # If `cont` is a Widget, add it to grid; if a str convert to label.
         propnm_lab = Gtk.Label(label)
         propnm_lab.set_halign(Gtk.Align.END)
         propnm_lab.set_yalign(0)
         propnm_lab.get_style_context().add_class(GUI.STYLE_TXTLABEL)
-        cont_lab = Gtk.Label(cont)
-        cont_lab.set_halign(Gtk.Align.START)
-        cont_lab.set_yalign(0)
-        cont_lab.set_xalign(0)
-        cont_lab.get_style_context().add_class(GUI.STYLE_TXTPROP)
-        if wrap:
-            cont_lab.set_line_wrap(True)
-            cont_lab.set_line_wrap_mode(PWrapMode.WORD_CHAR)
-            cont_lab.set_max_width_chars(50) # otherwise it fills screen
         self.grid.attach(propnm_lab, 0,self.grid_y, 1,1)
-        self.grid.attach(cont_lab, 1,self.grid_y, 1,1)
+
+        if isinstance(cont, Gtk.Widget):
+            # Assume caller has set any styling etc.
+            self.grid.attach(cont, 1,self.grid_y, 1,1)
+        else:
+            cont_lab = Gtk.Label(cont)
+            cont_lab.set_halign(Gtk.Align.START)
+            cont_lab.set_yalign(0)
+            cont_lab.set_xalign(0)
+            cont_lab.get_style_context().add_class(GUI.STYLE_TXTPROP)
+            if wrap:
+                cont_lab.set_line_wrap(True)
+                cont_lab.set_line_wrap_mode(PWrapMode.WORD_CHAR)
+                cont_lab.set_max_width_chars(50) # otherwise it fills screen
+            self.grid.attach(cont_lab, 1,self.grid_y, 1,1)
+
         self.grid_y += 1
 
 
@@ -260,6 +269,31 @@ class EntryPropertiesDialog:
             else:
                 # !! Not sure how to access LANGUAGE parameter for single desc
                 self._add_row(_('Description:'), edesc, wrap=True)
+
+
+    def _add_url_row(self) -> None:
+        # Add URL property to bottom of grid.
+        # Use a Gtk.LinkButton so the URL is clickable.
+        # Maybe security implications here if people import entries.
+        if 'URL' in self.entry:
+            url = self.entry['URL']
+            link = Gtk.LinkButton.new(url)
+            link.set_halign(Gtk.Align.START)
+            link.get_style_context().add_class(GUI.STYLE_TXTPROP)
+            self._add_row(_('URL:'), link)
+
+
+    def _add_categories_row(self) -> None:
+        # Add categories property to bottom of grid.
+        if 'CATEGORIES' in self.entry:
+            catgs = self.entry['CATEGORIES']
+            # If entry has multiple CATEGORIES lines, catgs will be a list
+            if isinstance(catgs, list):
+                ctmp = [ ', '.join(c.cats) for c in catgs ]
+            else:
+                ctmp = catgs.cats
+            cstr = ', '.join(ctmp)
+            self._add_row(_('Categories:'), cstr)
 
 
     def run(self) -> Gtk.ResponseType:
