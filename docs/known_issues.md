@@ -229,7 +229,7 @@ Minor
 * No user feedback for some actions (e.g. copy entry). Should flash or
   recolour cursor or something.
 
-* Menu shortcuts set in glade are not translated (e.g. aller à = ctrl+g)
+* Menu shortcuts set in .ui files are not translated (e.g. aller à = ctrl+g)
 
 * If using a iCal file and multiple instances edit the same file, data
   can be lost (note: using iCal file is not recommended => minor)

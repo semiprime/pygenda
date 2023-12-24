@@ -76,9 +76,9 @@ class View_Year(View_DayUnit_Base):
     @classmethod
     def init(cls) -> Gtk.Widget:
         # Called on startup.
-        # Gets view framework from glade file & tweaks/adds a few elements.
+        # Gets view framework from UI file & tweaks/adds a few elements.
         # Returns widget containing view.
-        GUI.load_glade_file('view_year.glade')
+        GUI.load_ui_file('view_year.ui')
         cls._topbox = GUI._builder.get_object('view_year')
         cls._grid_cells = GUI._builder.get_object('year_grid_days')
         cls._date_label = GUI._builder.get_object('year_datelabel')

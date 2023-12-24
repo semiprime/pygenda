@@ -77,7 +77,7 @@ setup(
     long_description = "Pygenda is a calendar/agenda application written in Python3/GTK3. The UI is inspired by the Agenda programs on the Psion Series 3 and Series 5 range of keyboard PDAs, with the aim of being suitable for devices such as Planet Computers' Gemini (running Linux).\n\nFor more information/latest source, see https://github.com/semiprime/pygenda",
     packages = ["pygenda"],
     cmdclass = {'bdist_egg': PygendaEggInstall}, # use custom install above
-    package_data = {'': ['glade/*.glade', 'css/*.css', 'css/*.svg', 'libpygenda_clipboard.so', 'locale/*/LC_MESSAGES/pygenda.mo', 'app/pygenda.desktop']}, # files for bdists
+    package_data = {'': ['ui/*.ui', 'css/*.css', 'css/*.svg', 'libpygenda_clipboard.so', 'locale/*/LC_MESSAGES/pygenda.mo', 'app/pygenda.desktop']}, # files for bdists
     license = "GPLv3 only",
     python_requires = ">=3.5",
     install_requires = [

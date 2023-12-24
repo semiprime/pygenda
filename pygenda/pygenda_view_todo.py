@@ -70,7 +70,6 @@ class View_Todo(View):
     @classmethod
     def init(cls) -> Gtk.Widget:
         # Called on startup.
-        # Gets view framework from glade file & tweaks/adds a few elements.
         # Returns widget containing view.
         cls._init_parse_list_config()
         cls._init_todo_widgets()

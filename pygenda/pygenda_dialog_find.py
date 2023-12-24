@@ -40,10 +40,10 @@ class FindDialogController:
         # Initialiser for FindController singleton class.
         # Called from GUI init_stage2().
 
-        # Load glade file
-        GUI.load_glade_file('dialog_find.glade')
+        # Load UI file
+        GUI.load_ui_file('dialog_find.ui')
 
-        # Get some references to dialog elements in glade
+        # Get some references to dialog elements from UI file
         cls.dialog = GUI._builder.get_object('dialog_find')
         cls.find_text = GUI._builder.get_object('dialog_find_text')
         if (not cls.dialog or not cls.find_text): # Sanity check

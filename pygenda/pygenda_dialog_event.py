@@ -131,8 +131,8 @@ class EventDialogController:
         # Initialiser for singleton class.
         # Called from GUI init_stage2().
 
-        # Load glade file
-        GUI.load_glade_file('dialog_event.glade')
+        # Load UI file
+        GUI.load_ui_file('dialog_event.ui')
 
         # Connect signal handlers
         HANDLERS = {
@@ -151,7 +151,7 @@ class EventDialogController:
             }
         GUI._builder.connect_signals(HANDLERS)
 
-        # Get some references to dialog elements in glade
+        # Get some references to dialog elements from UI file
         cls.dialog = GUI._builder.get_object('dialog_event')
         if (not cls.dialog): # Sanity check
             raise NameError('Dialog Event not found')
@@ -295,7 +295,7 @@ class EventDialogController:
 
     @classmethod
     def _revealers_from_ids(cls, *idlist) -> list:
-        # Given a list of id strings, in glade file, make a list of revealers
+        # Given a list of id strings from UI file, make a list of revealers
         revs = []
         for id in idlist:
             obj = GUI._builder.get_object(id)

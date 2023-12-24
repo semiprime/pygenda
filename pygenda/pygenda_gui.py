@@ -141,8 +141,8 @@ class GUI:
         # First set the locale, so UI language (e.g. in menu) is correct
         cls._init_locale()
 
-        # Construct GUI from GTK Builder XML glade file
-        cls.load_glade_file('main.glade')
+        # Construct GUI from GTK Builder XML UI file
+        cls.load_ui_file('main.ui')
 
         cls._window = cls._builder.get_object('window_main')
         if (not cls._window): # Sanity check
@@ -254,12 +254,12 @@ class GUI:
 
 
     @classmethod
-    def load_glade_file(cls, gfile:str) -> None:
-        # Load GUI elements from GTK Builder XML glade file in glade directory
-        fullname = ospath.dirname(__file__) + '/glade/' + gfile
+    def load_ui_file(cls, gfile:str) -> None:
+        # Load GUI elements from GTK Builder XML UI file in ui directory
+        fullname = ospath.dirname(__file__) + '/ui/' + gfile
         r = cls._builder.add_from_file(fullname)
         if not r:
-            print('Error loading glade file '+gfile, file=stderr)
+            print('Error loading UI file '+gfile, file=stderr)
             Gtk.main_quit()
 
 
@@ -379,7 +379,7 @@ class GUI:
         cls._init_comboboxes()
         cls._init_entryboxes()
 
-        # Menu bar & softkey bar made insensitive in .glade for startup.
+        # Menu bar & softkey bar made insensitive in .ui for startup.
         # We make them sensitive here before activating view.
         cls._builder.get_object('menu_bar').set_sensitive(True)
         cls._builder.get_object('box_buttons').set_sensitive(True)

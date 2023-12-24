@@ -44,7 +44,7 @@ end of this section.
 If you have added or changed strings, then you might need to generate
 a locale/pygenda.pot template. In the pygenda subdirectory:
 
-    xgettext --package-name Pygenda --copyright-holder "Matthew Lewis" -k_ -kN_ -o locale/pygenda.pot *.py glade/*.glade
+    xgettext --package-name Pygenda --copyright-holder "Matthew Lewis" -k_ -kN_ -o locale/pygenda.pot *.py ui/*.ui
 
 Use .pot to create/update .po for each language.
 

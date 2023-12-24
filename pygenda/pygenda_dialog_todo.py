@@ -67,8 +67,8 @@ class TodoDialogController:
         # Initialiser for TodoDialogController singleton class.
         # Called from GUI init_stage2().
 
-        # Load glade file
-        GUI.load_glade_file('dialog_todo.glade')
+        # Load UI file
+        GUI.load_ui_file('dialog_todo.ui')
 
         # Connect signal handlers
         HANDLERS = {
@@ -78,7 +78,7 @@ class TodoDialogController:
             }
         GUI._builder.connect_signals(HANDLERS)
 
-        # Get some references to dialog elements in glade
+        # Get some references to dialog elements from UI file
         cls.dialog = GUI._builder.get_object('dialog_todo')
         if (not cls.dialog): # Sanity check
             raise NameError('Dialog Todo not found')
