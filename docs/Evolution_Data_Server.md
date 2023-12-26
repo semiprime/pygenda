@@ -106,6 +106,51 @@ If you wish, you can include only one of the `Calendar` and `Task List`
 sections, or you can split them into two different .source files (each
 will have a uid corresponding to its filename).
 
+To add a CalDAV source, the procedure is similar, with the contents of
+the .source file something like:
+
+    [Data Source]
+    DisplayName=MY_DISPLAY_NAME
+    Enabled=true
+    Parent=caldav-stub
+    
+    [Offline]
+    StaySynchronized=true
+    
+    [WebDAV Backend]
+    AvoidIfmatch=false
+    CalendarAutoSchedule=false
+    DisplayName=MY_CALDAV_DISPLAY_NAME
+    ResourcePath=/PATH_ON_SERVER/WITHOUT_DOMAIN_NAME/
+    
+    [Calendar]
+    BackendName=caldav
+    Selected=true
+    
+    [Task List]
+    BackendName=caldav
+    Selected=true
+    
+    [Security]
+    Method=none
+    
+    [Refresh]
+    Enabled=true
+    IntervalMinutes=30
+    
+    [Authentication]
+    Host=HOSTNAME_OF_SERVER (maybe localhost)
+    Method=plain/password
+    Port=PORT_OF_SERVER
+    ProxyUid=system-proxy
+    User=USER_ID_ON_CALDAV_SERVER
+    
+    [Alarms]
+    IncludeMe=true
+    
+    [Conflict Search]
+    IncludeMe=true
+
 Where is the data stored?
 -------------------------
 It might be useful to know where your calendar data is being stored
