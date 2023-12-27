@@ -286,13 +286,6 @@ Cosmetic
 
 Testing
 -------
-* Need to test that iCal files/data can be read by other applications and
-  Pygenda can read files/data from other applications.
-
-* Need to expand unit testing (currently just test_repeats.py and
-  test_ongoing.py) and other tests (currently just manually checking a
-  few test*.ics files).
-
 * Need to test with corrupt iCal files. (Including when files become
   corrupt while the program is running.) Use a fuzzer?
   ? https://pypi.org/project/pythonfuzz/
