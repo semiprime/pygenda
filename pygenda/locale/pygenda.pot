@@ -1,0 +1,708 @@
+# Translation template file for Pygenda package
+# Copyright (C) 2023 Matthew Lewis
+#
+# This file is part of Pygenda.
+#
+# Pygenda is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3.
+#
+# Pygenda is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Pygenda. If not, see <https://www.gnu.org/licenses/>.
+#
+# Matthew Lewis <pygenda@semiprime.com>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Pygenda\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-12-28 09:46+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: pygenda_dialog_entryprops.py:63
+msgid "Entry properties"
+msgstr ""
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:74
+msgid "Summary:"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:129
+msgid "Type:"
+msgstr ""
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:129
+msgid "Event"
+msgstr ""
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:129
+msgid "Todo"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:135 ui/dialog_event.ui:153
+#: ui/dialog_todo.ui:142
+msgid "Calendar:"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:140
+msgid "Start date:"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:140
+msgid "Start date/time:"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:141
+msgid "End date:"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:141
+msgid "End date/time:"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:144 ui/dialog_event.ui:286
+msgid "Duration:"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:145 ui/dialog_todo.ui:250
+msgid "Due date:"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:145
+msgid "Due date/time:"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:146
+msgid "Completed date (noncompliant):"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:146
+msgid "Completed date/time:"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:165
+msgid " (timezone: {:s})"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:177
+msgid "interval:"
+msgstr ""
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "By month:"
+msgstr ""
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "By week number:"
+msgstr ""
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "By year day:"
+msgstr ""
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "By month day:"
+msgstr ""
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "By day:"
+msgstr ""
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "By hour:"
+msgstr ""
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "By minute:"
+msgstr ""
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "By second:"
+msgstr ""
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "By set position:"
+msgstr ""
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "Week starts:"
+msgstr ""
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "Count:"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:190
+msgid "Exception dates:"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:194
+msgid ";"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:200 ui/dialog_event.ui:405
+msgid "Repeats:"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:211 ui/dialog_event.ui:972
+#: ui/dialog_todo.ui:207
+msgid "Status:"
+msgstr ""
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:231 pygenda_dialog_event.py:420
+msgid "Audio"
+msgstr ""
+
+msgid "Display"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:246 pygenda_dialog_event.py:428
+msgid "“{:s}”"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:253
+msgid "Alarms:"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:266
+msgid "Description ({}):"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:268 pygenda_dialog_entryprops.py:271
+#: ui/dialog_event.ui:107 ui/dialog_todo.ui:86
+msgid "Description:"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:283
+msgid "URL:"
+msgstr ""
+
+#: pygenda_dialog_entryprops.py:296
+msgid "Categories:"
+msgstr ""
+
+#: pygenda_dialog_event.py:269
+msgid "Time before event"
+msgstr ""
+
+#: pygenda_dialog_event.py:270
+msgid "Action"
+msgstr ""
+
+#: pygenda_dialog_event.py:758
+msgid "1st {month:s}"
+msgstr ""
+
+#: pygenda_dialog_event.py:760
+msgid "{ord:s} {month:s}"
+msgstr ""
+
+#: pygenda_dialog_event.py:762
+msgid "{ord:s} {day:s} of {month:s}"
+msgstr ""
+
+#: pygenda_dialog_event.py:762
+msgid "{ord:s} {day:s} of April"
+msgstr ""
+
+#: pygenda_dialog_event.py:762
+msgid "{ord:s} {day:s} of August"
+msgstr ""
+
+#: pygenda_dialog_event.py:762
+msgid "{ord:s} {day:s} of October"
+msgstr ""
+
+#: pygenda_dialog_event.py:764
+msgid "Last {day:s} of {month:s}"
+msgstr ""
+
+#: pygenda_dialog_event.py:764
+msgid "Last {day:s} of April"
+msgstr ""
+
+#: pygenda_dialog_event.py:764
+msgid "Last {day:s} of August"
+msgstr ""
+
+#: pygenda_dialog_event.py:764
+msgid "Last {day:s} of October"
+msgstr ""
+
+#: pygenda_dialog_event.py:766
+msgid "{ord:s} to last {day:s} of {month:s}"
+msgstr ""
+
+#: pygenda_dialog_event.py:766
+msgid "{ord:s} to last {day:s} of April"
+msgstr ""
+
+#: pygenda_dialog_event.py:766
+msgid "{ord:s} to last {day:s} of August"
+msgstr ""
+
+#: pygenda_dialog_event.py:766
+msgid "{ord:s} to last {day:s} of October"
+msgstr ""
+
+#: pygenda_dialog_event.py:783
+msgid "1st day of month"
+msgstr ""
+
+#: pygenda_dialog_event.py:785
+msgid "{ord:s} day of month"
+msgstr ""
+
+#: pygenda_dialog_event.py:787
+msgid "Last day of month"
+msgstr ""
+
+#: pygenda_dialog_event.py:789
+msgid "{:s} to last day of month"
+msgstr ""
+
+#: pygenda_dialog_event.py:790
+msgid "{ord:s} {day:s} of month"
+msgstr ""
+
+#: pygenda_dialog_event.py:792
+msgid "Last {day:s} of month"
+msgstr ""
+
+#: pygenda_dialog_event.py:794
+msgid "{ord:s} to last {day:s} of month"
+msgstr ""
+
+#: pygenda_dialog_event.py:801
+msgid "New Event"
+msgstr ""
+
+#: pygenda_dialog_event.py:812
+msgid "Edit Event"
+msgstr ""
+
+#: pygenda_dialog_event.py:1202 ui/dialog_event.ui:423 ui/dialog_event.ui:717
+#: ui/dialog_event.ui:990 ui/dialog_todo.ui:185 ui/dialog_todo.ui:224
+msgid "None"
+msgstr ""
+
+#: pygenda_dialog_event.py:1675
+msgid "Exception dates"
+msgstr ""
+
+#: pygenda_dialog_event.py:1692
+msgid "Add date"
+msgstr ""
+
+#: pygenda_dialog_event.py:1713
+msgid "Remove date(s)"
+msgstr ""
+
+#: pygenda_dialog_find.py:65
+msgid "Find results"
+msgstr ""
+
+#: pygenda_dialog_find.py:72
+msgid "No results found"
+msgstr ""
+
+#: pygenda_dialog_todo.py:157
+msgid "New To-do"
+msgstr ""
+
+#: pygenda_dialog_todo.py:168
+msgid "Edit To-do"
+msgstr ""
+
+#: pygenda_gui.py:939
+msgid "Delete Entry"
+msgstr ""
+
+#: pygenda_gui.py:945
+msgid "Delete all repeats:\n“{:s}”?"
+msgstr ""
+
+#: pygenda_gui.py:947
+msgid "Delete entry:\n“{:s}”?"
+msgstr ""
+
+#: pygenda_gui.py:975 ui/main.ui:654
+msgid "Go To"
+msgstr ""
+
+#: pygenda_gui.py:987
+msgid "Go"
+msgstr ""
+
+#: pygenda_gui.py:1025
+msgid "Source code & documentation: "
+msgstr ""
+
+#: pygenda_gui.py:1030
+msgid ""
+"A calendar/agenda application written in Python/GTK3. The UI is inspired by "
+"the Agenda apps on the Psion Series 3 and Series 5 PDAs.\n"
+"WARNING: This is in-development code, released for testing and feedback. "
+"There will be bugs; please report them to: pygenda@semiprime.com."
+msgstr ""
+
+#: pygenda_gui.py:1031
+msgid "Thanks for testing &amp; feedback"
+msgstr ""
+
+#: pygenda_view_todo.py:42
+msgid "To-do"
+msgstr ""
+
+#: pygenda_view_todo.py:61
+msgid "_Todo View"
+msgstr ""
+
+#: pygenda_view_todo.py:66
+msgid "todo_view_accel"
+msgstr ""
+
+#: pygenda_view_todo.py:262
+msgid "Due:"
+msgstr ""
+
+#: pygenda_view_week.py:65
+msgid "_Week View"
+msgstr ""
+
+#: pygenda_view_week.py:70
+msgid "week_view_accel"
+msgstr ""
+
+#: pygenda_view_week.py:227
+msgid "Week 53/Week 1"
+msgstr ""
+
+#: pygenda_view_week.py:229
+msgid "Week {}"
+msgstr ""
+
+#: pygenda_view_year.py:67
+msgid "_Year View"
+msgstr ""
+
+#: pygenda_view_year.py:72
+msgid "year_view_accel"
+msgstr ""
+
+#: pygenda_widgets.py:62
+msgid "ymdhm"
+msgstr ""
+
+#: ui/dialog_event.ui:138
+msgid "Date:"
+msgstr ""
+
+#: ui/dialog_event.ui:188
+msgid "Timed event:"
+msgstr ""
+
+#: ui/dialog_event.ui:204
+msgid "No"
+msgstr ""
+
+#: ui/dialog_event.ui:219
+msgid "Yes"
+msgstr ""
+
+#: ui/dialog_event.ui:235
+msgid "All day"
+msgstr ""
+
+#: ui/dialog_event.ui:270
+msgid "Start time:"
+msgstr ""
+
+#: ui/dialog_event.ui:302
+msgid "End time:"
+msgstr ""
+
+#: ui/dialog_event.ui:348
+msgid "Days:"
+msgstr ""
+
+#: ui/dialog_event.ui:389
+msgid "Time"
+msgstr ""
+
+#: ui/dialog_event.ui:424
+msgid "Yearly"
+msgstr ""
+
+#: ui/dialog_event.ui:425
+msgid "Monthly"
+msgstr ""
+
+#: ui/dialog_event.ui:426
+msgid "Weekly"
+msgstr ""
+
+#: ui/dialog_event.ui:427
+msgid "Daily"
+msgstr ""
+
+#: ui/dialog_event.ui:444
+msgid "Repeat on:"
+msgstr ""
+
+#: ui/dialog_event.ui:525
+msgid "Period:"
+msgstr ""
+
+#: ui/dialog_event.ui:541
+msgid "Repeat Forever:"
+msgstr ""
+
+#: ui/dialog_event.ui:567
+msgid "Occurrences:"
+msgstr ""
+
+#: ui/dialog_event.ui:583
+msgid "Until:"
+msgstr ""
+
+#: ui/dialog_event.ui:608
+msgid "Exceptions:"
+msgstr ""
+
+#: ui/dialog_event.ui:769
+msgid "Repeats"
+msgstr ""
+
+#: ui/dialog_event.ui:794
+msgid "Alarm(s) set:"
+msgstr ""
+
+#: ui/dialog_event.ui:881
+msgid ""
+"<span weight=\"bold\">Warning:</span> Pygenda will <span style=\"italic\" weight=\"bold\">not</span> sound/display alarms.\n"
+"A separate alarm handler is required for alarms to activate.\n"
+"(To remove this warning, see the documentation.)"
+msgstr ""
+
+#: ui/dialog_event.ui:895
+msgid "Understood"
+msgstr ""
+
+#: ui/dialog_event.ui:926
+msgid "Alarms"
+msgstr ""
+
+#: ui/dialog_event.ui:943
+msgid "Location:"
+msgstr ""
+
+#: ui/dialog_event.ui:991
+msgid "Tentative"
+msgstr ""
+
+#: ui/dialog_event.ui:992 ui/dialog_todo.ui:228
+msgid "Cancelled"
+msgstr ""
+
+#: ui/dialog_event.ui:993
+msgid "Confirmed"
+msgstr ""
+
+#: ui/dialog_event.ui:1006 ui/dialog_todo.ui:318
+msgid "Notes:"
+msgstr ""
+
+#: ui/dialog_event.ui:1056 ui/dialog_todo.ui:368
+msgid "Details"
+msgstr ""
+
+#: ui/dialog_find.ui:25
+msgid "Find"
+msgstr ""
+
+#: ui/dialog_find.ui:86
+msgid "Find text:"
+msgstr ""
+
+#: ui/dialog_todo.ui:116
+msgid "To-do list:"
+msgstr ""
+
+#: ui/dialog_todo.ui:168
+msgid "Priority:"
+msgstr ""
+
+#: ui/dialog_todo.ui:186
+msgid "1 (Highest)"
+msgstr ""
+
+#: ui/dialog_todo.ui:194
+msgid "9 (Lowest)"
+msgstr ""
+
+#: ui/dialog_todo.ui:225
+msgid "Action required"
+msgstr ""
+
+#: ui/dialog_todo.ui:226
+msgid "In progress"
+msgstr ""
+
+#: ui/dialog_todo.ui:227
+msgid "Completed"
+msgstr ""
+
+#: ui/dialog_todo.ui:301
+msgid "Dates/Times"
+msgstr ""
+
+#: ui/main.ui:73
+msgid "_File"
+msgstr ""
+
+#: ui/main.ui:84
+msgid "_Import File"
+msgstr ""
+
+#: ui/main.ui:113
+msgid "_Edit"
+msgstr ""
+
+#: ui/main.ui:160
+msgid "_Delete…"
+msgstr ""
+
+#: ui/main.ui:179
+msgid "E_ntry"
+msgstr ""
+
+#: ui/main.ui:187
+msgid "_New Event…"
+msgstr ""
+
+#: ui/main.ui:199
+msgid "New _To-do…"
+msgstr ""
+
+#: ui/main.ui:213
+msgid "Show _Properties"
+msgstr ""
+
+#: ui/main.ui:229
+msgid "Edit _Time…"
+msgstr ""
+
+#: ui/main.ui:239
+msgid "Edit _Repeats…"
+msgstr ""
+
+#: ui/main.ui:249
+msgid "Edit _Alarms…"
+msgstr ""
+
+#: ui/main.ui:259
+msgid "Edit _Details…"
+msgstr ""
+
+#: ui/main.ui:275
+msgid "Set _Status"
+msgstr ""
+
+#: ui/main.ui:285
+msgid "_None"
+msgstr ""
+
+#: ui/main.ui:295
+msgid "_Confirmed"
+msgstr ""
+
+#: ui/main.ui:305
+msgid "_Action required"
+msgstr ""
+
+#: ui/main.ui:315
+msgid "In _progress"
+msgstr ""
+
+#: ui/main.ui:325
+msgid "_Completed"
+msgstr ""
+
+#: ui/main.ui:335
+msgid "Cance_lled"
+msgstr ""
+
+#: ui/main.ui:345
+msgid "_Tentative"
+msgstr ""
+
+#: ui/main.ui:363
+msgid "_View"
+msgstr ""
+
+#: ui/main.ui:371
+msgid "_View Mode"
+msgstr ""
+
+#: ui/main.ui:385
+msgid "Switch _View"
+msgstr ""
+
+#: ui/main.ui:442
+msgid "_Tools"
+msgstr ""
+
+#: ui/main.ui:450
+msgid "_Go To…"
+msgstr ""
+
+#: ui/main.ui:462
+msgid "_Find…"
+msgstr ""
+
+#: ui/main.ui:480
+msgid "_Help"
+msgstr ""
+
+#: ui/main.ui:548
+msgid "New Entry"
+msgstr ""
+
+#: ui/main.ui:601
+msgid "View"
+msgstr ""
+
+#: ui/main.ui:707
+msgid "Zoom"
+msgstr ""

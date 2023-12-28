@@ -36,26 +36,17 @@ files (if these are not already installed, it's probably package
 
 Translating strings
 -------------------
-If you are adding a new language, copy an existing complete .po as a
-template (the French one is probably best choice) and replace the
-given translations with your own. Then skip to "generate .mo" at the
-end of this section.
-
-If you have added or changed strings, then you might need to generate
-a locale/pygenda.pot template. In the pygenda subdirectory:
-
-    xgettext --package-name Pygenda --copyright-holder "Matthew Lewis" -k_ -kN_ -o locale/pygenda.pot *.py ui/*.ui
-
-Use .pot to create/update .po for each language.
+Use the provided pygenda/locale/pygenda.pot file to create/update the
+.po for the target language.
 
 Existing languages:
 
-    cd locale
+    cd pygenda/locale
     msgmerge -U fr/LC_MESSAGES/pygenda.po pygenda.pot
 
-To add new languages (don't do this – use the copy method above):
+To add new languages:
 
-    cd locale
+    cd pygenda/locale
     msginit -i pygenda.pot -o de/LC_MESSAGES/pygenda.po -l de_DE
 
 Check/edit the generated .po files, maybe adding translations.
@@ -64,6 +55,16 @@ Process each .po to generate the .mo:
 
     cd fr/LC_MESSAGES
     msgfmt pygenda.po -o pygenda.mo
+
+In general, use the locale/pygenda.pot provided (since the automatic
+tools don't find all the strings, and you'll need to check/edit/add
+things). However, if you have added, removed or changed strings, and
+wish to generate a pygenda.pot, in the pygenda subdirectory:
+
+    xgettext --package-name Pygenda --copyright-holder "Matthew Lewis" -k_ -kN_ -o locale/pygenda.pot *.py ui/*.ui
+
+Then compare against the previous pygenda.pot and integrate any
+strings that xgettext missed.
 
 Checklist for releases
 ----------------------
