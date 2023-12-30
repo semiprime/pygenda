@@ -72,7 +72,14 @@ Install Pygenda
 Enter the following command to download and install Pygenda from the
 PyPI repository:
 
-    pip3 install --user pygenda
+    pip3 install pygenda --user --no-deps
+
+(In recent versions of pmOS (v23.12+) you probably need to add the
+`--break-system-packages` option. This sounds scary (which I guess is
+deliberate) but in this case it is safe, because there is no Pygenda
+package in pmOS that you might interfere with, you are not installing
+other Python module dependencies, and Pygenda is not being installed
+in the system files.)
 
 Test Pygenda runs:
 
