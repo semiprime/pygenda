@@ -334,14 +334,17 @@ class Calendar:
 
 
     @classmethod
-    def new_entry_from_example(cls, exen:Union[iEvent,iTodo], e_type:int=None, dt_start:dt_date=None, e_cats:Union[list,bool,None]=True, cal_idx:int=None)-> Union[iEvent,iTodo]:
-        # Add a new iCal entry to store given an iEvent as a "template".
-        # Replace UID, timestamp etc. to make it a new event.
-        # Potentially change type of entry to e_type.
-        # Potentially override exen's date/time with a new dt_start.
-        # Potentially set categories (e_cats==True: "Use exen categories",
-        #   False/None: "no categories", list[str]: "Use these categories").
-        # Used to implement pasting events into new days/timeslots.
+    def new_entry_from_example(cls, exen:Union[iEvent,iTodo], e_type:int=None, dt_start:dt_date=None, e_cats:Union[list,bool,None]=True, cal_idx:int=None, use_ex_uid_created:bool=False, use_ex_rpts:bool=False, use_ex_alarms:bool=True)-> Union[iEvent,iTodo]:
+        # Add a new iCal entry to store given example iEvent as a "template".
+        # Used to implement pasting entries and importing entries.
+        # Arguments:
+        #   e_type: Change type of entry to e_type (e.g. paste into todo list)
+        #   dt_start: Override date/time with dt_start (e.g. paste to new date)
+        #   e_cats==True: "Use exen categories"; False/None: "no categories";
+        #           list[str]: "Use these categories"
+        #   use_ex_uid_created: Use exen UID, create/mod times (e.g. importing)
+        #   use_ex_rpts: Use exen repeat information (RRULE etc.)
+        #   use_ex_alarms: Use exen alarms (e.g. pasting)
         # Return a reference to the new entry.
 
         if e_type==EntryInfo.TYPE_EVENT or (e_type is None and isinstance(exen,iEvent)):
@@ -364,11 +367,25 @@ class Calendar:
         if cls.calConnectors[cal_idx].is_readonly():
             raise ValueError('Tried to add entry to calendar set as read-only')
 
-        en.add('UID', Calendar.gen_uid()) # Required
-        cls._update_timestamps(en, is_new=True)
+        if use_ex_uid_created and 'UID' in exen:
+            cls._en_add_elt_from_en(en, exen, 'UID')
+        else:
+            # UID is required, so add one
+            en.add('UID', Calendar.gen_uid())
 
-        cls._en_add_elt_from_en(en, exen, 'SUMMARY', fallback='New entry')
+        if use_ex_uid_created:
+            # DTSTAMP should be time of import/paste.
+            # Creation/last modified likely to be sometime in the past.
+            utcnow =  dt_datetime.now(timezone.utc)
+            en.add('DTSTAMP', utcnow) # Required elt
+            cls._en_add_elt_from_en(en, exen, 'CREATED')
+            cls._en_add_elt_from_en(en, exen, 'LAST-MODIFIED')
+        else:
+            cls._update_timestamps(en, is_new=True)
+
+        cls._en_add_elt_from_en(en, exen, 'SUMMARY', fallback='_')
         new_dt_start = None
+        en_repeats = False
         if en_is_event:
             # Some entry elements only relevant if an event (may change later)
             ex_dt_start = exen['DTSTART'].dt if 'DTSTART' in exen else None
@@ -389,9 +406,14 @@ class Calendar:
                 en.add('DTEND', new_dt_end)
             else:
                 cls._en_add_elt_from_en(en, exen, 'DURATION')
-            alms = exen.walk('VALARM')
-            for alm in alms:
-                en.add_component(deepcopy(alm)) # Not sure need dc, but safer
+            if use_ex_rpts and 'RRULE' in exen:
+                en_repeats = True
+                cls._en_add_elt_from_en(en, exen, 'RRULE')
+                cls._en_add_elt_from_en(en, exen, 'EXDATE')
+            if use_ex_alarms:
+                alms = exen.walk('VALARM')
+                for alm in alms:
+                    en.add_component(deepcopy(alm)) # Not sure need dc (safer)
 
         cls._en_add_elt_from_en(en, exen, 'LOCATION')
         if e_cats is True:
@@ -412,10 +434,14 @@ class Calendar:
         en = cls.calConnectors[cal_idx].add_entry(en) # Write to store
         en._cal_idx = cal_idx
 
+        # Clear appropriate lists
         if new_dt_start is not None:
-            cls._entry_norep_list_sorted = None # Clear norep cache as modified
-            if cls._is_xover_entry(en):
-                cls._entry_norep_xover_list_sorted = None
+            if en_repeats:
+                cls._entry_rep_list = None
+            else:
+                cls._entry_norep_list_sorted = None
+                if cls._is_xover_entry(en):
+                    cls._entry_norep_xover_list_sorted = None
         if not en_is_event: # is Todo
             cls._todo_list = None # Clear todo cache as modified
         return en
