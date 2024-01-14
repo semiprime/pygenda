@@ -4,7 +4,7 @@
 # Connects to agenda data provider - either an iCal file, a CalDAV server,
 # or an Evolution Data Server.
 #
-# Copyright (C) 2022,2023 Matthew Lewis
+# Copyright (C) 2022-2024 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -323,6 +323,16 @@ class Calendar:
         return entry
 
 
+    @staticmethod
+    def _en_add_elt_from_en(tgt_en:Union[iEvent,iTodo], src_en:Union[iEvent,iTodo], elt:str, fallback:str=None):
+        # Add src_en[elt] to tgt_en (if it exists).
+        # If elt not present in src_en, and fallback provided, use fallback.
+        if elt in src_en:
+            tgt_en.add(elt, src_en[elt])
+        elif fallback is not None:
+            tgt_en.add(elt, fallback)
+
+
     @classmethod
     def new_entry_from_example(cls, exen:Union[iEvent,iTodo], e_type:int=None, dt_start:dt_date=None, e_cats:Union[list,bool,None]=True, cal_idx:int=None)-> Union[iEvent,iTodo]:
         # Add a new iCal entry to store given an iEvent as a "template".
@@ -357,10 +367,7 @@ class Calendar:
         en.add('UID', Calendar.gen_uid()) # Required
         cls._update_timestamps(en, is_new=True)
 
-        summ = exen['SUMMARY'] if 'SUMMARY' in exen else None
-        if not summ:
-            summ = 'New entry' # fallback summary
-        en.add('SUMMARY', summ)
+        cls._en_add_elt_from_en(en, exen, 'SUMMARY', fallback='New entry')
         new_dt_start = None
         if en_is_event:
             # Some entry elements only relevant if an event (may change later)
@@ -375,37 +382,32 @@ class Calendar:
             else:
                 raise ValueError('Event has no date/time')
             en.add('DTSTART', new_dt_start)
-            if 'DURATION' in exen:
-                en.add('DURATION', exen['DURATION'])
-            elif ex_dt_start and 'DTEND' in exen:
+            if ex_dt_start and 'DTEND' in exen:
                 ex_dt_end = exen['DTEND'].dt
                 delta = new_dt_start - ex_dt_start
                 new_dt_end = ex_dt_end + delta
                 en.add('DTEND', new_dt_end)
+            else:
+                cls._en_add_elt_from_en(en, exen, 'DURATION')
             alms = exen.walk('VALARM')
             for alm in alms:
                 en.add_component(deepcopy(alm)) # Not sure need dc, but safer
 
-        if 'LOCATION' in exen:
-            en.add('LOCATION', exen['LOCATION'])
+        cls._en_add_elt_from_en(en, exen, 'LOCATION')
         if e_cats is True:
-            if 'CATEGORIES' in exen:
-                en.add('CATEGORIES', exen['CATEGORIES'])
+            cls._en_add_elt_from_en(en, exen, 'CATEGORIES')
         elif e_cats:
             # Convert to list - to work around bug passing set to old icalendar
             en.add('CATEGORIES', list(e_cats))
-        if 'PRIORITY' in exen:
-            en.add('PRIORITY', exen['PRIORITY'])
+        cls._en_add_elt_from_en(en, exen, 'PRIORITY')
         if 'STATUS' in exen:
             # Only add status if it is valid for entry type
             sl = cls.STATUS_LIST_EVENT if en_is_event else cls.STATUS_LIST_TODO
             exen_status = exen['STATUS']
             if exen_status in sl:
                 en.add('STATUS', exen_status)
-        if 'DUE' in exen:
-            en.add('DUE', exen['DUE'])
-        if 'DESCRIPTION' in exen:
-            en.add('DESCRIPTION', exen['DESCRIPTION'])
+        cls._en_add_elt_from_en(en, exen, 'DUE')
+        cls._en_add_elt_from_en(en, exen, 'DESCRIPTION')
 
         en = cls.calConnectors[cal_idx].add_entry(en) # Write to store
         en._cal_idx = cal_idx
