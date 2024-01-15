@@ -874,6 +874,26 @@ class Calendar:
 
 
     @classmethod
+    def get_entry_by_uid(cls, uid:str) -> Union[iEvent,iTodo,None]:
+        # Return entry corresponding to UID.
+        # Assumes UID only occurs once in all calendars.
+        # Used when importing ical files to check if entry already
+        # exists, so no particular need to be super-speedy.
+        for conn in cls.calConnectors:
+            if conn.stores_events():
+                evs = conn.cal.walk('VEVENT')
+                for ev in evs:
+                    if 'UID' in ev and ev['UID']==uid:
+                        return ev
+            if conn.stores_todos():
+                tds = conn.cal.walk('VTODO')
+                for td in tds:
+                    if 'UID' in td and td['UID']==uid:
+                        return td
+        return None
+
+
+    @classmethod
     def _update_todo_list(cls) -> None:
         # Re-build _todo_list, if it has been cleared (==None)
         if cls._todo_list is None:

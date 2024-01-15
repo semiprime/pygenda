@@ -3,7 +3,7 @@
 # pygenda_gui.py
 # Top-level GUI code and shared elements (e.g. menu, soft keys)
 #
-# Copyright (C) 2022,2023 Matthew Lewis
+# Copyright (C) 2022-2024 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -51,6 +51,7 @@ FindDialogController = None # type:Any
 EntryPropertiesDialog = None # type:Any
 EventPropertyBeyondEditDialog = None # type:Any
 TodoPropertyBeyondEditDialog = None # type:Any
+ImportController = None # type:Any
 
 
 # Singleton class for top-level GUI control
@@ -172,6 +173,7 @@ class GUI:
         # Connect signals now, so clicking on [X] in window exits application
         HANDLERS = {
             'window_main delete': cls.exit,
+            'menuitem_import': cls.handler_import,
             'menuitem_quit': cls.exit,
             'menuitem_cut': cls.cut_request,
             'menuitem_copy': cls.copy_request,
@@ -346,6 +348,7 @@ class GUI:
             cls._builder.get_object('menuelt-new-todo').set_sensitive(False)
         if not cls.create_events and not cls.create_todos:
             cls._builder.get_object('menuelt-paste').set_sensitive(False)
+            cls._builder.get_object('menuelt-import').set_sensitive(False)
 
         cls._init_views()
 
@@ -398,7 +401,7 @@ class GUI:
     def _init_dialogs() -> None:
         # Import and initialise dialog classes.
         # Doing imports here avoids circular dependencies.
-        global EventDialogController, EventPropertyBeyondEditDialog, TodoDialogController, TodoPropertyBeyondEditDialog, EntryPropertiesDialog, FindDialogController
+        global EventDialogController, EventPropertyBeyondEditDialog, TodoDialogController, TodoPropertyBeyondEditDialog, EntryPropertiesDialog, FindDialogController, ImportController
 
         from .pygenda_dialog_event import EventDialogController, EventPropertyBeyondEditDialog
         EventDialogController.init()
@@ -410,6 +413,7 @@ class GUI:
         FindDialogController.init()
 
         from .pygenda_dialog_entryprops import EntryPropertiesDialog
+        from .pygenda_dialog_import import ImportController
 
 
     @classmethod
@@ -766,6 +770,12 @@ class GUI:
         if cls.views[cls._view_idx].default_entry_is_todo():
             return cls.handler_newtodo(cls, *args)
         return cls.handler_newevent(cls, *args)
+
+    @classmethod
+    def handler_import(cls, *args) -> bool:
+        # Handler to implement "Import file" from GUI, e.g. clicked in menu
+        ImportController.import_flow()
+        return True # don't propagate event
 
     @classmethod
     def handler_find(cls, *args) -> bool:

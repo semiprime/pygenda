@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 	main.ui
-	Copyright (C) 2022,2023 Matthew Lewis
+	Copyright (C) 2022-2024 Matthew Lewis
 	Based on a file generated with glade 3.38.2
 
 	This file is part of Pygenda.
@@ -18,7 +18,7 @@
 	You should have received a copy of the GNU General Public License
 	along with Pygenda. If not, see https://www.gnu.org/licenses/.
 -->
-<interface>
+<interface domain="pygenda">
 	<requires lib="gtk+" version="3.20"/>
 	<object class="GtkImage" id="image-add-ev">
 		<property name="visible">True</property>
@@ -77,12 +77,14 @@
 										<property name="visible">True</property>
 										<property name="can-focus">False</property>
 										<child>
-											<object class="GtkMenuItem">
+											<object class="GtkMenuItem" id="menuelt-import">
 												<property name="visible">True</property>
-												<property name="sensitive">False</property>
+												<property name="sensitive">True</property>
 												<property name="can-focus">False</property>
-												<property name="label" translatable="yes">_Import File</property>
+												<property name="label" translatable="yes">_Import File…</property>
 												<property name="use-underline">True</property>
+												<signal name="activate" handler="menuitem_import" swapped="no"/>
+												<accelerator key="i" signal="activate" modifiers="GDK_CONTROL_MASK"/>
 											</object>
 										</child>
 										<child>

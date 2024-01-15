@@ -78,6 +78,7 @@ Checklist for releases
 * Check copy/cut/paste works, including e.g. event date/time, multi-day events,
   event status, with alarms, with notes, todo pasted as event & vice-versa,
   text pasted
+* Check importing events, todos, and repeated events work
 * Check readonly calendars work - missing from calendar dropdown, can't edit
   entries, if all readonly then can't create entries
 * Regenerate .po and .mo localisation files (see above)

@@ -67,13 +67,15 @@ Major
   for full string, only searches in the Summary, can't jump to entries
   from results, not progressive, order of results is not useful, ...)
 
-* No "Import" function (e.g. to import iCal events from an email).
-  Also, how do we share events - "export"?
-
 Medium
 ------
 * Support for multiple calendar sources is basic. To add: styling,
   set default calendar.
+
+* Import functionality is basic, work-in-progress (can't specify
+  calendar, todo list, can't replace existing entries).
+
+* How do we share events? Do we need an "Export" function?
 
 * How to handle setting the status of a repeating event? (E.g., a
   reasonable use-case would be to cancel just one occurrence of a
