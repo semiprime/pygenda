@@ -3,7 +3,7 @@
 # pygenda_view_year.py
 # Provides the "Year View" for Pygenda.
 #
-# Copyright (C) 2022,2023 Matthew Lewis
+# Copyright (C) 2022-2024 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -414,6 +414,19 @@ class View_Year(View_DayUnit_Base):
         return cls._visible_occurrences[View._cursor_idx_in_date][0]
 
 
+    @staticmethod
+    def _local_date(dt:dt_date) -> dt_date:
+        # Given a date/datetime, return the corresponding local date.
+        # Note this is timezone aware, so 1am-tomorrow in another
+        # timezone might correspond to today in local timezone.
+        # Helper function for _show_gridcontent().
+        if not isinstance(dt, dt_datetime):
+            return dt
+        if dt.tzinfo is None:
+            return dt.date()
+        return dt.astimezone().date()
+
+
     @classmethod
     def _show_gridcontent(cls) -> None:
         # Set styles to show events in grid.
@@ -424,16 +437,19 @@ class View_Year(View_DayUnit_Base):
         yr = cls._year_viewed
         date = dt_date(year=yr,month=1,day=1)
         oneday = timedelta(days=1)
-        occ_dates_single = [o[1].date() if isinstance(o[1],dt_datetime) else o[1] for o in Calendar.occurrence_list(date, dt_date(year=yr+1,month=1,day=1), include_single=True, include_repeated=False)]
+        single_list = Calendar.occurrence_list(date, dt_date(year=yr+1,month=1,day=1), include_single=True, include_repeated=False)
+        occ_dates_single = [cls._local_date(o[1]) for o in single_list]
         reps_list = Calendar.occurrence_list(date, dt_date(year=yr+1,month=1,day=1), include_single=False, include_repeated=True)
-        occ_dates_repeated = [o[1].date() if isinstance(o[1],dt_datetime) else o[1] for o in reps_list]
-        occ_dates_repeated_year = [o[1].date() if isinstance(o[1],dt_datetime) else o[1] for o in reps_list if o[0]['RRULE']['FREQ'][0]=='YEARLY']
-        occ_dates_repeated_month = [o[1].date() if isinstance(o[1],dt_datetime) else o[1] for o in reps_list if o[0]['RRULE']['FREQ'][0]=='MONTHLY']
-        occ_dates_repeated_week = [o[1].date() if isinstance(o[1],dt_datetime) else o[1] for o in reps_list if o[0]['RRULE']['FREQ'][0]=='WEEKLY']
-        occ_dates_repeated_day = [o[1].date() if isinstance(o[1],dt_datetime) else o[1] for o in reps_list if o[0]['RRULE']['FREQ'][0]=='DAILY']
-        occ_dates_repeated_hour = [o[1].date() if isinstance(o[1],dt_datetime) else o[1] for o in reps_list if o[0]['RRULE']['FREQ'][0]=='HOURLY']
-        occ_dates_repeated_minute = [o[1].date() if isinstance(o[1],dt_datetime) else o[1] for o in reps_list if o[0]['RRULE']['FREQ'][0]=='MINUTELY']
-        occ_dates_repeated_second = [o[1].date() if isinstance(o[1],dt_datetime) else o[1] for o in reps_list if o[0]['RRULE']['FREQ'][0]=='SECONDLY']
+        # Now simplify this list to keep the info we need...
+        reps_list = [(o[0]['RRULE']['FREQ'][0],cls._local_date(o[1])) for o in reps_list if 'FREQ' in o[0]['RRULE']]
+        occ_dates_repeated = [o[1] for o in reps_list]
+        occ_dates_repeated_year = [o[1] for o in reps_list if o[0]=='YEARLY']
+        occ_dates_repeated_month = [o[1] for o in reps_list if o[0]=='MONTHLY']
+        occ_dates_repeated_week = [o[1] for o in reps_list if o[0]=='WEEKLY']
+        occ_dates_repeated_day = [o[1] for o in reps_list if o[0]=='DAILY']
+        occ_dates_repeated_hour = [o[1] for o in reps_list if o[0]=='HOURLY']
+        occ_dates_repeated_minute = [o[1] for o in reps_list if o[0]=='MINUTELY']
+        occ_dates_repeated_second = [o[1] for o in reps_list if o[0]=='SECONDLY']
 
         for m in range(1,13):
             day,daycount = calendar.monthrange(yr,m)
