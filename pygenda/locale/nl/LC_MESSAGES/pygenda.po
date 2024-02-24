@@ -1,5 +1,5 @@
-# Translation template file for Pygenda package
-# Copyright (C) 2023 Matthew Lewis
+# Nederlandse vertaling van Pygenda
+# Copyright (C) 2024 Heimen Stoffels
 #
 # This file is part of Pygenda.
 #
@@ -17,7 +17,6 @@
 #
 # Matthew Lewis <pygenda@semiprime.com>, 2023.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
