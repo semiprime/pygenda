@@ -1,0 +1,728 @@
+# Nederlandse vertaling van Pygenda
+# Copyright (C) 2024 Heimen Stoffels
+#
+# This file is part of Pygenda.
+#
+# Pygenda is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3.
+#
+# Pygenda is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Pygenda. If not, see <https://www.gnu.org/licenses/>.
+#
+# Matthew Lewis <pygenda@semiprime.com>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Pygenda\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-12-28 09:46+0100\n"
+"PO-Revision-Date: 2024-02-23 11:23+0100\n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
+"Language-Team: \n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: pygenda_dialog_entryprops.py:63
+msgid "Entry properties"
+msgstr "Itemeigenschappen"
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:74
+msgid "Summary:"
+msgstr "Samenvatting:"
+
+#: pygenda_dialog_entryprops.py:129
+msgid "Type:"
+msgstr "Type:"
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:129
+msgid "Event"
+msgstr "Gebeurtenis"
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:129
+msgid "Todo"
+msgstr "Taak"
+
+#: pygenda_dialog_entryprops.py:135 ui/dialog_event.ui:153
+#: ui/dialog_todo.ui:142
+msgid "Calendar:"
+msgstr "Agenda:"
+
+#: pygenda_dialog_entryprops.py:140
+msgid "Start date:"
+msgstr "Begindatum:"
+
+#: pygenda_dialog_entryprops.py:140
+msgid "Start date/time:"
+msgstr "Begindatum/-tijd:"
+
+#: pygenda_dialog_entryprops.py:141
+msgid "End date:"
+msgstr "Einddatum:"
+
+#: pygenda_dialog_entryprops.py:141
+msgid "End date/time:"
+msgstr "Einddatum/-tijd:"
+
+#: pygenda_dialog_entryprops.py:144 ui/dialog_event.ui:286
+msgid "Duration:"
+msgstr "Duur:"
+
+#: pygenda_dialog_entryprops.py:145 ui/dialog_todo.ui:250
+msgid "Due date:"
+msgstr "Einddatum:"
+
+#: pygenda_dialog_entryprops.py:145
+msgid "Due date/time:"
+msgstr "Einddatum/-tijd:"
+
+#: pygenda_dialog_entryprops.py:146
+msgid "Completed date (noncompliant):"
+msgstr "Afronddatum (niet-conform):"
+
+#: pygenda_dialog_entryprops.py:146
+msgid "Completed date/time:"
+msgstr "Afronddatum/-tijd:"
+
+#: pygenda_dialog_entryprops.py:165
+msgid " (timezone: {:s})"
+msgstr " (tijdzone: {:s})"
+
+#: pygenda_dialog_entryprops.py:177
+msgid "interval:"
+msgstr "Tussenpoos:"
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "By month:"
+msgstr "Op maand:"
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "By week number:"
+msgstr "Op weeknummer:"
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "By year day:"
+msgstr "Op dag van het jaar:"
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "By month day:"
+msgstr "Op dag van de maand:"
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "By day:"
+msgstr "Op dag:"
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "By hour:"
+msgstr "Op uur:"
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "By minute:"
+msgstr "Op minuut:"
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "By second:"
+msgstr "Op seconde:"
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "By set position:"
+msgstr "Op ingestelde positie:"
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "Week starts:"
+msgstr "Week begint op:"
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:185
+msgid "Count:"
+msgstr "Aantal:"
+
+#: pygenda_dialog_entryprops.py:190
+msgid "Exception dates:"
+msgstr "Uitzonderingen:"
+
+#: pygenda_dialog_entryprops.py:194
+msgid ";"
+msgstr ";"
+
+#: pygenda_dialog_entryprops.py:200 ui/dialog_event.ui:405
+msgid "Repeats:"
+msgstr "Herhalen op:"
+
+#: pygenda_dialog_entryprops.py:211 ui/dialog_event.ui:972
+#: ui/dialog_todo.ui:207
+msgid "Status:"
+msgstr "Status:"
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_entryprops.py:231 pygenda_dialog_event.py:420
+msgid "Audio"
+msgstr "Audio"
+
+msgid "Display"
+msgstr "Weergave"
+
+msgid "Email"
+msgstr "E-mail"
+
+#: pygenda_dialog_entryprops.py:246 pygenda_dialog_event.py:428
+msgid "“{:s}”"
+msgstr "“{:s}”"
+
+#: pygenda_dialog_entryprops.py:253
+msgid "Alarms:"
+msgstr "Alarmen:"
+
+#: pygenda_dialog_entryprops.py:266
+msgid "Description ({}):"
+msgstr "Omschrijving ({}):"
+
+#: pygenda_dialog_entryprops.py:268 pygenda_dialog_entryprops.py:271
+#: ui/dialog_event.ui:107 ui/dialog_todo.ui:86
+msgid "Description:"
+msgstr "Omschrĳving:"
+
+#: pygenda_dialog_entryprops.py:283
+msgid "URL:"
+msgstr "Url:"
+
+#: pygenda_dialog_entryprops.py:296
+msgid "Categories:"
+msgstr "Categorieën:"
+
+#: pygenda_dialog_event.py:269
+msgid "Time before event"
+msgstr "Tijdstip van aanvang"
+
+#: pygenda_dialog_event.py:270
+msgid "Action"
+msgstr "Actie"
+
+#: pygenda_dialog_event.py:758
+msgid "1st {month:s}"
+msgstr "1ste {month:s}"
+
+#: pygenda_dialog_event.py:760
+msgid "{ord:s} {month:s}"
+msgstr "{ord:s} {month:s}"
+
+#: pygenda_dialog_event.py:762
+msgid "{ord:s} {day:s} of {month:s}"
+msgstr "{ord:s} {day:s} of {month:s}"
+
+#: pygenda_dialog_event.py:762
+msgid "{ord:s} {day:s} of April"
+msgstr "{ord:s} {day:s} van april"
+
+#: pygenda_dialog_event.py:762
+msgid "{ord:s} {day:s} of August"
+msgstr "{ord:s} {day:s} van augustus"
+
+#: pygenda_dialog_event.py:762
+msgid "{ord:s} {day:s} of October"
+msgstr "{ord:s} {day:s} van oktober"
+
+#: pygenda_dialog_event.py:764
+msgid "Last {day:s} of {month:s}"
+msgstr "Laatste {day:s} van {month:s}"
+
+#: pygenda_dialog_event.py:764
+msgid "Last {day:s} of April"
+msgstr "Laatste {day:s} van april"
+
+#: pygenda_dialog_event.py:764
+msgid "Last {day:s} of August"
+msgstr "Laatste {day:s} van augustus"
+
+#: pygenda_dialog_event.py:764
+msgid "Last {day:s} of October"
+msgstr "Laatste {day:s} van oktober"
+
+#: pygenda_dialog_event.py:766
+msgid "{ord:s} to last {day:s} of {month:s}"
+msgstr "{ord:s} tot laatste {day:s} van {month:s}"
+
+#: pygenda_dialog_event.py:766
+msgid "{ord:s} to last {day:s} of April"
+msgstr "{ord:s} tot laatste {day:s} van april"
+
+#: pygenda_dialog_event.py:766
+msgid "{ord:s} to last {day:s} of August"
+msgstr "{ord:s} tot laatste {day:s} van augustus"
+
+#: pygenda_dialog_event.py:766
+msgid "{ord:s} to last {day:s} of October"
+msgstr "{ord:s} tot laatste {day:s} van oktober"
+
+#: pygenda_dialog_event.py:783
+msgid "1st day of month"
+msgstr "1ste dag van maand"
+
+#: pygenda_dialog_event.py:785
+msgid "{ord:s} day of month"
+msgstr "{ord:s} dag van maand"
+
+#: pygenda_dialog_event.py:787
+msgid "Last day of month"
+msgstr "Laatste dag van maand"
+
+#: pygenda_dialog_event.py:789
+msgid "{:s} to last day of month"
+msgstr "{:s} tot laatste dag van maand"
+
+#: pygenda_dialog_event.py:790
+msgid "{ord:s} {day:s} of month"
+msgstr "{ord:s} {day:s} van maand"
+
+#: pygenda_dialog_event.py:792
+msgid "Last {day:s} of month"
+msgstr "Laatste {day:s} van maand"
+
+#: pygenda_dialog_event.py:794
+msgid "{ord:s} to last {day:s} of month"
+msgstr "{ord:s} tot laatste {day:s} van maand"
+
+#: pygenda_dialog_event.py:801
+msgid "New Event"
+msgstr "Nieuwe gebeurtenis"
+
+#: pygenda_dialog_event.py:812
+msgid "Edit Event"
+msgstr "Gebeurtenis bewerken"
+
+#: pygenda_dialog_event.py:1202 ui/dialog_event.ui:423 ui/dialog_event.ui:717
+#: ui/dialog_event.ui:990 ui/dialog_todo.ui:185 ui/dialog_todo.ui:224
+msgid "None"
+msgstr "Geen"
+
+#: pygenda_dialog_event.py:1675
+msgid "Exception dates"
+msgstr "Uitzonderingen"
+
+#: pygenda_dialog_event.py:1692
+msgid "Add date"
+msgstr "Datum toevoegen"
+
+#: pygenda_dialog_event.py:1713
+msgid "Remove date(s)"
+msgstr "Datum(s) verwijderen"
+
+#: pygenda_dialog_find.py:65
+msgid "Find results"
+msgstr "Zoekresultaten"
+
+#: pygenda_dialog_find.py:72
+msgid "No results found"
+msgstr "Er zĳn geen zoekresultaten"
+
+#: pygenda_dialog_todo.py:157
+msgid "New To-do"
+msgstr "Nieuwe taak"
+
+#: pygenda_dialog_todo.py:168
+msgid "Edit To-do"
+msgstr "Taak bewerken"
+
+#: pygenda_gui.py:939
+msgid "Delete Entry"
+msgstr "Item verwijderen"
+
+#: pygenda_gui.py:945
+msgid ""
+"Delete all repeats:\n"
+"“{:s}”?"
+msgstr ""
+"Wilt u alle herhalingen verwijderen?\n"
+"“{:s}”"
+
+#: pygenda_gui.py:947
+msgid ""
+"Delete entry:\n"
+"“{:s}”?"
+msgstr ""
+"Wilt u het volgende item verwijderen?\n"
+"“{:s}”"
+
+#: pygenda_gui.py:975 ui/main.ui:654
+msgid "Go To"
+msgstr "Ga naar"
+
+#: pygenda_gui.py:987
+msgid "Go"
+msgstr "Gaan"
+
+#: pygenda_gui.py:1025
+msgid "Source code & documentation: "
+msgstr "Broncode en documentatie: "
+
+#: pygenda_gui.py:1030
+msgid ""
+"A calendar/agenda application written in Python/GTK3. The UI is inspired by "
+"the Agenda apps on the Psion Series 3 and Series 5 PDAs.\n"
+"WARNING: This is in-development code, released for testing and feedback. "
+"There will be bugs; please report them to: pygenda@semiprime.com."
+msgstr ""
+"Een kalender-/agendatoepassing gemaakt met behulp van Python/GTK3. De "
+"vormgeving is gebaseerd op de agenda-apps van de Psion Series 3- en "
+"Series 5-pda's.\n"
+"WAARSCHUWING: de toepassing is nog volop in ontwikkeling en slechts "
+"uitgebracht om feedback te kunnen ontvangen. Er zullen gegarandeerd bugs "
+"zijn; meld ze via pygenda@semiprime.com."
+
+#: pygenda_gui.py:1031
+msgid "Thanks for testing &amp; feedback"
+msgstr "Bedankt voor het testen en de feedback"
+
+#: pygenda_view_todo.py:42
+msgid "To-do"
+msgstr "Taak"
+
+#: pygenda_view_todo.py:61
+msgid "_Todo View"
+msgstr "_Taakweergave"
+
+#: pygenda_view_todo.py:66
+msgid "todo_view_accel"
+msgstr "todo_view_accel"
+
+#: pygenda_view_todo.py:262
+msgid "Due:"
+msgstr "Einddatum:"
+
+#: pygenda_view_week.py:65
+msgid "_Week View"
+msgstr "_Weekweergave"
+
+#: pygenda_view_week.py:70
+msgid "week_view_accel"
+msgstr "week_view_accel"
+
+#: pygenda_view_week.py:227
+msgid "Week 53/Week 1"
+msgstr "Week 53/Week 1"
+
+#: pygenda_view_week.py:229
+msgid "Week {}"
+msgstr "Week {}"
+
+#: pygenda_view_year.py:67
+msgid "_Year View"
+msgstr "_Jaarweergave"
+
+#: pygenda_view_year.py:72
+msgid "year_view_accel"
+msgstr "year_view_accel"
+
+#: pygenda_widgets.py:62
+msgid "ymdhm"
+msgstr "ymdhm"
+
+#: ui/dialog_event.ui:138
+msgid "Date:"
+msgstr "Datum:"
+
+#: ui/dialog_event.ui:188
+msgid "Timed event:"
+msgstr "Gebeurtenis met tijdstip:"
+
+#: ui/dialog_event.ui:204
+msgid "No"
+msgstr "Nee"
+
+#: ui/dialog_event.ui:219
+msgid "Yes"
+msgstr "Ja"
+
+#: ui/dialog_event.ui:235
+msgid "All day"
+msgstr "Gehele dag"
+
+#: ui/dialog_event.ui:270
+msgid "Start time:"
+msgstr "Begintijd:"
+
+#: ui/dialog_event.ui:302
+msgid "End time:"
+msgstr "Eindtijd:"
+
+#: ui/dialog_event.ui:348
+msgid "Days:"
+msgstr "Aantal dagen:"
+
+#: ui/dialog_event.ui:389
+msgid "Time"
+msgstr "Tijdstip"
+
+#: ui/dialog_event.ui:424
+msgid "Yearly"
+msgstr "Ieder jaar"
+
+#: ui/dialog_event.ui:425
+msgid "Monthly"
+msgstr "Iedere maand"
+
+#: ui/dialog_event.ui:426
+msgid "Weekly"
+msgstr "Iedere week"
+
+#: ui/dialog_event.ui:427
+msgid "Daily"
+msgstr "Iedere dag"
+
+#: ui/dialog_event.ui:444
+msgid "Repeat on:"
+msgstr "Herhalen op:"
+
+#: ui/dialog_event.ui:525
+msgid "Period:"
+msgstr "Periode:"
+
+#: ui/dialog_event.ui:541
+msgid "Repeat Forever:"
+msgstr "Oneindig herhalen:"
+
+#: ui/dialog_event.ui:567
+msgid "Occurrences:"
+msgstr "Aantal herhalingen:"
+
+#: ui/dialog_event.ui:583
+msgid "Until:"
+msgstr "Tot:"
+
+#: ui/dialog_event.ui:608
+msgid "Exceptions:"
+msgstr "Uitzonderingen:"
+
+#: ui/dialog_event.ui:769
+msgid "Repeats"
+msgstr "Herhalingen"
+
+#: ui/dialog_event.ui:794
+msgid "Alarm(s) set:"
+msgstr "Alarm(en) ingesteld:"
+
+#: ui/dialog_event.ui:881
+msgid ""
+"<span weight=\"bold\">Warning:</span> Pygenda will <span style=\"italic\" "
+"weight=\"bold\">not</span> sound/display alarms.\n"
+"A separate alarm handler is required for alarms to activate.\n"
+"(To remove this warning, see the documentation.)"
+msgstr ""
+"<span weight=\"bold\">Waarschuwing:</span> Pygenda zal uit zichzelf <span "
+"style=\"italic\" weight=\"bold\">geen</span> alarmgeluiden afspelen of "
+"meldingen tonen.\n"
+"Hiervoor is een aparte toepassing of dienst benodigd.\n"
+"(Bekijk in de documentatie hoe u deze melding kunt onderdrukken.)"
+
+#: ui/dialog_event.ui:895
+msgid "Understood"
+msgstr "Ik begrijp het"
+
+#: ui/dialog_event.ui:926
+msgid "Alarms"
+msgstr "Alarmen"
+
+#: ui/dialog_event.ui:943
+msgid "Location:"
+msgstr "Locatie:"
+
+#: ui/dialog_event.ui:991
+msgid "Tentative"
+msgstr "Mogelijk"
+
+#: ui/dialog_event.ui:992 ui/dialog_todo.ui:228
+msgid "Cancelled"
+msgstr "Geannuleerd"
+
+#: ui/dialog_event.ui:993
+msgid "Confirmed"
+msgstr "Bevestigd"
+
+#: ui/dialog_event.ui:1006 ui/dialog_todo.ui:318
+msgid "Notes:"
+msgstr "Aantekeningen:"
+
+#: ui/dialog_event.ui:1056 ui/dialog_todo.ui:368
+msgid "Details"
+msgstr "Details"
+
+#: ui/dialog_find.ui:25
+msgid "Find"
+msgstr "Zoeken"
+
+#: ui/dialog_find.ui:86
+msgid "Find text:"
+msgstr "Tekst zoeken:"
+
+#: ui/dialog_todo.ui:116
+msgid "To-do list:"
+msgstr "Takenlijst:"
+
+#: ui/dialog_todo.ui:168
+msgid "Priority:"
+msgstr "Prioriteit:"
+
+#: ui/dialog_todo.ui:186
+msgid "1 (Highest)"
+msgstr "1 (hoogste)"
+
+#: ui/dialog_todo.ui:194
+msgid "9 (Lowest)"
+msgstr "9 (laagste)"
+
+#: ui/dialog_todo.ui:225
+msgid "Action required"
+msgstr "Actie vereist"
+
+#: ui/dialog_todo.ui:226
+msgid "In progress"
+msgstr "In behandeling"
+
+#: ui/dialog_todo.ui:227
+msgid "Completed"
+msgstr "Afgerond"
+
+#: ui/dialog_todo.ui:301
+msgid "Dates/Times"
+msgstr "Datums/Tijdstippen"
+
+#: ui/main.ui:73
+msgid "_File"
+msgstr "_Bestand"
+
+#: ui/main.ui:84
+msgid "_Import File"
+msgstr "Bestand _importeren"
+
+#: ui/main.ui:113
+msgid "_Edit"
+msgstr "B_ewerken"
+
+#: ui/main.ui:160
+msgid "_Delete…"
+msgstr "Verwĳ_deren…"
+
+#: ui/main.ui:179
+msgid "E_ntry"
+msgstr "Ite_m"
+
+#: ui/main.ui:187
+msgid "_New Event…"
+msgstr "_Nieuwe gebeurtenis…"
+
+#: ui/main.ui:199
+msgid "New _To-do…"
+msgstr "Nieuwe _taak…"
+
+#: ui/main.ui:213
+msgid "Show _Properties"
+msgstr "Eigenscha_ppen tonen"
+
+#: ui/main.ui:229
+msgid "Edit _Time…"
+msgstr "_Tijdstip bewerken…"
+
+#: ui/main.ui:239
+msgid "Edit _Repeats…"
+msgstr "He_rhalingen bewerken…"
+
+#: ui/main.ui:249
+msgid "Edit _Alarms…"
+msgstr "_Alarmen bewerken…"
+
+#: ui/main.ui:259
+msgid "Edit _Details…"
+msgstr "_Details bewerken…"
+
+#: ui/main.ui:275
+msgid "Set _Status"
+msgstr "_Status instellen"
+
+#: ui/main.ui:285
+msgid "_None"
+msgstr "Gee_n"
+
+#: ui/main.ui:295
+msgid "_Confirmed"
+msgstr "Be_vestigd"
+
+#: ui/main.ui:305
+msgid "_Action required"
+msgstr "_Actie vereist"
+
+#: ui/main.ui:315
+msgid "In _progress"
+msgstr "In _behandeling"
+
+#: ui/main.ui:325
+msgid "_Completed"
+msgstr "Af_gerond"
+
+#: ui/main.ui:335
+msgid "Cance_lled"
+msgstr "Geannu_lleerd"
+
+#: ui/main.ui:345
+msgid "_Tentative"
+msgstr "Mogel_ijk"
+
+#: ui/main.ui:363
+msgid "_View"
+msgstr "_Beeld"
+
+#: ui/main.ui:371
+msgid "_View Mode"
+msgstr "Weerga_vemodus"
+
+#: ui/main.ui:385
+msgid "Switch _View"
+msgstr "Andere weerga_vemodus"
+
+#: ui/main.ui:442
+msgid "_Tools"
+msgstr "Hul_pmiddelen"
+
+#: ui/main.ui:450
+msgid "_Go To…"
+msgstr "_Ga naar…"
+
+#: ui/main.ui:462
+msgid "_Find…"
+msgstr "_Zoeken…"
+
+#: ui/main.ui:480
+msgid "_Help"
+msgstr "_Hulp"
+
+#: ui/main.ui:548
+msgid "New Entry"
+msgstr "Nieuw item"
+
+#: ui/main.ui:601
+msgid "View"
+msgstr "Beeld"
+
+#: ui/main.ui:707
+msgid "Zoom"
+msgstr "Zoomen"
