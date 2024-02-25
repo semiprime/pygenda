@@ -1,5 +1,6 @@
-# Translation template file for Pygenda package
-# Copyright (C) 2023 Matthew Lewis
+# Translation template file for Pygenda
+# Copyright (C) 2024 Matthew Lewis
+# [NOTE: Translators should update the copyright in the line above (and delete this line)]
 #
 # This file is part of Pygenda.
 #
@@ -15,14 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Pygenda. If not, see <https://www.gnu.org/licenses/>.
 #
-# Matthew Lewis <pygenda@semiprime.com>, 2023.
-#
-#, fuzzy
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-28 09:46+0100\n"
+"POT-Creation-Date: 2024-02-25 12:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -378,6 +377,10 @@ msgstr ""
 
 #: pygenda_gui.py:1031
 msgid "Thanks for testing &amp; feedback"
+msgstr ""
+
+#: pygenda_gui.py:1042
+msgid "translator-credits"
 msgstr ""
 
 #: pygenda_view_todo.py:42

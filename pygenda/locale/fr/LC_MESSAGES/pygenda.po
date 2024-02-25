@@ -1,6 +1,6 @@
-# French translations for Pygenda package
-# Traductions françaises du paquet Pygenda.
-# Copyright (C) 2022,2023 Matthew Lewis
+# French translations for Pygenda
+# Traductions françaises de Pygenda
+# Copyright (C) 2022-2024 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -16,14 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Pygenda. If not, see <https://www.gnu.org/licenses/>.
 #
-# Matthew Lewis <pygenda@semiprime.com>, 2022,2023.
-#
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-28 09:46+0100\n"
-"PO-Revision-Date: 2023-12-28 09:46+0100\n"
+"POT-Creation-Date: 2024-02-25 12:10+0100\n"
+"PO-Revision-Date: 2024-02-25 21:24+0100\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -384,6 +383,10 @@ msgstr ""
 #: pygenda_gui.py:1031
 msgid "Thanks for testing &amp; feedback"
 msgstr "Merci pour les tests et les feedbacks"
+
+#: pygenda_gui.py:1042
+msgid "translator-credits"
+msgstr "Matthew Lewis"
 
 #: pygenda_view_todo.py:42
 msgid "To-do"

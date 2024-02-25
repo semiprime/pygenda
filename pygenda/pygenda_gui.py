@@ -1028,7 +1028,7 @@ class GUI:
         # Display the "About Pygenda" dialog
         dialog = Gtk.AboutDialog(parent=cls._window)
         dialog.set_program_name('Pygenda')
-        dialog.set_copyright(u'Copyright © 2022,2023 Matthew Lewis')
+        dialog.set_copyright(u'Copyright © 2022–2024 Matthew Lewis')
         dialog.set_license_type(Gtk.License.GPL_3_0_ONLY)
         github_url = 'https://github.com/semiprime/pygenda'
         dialog.set_website(github_url)
@@ -1039,6 +1039,7 @@ class GUI:
         dialog.set_version('version {:s}'.format(__version__))
         dialog.set_comments(_(u'A calendar/agenda application written in Python/GTK3. The UI is inspired by the Agenda apps on the Psion Series 3 and Series 5 PDAs.\nWARNING: This is in-development code, released for testing and feedback. There will be bugs; please report them to: pygenda@semiprime.com.'))
         dialog.add_credit_section(_('Thanks for testing &amp; feedback'),('Edward Hasbrouck', 'Neil Sands'))
+        dialog.set_translator_credits(_('translator-credits'))
         dialog.show_all()
         dialog.run()
         dialog.destroy()

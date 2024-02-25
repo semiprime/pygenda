@@ -1,3 +1,4 @@
+# Dutch translations for Pygenda
 # Nederlandse vertaling van Pygenda
 # Copyright (C) 2024 Heimen Stoffels
 #
@@ -15,14 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Pygenda. If not, see <https://www.gnu.org/licenses/>.
 #
-# Matthew Lewis <pygenda@semiprime.com>, 2023.
-#
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-28 09:46+0100\n"
-"PO-Revision-Date: 2024-02-23 11:23+0100\n"
+"POT-Creation-Date: 2024-02-25 12:10+0100\n"
+"PO-Revision-Date: 2024-02-25 2024-02-25 21:24+0100\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -393,6 +393,10 @@ msgstr ""
 #: pygenda_gui.py:1031
 msgid "Thanks for testing &amp; feedback"
 msgstr "Bedankt voor het testen en de feedback"
+
+#: pygenda_gui.py:1042
+msgid "translator-credits"
+msgstr "Heimen Stoffels (github.com/Vistaus)"
 
 #: pygenda_view_todo.py:42
 msgid "To-do"
