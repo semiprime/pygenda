@@ -88,6 +88,9 @@ class ImportController:
         jump_to_en = None # Store the first entry imported - to move cursor to
         for en in entries:
             new_en = cls._process_entry(en)
+            if new_en is False:
+                # False indicates import has been cancelled, so stop here
+                break
             if jump_to_en is None and new_en is not None:
                 jump_to_en = new_en
 
@@ -100,9 +103,12 @@ class ImportController:
 
 
     @classmethod
-    def _process_entry(cls, en:Union[iEvent,iTodo]) -> Union[iEvent,iTodo,None]:
-        # Import or skip entry in iCal file, depending on user interaction
+    def _process_entry(cls, en:Union[iEvent,iTodo]) -> Union[iEvent,iTodo,bool,None]:
+        # Import or skip entry in iCal file, depending on user interaction.
+        # Return entry if entry imported, None if skipped, False if cancelled.
         res = cls._import_entry_dialog(en)
+        if res==Gtk.ResponseType.DELETE_EVENT:
+            return False
         if res==Gtk.ResponseType.ACCEPT:
             new_en = Calendar.new_entry_from_example(en, cal_idx=None, use_ex_uid_created=True, use_ex_rpts=True, use_ex_alarms=False)
             return new_en
