@@ -3,7 +3,7 @@
 # pygenda_dialog_entryprops.py
 # Code for dialog to show entry properties
 #
-# Copyright (C) 2023 Matthew Lewis
+# Copyright (C) 2023,2024 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -277,10 +277,11 @@ class EntryPropertiesDialog:
         # Maybe security implications here if people import entries.
         if 'URL' in self.entry:
             url = self.entry['URL']
-            link = Gtk.LinkButton.new(url)
-            link.set_halign(Gtk.Align.START)
-            link.get_style_context().add_class(GUI.STYLE_TXTPROP)
-            self._add_row(_('URL:'), link)
+            if url:
+                link = Gtk.LinkButton.new(url)
+                link.set_halign(Gtk.Align.START)
+                link.get_style_context().add_class(GUI.STYLE_TXTPROP)
+                self._add_row(_('URL:'), link)
 
 
     def _add_categories_row(self) -> None:
