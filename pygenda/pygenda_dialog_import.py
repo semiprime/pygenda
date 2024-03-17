@@ -110,7 +110,7 @@ class ImportController:
         if res==Gtk.ResponseType.DELETE_EVENT:
             return False
         if res==Gtk.ResponseType.ACCEPT:
-            new_en = Calendar.new_entry_from_example(en, cal_idx=None, use_ex_uid_created=True, use_ex_rpts=True, use_ex_alarms=False)
+            new_en = Calendar.new_entry_from_example(en, e_cats=None, cal_idx=None, use_ex_uid_created=True, use_ex_rpts=True, use_ex_alarms=False)
             return new_en
         return None
 
