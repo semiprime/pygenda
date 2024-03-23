@@ -4,7 +4,7 @@
 # "View" class definition - base class for Week View, Year View.
 # Provides default implementations of functions.
 #
-# Copyright (C) 2022,2023 Matthew Lewis
+# Copyright (C) 2022-2024 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -31,7 +31,7 @@ from typing import Optional, Union
 from .pygenda_gui import GUI
 from .pygenda_config import Config
 from .pygenda_dialog_event import EventDialogController
-from .pygenda_util import datetime_to_time, datetime_to_date, date_to_datetime, format_time, format_compact_date, format_compact_time, format_compact_datetime, dt_lte
+from .pygenda_util import datetime_to_time, datetime_to_date, date_to_datetime, format_time, format_compact_date, format_compact_time, format_compact_datetime, dt_lte, get_local_tz
 from .pygenda_calendar import Calendar
 from .pygenda_entryinfo import EntryInfo
 
@@ -393,6 +393,9 @@ class View_DayUnit_Base(View):
             # !! Need to make repeating case do something sensible
             dt = ev['DTSTART'].dt
             if isinstance(dt, dt_datetime):
+                if dt.tzinfo is not None:
+                    # dt has a timezone, so convert to local time
+                    dt = dt.astimezone(get_local_tz())
                 dt = dt.date()
             cls.cursor_set_date(dt)
         cls._target_entry = ev # type:ignore # Week/Year View classes have this
