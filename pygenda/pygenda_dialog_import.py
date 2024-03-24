@@ -35,6 +35,9 @@ from .pygenda_calendar import Calendar
 # Singleton class to manage importing file
 class ImportController:
 
+    _dialog_grid = None # type:Gtk.Grid
+    _dialog_y = 0
+
     @classmethod
     def import_flow(cls) -> None:
         # Called to import a file
@@ -126,66 +129,81 @@ class ImportController:
         import_button = dialog.add_button(_('Import'), Gtk.ResponseType.ACCEPT)
         can_import = True # Will use this to enable/disable Import button
 
-        grid = Gtk.Grid()
-        dialog.get_content_area().add(grid)
-        grid.attach(Gtk.Label(_('Import entry?')), 0,0, 1,1)
+        cls._dialog_grid = Gtk.Grid()
+        dialog.get_content_area().add(cls._dialog_grid)
+        cls._dialog_y = 0
+
+        cls._add_row(_('Found entry:'), style=GUI.STYLE_SECTLABEL, halign=Gtk.Align.START)
+
         if 'SUMMARY' in en:
             desc_txt = en['SUMMARY']
             if len(desc_txt)>60:
                 desc_txt = desc_txt[:60]+u'…'
         else:
             desc_txt = _('None')
-        cls._add_row(grid, 1, _('Description:'), desc_txt)
+        cls._add_row_prop(_('Description:'), desc_txt)
         en_is_event = isinstance(en,iEvent) # False => a Todo
-        cls._add_row(grid, 2, _('Type:'), _('Event') if en_is_event else _('Todo'))
+        cls._add_row_prop(_('Type:'), _('Event') if en_is_event else _('Todo'))
 
         # Display extra information rows depending on entry type
-        y = 3
         if en_is_event:
             if 'DTSTART' in en:
-                cls._add_row(grid, y, _('Date/time:'), str(en['DTSTART'].dt))
+                cls._add_row_prop(_('Date/time:'), str(en['DTSTART'].dt))
             else:
-                grid.attach(Gtk.Label(_('Invalid event, no date found')), 1,y, 1,1)
+                cls._add_row(_('Invalid event, no date found'))
                 can_import = False
-            y += 1
             if can_import and 'RRULE' in en:
                 rr = en['RRULE']
                 if 'FREQ' in rr:
                     rep_type = rr['FREQ'][0].capitalize()
-                    cls._add_row(grid, y, _('Repeats:'), _(rep_type))
-                    y += 1
+                    cls._add_row_prop(_('Repeats:'), _(rep_type))
         else: # en is Todo
             if 'DUE' in en:
-                cls._add_row(grid, y, _('Due date:'), str(en['DUE'].dt))
-                y += 1
+                cls._add_row_prop(_('Due date:'), str(en['DUE'].dt))
 
         # Check entry UID. If present, use it to test if entry already exists
         if 'UID' not in en:
-            grid.attach(Gtk.Label(_('Invalid entry, no ID found')), 1,y, 1,1)
+            cls._add_row(_('Invalid entry, no ID found'), style=GUI.STYLE_ALERTLABEL, halign=Gtk.Align.CENTER)
             can_import = False
         elif Calendar.get_entry_by_uid(en['UID']) is not None: # entry exists?
-            grid.attach(Gtk.Label(_('An event with this ID already exists')), 1,y, 1,1)
+            cls._add_row(_('An event with this ID already exists'), style=GUI.STYLE_ALERTLABEL, halign=Gtk.Align.CENTER)
             can_import = False
 
         import_button.set_sensitive(can_import)
         dialog.show_all()
         res = dialog.run() # type:int
         dialog.destroy()
+        cls._dialog_grid = None # so grid & contents are cleaned up
         return res
 
 
-    @staticmethod
-    def _add_row(grid:Gtk.Grid, y:int, label:str, cont:str) -> None:
-        # Add text to bottom of grid in the form "label cont".
+    @classmethod
+    def _add_row(cls, txt:str, style:str=None, halign:Gtk.Align=None) -> None:
+        # Add text to next row of grid in the form "`txt`"
+        lab = Gtk.Label(txt)
+        if style:
+            lab.get_style_context().add_class(style)
+        if halign:
+            lab.set_halign(halign)
+        lab.set_yalign(0.5)
+        cls._dialog_grid.attach(lab, 0,cls._dialog_y, 2,1) # spans 2 columns
+        cls._dialog_y += 1
+
+
+    @classmethod
+    def _add_row_prop(cls, label:str, cont:str) -> None:
+        # Add text to next row of grid in the form "`label` `cont`"
         propnm_lab = Gtk.Label(label)
         propnm_lab.set_halign(Gtk.Align.END)
-        propnm_lab.set_yalign(0)
+        propnm_lab.set_yalign(0.5)
         propnm_lab.get_style_context().add_class(GUI.STYLE_TXTLABEL)
-        grid.attach(propnm_lab, 0,y, 1,1)
+        cls._dialog_grid.attach(propnm_lab, 0,cls._dialog_y, 1,1)
 
         cont_lab = Gtk.Label(cont)
         cont_lab.set_halign(Gtk.Align.START)
-        cont_lab.set_yalign(0)
+        cont_lab.set_yalign(0.5)
         cont_lab.set_xalign(0)
         cont_lab.get_style_context().add_class(GUI.STYLE_TXTPROP)
-        grid.attach(cont_lab, 1,y, 1,1)
+        cls._dialog_grid.attach(cont_lab, 1,cls._dialog_y, 1,1)
+
+        cls._dialog_y += 1

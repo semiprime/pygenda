@@ -1,6 +1,6 @@
 /*****************************
   pygenda.css
-  Copyright (C) 2022,2023 Matthew Lewis
+  Copyright (C) 2022-2024 Matthew Lewis
 
   This file is part of Pygenda.
 
@@ -588,6 +588,16 @@ notebook:focus tab:checked {
 	min-width:8em;
 	padding-right:0.4ex;
 	padding-left:0.4ex;
+}
+
+.sectlabel {
+	padding-bottom:.9ex;
+}
+
+.alertlabel {
+	font-style:italic;
+	padding-top:.9ex;
+	padding-bottom:.9ex;
 }
 
 /* This is to prevent visibility of transition when dialog is redisplayed */

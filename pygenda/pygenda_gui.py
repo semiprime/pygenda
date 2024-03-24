@@ -64,6 +64,8 @@ class GUI:
     SPINBUTTON_DEC_KEY = (Gdk.KEY_minus,Gdk.KEY_less)
     STYLE_TXTLABEL = 'tlabel'
     STYLE_TXTPROP = 'plabel'
+    STYLE_SECTLABEL = 'sectlabel'
+    STYLE_ALERTLABEL = 'alertlabel'
     STYLE_ERR = 'dialog_error'
 
     views = [] # type: List[Type]
