@@ -25,7 +25,7 @@ from gi.repository import Gtk
 from icalendar import Calendar as iCalendar, Event as iEvent, Todo as iTodo
 from locale import gettext as _ # type:ignore[attr-defined]
 from sys import stderr
-from typing import Optional, Union
+from typing import Optional, Union, Tuple
 
 # Pygenda components
 from .pygenda_gui import GUI
@@ -106,20 +106,38 @@ class ImportController:
 
 
     @classmethod
+    def _get_calendar_combobox(cls, is_event:bool) -> Optional[Gtk.ComboBox]:
+        # Return a combobox for selecting calendar for events.
+        # Combobox = None -> None required
+        if is_event:
+            cal_list = Calendar.calendar_displaynames_event_rw()
+        else: # is a todo
+            cal_list = Calendar.calendar_displaynames_todo_rw()
+        if len(cal_list) <= 1:
+            # No need for a combobox when there's no choice to make
+            return None
+        combobox = Gtk.ComboBoxText()
+        for id,dn in cal_list:
+            combobox.append(str(id), dn)
+        combobox.connect('key-press-event', GUI._combobox_keypress)
+        return combobox
+
+
+    @classmethod
     def _process_entry(cls, en:Union[iEvent,iTodo]) -> Union[iEvent,iTodo,bool,None]:
         # Import or skip entry in iCal file, depending on user interaction.
         # Return entry if entry imported, None if skipped, False if cancelled.
-        res = cls._import_entry_dialog(en)
+        res,cal = cls._import_entry_dialog(en)
         if res==Gtk.ResponseType.DELETE_EVENT:
             return False
         if res==Gtk.ResponseType.ACCEPT:
-            new_en = Calendar.new_entry_from_example(en, e_cats=None, cal_idx=None, use_ex_uid_created=True, use_ex_rpts=True, use_ex_alarms=False)
+            new_en = Calendar.new_entry_from_example(en, e_cats=None, cal_idx=cal, use_ex_uid_created=True, use_ex_rpts=True, use_ex_alarms=False)
             return new_en
         return None
 
 
     @classmethod
-    def _import_entry_dialog(cls, en:Union[iEvent,iTodo]) -> int:
+    def _import_entry_dialog(cls, en:Union[iEvent,iTodo]) -> Tuple[int,Optional[int]]:
         # Show/manage dialog to query importing single entry.
         # This will be shown for each entry in an imported iCal file.
         dialog = Gtk.Dialog(title=_('Import entry'), parent=GUI._window,
@@ -169,12 +187,23 @@ class ImportController:
             cls._add_row(_('An event with this ID already exists'), style=GUI.STYLE_ALERTLABEL, halign=Gtk.Align.CENTER)
             can_import = False
 
+        # If necessary, add dropdown box to select calendar to import into
+        cb_cal = None
+        if can_import:
+            cb_cal = cls._get_calendar_combobox(en_is_event)
+            if cb_cal is not None:
+                cb_cal.set_active(0)
+                cls._add_row_widget(_('Import to calendar:'), cb_cal)
+
+        # If can_import, sensitise the "Import" button
         import_button.set_sensitive(can_import)
+
         dialog.show_all()
         res = dialog.run() # type:int
+        dest_cal = None if cb_cal is None else int(cb_cal.get_active_id())
         dialog.destroy()
         cls._dialog_grid = None # so grid & contents are cleaned up
-        return res
+        return res, dest_cal
 
 
     @classmethod
@@ -206,4 +235,17 @@ class ImportController:
         cont_lab.get_style_context().add_class(GUI.STYLE_TXTPROP)
         cls._dialog_grid.attach(cont_lab, 1,cls._dialog_y, 1,1)
 
+        cls._dialog_y += 1
+
+
+    @classmethod
+    def _add_row_widget(cls, label:str, wid:Gtk.Widget) -> None:
+        # Add label + widget to next row of grid
+        propnm_lab = Gtk.Label(label)
+        propnm_lab.set_halign(Gtk.Align.END)
+        propnm_lab.set_yalign(0.5)
+        propnm_lab.get_style_context().add_class(GUI.STYLE_TXTLABEL)
+        cls._dialog_grid.attach(propnm_lab, 0,cls._dialog_y, 1,1)
+
+        cls._dialog_grid.attach(wid, 1,cls._dialog_y, 1,1)
         cls._dialog_y += 1

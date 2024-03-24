@@ -72,8 +72,8 @@ Medium
 * Support for multiple calendar sources is basic. To add: styling,
   set default calendar.
 
-* Import functionality is basic, work-in-progress (can't specify
-  calendar, todo list, can't replace existing entries).
+* Import functionality is work-in-progress (can't specify todo list,
+  can't replace existing entries).
 
 * How do we share events? Do we need an "Export" function?
 
