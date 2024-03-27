@@ -119,7 +119,7 @@ class ImportController:
         combobox = Gtk.ComboBoxText()
         for id,dn in cal_list:
             combobox.append(str(id), dn)
-        combobox.connect('key-press-event', GUI._combobox_keypress)
+        combobox.connect('key-press-event', GUI._combobox_keypress, Gtk.ResponseType.ACCEPT)
         return combobox
 
 

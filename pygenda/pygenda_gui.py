@@ -602,14 +602,14 @@ class GUI:
 
 
     @staticmethod
-    def _combobox_keypress(wid:Gtk.ComboBox, ev:Gdk.EventKey) -> bool:
+    def _combobox_keypress(wid:Gtk.ComboBox, ev:Gdk.EventKey, resp:Gtk.ResponseType=Gtk.ResponseType.OK) -> bool:
         # Called to handle extra combobox keyboard controls
         # BUG!! This is not called when the combobox is in "popout" state
         if ev.keyval==Gdk.KEY_Return:
             # Manually trigger default event on dialog box
             dlg = wid.get_toplevel()
             if dlg:
-                dlg.response(Gtk.ResponseType.OK)
+                dlg.response(resp)
             return True # done
 
         mdl = wid.get_model()
