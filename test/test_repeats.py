@@ -4,7 +4,7 @@
 # test_repeats.py
 # Run unit tests for repeating entry calculations in Pygenda
 #
-# Copyright (C) 2022,2023 Matthew Lewis
+# Copyright (C) 2022-2024 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -28,7 +28,6 @@ import icalendar
 from dateutil.rrule import rrulestr
 from copy import deepcopy
 from sys import version_info as python_version
-from tzlocal import get_localzone
 
 # Add '..' to path, so this can be run from test directory
 import sys
@@ -2148,6 +2147,240 @@ class TestRepeats(unittest.TestCase):
         self.check_count_rrule(event, date(2019,3,31), date(2019,4,1), 652) # Clocks go fwd
         self.check_count_rrule(event, date(2021,4,29), date(2021,4,30), 643) # Last day
         self.check_count_rrule(event, date(2021,1,1), date(2022,1,1), 80892) # Includes clocks going fwd
+
+
+    #@unittest.skip
+    def test_82_weekly_dst_utc(self) -> None:
+        # Create weekly repeating event with UTC timezone, so shifting
+        # local DST causes it to move between Monday and Sunday.
+        tz_UTC = tz.gettz('UTC')
+        self.assertTrue(tz_UTC) # check not None
+
+        # Set local timezone
+        tz_PAR = tz.gettz('Europe/Paris')
+        self.assertTrue(tz_PAR)
+        set_local_tz(tz_PAR)
+
+        event = self.create_event(
+            'Event {}'.format(sys._getframe().f_code.co_name),
+            datetime(2024,4,21,22,30,tzinfo=tz_UTC), # Time 22:30 UTC
+            rrule = {'FREQ':['WEEKLY']})
+
+        # Test first occs
+        self.check_count(event, date(2024,1,1), date(2024,4,22), 0)
+        self.check_count(event, date(2024,4,22), date(2024,4,23), 1) # Mon
+        self.check_count(event, date(2024,4,23), date(2024,4,29), 0)
+        self.check_count(event, date(2024,4,29), date(2024,4,30), 1)
+        self.check_count(event, date(2024,4,30), date(2024,5,6), 0)
+        self.check_count(event, date(2024,5,6), date(2024,5,7), 1)
+
+        # Test transition to winter
+        self.check_count(event, date(2024,10,21), date(2024,10,22), 1) # Mon
+        self.check_count(event, date(2024,10,22), date(2024,10,27), 0)
+        self.check_count(event, date(2024,10,27), date(2024,10,28), 1) # Sun
+        self.check_count(event, date(2024,10,28), date(2024,11,3), 0)
+        self.check_count(event, date(2024,11,3), date(2024,11,4), 1) # Sun
+        self.check_count(event, date(2024,11,4), date(2024,11,10), 0)
+        self.check_count(event, date(2024,11,10), date(2024,11,11), 1)
+        self.check_count(event, date(2024,11,11), date(2024,11,17), 0)
+        self.check_count(event, date(2024,11,17), date(2024,11,18), 1)
+        # Longer periods:
+        self.check_count(event, date(2024,10,14), date(2024,10,21), 1)
+        self.check_count(event, date(2024,10,21), date(2024,10,28), 2)
+        self.check_count(event, date(2024,10,28), date(2024,11,4), 1)
+
+        # Test transition to summer
+        self.check_count(event, date(2025,3,23), date(2025,3,24), 1) # Sun
+        self.check_count(event, date(2025,3,24), date(2025,3,31), 0)
+        self.check_count(event, date(2025,3,31), date(2025,4,1), 1) # Mon
+        self.check_count(event, date(2025,4,1), date(2025,4,7), 0)
+        self.check_count(event, date(2025,4,7), date(2025,4,8), 1) # Mon
+        # Longer periods:
+        self.check_count(event, date(2025,3,17), date(2025,3,24), 1)
+        self.check_count(event, date(2025,3,23), date(2025,4,1), 2)
+        self.check_count(event, date(2025,3,31), date(2025,4,7), 1)
+
+
+    #@unittest.skip
+    def test_83_weekly_dst_elsewhere(self) -> None:
+        # Create weekly repeating event in a different timezone, so shifting
+        # local DSTs cause it to move between Wednesday and Thursday.
+        tz_NY = tz.gettz('America/New_York')
+        self.assertTrue(tz_NY) # check not None
+
+        # Set local timezone
+        tz_PAR = tz.gettz('Europe/Paris')
+        self.assertTrue(tz_PAR)
+        set_local_tz(tz_PAR)
+
+        event = self.create_event(
+            'Event {}'.format(sys._getframe().f_code.co_name),
+            datetime(2024,4,24,18,30,tzinfo=tz_NY), # Time 18:30 NY
+            rrule = {'FREQ':['WEEKLY']})
+
+        # Test first occs
+        self.check_count(event, date(2024,1,1), date(2024,4,25), 0)
+        self.check_count(event, date(2024,4,25), date(2024,4,26), 1) # Thu
+        self.check_count(event, date(2024,4,26), date(2024,5,2), 0)
+        self.check_count(event, date(2024,5,2), date(2024,5,3), 1) # Thu
+
+        # Test transition to winter
+        # Local changes Oct-27; remote changes Nov-03
+        # In this period, local is +0, while remote +1
+        self.check_count(event, date(2024,10,24), date(2024,10,25), 1) # Thu
+        self.check_count(event, date(2024,10,25), date(2024,10,30), 0)
+        self.check_count(event, date(2024,10,30), date(2024,10,31), 1) # Wed!
+        self.check_count(event, date(2024,10,31), date(2024,11,7), 0)
+        self.check_count(event, date(2024,11,7), date(2024,11,8), 1) # Thu
+        self.check_count(event, date(2024,11,8), date(2024,11,14), 0)
+        self.check_count(event, date(2024,11,14), date(2024,11,15), 1) # Thu
+        self.check_count(event, date(2024,11,15), date(2024,11,21), 0)
+        self.check_count(event, date(2024,11,21), date(2024,11,22), 1) # Thu
+        # Longer periods:
+        self.check_count(event, date(2024,10,17), date(2024,10,24), 1)
+        self.check_count(event, date(2024,10,24), date(2024,10,31), 2)
+        self.check_count(event, date(2024,10,31), date(2024,11,7), 0)
+        self.check_count(event, date(2024,11,7), date(2024,11,14), 1)
+
+        # Test transition to summer
+        # Remote changes Mar-09; local changes Mar-30
+        # In this period, remote is +1, while local +0
+        self.check_count(event, date(2025,3,6), date(2025,3,7), 1) # Thu
+        self.check_count(event, date(2025,3,7), date(2025,3,12), 0)
+        self.check_count(event, date(2025,3,12), date(2025,3,13), 1) # Wed!
+        self.check_count(event, date(2025,3,13), date(2025,3,19), 0)
+        self.check_count(event, date(2025,3,19), date(2025,3,20), 1) # Wed!
+        self.check_count(event, date(2025,3,20), date(2025,3,26), 0)
+        self.check_count(event, date(2025,3,26), date(2025,3,27), 1) # Wed!
+        self.check_count(event, date(2025,3,27), date(2025,4,3), 0)
+        self.check_count(event, date(2025,4,3), date(2025,4,4), 1) # Thu
+        self.check_count(event, date(2025,4,4), date(2025,4,10), 0)
+        self.check_count(event, date(2025,4,10), date(2025,4,11), 1) # Thu
+        # Longer periods:
+        self.check_count(event, date(2025,2,27), date(2025,3,6), 1)
+        self.check_count(event, date(2025,3,6), date(2025,3,13), 2)
+        self.check_count(event, date(2025,3,13), date(2025,3,20), 1)
+        self.check_count(event, date(2025,3,20), date(2025,3,27), 1)
+        self.check_count(event, date(2025,3,27), date(2025,4,3), 0)
+        self.check_count(event, date(2025,4,3), date(2025,4,10), 1)
+
+
+    #@unittest.skip
+    def test_84_weekly_dst_other_hemisphere(self) -> None:
+        # Create weekly repeating event in a different timezone and
+        # hemisphere, so local DSTs cause it to move 2 hours
+        tz_NSW = tz.gettz('Australia/NSW')
+        self.assertTrue(tz_NSW) # check not None
+
+        # Set local timezone
+        tz_PAR = tz.gettz('Europe/Paris')
+        self.assertTrue(tz_PAR)
+        set_local_tz(tz_PAR)
+
+        event = self.create_event(
+            'Event {}'.format(sys._getframe().f_code.co_name),
+            datetime(2024,7,17,8,30,tzinfo=tz_NSW), # Time 8:30 NSW
+            rrule = {'FREQ':['WEEKLY']})
+
+        # Test first occs
+        # Remote is +0, local is +1
+        self.check_count(event, date(2024,1,1), date(2024,7,17), 0)
+        self.check_count(event, date(2024,7,17), date(2024,7,18), 1) # Wed
+        self.check_count(event, date(2024,7,18), date(2024,7,24), 0)
+        self.check_count(event, date(2024,7,24), date(2024,7,25), 1) # Wed
+
+        # Test transition to local winter (north) and remote summer (south)
+        # Remote changes Oct-06; local changes Oct-27
+        # In this period, remote and local are +1
+        self.check_count(event, date(2024,10,2), date(2024,10,3), 1) # Wed
+        self.check_count(event, date(2024,10,3), date(2024,10,8), 0)
+        self.check_count(event, date(2024,10,8), date(2024,10,9), 1) # Tue!
+        self.check_count(event, date(2024,10,9), date(2024,10,15), 0)
+        self.check_count(event, date(2024,10,15), date(2024,10,16), 1) # Tue
+        self.check_count(event, date(2024,10,16), date(2024,10,22), 0)
+        self.check_count(event, date(2024,10,22), date(2024,10,23), 1) # Tue
+        self.check_count(event, date(2024,10,23), date(2024,10,29), 0)
+        # Then, when both have changed, remote is +1, local is +0
+        self.check_count(event, date(2024,10,29), date(2024,10,30), 1) # Tue
+        self.check_count(event, date(2024,10,30), date(2024,11,5), 0)
+        self.check_count(event, date(2024,11,5), date(2024,11,6), 1) # Tue
+        self.check_count(event, date(2024,11,6), date(2024,11,12), 0)
+        self.check_count(event, date(2024,11,12), date(2024,11,13), 1) # Tue
+
+        # Test transition to local summer (north) and remote winter (south)
+        # Local changes Mar-30. Remote changes Apr-06
+        # Between these dates, remote and local are both +1
+        self.check_count(event, date(2025,3,18), date(2025,3,19), 1) # Tue
+        self.check_count(event, date(2025,3,19), date(2025,3,25), 0)
+        self.check_count(event, date(2025,3,25), date(2025,3,26), 1) # Tue
+        self.check_count(event, date(2025,3,26), date(2025,4,1), 0)
+        self.check_count(event, date(2025,4,1), date(2025,4,2), 1) # Tue
+        # Then local is +1 and remote is +0
+        self.check_count(event, date(2025,4,2), date(2025,4,9), 0)
+        self.check_count(event, date(2025,4,9), date(2025,4,10), 1) # Wed!
+        self.check_count(event, date(2025,4,10), date(2025,4,16), 0)
+        self.check_count(event, date(2025,4,16), date(2025,4,17), 1) # Wed
+        self.check_count(event, date(2025,4,17), date(2025,4,23), 0)
+
+
+    #@unittest.skip
+    def test_85_weekly_dst_other_hemisphere_2(self) -> None:
+        # Create weekly repeating event in a different timezone and
+        # hemisphere, so local DSTs cause it to move 2 hours.
+        # This is the same as the previous test, but with the event an
+        # hour later, so the local day changes occurs on different dates.
+        tz_NSW = tz.gettz('Australia/NSW')
+        self.assertTrue(tz_NSW) # check not None
+
+        # Set local timezone
+        tz_PAR = tz.gettz('Europe/Paris')
+        self.assertTrue(tz_PAR)
+        set_local_tz(tz_PAR)
+
+        event = self.create_event(
+            'Event {}'.format(sys._getframe().f_code.co_name),
+            datetime(2024,7,17,9,30,tzinfo=tz_NSW), # Time 9:30 NSW
+            rrule = {'FREQ':['WEEKLY']})
+
+        # Test first occs
+        # Remote is +0, local is +1
+        self.check_count(event, date(2024,1,1), date(2024,7,17), 0)
+        self.check_count(event, date(2024,7,17), date(2024,7,18), 1) # Wed
+        self.check_count(event, date(2024,7,18), date(2024,7,24), 0)
+        self.check_count(event, date(2024,7,24), date(2024,7,25), 1) # Wed
+
+        # Test transition to local winter (north) and remote summer (south)
+        # Remote changes Oct-06; local changes Oct-27
+        # In this period, remote and local are +1
+        self.check_count(event, date(2024,10,2), date(2024,10,3), 1) # Wed
+        self.check_count(event, date(2024,10,3), date(2024,10,9), 0)
+        self.check_count(event, date(2024,10,9), date(2024,10,10), 1) # Wed!
+        self.check_count(event, date(2024,10,10), date(2024,10,16), 0)
+        self.check_count(event, date(2024,10,16), date(2024,10,17), 1) # Wed
+        self.check_count(event, date(2024,10,17), date(2024,10,23), 0)
+        self.check_count(event, date(2024,10,23), date(2024,10,24), 1) # Wed
+        self.check_count(event, date(2024,10,24), date(2024,10,29), 0)
+        # Then, when both have changed, remote is +1, local is +0
+        self.check_count(event, date(2024,10,29), date(2024,10,30), 1) # Tue!
+        self.check_count(event, date(2024,10,30), date(2024,11,5), 0)
+        self.check_count(event, date(2024,11,5), date(2024,11,6), 1) # Tue
+        self.check_count(event, date(2024,11,6), date(2024,11,12), 0)
+        self.check_count(event, date(2024,11,12), date(2024,11,13), 1) # Tue
+
+        # Test transition to local summer (north) and remote winter (south)
+        # Local changes Mar-30. Remote changes Apr-06
+        # Between these dates, remote and local are both +1
+        self.check_count(event, date(2025,3,18), date(2025,3,19), 1) # Tue
+        self.check_count(event, date(2025,3,19), date(2025,3,25), 0)
+        self.check_count(event, date(2025,3,25), date(2025,3,26), 1) # Tue
+        self.check_count(event, date(2025,3,26), date(2025,4,2), 0)
+        self.check_count(event, date(2025,4,2), date(2025,4,3), 1) # Wed!
+        # Then local is +1 and remote is +0
+        self.check_count(event, date(2025,4,3), date(2025,4,9), 0)
+        self.check_count(event, date(2025,4,9), date(2025,4,10), 1) # Wed
+        self.check_count(event, date(2025,4,10), date(2025,4,16), 0)
+        self.check_count(event, date(2025,4,16), date(2025,4,17), 1) # Wed
+        self.check_count(event, date(2025,4,17), date(2025,4,23), 0)
 
 
     # Helper methods

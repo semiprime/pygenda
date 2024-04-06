@@ -1279,7 +1279,10 @@ class RepeatInfo:
 
     def __init__(self, event:iEvent, start:dt_date, stop:dt_date):
         # Note: start argument is INclusive, stop is EXclusive
-        self.dtstart = event['DTSTART'].dt
+        e_dtst = event['DTSTART']
+        if 'TZID' in e_dtst.params:
+            raise RepeatUnsupportedError('Unsupported repeat with TZID')
+        self.dtstart = e_dtst.dt
         rrule = event['RRULE']
         self.subday_rpt = rrule['FREQ'][0] in self.SUBDAY_REPEATS
         self.timed_rpt = self.subday_rpt or isinstance(self.dtstart, dt_datetime)
