@@ -25,6 +25,7 @@ from icalendar import Calendar as iCalendar, Event as iEvent, Todo as iTodo, Ala
 from datetime import timedelta, datetime as dt_datetime, time as dt_time, date as dt_date, timezone
 from dateutil.relativedelta import relativedelta
 from dateutil.rrule import rrulestr
+from dateutil import tz as du_tz
 from sys import stderr
 from uuid import uuid1
 from pathlib import Path
@@ -116,8 +117,8 @@ class Calendar:
             'all': CalendarConnector.TYPE_ALL
             }
 
-        # Local function to save duplicating code
-        def do_parse(sect:str, caltype:str) -> None:
+        # Local connector create function to save duplicating code
+        def do_create_conn(sect:str, caltype:str) -> None:
             caltype = caltype.lower()
             assert(caltype in CTMAP)
 
@@ -143,14 +144,17 @@ class Calendar:
             elif not conn.displayname: # Don't want empty display name
                 conn.displayname = sect
 
-            # Add _cal_idx attribute so we can find calendar from entry
+            # Add _cal_idx attribute so we can find calendar from entry.
+            # Also "fix tz": make sure entry timezones are detailed.
             calidx = len(cls.calConnectors)
             if conn.stores_events():
                 for ev in conn.cal.walk('VEVENT'):
                     ev._cal_idx = calidx
+                    cls._fix_tz(ev)
             if conn.stores_todos():
                 for td in conn.cal.walk('VTODO'):
                     td._cal_idx = calidx
+                    cls._fix_tz(td)
 
             # Finally, append our new connector to the list
             cls.calConnectors.append(conn)
@@ -168,7 +172,7 @@ class Calendar:
 
         caltype = Config.get('calendar','type')
         if caltype is not None:
-            do_parse('calendar', caltype)
+            do_create_conn('calendar', caltype)
 
         # look for 'calendar1', 'calendar2' etc.
         i = len(cls.calConnectors) # if no 'calendar' start at 'calendar0'
@@ -177,12 +181,12 @@ class Calendar:
             caltype = Config.get(sect, 'type')
             if caltype is None:
                 break
-            do_parse(sect, caltype)
+            do_create_conn(sect, caltype)
             i += 1
 
         if i==0:
             # No calendar or calendar0 - default to a file
-            do_parse('calendar', 'icalfile')
+            do_create_conn('calendar', 'icalfile')
 
         # Set default connectors for events and todos if not already set
         if cls._default_connector_event is None:
@@ -229,6 +233,22 @@ class Calendar:
     def _parse_config_evolution(calsect:str, flags:int) -> CalendarConnector:
         uid = Config.get(calsect, 'uid')
         return CalendarConnectorEvolution(uid, flags)
+
+
+    @staticmethod
+    def _fix_tz(entry:Union[iEvent,iTodo]) -> None:
+        # Function to set timezones for entry dates.
+        # Modifies entry dates in-place.
+        for l in ('DTSTART','DTEND','DUE'):
+            if l in entry:
+                prop = entry[l]
+                if 'TZID' in prop.params:
+                    # A du_tz object can hold complex TZ info, including
+                    # DST changes. So we want to use one with our datetime.
+                    tzid = prop.params['TZID']
+                    tz = du_tz.gettz(tzid) # A du_tz based on info from OS.
+                    if tz is not None:
+                        prop.dt = prop.dt.astimezone(tz)
 
 
     @staticmethod
