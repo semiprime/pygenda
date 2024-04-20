@@ -41,7 +41,7 @@ from calendar import monthrange
 
 # Pygenda components
 from .pygenda_config import Config
-from .pygenda_util import dt_lt, dt_lte, datetime_to_date, date_to_datetime, get_local_tz, dt_add_delta
+from .pygenda_util import dt_lt, dt_lte, datetime_to_date, date_to_datetime, get_local_tz, dt_add_delta, utc_now_stamp
 from .pygenda_entryinfo import EntryInfo
 
 
@@ -352,7 +352,6 @@ class Calendar:
         elif fallback is not None:
             tgt_en.add(elt, fallback)
 
-
     @classmethod
     def new_entry_from_example(cls, exen:Union[iEvent,iTodo], e_type:int=None, dt_start:dt_date=None, e_cats:Union[list,bool,None]=True, cal_idx:int=None, use_ex_uid_created:bool=False, use_ex_rpts:bool=False, use_ex_alarms:bool=True)-> Union[iEvent,iTodo]:
         # Add a new iCal entry to store given example iEvent as a "template".
@@ -396,7 +395,7 @@ class Calendar:
         if use_ex_uid_created:
             # DTSTAMP should be time of import/paste.
             # Creation/last modified likely to be sometime in the past.
-            utcnow =  dt_datetime.now(timezone.utc)
+            utcnow = utc_now_stamp()
             en.add('DTSTAMP', utcnow) # Required elt
             cls._en_add_elt_from_en(en, exen, 'CREATED')
             cls._en_add_elt_from_en(en, exen, 'LAST-MODIFIED')
@@ -586,8 +585,7 @@ class Calendar:
         # Update entry fields recording modified time: DTSTAMP.
         # if is_new, add CREATED; if not new, update LAST-MODIFIED.
         # All these fields use UTC.
-        # DateTime utcnow() function doesn't include TZ, so use now(tz.utc)
-        utcnow =  dt_datetime.now(timezone.utc)
+        utcnow = utc_now_stamp()
         Calendar._update_entry_field(en, 'DTSTAMP', utcnow) # Required elt
         if is_new:
             en.add('CREATED', utcnow) # Optional elt

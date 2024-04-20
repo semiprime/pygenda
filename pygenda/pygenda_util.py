@@ -3,7 +3,7 @@
 # pygenda_util.py
 # Miscellaneous utility functions for Pygenda.
 #
-# Copyright (C) 2022,2023 Matthew Lewis
+# Copyright (C) 2022-2024 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -314,3 +314,9 @@ def parse_timedelta(s:str) -> timedelta:
         td += MAP[s[j]](n)
         i = j+1
     return td
+
+
+def utc_now_stamp() -> datetime:
+    # Return current time suitable for use as an iCalendar timestamp.
+    # Spec says it must be UTC. iCal stuctures go to second accuracy.
+    return datetime.now(timezone.utc).replace(microsecond=0)

@@ -4,7 +4,7 @@
 # test_entries.py
 # Unit tests for events/todos - creation/modification/deletion
 #
-# Copyright (C) 2023 Matthew Lewis
+# Copyright (C) 2023,2024 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -25,6 +25,7 @@ import unittest
 from datetime import date, datetime, timedelta
 from os import remove as os_remove
 from icalendar import Event as iEvent, Todo as iTodo
+from time import sleep
 
 # Add '..' to path, so this can be run from test directory
 import sys
@@ -86,6 +87,8 @@ class TestEntries(unittest.TestCase):
         self.check_entry_timestamps_new(ev)
         self.check_entry_basic_properties(ev, 'event 01', date(1988,4,2))
 
+        sleep(1) # Sleep to check modtime > created time
+
         # Change date
         Calendar.update_entry(ev,EntryInfo(desc='event 01',start_dt=date(1988,4,3)))
         self.check_entry_timestamps_mod(ev)
@@ -126,6 +129,8 @@ class TestEntries(unittest.TestCase):
         ev = Calendar.new_entry(EntryInfo(desc='event 03', start_dt=date(1994,7,1)))
         self.check_entry_timestamps_new(ev)
         self.check_entry_basic_properties(ev, 'event 03', date(1994,7,1))
+
+        sleep(1) # Sleep to check modtime > created time
 
         Calendar.set_toggle_status_entry(ev, None)
         self.check_entry_timestamps_new(ev, uid_new=False)
@@ -235,6 +240,8 @@ class TestEntries(unittest.TestCase):
         self.check_entry_timestamps_new(td)
         self.check_entry_basic_properties(td, 'todo 01')
 
+        sleep(1) # Sleep to check modtime > created time
+
         # Change summary
         Calendar.update_entry(td,EntryInfo(type=EntryInfo.TYPE_TODO, desc='todo 01a'))
         self.check_entry_timestamps_mod(td)
@@ -298,6 +305,8 @@ class TestEntries(unittest.TestCase):
         td = Calendar.new_entry(EntryInfo(type=EntryInfo.TYPE_TODO, desc='todo 03'))
         self.check_entry_timestamps_new(td)
         self.check_entry_basic_properties(td, 'todo 03')
+
+        sleep(1) # Sleep to check modtime > created time
 
         Calendar.set_toggle_status_entry(td, None)
         self.check_entry_timestamps_new(td, uid_new=False)
