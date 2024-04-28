@@ -404,25 +404,59 @@ class Calendar:
 
         cls._en_add_elt_from_en(en, exen, 'SUMMARY', fallback='_')
         new_dt_start = None
+        new_dt_start_tzid = None
         en_repeats = False
         if en_is_event:
             # Some entry elements only relevant if an event (may change later)
-            ex_dt_start = exen['DTSTART'].dt if 'DTSTART' in exen else None
+            ex_dt_start = None
+            ex_dt_start_tzid = None
+            if 'DTSTART' in exen:
+                ex_dt_start = exen['DTSTART'].dt
+                params = exen['DTSTART'].params
+                if 'TZID' in params:
+                    ex_dt_start_tzid = params['TZID']
+                    tz = du_tz.gettz(ex_dt_start_tzid) # A du_tz from OS info
+                    if tz is not None:
+                        ex_dt_start = ex_dt_start.astimezone(tz)
             if dt_start:
                 if ex_dt_start:
-                    new_dt_start = ex_dt_start.replace(year=dt_start.year,month=dt_start.month,day=dt_start.day)
+                    src_date_local = ex_dt_start
+                    if isinstance(src_date_local, dt_datetime) and src_date_local.tzinfo is not None:
+                        # Pasting. Target dt is in *local* timezone.
+                        # Hence to get correct offset, need to convert
+                        # example entry's datetime to local time too.
+                        src_date_local = src_date_local.astimezone(get_local_tz())
+                    if not isinstance(dt_start, dt_datetime):
+                        # Target is just a date, so make delta a numer of days
+                        src_date_local = datetime_to_date(src_date_local)
+                    date_delta = dt_start - src_date_local
+                    new_dt_start = ex_dt_start + date_delta
+                    new_dt_start_tzid = None if isinstance(dt_start, dt_datetime) else ex_dt_start_tzid
                 else:
                     new_dt_start = dt_start
+                    new_dt_start_tzid = None
             elif ex_dt_start:
                 new_dt_start = ex_dt_start
+                new_dt_start_tzid = ex_dt_start_tzid
             else:
                 raise ValueError('Event has no date/time')
-            en.add('DTSTART', new_dt_start)
+            en.add('DTSTART', new_dt_start, parameters={'TZID':new_dt_start_tzid} if new_dt_start_tzid else None)
             if ex_dt_start and 'DTEND' in exen:
                 ex_dt_end = exen['DTEND'].dt
-                delta = new_dt_start - ex_dt_start
-                new_dt_end = ex_dt_end + delta
-                en.add('DTEND', new_dt_end)
+                ex_dt_end_tzid = None
+                if 'TZID' in exen['DTEND'].params:
+                    ex_dt_end_tzid = exen['DTEND'].params['TZID']
+                    end_tz = du_tz.gettz(ex_dt_end_tzid) # A du_tz from OS info
+                    if end_tz is not None:
+                        ex_dt_end = ex_dt_end.astimezone(end_tz)
+                new_dt_end_tzid = ex_dt_end_tzid
+                if dt_start:
+                    delta = new_dt_start - ex_dt_start
+                    new_dt_end = ex_dt_end + delta
+                else:
+                    # No dt_start, so just importing date/times directly
+                    new_dt_end = ex_dt_end
+                en.add('DTEND', new_dt_end, parameters={'TZID':new_dt_end_tzid} if new_dt_end_tzid else None)
             else:
                 cls._en_add_elt_from_en(en, exen, 'DURATION')
             if use_ex_rpts and 'RRULE' in exen:
