@@ -343,17 +343,31 @@ class Calendar:
         return entry
 
 
+    @classmethod
+    def paste_entry(cls, exen:Union[iEvent,iTodo], e_type:int=None, dt_start:dt_date=None, e_cats:Union[list,bool,None]=True)-> Union[iEvent,iTodo]:
+        # Paste - a wrapper fn around _new_entry_from_example()
+        r = cls._new_entry_from_example(exen, e_type=e_type, dt_start=dt_start, e_cats=e_cats)
+        return r
+
+
+    @classmethod
+    def import_entry(cls, exen:Union[iEvent,iTodo], cal_idx:int)-> Union[iEvent,iTodo]:
+        # Import - a wrapper fn around _new_entry_from_example()
+        return cls._new_entry_from_example(exen, e_cats=None, cal_idx=cal_idx, use_ex_uid_created=True, use_ex_rpts=True, use_ex_alarms=False)
+
+
     @staticmethod
     def _en_add_elt_from_en(tgt_en:Union[iEvent,iTodo], src_en:Union[iEvent,iTodo], elt:str, fallback:str=None):
         # Add src_en[elt] to tgt_en (if it exists).
         # If elt not present in src_en, and fallback provided, use fallback.
+        # Used by _new_entry_from_example()
         if elt in src_en:
             tgt_en.add(elt, src_en[elt])
         elif fallback is not None:
             tgt_en.add(elt, fallback)
 
     @classmethod
-    def new_entry_from_example(cls, exen:Union[iEvent,iTodo], e_type:int=None, dt_start:dt_date=None, e_cats:Union[list,bool,None]=True, cal_idx:int=None, use_ex_uid_created:bool=False, use_ex_rpts:bool=False, use_ex_alarms:bool=True)-> Union[iEvent,iTodo]:
+    def _new_entry_from_example(cls, exen:Union[iEvent,iTodo], e_type:int=None, dt_start:dt_date=None, e_cats:Union[list,bool,None]=True, cal_idx:int=None, use_ex_uid_created:bool=False, use_ex_rpts:bool=False, use_ex_alarms:bool=True)-> Union[iEvent,iTodo]:
         # Add a new iCal entry to store given example iEvent as a "template".
         # Used to implement pasting entries and importing entries.
         # Arguments:

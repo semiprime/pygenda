@@ -923,7 +923,7 @@ class GUI:
         try:
             ical = iCalendar.from_ical(sdat.get_data())
             en = ical.walk()[0]
-            cls.views[cls._view_idx].new_entry_from_example(en)
+            cls.views[cls._view_idx].paste_entry(en)
             cls.view_redraw(en_changes=True)
         except:
             # Fallback: request plain text from clipboard

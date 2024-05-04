@@ -186,11 +186,11 @@ class View_Todo(View):
 
 
     @classmethod
-    def new_entry_from_example(cls, en:Union[iEvent,iTodo]) -> None:
-        # Creates new entry based on entry en. Used for pasting entries.
+    def paste_entry(cls, en:Union[iEvent,iTodo]) -> None:
+        # Creates new entry based on entry en.
         # Type of entry depends on View (e.g. Todo View -> to-do item).
         cats = cls._list_default_cats[cls._cursor_list]
-        new_en = Calendar.new_entry_from_example(en, e_type=EntryInfo.TYPE_TODO, e_cats=cats)
+        new_en = Calendar.paste_entry(en, e_type=EntryInfo.TYPE_TODO, e_cats=cats)
         cls.cursor_goto_todo(new_en, cls._cursor_list)
 
 

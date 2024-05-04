@@ -114,8 +114,8 @@ class View:
 
 
     @classmethod
-    def new_entry_from_example(cls, en:Union[iEvent,iTodo]) -> None:
-        # Creates new entry based on entry en. Used for pasting entries.
+    def paste_entry(cls, en:Union[iEvent,iTodo]) -> None:
+        # Creates new entry based on entry en.
         # Type of entry should depend on View (e.g. Todo View -> to-do item).
         # Default implementation does nothing.
         pass
@@ -341,10 +341,10 @@ class View_DayUnit_Base(View):
     # Used as base class for Day & Year views
 
     @classmethod
-    def new_entry_from_example(cls, en:Union[iEvent,iTodo]) -> None:
-        # Creates new entry based on entry en. Used for pasting entries.
+    def paste_entry(cls, en:Union[iEvent,iTodo]) -> None:
+        # Creates new entry based on entry en.
         # Implementation for Week and Year Views - makes an event.
-        new_en = Calendar.new_entry_from_example(en, e_type=EntryInfo.TYPE_EVENT, dt_start=View._cursor_date)
+        new_en = Calendar.paste_entry(en, e_type=EntryInfo.TYPE_EVENT, dt_start=View._cursor_date)
         cls.cursor_goto_event(new_en)
 
 

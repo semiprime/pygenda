@@ -159,14 +159,14 @@ class TestEntries(unittest.TestCase):
 
 
     #@unittest.skip
-    def test_event_04_new_from_example(self) -> None:
-        # Test new_entry_from_example(), i.e. pasting events
+    def test_event_04_paste(self) -> None:
+        # Test pasting events
 
         ev = Calendar.new_entry(EntryInfo(desc='event 04', start_dt=date(2001,4,30)))
         self.check_entry_timestamps_new(ev)
         self.check_entry_basic_properties(ev, 'event 04', date(2001,4,30))
 
-        ev2 = Calendar.new_entry_from_example(ev)
+        ev2 = Calendar.paste_entry(ev)
         self.check_entry_timestamps_new(ev2)
         self.check_entry_basic_properties(ev2, 'event 04', date(2001,4,30), expected_count=2)
         self.assertNotEqual(ev['UID'], ev2['UID'])
@@ -176,7 +176,7 @@ class TestEntries(unittest.TestCase):
         self.check_entry_basic_properties(ev, 'event 04', date(2001,4,30), expected_count=2)
 
         # "Paste" to different date
-        ev3 = Calendar.new_entry_from_example(ev, dt_start=date(2001,5,2))
+        ev3 = Calendar.paste_entry(ev, dt_start=date(2001,5,2))
         self.check_entry_timestamps_new(ev3)
         self.check_entry_basic_properties(ev3, 'event 04', date(2001,5,2))
         self.assertNotEqual(ev['UID'], ev3['UID'])
@@ -340,14 +340,14 @@ class TestEntries(unittest.TestCase):
 
 
     #@unittest.skip
-    def test_todo_04_new_from_example(self) -> None:
-        # Test new_entry_from_example(), i.e. pasting todos
+    def test_todo_04_paste(self) -> None:
+        # Test pasting todos
 
         td = Calendar.new_entry(EntryInfo(type=EntryInfo.TYPE_TODO, desc='todo 04'))
         self.check_entry_timestamps_new(td)
         self.check_entry_basic_properties(td, 'todo 04')
 
-        td2 = Calendar.new_entry_from_example(td)
+        td2 = Calendar.paste_entry(td)
         self.check_entry_timestamps_new(td2)
         self.check_entry_basic_properties(td2, 'todo 04')
         self.assertNotEqual(td['UID'], td2['UID'])
@@ -357,7 +357,7 @@ class TestEntries(unittest.TestCase):
         self.check_entry_basic_properties(td, 'todo 04')
 
         # "Paste" to different todo list (category)
-        td3 = Calendar.new_entry_from_example(td, e_cats=('some cat',))
+        td3 = Calendar.paste_entry(td, e_cats=('some cat',))
         self.check_entry_timestamps_new(td3)
         self.check_entry_basic_properties(td3, 'todo 04')
         self.assertIn('CATEGORIES', td3)
@@ -371,7 +371,7 @@ class TestEntries(unittest.TestCase):
         self.check_entry_basic_properties(td, 'todo 04')
 
         # "Paste" duplicate in same todo list (category)
-        td4 = Calendar.new_entry_from_example(td3, e_cats=True) #True=keep cats
+        td4 = Calendar.paste_entry(td3, e_cats=True) #True=keep cats
         self.check_entry_timestamps_new(td4)
         self.check_entry_basic_properties(td4, 'todo 04')
         self.assertIn('CATEGORIES', td4)
@@ -380,7 +380,7 @@ class TestEntries(unittest.TestCase):
         self.assertNotEqual(td3['UID'], td4['UID'])
 
         # "Paste" duplicate td3 from one category to another
-        td5 = Calendar.new_entry_from_example(td3, e_cats=('another cat',))
+        td5 = Calendar.paste_entry(td3, e_cats=('another cat',))
         self.check_entry_timestamps_new(td5)
         self.check_entry_basic_properties(td5, 'todo 04')
         self.assertIn('CATEGORIES', td5)
