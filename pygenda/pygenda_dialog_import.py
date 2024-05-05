@@ -184,7 +184,7 @@ class ImportController:
             cls._add_row(_('Invalid entry, no ID found'), style=GUI.STYLE_ALERTLABEL, halign=Gtk.Align.CENTER)
             can_import = False
         elif Calendar.get_entry_by_uid(en['UID']) is not None: # entry exists?
-            cls._add_row(_('An event with this ID already exists'), style=GUI.STYLE_ALERTLABEL, halign=Gtk.Align.CENTER)
+            cls._add_row(_('An entry with this ID already exists'), style=GUI.STYLE_ALERTLABEL, halign=Gtk.Align.CENTER)
             can_import = False
 
         # If necessary, add dropdown box to select calendar to import into
