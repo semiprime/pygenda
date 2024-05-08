@@ -463,7 +463,7 @@ msgstr "_Taakweergave"
 
 #: pygenda_view_todo.py:66
 msgid "todo_view_accel"
-msgstr "todo_view_accel"
+msgstr "t"
 
 #: pygenda_view_todo.py:262
 msgid "Due:"
@@ -475,7 +475,7 @@ msgstr "_Weekweergave"
 
 #: pygenda_view_week.py:70
 msgid "week_view_accel"
-msgstr "week_view_accel"
+msgstr "w"
 
 #: pygenda_view_week.py:227
 msgid "Week 53/Week 1"
@@ -491,11 +491,11 @@ msgstr "_Jaarweergave"
 
 #: pygenda_view_year.py:72
 msgid "year_view_accel"
-msgstr "year_view_accel"
+msgstr "j"
 
 #: pygenda_widgets.py:62
 msgid "ymdhm"
-msgstr "ymdhm"
+msgstr "jmdum"
 
 #: ui/dialog_event.ui:138
 msgid "Date:"

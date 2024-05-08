@@ -433,6 +433,9 @@ msgid "Thanks for testing &amp; feedback"
 msgstr ""
 
 #: pygenda_gui.py:1044
+# This information is be shown in the credits pane of the "About" dialog.
+# Translators are encouraged to add their own name here, and may add a
+# website/email too. Pseudonyms and anonymity are also welcome.
 msgid "translator-credits"
 msgstr ""
 
@@ -445,6 +448,10 @@ msgid "_Todo View"
 msgstr ""
 
 #: pygenda_view_todo.py:66
+# Note to translators: the "translation" of this string should be a
+# a single letter that gives the Todo View shortcut (with ctrl+shift).
+# This is typically the first letter of the view name ("todo"/"tasks")
+# in the target language.
 msgid "todo_view_accel"
 msgstr ""
 
@@ -457,6 +464,10 @@ msgid "_Week View"
 msgstr ""
 
 #: pygenda_view_week.py:70
+# Note to translators: the "translation" of this string should be a
+# a single letter that gives the Week View shortcut (with ctrl+shift).
+# This is typically the first letter of the view name ("week"/"weekly")
+# in the target language.
 msgid "week_view_accel"
 msgstr ""
 
@@ -473,10 +484,18 @@ msgid "_Year View"
 msgstr ""
 
 #: pygenda_view_year.py:72
+# Note to translators: the "translation" of this string should be a
+# a single letter that gives the Year View shortcut (with ctrl+shift).
+# This is typically the first letter of the word "year" in the target
+# language. For example, in French this is "a" for "année".
 msgid "year_view_accel"
 msgstr ""
 
 #: pygenda_widgets.py:62
+# Note to translators: the "translation" of this string should be the
+# five letters that act as shortcuts in the date and time editors.
+# In English this corresponds to year/month/day/hour/minute = "ymdhm",
+# so in French année/mois/jour/heure/minute gives us "amjhm".
 msgid "ymdhm"
 msgstr ""
 
