@@ -21,8 +21,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-25 12:10+0100\n"
-"PO-Revision-Date: 2024-02-25 21:24+0100\n"
+"POT-Creation-Date: 2024-05-07 23:00+0200\n"
+"PO-Revision-Date: 2024-05-07 23:00+0200\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -39,19 +39,9 @@ msgstr "Propriétés de l’entrée"
 msgid "Summary:"
 msgstr "Sommaire :"
 
-#: pygenda_dialog_entryprops.py:129
+#: pygenda_dialog_entryprops.py:129 pygenda_dialog_import.py:164
 msgid "Type:"
 msgstr "Type :"
-
-# Added by hand - not detected by gettext
-#: pygenda_dialog_entryprops.py:129
-msgid "Event"
-msgstr "Évènement"
-
-# Added by hand - not detected by gettext
-#: pygenda_dialog_entryprops.py:129
-msgid "Todo"
-msgstr "Tâche"
 
 #: pygenda_dialog_entryprops.py:135 ui/dialog_event.ui:153
 #: ui/dialog_todo.ui:142
@@ -78,7 +68,8 @@ msgstr "Date/heure de fin :"
 msgid "Duration:"
 msgstr "Durée :"
 
-#: pygenda_dialog_entryprops.py:145 ui/dialog_todo.ui:250
+#: pygenda_dialog_entryprops.py:145 pygenda_dialog_import.py:180
+#: ui/dialog_todo.ui:250
 msgid "Due date:"
 msgstr "Date limite :"
 
@@ -165,7 +156,8 @@ msgstr "Dates omises :"
 msgid ";"
 msgstr " ;"
 
-#: pygenda_dialog_entryprops.py:200 ui/dialog_event.ui:405
+#: pygenda_dialog_entryprops.py:200 pygenda_dialog_import.py:177
+#: ui/dialog_event.ui:405
 msgid "Repeats:"
 msgstr "Répétition :"
 
@@ -198,15 +190,15 @@ msgid "Description ({}):"
 msgstr "Description ({}) :"
 
 #: pygenda_dialog_entryprops.py:268 pygenda_dialog_entryprops.py:271
-#: ui/dialog_event.ui:107 ui/dialog_todo.ui:86
+#: pygenda_dialog_import.py:162 ui/dialog_event.ui:107 ui/dialog_todo.ui:86
 msgid "Description:"
 msgstr "Description :"
 
-#: pygenda_dialog_entryprops.py:283
+#: pygenda_dialog_entryprops.py:284
 msgid "URL:"
 msgstr "URL :"
 
-#: pygenda_dialog_entryprops.py:296
+#: pygenda_dialog_entryprops.py:297
 msgid "Categories:"
 msgstr "Catégories :"
 
@@ -310,8 +302,9 @@ msgstr "Nouvel évènement"
 msgid "Edit Event"
 msgstr "Modifier évènement"
 
-#: pygenda_dialog_event.py:1202 ui/dialog_event.ui:423 ui/dialog_event.ui:717
-#: ui/dialog_event.ui:990 ui/dialog_todo.ui:185 ui/dialog_todo.ui:224
+#: pygenda_dialog_event.py:1202 pygenda_dialog_import.py:161
+#: ui/dialog_event.ui:423 ui/dialog_event.ui:717 ui/dialog_event.ui:990
+#: ui/dialog_todo.ui:185 ui/dialog_todo.ui:224
 msgid "None"
 msgstr "Rien"
 
@@ -335,6 +328,68 @@ msgstr "Resultats de recherche"
 msgid "No results found"
 msgstr "Pas d’entrées trouvées"
 
+#: pygenda_dialog_import.py:52
+msgid "Import File"
+msgstr "Importer fichier"
+
+#: pygenda_dialog_import.py:52
+msgid "_Import"
+msgstr "_Importer"
+
+#: pygenda_dialog_import.py:56
+msgid "iCalendar files"
+msgstr "fichiers iCalendar"
+
+#: pygenda_dialog_import.py:60
+msgid "All files"
+msgstr "Tous fichiers"
+
+#: pygenda_dialog_import.py:143
+msgid "Import entry"
+msgstr "Importer entrée"
+
+#: pygenda_dialog_import.py:145
+msgid "Skip"
+msgstr "Sauter"
+
+#: pygenda_dialog_import.py:147
+msgid "Import"
+msgstr "Importer"
+
+#: pygenda_dialog_import.py:154
+msgid "Found entry:"
+msgstr "Entrée trouvée :"
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_import.py:164 pygenda_dialog_entryprops.py:129
+msgid "Event"
+msgstr "Évènement"
+
+# Added by hand - not detected by gettext
+#: pygenda_dialog_import.py:164 pygenda_dialog_entryprops.py:129
+msgid "Todo"
+msgstr "Tâche"
+
+#: pygenda_dialog_import.py:169
+msgid "Date/time:"
+msgstr "Date/heure :"
+
+#: pygenda_dialog_import.py:171
+msgid "Invalid event, no date found"
+msgstr "Évènement mal formé, date pas trouvée"
+
+#: pygenda_dialog_import.py:184
+msgid "Invalid entry, no ID found"
+msgstr "Entrée mal formé, ID pas trouvée"
+
+#: pygenda_dialog_import.py:187
+msgid "An entry with this ID already exists"
+msgstr "Une entrée avec cet ID existe déjà"
+
+#: pygenda_dialog_import.py:196
+msgid "Import to calendar:"
+msgstr "Importer vers calendrier :"
+
 #: pygenda_dialog_todo.py:157
 msgid "New To-do"
 msgstr "Nouvelle tâche"
@@ -343,31 +398,31 @@ msgstr "Nouvelle tâche"
 msgid "Edit To-do"
 msgstr "Modifier tâche"
 
-#: pygenda_gui.py:939
+#: pygenda_gui.py:951
 msgid "Delete Entry"
 msgstr "Supprimer l’entrée"
 
-#: pygenda_gui.py:945
+#: pygenda_gui.py:957
 msgid "Delete all repeats:\n“{:s}”?"
 msgstr "Supprimer toutes les entrées\n« {:s} » ?"
 
-#: pygenda_gui.py:947
+#: pygenda_gui.py:959
 msgid "Delete entry:\n“{:s}”?"
 msgstr "Supprimer l’entrée\n« {:s} » ?"
 
-#: pygenda_gui.py:975 ui/main.ui:654
+#: pygenda_gui.py:987 ui/main.ui:656
 msgid "Go To"
 msgstr "Aller à"
 
-#: pygenda_gui.py:987
+#: pygenda_gui.py:999
 msgid "Go"
 msgstr "Y aller"
 
-#: pygenda_gui.py:1025
+#: pygenda_gui.py:1037
 msgid "Source code & documentation: "
 msgstr "Code source et documentation : "
 
-#: pygenda_gui.py:1030
+#: pygenda_gui.py:1042
 msgid ""
 "A calendar/agenda application written in Python/GTK3. The UI is inspired by "
 "the Agenda apps on the Psion Series 3 and Series 5 PDAs.\n"
@@ -380,11 +435,11 @@ msgstr ""
 "publiée à des fins de test et feedback. Il y aura des bogues ; veuillez les "
 "rapporter à : pygenda@semiprime.com."
 
-#: pygenda_gui.py:1031
+#: pygenda_gui.py:1043
 msgid "Thanks for testing &amp; feedback"
 msgstr "Merci pour les tests et les feedbacks"
 
-#: pygenda_gui.py:1042
+#: pygenda_gui.py:1044
 msgid "translator-credits"
 msgstr "Matthew Lewis"
 
@@ -520,7 +575,7 @@ msgid ""
 msgstr ""
 "<span weight=\"bold\">Attention :</span> Pygenda n’active <span style=\"italic\" weight=\"bold\">pas</span> les alarmes.\n"
 "Pour activer des alarmes, il faut un programme séparé pour s’en charger.\n"
-"(Pour enlever cet avertissement, voir la documentation.)"
+"(Pour désactiver cet avertissement, voir la documentation.)"
 
 #: ui/dialog_event.ui:895
 msgid "Understood"
@@ -599,117 +654,117 @@ msgid "_File"
 msgstr "_Fichier"
 
 #: ui/main.ui:84
-msgid "_Import File"
-msgstr "_Importer fichier"
+msgid "_Import File…"
+msgstr "_Importer fichier…"
 
-#: ui/main.ui:113
+#: ui/main.ui:115
 msgid "_Edit"
 msgstr "É_dition"
 
-#: ui/main.ui:160
+#: ui/main.ui:162
 msgid "_Delete…"
 msgstr "_Supprimer…"
 
-#: ui/main.ui:179
+#: ui/main.ui:181
 msgid "E_ntry"
 msgstr "E_ntrée"
 
-#: ui/main.ui:187
+#: ui/main.ui:189
 msgid "_New Event…"
 msgstr "_Nouvel évènement…"
 
-#: ui/main.ui:199
+#: ui/main.ui:201
 msgid "New _To-do…"
 msgstr "Nouvelle _tâche…"
 
-#: ui/main.ui:213
+#: ui/main.ui:215
 msgid "Show _Properties"
 msgstr "Afficher _propriétés"
 
-#: ui/main.ui:229
+#: ui/main.ui:231
 msgid "Edit _Time…"
 msgstr "Modifier _heure…"
 
-#: ui/main.ui:239
+#: ui/main.ui:241
 msgid "Edit _Repeats…"
 msgstr "Modifier _répétitions…"
 
-#: ui/main.ui:249
+#: ui/main.ui:251
 msgid "Edit _Alarms…"
 msgstr "Modifier _alarmes…"
 
-#: ui/main.ui:259
+#: ui/main.ui:261
 msgid "Edit _Details…"
 msgstr "Modifier _détails…"
 
-#: ui/main.ui:275
+#: ui/main.ui:277
 msgid "Set _Status"
 msgstr "_Statut"
 
-#: ui/main.ui:285
+#: ui/main.ui:287
 msgid "_None"
 msgstr "_Rien"
 
-#: ui/main.ui:295
+#: ui/main.ui:297
 msgid "_Confirmed"
 msgstr "_Confirmé"
 
-#: ui/main.ui:305
+#: ui/main.ui:307
 msgid "_Action required"
 msgstr "_Action requise"
 
-#: ui/main.ui:315
+#: ui/main.ui:317
 msgid "In _progress"
 msgstr "En _cours"
 
-#: ui/main.ui:325
+#: ui/main.ui:327
 msgid "_Completed"
 msgstr "_Achevé"
 
-#: ui/main.ui:335
+#: ui/main.ui:337
 msgid "Cance_lled"
 msgstr "_Annulé"
 
-#: ui/main.ui:345
+#: ui/main.ui:347
 msgid "_Tentative"
 msgstr "_Provisoire"
 
-#: ui/main.ui:363
+#: ui/main.ui:365
 msgid "_View"
 msgstr "_Afficharge"
 
-#: ui/main.ui:371
+#: ui/main.ui:373
 msgid "_View Mode"
 msgstr "_Mode"
 
-#: ui/main.ui:385
+#: ui/main.ui:387
 msgid "Switch _View"
 msgstr "Changer mode"
 
-#: ui/main.ui:442
+#: ui/main.ui:444
 msgid "_Tools"
 msgstr "_Outils"
 
-#: ui/main.ui:450
+#: ui/main.ui:452
 msgid "_Go To…"
 msgstr "_Aller à…"
 
-#: ui/main.ui:462
+#: ui/main.ui:464
 msgid "_Find…"
 msgstr "_Rechercher…"
 
-#: ui/main.ui:480
+#: ui/main.ui:482
 msgid "_Help"
 msgstr "Aid_e"
 
-#: ui/main.ui:548
+#: ui/main.ui:550
 msgid "New Entry"
 msgstr "Nouvelle entrée"
 
-#: ui/main.ui:601
+#: ui/main.ui:603
 msgid "View"
 msgstr "Mode"
 
-#: ui/main.ui:707
+#: ui/main.ui:709
 msgid "Zoom"
 msgstr "Zoom"
