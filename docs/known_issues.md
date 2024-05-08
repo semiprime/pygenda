@@ -104,8 +104,8 @@ Medium
 
 * No GUI for configuration settings/preferences
 
-* Only French & English translations are provided (and the French needs
-  checking by a native speaker).
+* More translations are needed - only French, English & Dutch so far.
+  (And the French needs checking by a native speaker.)
 
 * Setting number of days for "all day" events could be friendlier
   (e.g. show/set end date)

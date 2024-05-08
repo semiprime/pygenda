@@ -28,14 +28,14 @@ prioritise what we work on.
 
 Translations
 ------------
-Currently, Pygenda has translations for English (UK & US) and French.
+Currently, Pygenda is localised for English (UK & US), French and Dutch.
 We'd welcome other languages (or fixes to the existing languages –
 the French translation was not done by a native speaker).
 
 The easiest way to create a new translation is to take the most recent
-[French .po file](../pygenda/locale/fr/LC_MESSAGES/pygenda.po), and
-replace the French strings. You can email the new file to us, or make
-a PR on GitHub (please check that you agree with the licence – see
+template ([locale/pygenda.pot](../pygenda/locale/pygenda.pot)) and add
+the translated strings. You can email the new file to us or make a PR
+on GitHub (please check that you agree with the licence – see
 [COPYING](../COPYING)).
 
 Other devices
