@@ -16,13 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Pygenda. If not, see <https://www.gnu.org/licenses/>.
 #
-
 msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-07 23:00+0200\n"
-"PO-Revision-Date: 2024-02-25 2024-02-25 21:24+0100\n"
+"PO-Revision-Date: 2024-05-10 19:33+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -297,11 +296,11 @@ msgstr "{ord:s} tot laatste {day:s} van maand"
 
 #: pygenda_dialog_event.py:801
 msgid "New Event"
-msgstr "Nieuwe gebeurtenis"
+msgstr "Nieuwe afspraak"
 
 #: pygenda_dialog_event.py:812
 msgid "Edit Event"
-msgstr "Gebeurtenis bewerken"
+msgstr "Afspraak bewerken"
 
 #: pygenda_dialog_event.py:1202 pygenda_dialog_import.py:161
 #: ui/dialog_event.ui:423 ui/dialog_event.ui:717 ui/dialog_event.ui:990
@@ -339,19 +338,19 @@ msgstr "_Importeren"
 
 #: pygenda_dialog_import.py:56
 msgid "iCalendar files"
-msgstr ""
+msgstr "iCalendar-bestanden"
 
 #: pygenda_dialog_import.py:60
 msgid "All files"
-msgstr ""
+msgstr "Alle bestanden"
 
 #: pygenda_dialog_import.py:143
 msgid "Import entry"
-msgstr ""
+msgstr "Item importeren"
 
 #: pygenda_dialog_import.py:145
 msgid "Skip"
-msgstr ""
+msgstr "Overslaan"
 
 #: pygenda_dialog_import.py:147
 msgid "Import"
@@ -359,12 +358,12 @@ msgstr "Importeren"
 
 #: pygenda_dialog_import.py:154
 msgid "Found entry:"
-msgstr ""
+msgstr "Item aangetroffen:"
 
 # Added by hand - not detected by gettext
 #: pygenda_dialog_import.py:164 pygenda_dialog_entryprops.py:129
 msgid "Event"
-msgstr "Gebeurtenis"
+msgstr "Afspraak"
 
 # Added by hand - not detected by gettext
 #: pygenda_dialog_import.py:164 pygenda_dialog_entryprops.py:129
@@ -373,23 +372,23 @@ msgstr "Taak"
 
 #: pygenda_dialog_import.py:169
 msgid "Date/time:"
-msgstr "Datum/tijd:"
+msgstr "Datum/Tijd:"
 
 #: pygenda_dialog_import.py:171
 msgid "Invalid event, no date found"
-msgstr ""
+msgstr "Ongeldige afspraak: geen datum aangetroffen"
 
 #: pygenda_dialog_import.py:184
 msgid "Invalid entry, no ID found"
-msgstr ""
+msgstr "Ongeldig item: geen id aangetroffen"
 
 #: pygenda_dialog_import.py:187
 msgid "An entry with this ID already exists"
-msgstr ""
+msgstr "Er is al een item met deze id"
 
 #: pygenda_dialog_import.py:196
 msgid "Import to calendar:"
-msgstr ""
+msgstr "Importeren naar agenda:"
 
 #: pygenda_dialog_todo.py:157
 msgid "New To-do"
@@ -439,8 +438,8 @@ msgid ""
 "There will be bugs; please report them to: pygenda@semiprime.com."
 msgstr ""
 "Een kalender-/agendatoepassing gemaakt met behulp van Python/GTK3. De "
-"vormgeving is gebaseerd op de agenda-apps van de Psion Series 3- en "
-"Series 5-pda's.\n"
+"vormgeving is gebaseerd op de agenda-apps van de Psion Series 3- en Series 5-"
+"pda's.\n"
 "WAARSCHUWING: de toepassing is nog volop in ontwikkeling en slechts "
 "uitgebracht om feedback te kunnen ontvangen. Er zullen gegarandeerd bugs "
 "zijn; meld ze via pygenda@semiprime.com."
@@ -503,7 +502,7 @@ msgstr "Datum:"
 
 #: ui/dialog_event.ui:188
 msgid "Timed event:"
-msgstr "Gebeurtenis met tijdstip:"
+msgstr "Afspraak met tijdstip:"
 
 #: ui/dialog_event.ui:204
 msgid "No"
@@ -688,7 +687,7 @@ msgstr "Ite_m"
 
 #: ui/main.ui:189
 msgid "_New Event…"
-msgstr "_Nieuwe gebeurtenis…"
+msgstr "_Nieuwe afspraak…"
 
 #: ui/main.ui:201
 msgid "New _To-do…"
