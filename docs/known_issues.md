@@ -16,8 +16,9 @@ Major
   (Also, a Month View, e.g. https://www.rmrsoft.com/epoc/month.htm )
 
 * Setting alarms is under development. See [Usage.md](Usage.md) for
-  current details. (Note: a separate alarm program should handle the
-  actual alarm notifications.)
+  current details. Alarms with absolute times are not supported at all.
+  (Note: a separate alarm program should handle the actual alarm
+  notifications.)
 
 * Several event properties are not implemented (attendees, url,
   transparency (i.e. free/busy), user tags, attachments, etc.)
