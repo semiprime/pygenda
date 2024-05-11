@@ -495,7 +495,8 @@ class Calendar:
             exen_status = exen['STATUS']
             if exen_status in sl:
                 en.add('STATUS', exen_status)
-        cls._en_add_elt_from_en(en, exen, 'DUE')
+        if not en_is_event: # is Todo (spec says DUE is not allowed in events)
+            cls._en_add_elt_from_en(en, exen, 'DUE')
         cls._en_add_elt_from_en(en, exen, 'DESCRIPTION')
 
         en = cls.calConnectors[cal_idx].add_entry(en) # Write to store
