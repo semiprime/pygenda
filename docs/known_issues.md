@@ -74,7 +74,10 @@ Medium
   set default calendar.
 
 * Import functionality is work-in-progress (can't specify todo list,
-  can't replace existing entries).
+  can't replace existing entries, needs better error messages when
+  file could not be parsed, filechooser dialog isn't good on mobile,
+  how should alarms be handled?, a progress indicator when there are
+  multiple entries would be nice, more keyboard shortcuts).
 
 * How do we share events? Do we need an "Export" function?
 
@@ -197,6 +200,13 @@ Medium
 Minor
 -----
 (Note: minor bugs can still be irritating!)
+
+* If editable calendars only accept todo items, then trying to import an
+  event gives internal errors. (Probably similar importing a todo when
+  only events are accepted.)
+
+* If editable calendars only accept todo items then "New entry" softkey
+  is disabled - even in Todo View.
 
 * After creating/editing a repeating event, cursor not always on that event
 
