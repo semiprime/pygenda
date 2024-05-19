@@ -135,6 +135,10 @@ scrollbar slider {
 	padding:2px;
 }
 
+.yearview_daycell {
+	font-size:9pt;
+}
+
 .zoom0 #yearview_datecontent, .zoom0 #yearview_labeldate {
 	font-size:14pt;
 }
