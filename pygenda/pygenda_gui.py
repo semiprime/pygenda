@@ -439,7 +439,7 @@ class GUI:
             libclip_file = '{:s}/libpygenda_clipboard.so'.format(ospath.dirname(__file__))
             cls._lib_clip = ctypes.CDLL(libclip_file)
         except:
-            print('Warning: Failed to load clipboard library', file=stderr)
+            print('Notice: Clipboard library not found, using fallback', file=stderr)
 
 
     @classmethod
@@ -877,22 +877,17 @@ class GUI:
         # Handler to implement "cut" from GUI, e.g. cut clicked in menu
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en and 'SUMMARY' in en:
-            if cls._lib_clip is None:
-                # Don't do fallback - might lead to unexpected data loss
-                print('Warning: No clipboard library, cut not available', file=stderr)
-            elif 'RRULE' in en: # repeating entry
+            if 'RRULE' in en: # repeating entry
                 # Need to think about how to implement this from UI side.
                 # Problem: Does user expect single occurrence to be cut, or all?
                 # Maybe bring up dialog "Cut single occurrence, or all repeats?"
                 # Then, do we do the came for Copying repeating entries?
                 # How do we adapt repeats when moved to a different date?
                 print('Warning: Cutting repeating entries not implemented', file=stderr)
-            else:
-                txtbuf = bytes(en['SUMMARY'], 'utf-8')
-                calbuf = en.to_ical()
-                cls._lib_clip.set_cb(ctypes.create_string_buffer(txtbuf),ctypes.create_string_buffer(calbuf))
-                Calendar.delete_entry(en)
-                cls.view_redraw(en_changes=True)
+                return True
+            cls._put_entry_on_clipboard(en)
+            Calendar.delete_entry(en)
+            cls.view_redraw(en_changes=True)
         return True # don't propagate event
 
 
@@ -901,16 +896,19 @@ class GUI:
         # Handler to implement "copy" from GUI, e.g. copy clicked in menu
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en and 'SUMMARY' in en:
-            if cls._lib_clip is None:
-                print('Warning: No clipboard library, fallback to text copy', file=stderr)
-                cb = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-                txt = en['SUMMARY']
-                cb.set_text(txt, -1)
-            else:
-                txtbuf = bytes(en['SUMMARY'], 'utf-8')
-                calbuf = en.to_ical()
-                cls._lib_clip.set_cb(ctypes.create_string_buffer(txtbuf),ctypes.create_string_buffer(calbuf))
+            cls._put_entry_on_clipboard(en)
         return True # don't propagate event
+
+
+    @classmethod
+    def _put_entry_on_clipboard(cls, en:Union[iEvent,iTodo]) -> None:
+        calbuf = en.to_ical()
+        if cls._lib_clip is None:
+            cb = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+            cb.set_text(calbuf.decode('utf-8'), -1)
+        else:
+            txtbuf = bytes(en['SUMMARY'], 'utf-8')
+            cls._lib_clip.set_cb(ctypes.create_string_buffer(txtbuf),ctypes.create_string_buffer(calbuf))
 
 
     @classmethod
@@ -929,6 +927,19 @@ class GUI:
             # Fallback: request plain text from clipboard
             txt = cb.wait_for_text()
             if txt: # might be None
+                if cls._lib_clip is None:
+                    # "Text" might be ical data, let's check...
+                    try:
+                        ical = iCalendar.from_ical(txt)
+                        en = ical.walk()[0]
+                        cls.views[cls._view_idx].paste_entry(en)
+                        cls.view_redraw(en_changes=True)
+                        return True
+                    except:
+                        pass
+                # We got text. Either clipboard library is present, or
+                # there was an exception trying to treat it as ical data.
+                # So, let's just treat it as plain text...
                 txt = cls._sanitise_pasted_text(txt)
                 # Type of entry created depends on View, so call View paste fn
                 if txt:

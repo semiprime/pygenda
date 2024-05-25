@@ -17,11 +17,15 @@ clipboard library manually, as in the section below.)
 
 Building clipboard library
 --------------------------
-This is a small C library required for cutting/copying entries. Built
-automatically with `./setup.py install`. Tested on Gemian, postmarketOS
-and Slackware, and probably works on other Linux distributions. It might
-need tweaking for Windows/MacOS/BSD/other. To build by hand and copy to
-the correct location in the source tree:
+This is a small C library to improve cutting/copying behaviour.
+Specifically it allows Pygenda entries to be copied+pasted as text
+into applications that expect text, and as calendar entries into
+applications that expect clendar entries. Built automatically with
+`./setup.py install`. Tested on Gemian, postmarketOS and Slackware,
+and probably works on other Linux distributions. It might need
+tweaking for Windows/MacOS/BSD/other.
+
+To build by hand and copy to the correct location in the source tree:
 
     cd csrc
     cmake .

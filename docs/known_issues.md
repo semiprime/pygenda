@@ -128,11 +128,6 @@ Medium
 
 * An undo/redo function would be useful
 
-* Copying/cutting entries doesn't work on all platforms. This functionality
-  relies on a small C library, due to limits of Python GObject module.
-  Builds on my devices and on Gemini. Needs looking at for other Linux
-  distributions and Windows/MacOS.
-
 * Softkeys should be user-customisable
 
 * Date/time widgets are not easy to click (tap) on since most of the area
