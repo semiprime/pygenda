@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-07 23:00+0200\n"
+"POT-Creation-Date: 2024-05-25 19:07+0200\n"
 "PO-Revision-Date: 2024-05-07 23:00+0200\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
@@ -398,31 +398,31 @@ msgstr "Nouvelle tâche"
 msgid "Edit To-do"
 msgstr "Modifier tâche"
 
-#: pygenda_gui.py:951
+#: pygenda_gui.py:962
 msgid "Delete Entry"
 msgstr "Supprimer l’entrée"
 
-#: pygenda_gui.py:957
+#: pygenda_gui.py:968
 msgid "Delete all repeats:\n“{:s}”?"
 msgstr "Supprimer toutes les entrées\n« {:s} » ?"
 
-#: pygenda_gui.py:959
+#: pygenda_gui.py:970
 msgid "Delete entry:\n“{:s}”?"
 msgstr "Supprimer l’entrée\n« {:s} » ?"
 
-#: pygenda_gui.py:987 ui/main.ui:656
+#: pygenda_gui.py:998 ui/main.ui:656
 msgid "Go To"
 msgstr "Aller à"
 
-#: pygenda_gui.py:999
+#: pygenda_gui.py:1010
 msgid "Go"
 msgstr "Y aller"
 
-#: pygenda_gui.py:1037
+#: pygenda_gui.py:1048
 msgid "Source code & documentation: "
 msgstr "Code source et documentation : "
 
-#: pygenda_gui.py:1042
+#: pygenda_gui.py:1053
 msgid ""
 "A calendar/agenda application written in Python/GTK3. The UI is inspired by "
 "the Agenda apps on the Psion Series 3 and Series 5 PDAs.\n"
@@ -435,11 +435,11 @@ msgstr ""
 "publiée à des fins de test et feedback. Il y aura des bogues ; veuillez les "
 "rapporter à : pygenda@semiprime.com."
 
-#: pygenda_gui.py:1043
+#: pygenda_gui.py:1054
 msgid "Thanks for testing &amp; feedback"
 msgstr "Merci pour les tests et les feedbacks"
 
-#: pygenda_gui.py:1044
+#: pygenda_gui.py:1055
 msgid "translator-credits"
 msgstr "Matthew Lewis"
 
