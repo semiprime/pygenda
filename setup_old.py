@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# setup.py for Pygenda
+# setup_old.py for Pygenda
 #
 # Copyright (C) 2022,2023 Matthew Lewis
 #
@@ -19,6 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Pygenda. If not, see <https://www.gnu.org/licenses/>.
 #
+
+# This is an old setup script for those who need it.
 
 # Example usage:
 #   ./setup.py install [--user]

@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=57.5", "setuptools_scm>=6.3"]
+
+
+[project]
+name = "pygenda"
+version = "0.3.3-dev0"
+authors = [
+    { name="Matthew Lewis", email="pygenda@semiprime.com" },
+]
+# license = "GPLv3 only"
+description = "An agenda application inspired by Agenda programs on Psion PDAs."
+readme = "description.md"
+keywords = [ "calendar", "agenda", "todolist", "diary", "pda", "psion", "geminipda", "linux-mobile" ]
+
+requires-python = ">=3.5"
+dependencies = [
+    "PyGObject",
+    "python-dateutil",
+    "icalendar",
+    "tzlocal!=2.*", # Gemian on GeminiPDA does not work with tzlocal 2.x
+    "num2words",
+]
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Handhelds/PDA's",
+    "Environment :: X11 Applications :: GTK",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Office/Business :: Scheduling",
+]
+
+
+[tool.setuptools]
+packages = ["pygenda"]
+
+[tool.setuptools.exclude-package-data]
+pygenda = ["mypy.ini", "*.pot", "*.po"]
+
+[tool.setuptools_scm]
+
+
+[project.urls]
+Homepage = "https://github.com/semiprime/pygenda"

@@ -101,9 +101,13 @@ readme), with the command:
 
 Better/recommended: install the Python module with (for example)...
 
-	./setup.py develop --user
+	pip3 install --editable . --user
 
-(You can uninstall the module with `pip3 uninstall pygenda`.)
+Or, for older versions of pip/Python:
+
+    ./setup_old.py develop --user
+
+(In either case you can uninstall the module with `pip3 uninstall pygenda`.)
 
 Now you can now run Pygenda from anywhere with:
 

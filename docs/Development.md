@@ -2,30 +2,36 @@ Pygenda Development
 ===================
 Miscellaneous hints/notes for development.
 
-Installing in Develop mode
---------------------------
-In Python, you can install modules in Develop mode with:
+Installing in Development mode
+------------------------------
+In Python, you can install modules in Development (Editable) mode with:
 
-    ./setup.py develop [--user]
+    pip3 install --editable . [--user]
 
-Rather than copying the files over, this just creates a link to the
+Or, for older versions of pip3 (e.g. on Gemini):
+
+    ./setup_old.py develop --user
+
+Rather than copying the application files, this creates a link to the
 source directory, so any changes you make in the source are instantly
 available in the "installed" version.
 
-(Note that if you install in Develop mode, you'll need to build the
-clipboard library manually, as in the section below.)
-
-Building clipboard library
---------------------------
+Clipboard library
+-----------------
 This is a small C library to improve cutting/copying behaviour.
 Specifically it allows Pygenda entries to be copied+pasted as text
 into applications that expect text, and as calendar entries into
-applications that expect clendar entries. Built automatically with
-`./setup.py install`. Tested on Gemian, postmarketOS and Slackware,
-and probably works on other Linux distributions. It might need
-tweaking for Windows/MacOS/BSD/other.
+applications that expect calendar entries. Tested on Gemian,
+postmarketOS and Slackware, and probably works on other Linux
+distributions. It might need tweaking for Windows/MacOS/BSD/other.
 
-To build by hand and copy to the correct location in the source tree:
+In order to be as universally compatible as possible, the clipboard
+library is not included in the default wheel package. However, you can
+build the library yourself, and if you are packaging Pygenda (e.g. for
+a specific OS or a Flatpak) it is recommended that you include an
+appropriate version of libpygenda_clipboard.so for improved functionality.
+
+To build and copy to the correct location in the source tree:
 
     cd csrc
     cmake .
@@ -75,8 +81,9 @@ Checklist for releases
 * Check new code is appropriately commented and annotated
 * Check any doc changes made (e.g. known issues, config, this checklist)
 * Run `mypy .` in source directory, check any new messages
-* If any new dependencies are required, add them to setup.py
-* Check setup.py install works & the installed module runs correctly
+* If any new dependencies are required, add them to pyproject.toml
+* Check `python3 -m build` then `pip3 install dist/pygenda-*.whl` works
+  and the installed module runs correctly
 * Create various events & todo items. Close & reopen Pygenda and check
   they are still there (with iCal file, EDS, & CalDAV server).
 * Check copy/cut/paste works, including e.g. event date/time, multi-day events,
@@ -94,7 +101,7 @@ Checklist for releases
 * Check darkmode & backgrounds CSS still work
 * Check mouse clicks/touchscreen taps/swipes work (all views)
 * Check start_week_day!=Monday still works (all views)
-* Increase version number
+* Increase version number in pygenda_version.py & pyproject.toml
 
 Checking repeats
 ----------------
@@ -116,19 +123,25 @@ Debugging
 
     GTK_DEBUG=interactive python3 -m pygenda
 
-Test setup
-----------
-Can test setup.py by using a virtual Python environment:
+Test packaging
+--------------
+You can test packaging using a virtual Python environment:
 
+    # In root directory of Pygenda source, build a wheel
+    python3 -m build
+    # Set up and activate the virtual environment
+    cd ~
     python3 -m venv venv_dir
     source venv_dir/bin/activate
+    # Install the wheel
     cd PYGENDA_SRC_DIR
-    ./setup.py install
+    pip3 install dist/pygenda-*.whl
     # Check no install errors
     cd ~
-    # Check pygenda runs with file
+    # Check pygenda runs with a file
     python3 -m pygenda -f test.ics
     # (Optionally install caldav and check pygenda can use it)
+    # Exit and tidy up
     deactivate
     rm -r venv_dir
 
