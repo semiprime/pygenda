@@ -31,23 +31,32 @@ Enter the following commands in the command prompt (requires password):
     sudo apt update
     sudo apt install python3
     sudo apt install python3-pip
-    sudo apt install libgtk-3-0
     sudo apt install fonts-dejavu
     sudo apt install python3-gi python3-cairo python3-icalendar python3-dateutil python3-tzlocal python3-num2words
 
 (Note: I'm using the apt versions of the Python3 module dependencies here.
-This is for better compatibility (hopefully) with other operating system
-components. If you are already using different versions of these modules,
-you may want to stick with those versions. Alternatively, you may want to
-keep the Pygenda module dependencies separate from the OS modules by
-running Pygenda in a Python virtual environment.)
+This is for better compatibility with other operating system components.
+If you are already using different versions of these modules, you may
+want to stick with those versions. Alternatively, you may want to keep
+the Pygenda module dependencies separate from the OS modules by running
+Pygenda in a Python virtual environment.)
+
+(Note 2: You may also need to install a libgtk3 package. If you have a GUI
+then an appropriate libgtk3 is probably already installed, so you should
+stick with that.)
 
 Install Pygenda
 ---------------
 Enter the following command to download and install Pygenda from the
 PyPI repository:
 
-    pip3 install --user pygenda
+    pip3 install pygenda --user --no-deps
+
+(In recent versions of pip3 you may need to add the `--break-system-packages`
+option. This sounds scary (probably deliberately) but in this case it is safe,
+because there is no Pygenda package in Debian that you might interfere with,
+you are not installing other Python modules (the `--no-deps` makes sure of
+this), and Pygenda is not being installed in the system files.)
 
 Test Pygenda runs:
 

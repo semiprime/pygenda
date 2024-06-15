@@ -33,6 +33,7 @@ test. Feedback can be sent to pygenda@semiprime.com.
 This guide has been tested on a Wileyfox Swift ('crackling') device
 running PostmarketOS 23.06 with Phosh 0.30.0 (pre-built postmarketOS
 image, id 20230912-0014, with python3-3.11.5-r0 and gtk+3.0-3.24.38-r1).
+It was revised for PostmarketOS 23.12.
 
 Known issues
 ------------
@@ -58,11 +59,11 @@ Enter the following commands in a command prompt (requires password):
     sudo apk add py3-gobject3 py3-cairo py3-icalendar py3-dateutil py3-tzlocal py3-num2words
 
 (Note: I'm using the apk versions of the Python3 module dependencies here.
-This is for better compatibility (hopefully) with other operating system
-components. If you are already using different versions of these modules,
-you may want to stick with those versions. Alternatively, you may want to
-keep the Pygenda module dependencies separate from the OS modules by
-running Pygenda in a Python virtual environment.)
+This is for better compatibility with other operating system components.
+If you are already using different versions of these modules, you may
+want to stick with those versions. Alternatively, you may want to keep
+the Pygenda module dependencies separate from the OS modules by running
+Pygenda in a Python virtual environment.)
 
 (Note 2: If you decide to install pycairo via pip, you will need GCC
 installed, and maybe some other build tools.)
@@ -72,14 +73,15 @@ Install Pygenda
 Enter the following command to download and install Pygenda from the
 PyPI repository:
 
-    pip3 install pygenda --user --no-deps
+    pip3 install pygenda --user --no-deps --break-system-packages
 
-(In recent versions of pmOS (v23.12+) you probably need to add the
-`--break-system-packages` option. This sounds scary (which I guess is
-deliberate) but in this case it is safe, because there is no Pygenda
+The `--break-system-packages` option sounds scary (probably deliberately).
+It simply tells pip3 to proceed even though we're in an environment
+where packages are managed by apk. In some cases this can cause
+problems, but in this case it is safe because there is no Pygenda
 package in pmOS that you might interfere with, you are not installing
-other Python module dependencies, and Pygenda is not being installed
-in the system files.)
+any other Python modules (the `--no-deps` option makes sure of this),
+and Pygenda is not being installed in the system files.
 
 Test Pygenda runs:
 
