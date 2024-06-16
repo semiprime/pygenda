@@ -50,12 +50,15 @@ def datetime_to_time(dt:date):
 
 # For some calculations, we need to have a timezone that is "aware" of
 # summer time changes to make correct, e.g. hourly, calculations
-_local_tz = get_localzone()
-if not hasattr(_local_tz,'unwrap_shim') and hasattr(_local_tz,'zone'):
-    # Old tzlocal API, so need to create tzinfo object
-    _local_tz = du_tz.gettz(_local_tz.zone)
-# Alternative for Linuxes:
-#_local_tz = du_tz.tzfile('/etc/localtime')
+try:
+    _local_tz = get_localzone() # type:tzinfo
+    if not hasattr(_local_tz,'unwrap_shim') and hasattr(_local_tz,'zone'):
+        # Old tzlocal API, so need to create tzinfo object
+        _local_tz = du_tz.gettz(_local_tz.zone) # type:ignore
+except:
+    # Fallback method for Linuxes:
+    _local_tz = du_tz.tzfile('/etc/localtime')
+
 
 def get_local_tz() -> Any:
     # Getter. Can be assumed to return a zoneinfo object.
