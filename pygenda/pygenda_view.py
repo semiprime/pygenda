@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # pygenda_view.py
-# "View" class definition - base class for Week View, Year View.
+# "View" class definition - base class for Week/Year/Todo View.
 # Provides default implementations of functions.
 #
 # Copyright (C) 2022-2024 Matthew Lewis
@@ -31,7 +31,7 @@ from typing import Optional, Union
 from .pygenda_gui import GUI
 from .pygenda_config import Config
 from .pygenda_dialog_event import EventDialogController
-from .pygenda_util import datetime_to_time, datetime_to_date, date_to_datetime, format_time, format_compact_date, format_compact_time, format_compact_datetime, dt_lte, get_local_tz
+from .pygenda_util import datetime_to_time, datetime_to_date, date_to_datetime, format_time, format_compact_date, format_compact_time, format_compact_datetime, dt_lte, get_local_tz, tzinfo_display_name
 from .pygenda_calendar import Calendar
 from .pygenda_entryinfo import EntryInfo
 
@@ -206,7 +206,13 @@ class View:
             l_txt = ' (@{:s})'.format(loc)
         else:
             l_txt = ''
-        lab.set_text(u'{:s}{:s}{:s}{:s}'.format(d_txt,endtm,l_txt,icons))
+        z_txt = ''
+        if isinstance(dt_st,dt_datetime) and dt_st.tzinfo is not None and dt_st.utcoffset()!=dt_st.astimezone(get_local_tz()).utcoffset():
+            z_nm = tzinfo_display_name(ev['DTSTART'])
+            if z_nm:
+                z_tm = format_time(dt_st)
+                z_txt = u'({:s} {:s}) '.format(z_tm,z_nm)
+        lab.set_text(u'{:s}{:s}{:s}{:s}{:s}'.format(z_txt,d_txt,endtm,l_txt,icons))
         View.add_event_styles(lab, ev)
         return lab
 

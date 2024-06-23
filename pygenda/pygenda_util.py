@@ -26,7 +26,7 @@ from datetime import date, time, datetime, timedelta, tzinfo, timezone
 from dateutil import tz as du_tz
 from tzlocal import get_localzone
 import locale
-from typing import Tuple, Any, Union
+from typing import Tuple, Any, Union, Optional
 
 from .pygenda_config import Config
 
@@ -164,6 +164,21 @@ def format_compact_datetime(dt:datetime, show_year:bool, aslocal:bool=False) -> 
     else:
         fmt = '{day:s} {date:d} {mon:s}, {tm:s}'
     return fmt.format(day=day_abbr[dt.weekday()], date=dt.day, mon=month_abbr[dt.month], yr=dt.year, tm=format_compact_time(dt))
+
+
+def tzinfo_display_name(idt) -> Optional[str]:
+    # Return name for timezone given idt, a datetime element of an iEvent/iTodo
+    if 'TZID' in idt.params:
+        nm = idt.params['TZID'] # type:str
+        if nm:
+            sl = nm.rfind('/')
+            if sl>=0:
+                nm = nm[sl+1:]
+            nm = nm.replace('_',u' ')
+            return nm
+    if idt.dt.tzinfo is not None:
+        return(str(idt.dt.tzinfo))
+    return None
 
 
 def day_in_week(dt:date) -> int:
