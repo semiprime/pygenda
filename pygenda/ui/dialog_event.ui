@@ -989,8 +989,8 @@ A separate alarm handler is required for alarms to activate.
 												<items>
 													<item translatable="yes">None</item>
 													<item id="TENTATIVE" translatable="yes">Tentative</item>
-													<item id="CANCELLED" translatable="yes">Cancelled</item>
 													<item id="CONFIRMED" translatable="yes">Confirmed</item>
+													<item id="CANCELLED" translatable="yes">Cancelled</item>
 												</items>
 											</object>
 											<packing>
