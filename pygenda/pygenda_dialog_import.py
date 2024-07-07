@@ -106,16 +106,20 @@ class ImportController:
 
 
     @classmethod
-    def _get_calendar_combobox(cls, is_event:bool) -> Optional[Gtk.ComboBox]:
+    def _get_calendar_combobox(cls, is_event:bool) -> Union[bool,Gtk.ComboBox]:
         # Return a combobox for selecting calendar for events.
-        # Combobox = None -> None required
+        # Returns True => Only one calendar available, so no combobox required.
+        # Returns False => No calendars available, so can't import.
         if is_event:
             cal_list = Calendar.calendar_displaynames_event_rw()
         else: # is a todo
             cal_list = Calendar.calendar_displaynames_todo_rw()
-        if len(cal_list) <= 1:
+        if len(cal_list) == 0:
+            # We can't import this entry!
+            return False
+        if len(cal_list) == 1:
             # No need for a combobox when there's no choice to make
-            return None
+            return True
         combobox = Gtk.ComboBoxText()
         for id,dn in cal_list:
             combobox.append(str(id), dn)
@@ -188,11 +192,14 @@ class ImportController:
             can_import = False
 
         # If necessary, add dropdown box to select calendar to import into
-        cb_cal = None
+        cb_cal = False
         if can_import:
             cb_cal = cls._get_calendar_combobox(en_is_event)
-            if cb_cal is not None:
-                cb_cal.set_active(0)
+            if cb_cal is False:
+                cls._add_row(_('No calendar available to store {:s}').format(_('an event') if en_is_event else _('a todo')), style=GUI.STYLE_ALERTLABEL, halign=Gtk.Align.CENTER)
+                can_import = False
+            elif cb_cal is not True:
+                cb_cal.set_active(0) # type:ignore[union-attr]
                 cls._add_row_widget(_('Import to calendar:'), cb_cal)
 
         # If can_import, sensitise the "Import" button
@@ -200,7 +207,7 @@ class ImportController:
 
         dialog.show_all()
         res = dialog.run() # type:int
-        dest_cal = None if cb_cal is None else int(cb_cal.get_active_id())
+        dest_cal = None if isinstance(cb_cal, bool) else int(cb_cal.get_active_id()) # type:ignore[attr-defined]
         dialog.destroy()
         cls._dialog_grid = None # so grid & contents are cleaned up
         return res, dest_cal

@@ -196,10 +196,6 @@ Minor
 -----
 (Note: minor bugs can still be irritating!)
 
-* If editable calendars only accept todo items, then trying to import an
-  event gives internal errors. (Probably similar importing a todo when
-  only events are accepted.)
-
 * If editable calendars only accept todo items then "New entry" softkey
   is disabled - even in Todo View.
 
