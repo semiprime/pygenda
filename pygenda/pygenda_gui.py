@@ -29,6 +29,7 @@ from icalendar import Calendar as iCalendar, Event as iEvent, Todo as iTodo
 from importlib import import_module
 from os import path as ospath
 from sys import stderr
+from pathlib import Path
 import signal
 import ctypes
 from typing import Optional, Tuple, List, Union, Any, Type
@@ -427,7 +428,15 @@ class GUI:
         if isinstance(lang,str) and '.' not in lang:
             # Need to include encoding
             lang = (lang,'UTF-8')
-        locale.setlocale(locale.LC_ALL, lang)
+        try:
+            locale.setlocale(locale.LC_ALL, lang)
+        except locale.Error:
+            lang_dname = lang if isinstance(lang,str) else '.'.join(lang)
+            print("Error loading locale {:s} (not installed on OS?)".format(lang_dname), file=stderr)
+            if Path('/etc/debian_version').exists():
+                # Add extra info for users on Debian-like systems
+                print(" On Debian try: uncomment corresponding line in /etc/locale.gen & run locale-gen", file=stderr)
+            print(" Trying to continue with default locale...", file=stderr)
         locale.bindtextdomain('pygenda', cls._LOCALE_DIR)
         locale.textdomain('pygenda')
 
