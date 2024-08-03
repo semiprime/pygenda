@@ -1,14 +1,9 @@
 /*****************************
 gemini.css
 
-Example user CSS file for Planet Computers' Gemini PDA. Include from
-~/.config/pygenda/pygenda.css or copy & adapt as desired. Should also
-be suitable for similar products such as the Cosmo Communicator.
+Example user CSS file for Planet Computers' Gemini PDA running LXQt.
+Include from ~/.config/pygenda/pygenda.css or copy & adapt as desired.
 
-At some point this may be loaded automatically. However, that will
-depend on code to detect the device, which should be fine, but I'd
-prefer to wait until there's more than one device that gets regular
-testing before adding it!
 ******************************/
 
 /* Remove transition animations - they make Gemini feel slow */
@@ -17,11 +12,19 @@ testing before adding it!
 	transition-delay:0s;
 }
 
+/* Icon theme - see /usr/share/icons/ for installed themes */
+image {
+	-gtk-icon-theme:"Adwaita";
+}
 
 /* GUI size increases for Gemini's small screen */
 
 menubar, button {
 	font-size:15pt;
+}
+
+menubar > menuitem {
+	margin-right:0.1em;
 }
 
 dialog {
@@ -209,7 +212,7 @@ scrollbar slider {
 /* Dialogs */
 
 entry, spinbutton, date_entry, time_entry, duration_entry {
-	min-height:1.6em;
+	min-height:1.5em;
 }
 
 .longtextentry > textview {
@@ -261,7 +264,7 @@ radio:focus, check:focus {
 }
 
 .llabel {
-	min-height:32px;
+	min-height:34px;
 	padding-right:0.3ex;
 	padding-left:0.3ex;
 }
