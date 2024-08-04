@@ -5,8 +5,9 @@ of the most recent release of Pygenda on Debian-like Linux distributions
 (that is, ones that use apt for package management). It is intended
 for users who want to install/run/test Pygenda.
 
-(If you have a Gemini PDA with Gemian installed, see the
-[Gemini PDA quickstart](quickstart-geminipda.md).)
+(If you have a Gemini PDA or Cosmo Communicator with Gemian installed,
+see the either the [Gemini PDA](quickstart-geminipda.md) or
+[Cosmo Communicator](quickstart-cosmocommunicator.md) quickstart.)
 
 If you want to contribute to or modify Pygenda, then you probably want
 to get the latest version from GitHub (which is usually a little ahead

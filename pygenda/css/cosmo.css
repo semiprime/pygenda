@@ -1,0 +1,344 @@
+/*****************************
+cosmo.css
+
+Example user CSS file for Planet Computers' Cosmo Communicator running
+KDE. Include this file from ~/.config/pygenda/pygenda.css or copy &
+adapt as desired.
+
+Note: Font sizes are given in pixels, rather than points. This is so
+that they are not affected by KDE's "Scale Display" setting.
+
+******************************/
+
+/* Remove transition animations - they make Cosmo feel slow */
+* {
+	transition-duration:0s;
+	transition-delay:0s;
+}
+
+/* Icon theme - see /usr/share/icons/ for installed themes */
+image {
+	-gtk-icon-theme:"Adwaita";
+}
+
+/* GUI size increases for Cosmo's small screen */
+
+menubar, button {
+	font-size:40px;
+}
+
+menuitem {
+	padding:0.15em 0.3em;
+}
+
+menubar > menuitem {
+	margin-right:0.3em;
+}
+
+dialog {
+	font-size:40px;
+}
+
+.view, #view_loading {
+	min-width:800px;
+	min-height:400px;
+}
+
+/* Increasing font size in dialog distorts switches, so we tweak size... */
+switch {
+	border-radius:26px;
+}
+
+switch slider {
+	min-height:48px;
+	min-width:48px;
+	border-radius:21px;
+}
+
+scrollbar.vertical, scrollbar.vertical slider, scrollbar button {
+	min-width:30px;
+}
+
+scrollbar.horizontal, scrollbar.horizontal slider, scrollbar button {
+	min-height:30px;
+}
+
+scrollbar trough {
+	background-color:#f0f0f0;
+}
+
+scrollbar slider {
+	background-color:#c0c0c0;
+	border-radius:0;
+}
+
+
+/* Week View */
+
+#weekview_titlearea {
+	padding:5px;
+	border-width:3px;
+}
+
+#weekview_labelmonth {
+	font-size:56px;
+}
+
+.zoom3 #weekview_labelmonth {
+	font-size:60px;
+}
+
+.zoom4 #weekview_labelmonth {
+	font-size:64px;
+}
+
+#weekview_labelweek {
+	font-size:36px;
+}
+
+.zoom3 #weekview_labelweek {
+	font-size:39px;
+}
+
+.zoom4 #weekview_labelweek {
+	font-size:42px;
+}
+
+#weekview_fold {
+	min-width:28px;
+}
+
+.weekview_labelday {
+	font-size:48px;
+	min-width:3em;
+}
+
+.zoom0 .weekview_daytext {
+	font-size:35px;
+}
+
+.zoom1 .weekview_daytext {
+	font-size:39px;
+}
+
+.zoom2 .weekview_daytext {
+	font-size:43px;
+}
+
+.zoom3 .weekview_daytext {
+	font-size:47px;
+}
+
+.zoom4 .weekview_daytext {
+	font-size:51px;
+}
+
+/* Year View */
+
+#yearview_labelyear {
+	font-size:48px;
+	padding:2px;
+}
+
+.yearview_day_label, .yearview_month_label {
+	font-size:29px;
+}
+
+#yearview_labeldate {
+	padding:2px;
+}
+
+.yearview_daycell {
+	font-size:24px;
+}
+
+#yearview_datecontent {
+	padding:1px 5px;
+}
+
+.zoom0 #yearview_datecontent, .zoom0 #yearview_labeldate {
+	font-size:37px;
+}
+
+.zoom1 #yearview_datecontent, .zoom1 #yearview_labeldate {
+	font-size:41px;
+}
+
+.zoom2 #yearview_datecontent, .zoom2 #yearview_labeldate {
+	font-size:45px;
+}
+
+.zoom3 #yearview_datecontent, .zoom3 #yearview_labeldate {
+	font-size:49px;
+}
+
+.zoom4 #yearview_datecontent, .zoom4 #yearview_labeldate {
+	font-size:53px;
+}
+
+
+/* Todo View */
+
+.todoview_list {
+	min-width:640px;
+}
+
+.zoom0 .todoview_title {
+	font-size:37px;
+}
+
+.zoom1 .todoview_title {
+	font-size:41px;
+}
+
+.zoom2 .todoview_title {
+	font-size:45px;
+}
+
+.zoom3 .todoview_title {
+	font-size:49px;
+}
+
+.zoom4 .todoview_title {
+	font-size:53px;
+}
+
+.zoom0 .todoview_items {
+	font-size:35px;
+}
+
+.zoom1 .todoview_items {
+	font-size:39px;
+}
+
+.zoom2 .todoview_items {
+	font-size:43px;
+}
+
+.zoom3 .todoview_items {
+	font-size:47px;
+}
+
+.zoom4 .todoview_items {
+	font-size:51px;
+}
+
+/* Dialogs */
+
+entry, spinbutton, date_entry, time_entry, duration_entry {
+	min-height:1.5em;
+}
+
+.longtextentry > textview {
+	padding-top:.1ex;
+	padding-bottom:.1ex;
+}
+
+/* Set height of Repeats tab, so expanding it doesn't expand Event dialog */
+#grid-repeats {
+	min-height:24.1ex;
+}
+
+/* Make buttons bigger (for easier touchscreen use) */
+buttonbox > button {
+	border-width:2px;
+	padding:12px 16px;
+}
+
+buttonbox > button:focus {
+	border-width:4px;
+	padding:10px 14px;
+}
+
+checkbutton {
+	min-height:58px;
+}
+
+radio, check {
+	min-height:40px;
+	min-width:40px;
+}
+
+radio, check {
+	border-style:solid;
+	border-width:0px;
+	padding:4px;
+}
+
+radio {
+	border-radius:8px;
+}
+
+check {
+	border-radius:4px;
+	margin-top:12px;
+}
+
+radio:focus, check:focus {
+	border-color:#398ee7;
+	border-width:4px;
+	padding:0px;
+}
+
+.dialogbutton, combobox button, spinbutton, switch, date_entry, time_entry, duration_entry {
+	border-width:2px;
+	padding:2px;
+}
+
+.dialogbutton:focus, combobox button:focus, spinbutton:focus, switch:focus, .focus {
+	border-width:4px;
+	padding:0px;
+}
+
+.textentry, .longtextentry {
+	border-width:2px;
+	padding:2px 6px;
+}
+
+.textentry:focus, .longtextentry.focus {
+	border-width:4px;
+	padding:0 4px;
+}
+
+notebook tab {
+	padding-left:20px;
+	padding-right:20px;
+}
+
+notebook:focus tab:checked {
+	border-width:4px;
+	padding:0;
+	padding-left:17px;
+	padding-right:17px;
+}
+
+.llabel {
+	min-height:68px;
+	padding-right:0.3ex;
+	padding-left:0.3ex;
+}
+
+date_entry > label {
+	padding-bottom:0;
+}
+
+time_entry > label, duration_entry > label {
+	padding-bottom:0.1ex;
+}
+
+button image {
+	-gtk-icon-transform:scale(2) translateY(-5px);
+	min-width:1em;
+}
+
+menuitem image {
+	-gtk-icon-transform:scale(2);
+	padding-left:0.6ex;
+	padding-right:0.7ex;
+}
+
+arrow {
+	-gtk-icon-transform:scale(2);
+	padding-left:0.6ex;
+	padding-right:0.6ex;
+}

@@ -63,6 +63,7 @@ The simplest way to get started is to follow one of the following "quick start"
 guides (only a few devices, so far):
 
 * [**Gemini PDA**](docs/quickstart-geminipda.md) running Gemian
+* [**Cosmo Communicator**](docs/quickstart-cosmocommunicator.md) running Gemian
 * [**PostmarketOS**](docs/quickstart-postmarketOS.md)
 * [**Debian-like systems**](docs/quickstart-debianlike.md) e.g. Raspberry Pi OS (but see above for Gemian)
 

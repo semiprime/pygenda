@@ -8,7 +8,7 @@ In Python, you can install modules in Development (Editable) mode with:
 
     pip3 install --editable . [--user]
 
-Or, for older versions of pip3 (e.g. on Gemini):
+Or, for older versions of pip3 (e.g. on Gemini, Cosmo):
 
     ./setup_old.py develop --user
 
