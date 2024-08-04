@@ -2,15 +2,13 @@ Pygenda "Quick Start" Guide for the Gemini PDA
 ==============================================
 This guide will lead you through installation and basic configuration
 of the most recent release of Pygenda on a Gemini PDA running Gemian
-Linux (the instructions might work with a Cosmo Communicator too, but
-I haven't been able to test this – I would be grateful to hear from
-anyone who can test this guide on a Cosmo).
+Linux.
 
 The guide is intended for users who want to install/run/test Pygenda.
 If you want to contribute to or modify Pygenda, then you probably want
 to get the latest version from GitHub (which is usually a little ahead
 of the latest official release). This guide may be useful to refer to
-for initial configuration.
+for dependencies and initial configuration.
 
 Note that Pygenda is alpha software, and as such has **lots of
 missing/incomplete features** as well as **bugs**. It is released for
@@ -27,7 +25,7 @@ files or update pip.
 Preliminaries
 -------------
 First, check that you have the correct device and operating system for
-this guide: the Gemini PDA made my Planet Computers. This should be
+this guide: the Gemini PDA made by Planet Computers. This should be
 running Gemian Linux (a version of Debian), *not* Android.
 
 To check your Gemian (Debian) version, open a command prompt on the
@@ -41,7 +39,9 @@ At the time of writing, version 9.13 is the most recent version. If
 you have an older version of Debian, then I suggest you update before
 installing Pygenda. Unfortunately, since Debian themselves no longer
 support Debian version 9, updating Gemian is not a simple process, and
-is not described in this document[^1].
+is not described in this document[^1]. If you have Debian 10.x or
+later, then the [quickstart for Debian-like systems](quickstart-debianlike.md)
+will be a better starting point than this guide.
 
 Update apt sources
 ------------------
@@ -152,8 +152,10 @@ basic configuration, which you can modify as required:
     fullscreen = False
     
     [softkeys]
-    # Hide icons because the old LXQt icons don't look great
-    show_icons = False
+    # Uncomment one of these if you want the soft keys on the left
+    # or hidden:
+    #display = left
+    #display = hide
     
     [todo_view]
     list0_filter = UNCATEGORIZED
