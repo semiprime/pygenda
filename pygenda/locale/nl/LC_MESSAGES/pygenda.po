@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-25 19:07+0200\n"
+"POT-Creation-Date: 2024-08-17 13:05+0200\n"
 "PO-Revision-Date: 2024-05-10 19:33+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -39,7 +39,7 @@ msgstr "Itemeigenschappen"
 msgid "Summary:"
 msgstr "Samenvatting:"
 
-#: pygenda_dialog_entryprops.py:129 pygenda_dialog_import.py:164
+#: pygenda_dialog_entryprops.py:129 pygenda_dialog_import.py:168
 msgid "Type:"
 msgstr "Type:"
 
@@ -68,7 +68,7 @@ msgstr "Einddatum/-tijd:"
 msgid "Duration:"
 msgstr "Duur:"
 
-#: pygenda_dialog_entryprops.py:145 pygenda_dialog_import.py:180
+#: pygenda_dialog_entryprops.py:145 pygenda_dialog_import.py:184
 #: ui/dialog_todo.ui:250
 msgid "Due date:"
 msgstr "Einddatum:"
@@ -156,7 +156,7 @@ msgstr "Uitzonderingen:"
 msgid ";"
 msgstr ";"
 
-#: pygenda_dialog_entryprops.py:200 pygenda_dialog_import.py:177
+#: pygenda_dialog_entryprops.py:200 pygenda_dialog_import.py:181
 #: ui/dialog_event.ui:405
 msgid "Repeats:"
 msgstr "Herhalen op:"
@@ -190,7 +190,7 @@ msgid "Description ({}):"
 msgstr "Omschrijving ({}):"
 
 #: pygenda_dialog_entryprops.py:268 pygenda_dialog_entryprops.py:271
-#: pygenda_dialog_import.py:162 ui/dialog_event.ui:107 ui/dialog_todo.ui:86
+#: pygenda_dialog_import.py:166 ui/dialog_event.ui:107 ui/dialog_todo.ui:86
 msgid "Description:"
 msgstr "Omschrĳving:"
 
@@ -302,7 +302,7 @@ msgstr "Nieuwe afspraak"
 msgid "Edit Event"
 msgstr "Afspraak bewerken"
 
-#: pygenda_dialog_event.py:1202 pygenda_dialog_import.py:161
+#: pygenda_dialog_event.py:1202 pygenda_dialog_import.py:165
 #: ui/dialog_event.ui:423 ui/dialog_event.ui:717 ui/dialog_event.ui:990
 #: ui/dialog_todo.ui:185 ui/dialog_todo.ui:224
 msgid "None"
@@ -344,49 +344,61 @@ msgstr "iCalendar-bestanden"
 msgid "All files"
 msgstr "Alle bestanden"
 
-#: pygenda_dialog_import.py:143
+#: pygenda_dialog_import.py:147
 msgid "Import entry"
 msgstr "Item importeren"
 
-#: pygenda_dialog_import.py:145
+#: pygenda_dialog_import.py:149
 msgid "Skip"
 msgstr "Overslaan"
 
-#: pygenda_dialog_import.py:147
+#: pygenda_dialog_import.py:151
 msgid "Import"
 msgstr "Importeren"
 
-#: pygenda_dialog_import.py:154
+#: pygenda_dialog_import.py:158
 msgid "Found entry:"
 msgstr "Item aangetroffen:"
 
 # Added by hand - not detected by gettext
-#: pygenda_dialog_import.py:164 pygenda_dialog_entryprops.py:129
+#: pygenda_dialog_import.py:168 pygenda_dialog_entryprops.py:129
 msgid "Event"
 msgstr "Afspraak"
 
 # Added by hand - not detected by gettext
-#: pygenda_dialog_import.py:164 pygenda_dialog_entryprops.py:129
+#: pygenda_dialog_import.py:168 pygenda_dialog_entryprops.py:129
 msgid "Todo"
 msgstr "Taak"
 
-#: pygenda_dialog_import.py:169
+#: pygenda_dialog_import.py:173
 msgid "Date/time:"
 msgstr "Datum/Tijd:"
 
-#: pygenda_dialog_import.py:171
+#: pygenda_dialog_import.py:175
 msgid "Invalid event, no date found"
 msgstr "Ongeldige afspraak: geen datum aangetroffen"
 
-#: pygenda_dialog_import.py:184
+#: pygenda_dialog_import.py:188
 msgid "Invalid entry, no ID found"
 msgstr "Ongeldig item: geen id aangetroffen"
 
-#: pygenda_dialog_import.py:187
+#: pygenda_dialog_import.py:191
 msgid "An entry with this ID already exists"
 msgstr "Er is al een item met deze id"
 
-#: pygenda_dialog_import.py:196
+#: pygenda_dialog_import.py:199
+msgid "No calendar available to store {:s}"
+msgstr ""
+
+#: pygenda_dialog_import.py:199
+msgid "an event"
+msgstr ""
+
+#: pygenda_dialog_import.py:199
+msgid "a todo"
+msgstr ""
+
+#: pygenda_dialog_import.py:203
 msgid "Import to calendar:"
 msgstr "Importeren naar agenda:"
 
@@ -398,11 +410,11 @@ msgstr "Nieuwe taak"
 msgid "Edit To-do"
 msgstr "Taak bewerken"
 
-#: pygenda_gui.py:962
+#: pygenda_gui.py:971
 msgid "Delete Entry"
 msgstr "Item verwijderen"
 
-#: pygenda_gui.py:968
+#: pygenda_gui.py:977
 msgid ""
 "Delete all repeats:\n"
 "“{:s}”?"
@@ -410,7 +422,7 @@ msgstr ""
 "Wilt u alle herhalingen verwijderen?\n"
 "“{:s}”"
 
-#: pygenda_gui.py:970
+#: pygenda_gui.py:979
 msgid ""
 "Delete entry:\n"
 "“{:s}”?"
@@ -418,19 +430,19 @@ msgstr ""
 "Wilt u het volgende item verwijderen?\n"
 "“{:s}”"
 
-#: pygenda_gui.py:998 ui/main.ui:656
+#: pygenda_gui.py:1007 ui/main.ui:656
 msgid "Go To"
 msgstr "Ga naar"
 
-#: pygenda_gui.py:1010
+#: pygenda_gui.py:1019
 msgid "Go"
 msgstr "Gaan"
 
-#: pygenda_gui.py:1048
+#: pygenda_gui.py:1057
 msgid "Source code & documentation: "
 msgstr "Broncode en documentatie: "
 
-#: pygenda_gui.py:1053
+#: pygenda_gui.py:1062
 msgid ""
 "A calendar/agenda application written in Python/GTK3. The UI is inspired by "
 "the Agenda apps on the Psion Series 3 and Series 5 PDAs.\n"
@@ -444,11 +456,11 @@ msgstr ""
 "uitgebracht om feedback te kunnen ontvangen. Er zullen gegarandeerd bugs "
 "zijn; meld ze via pygenda@semiprime.com."
 
-#: pygenda_gui.py:1054
+#: pygenda_gui.py:1063
 msgid "Thanks for testing &amp; feedback"
 msgstr "Bedankt voor het testen en de feedback"
 
-#: pygenda_gui.py:1055
+#: pygenda_gui.py:1064
 msgid "translator-credits"
 msgstr "Heimen Stoffels (github.com/Vistaus)"
 
@@ -609,13 +621,13 @@ msgstr "Locatie:"
 msgid "Tentative"
 msgstr "Mogelijk"
 
-#: ui/dialog_event.ui:992 ui/dialog_todo.ui:228
-msgid "Cancelled"
-msgstr "Geannuleerd"
-
-#: ui/dialog_event.ui:993
+#: ui/dialog_event.ui:992
 msgid "Confirmed"
 msgstr "Bevestigd"
+
+#: ui/dialog_event.ui:993 ui/dialog_todo.ui:228
+msgid "Cancelled"
+msgstr "Geannuleerd"
 
 #: ui/dialog_event.ui:1006 ui/dialog_todo.ui:318
 msgid "Notes:"

@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-25 19:07+0200\n"
+"POT-Creation-Date: 2024-08-17 13:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,7 +39,7 @@ msgstr ""
 msgid "Summary:"
 msgstr ""
 
-#: pygenda_dialog_entryprops.py:129 pygenda_dialog_import.py:164
+#: pygenda_dialog_entryprops.py:129 pygenda_dialog_import.py:168
 msgid "Type:"
 msgstr ""
 
@@ -68,7 +68,7 @@ msgstr ""
 msgid "Duration:"
 msgstr ""
 
-#: pygenda_dialog_entryprops.py:145 pygenda_dialog_import.py:180
+#: pygenda_dialog_entryprops.py:145 pygenda_dialog_import.py:184
 #: ui/dialog_todo.ui:250
 msgid "Due date:"
 msgstr ""
@@ -156,7 +156,7 @@ msgstr ""
 msgid ";"
 msgstr ""
 
-#: pygenda_dialog_entryprops.py:200 pygenda_dialog_import.py:177
+#: pygenda_dialog_entryprops.py:200 pygenda_dialog_import.py:181
 #: ui/dialog_event.ui:405
 msgid "Repeats:"
 msgstr ""
@@ -190,7 +190,7 @@ msgid "Description ({}):"
 msgstr ""
 
 #: pygenda_dialog_entryprops.py:268 pygenda_dialog_entryprops.py:271
-#: pygenda_dialog_import.py:162 ui/dialog_event.ui:107 ui/dialog_todo.ui:86
+#: pygenda_dialog_import.py:166 ui/dialog_event.ui:107 ui/dialog_todo.ui:86
 msgid "Description:"
 msgstr ""
 
@@ -302,7 +302,7 @@ msgstr ""
 msgid "Edit Event"
 msgstr ""
 
-#: pygenda_dialog_event.py:1202 pygenda_dialog_import.py:161
+#: pygenda_dialog_event.py:1202 pygenda_dialog_import.py:165
 #: ui/dialog_event.ui:423 ui/dialog_event.ui:717 ui/dialog_event.ui:990
 #: ui/dialog_todo.ui:185 ui/dialog_todo.ui:224
 msgid "None"
@@ -344,47 +344,59 @@ msgstr ""
 msgid "All files"
 msgstr ""
 
-#: pygenda_dialog_import.py:143
+#: pygenda_dialog_import.py:147
 msgid "Import entry"
 msgstr ""
 
-#: pygenda_dialog_import.py:145
+#: pygenda_dialog_import.py:149
 msgid "Skip"
 msgstr ""
 
-#: pygenda_dialog_import.py:147
+#: pygenda_dialog_import.py:151
 msgid "Import"
 msgstr ""
 
-#: pygenda_dialog_import.py:154
+#: pygenda_dialog_import.py:158
 msgid "Found entry:"
 msgstr ""
 
-#: pygenda_dialog_import.py:164 pygenda_dialog_entryprops.py:129
+#: pygenda_dialog_import.py:168 pygenda_dialog_entryprops.py:129
 msgid "Event"
 msgstr ""
 
-#: pygenda_dialog_import.py:164 pygenda_dialog_entryprops.py:129
+#: pygenda_dialog_import.py:168 pygenda_dialog_entryprops.py:129
 msgid "Todo"
 msgstr ""
 
-#: pygenda_dialog_import.py:169
+#: pygenda_dialog_import.py:173
 msgid "Date/time:"
 msgstr ""
 
-#: pygenda_dialog_import.py:171
+#: pygenda_dialog_import.py:175
 msgid "Invalid event, no date found"
 msgstr ""
 
-#: pygenda_dialog_import.py:184
+#: pygenda_dialog_import.py:188
 msgid "Invalid entry, no ID found"
 msgstr ""
 
-#: pygenda_dialog_import.py:187
+#: pygenda_dialog_import.py:191
 msgid "An entry with this ID already exists"
 msgstr ""
 
-#: pygenda_dialog_import.py:196
+#: pygenda_dialog_import.py:199
+msgid "No calendar available to store {:s}"
+msgstr ""
+
+#: pygenda_dialog_import.py:199
+msgid "an event"
+msgstr ""
+
+#: pygenda_dialog_import.py:199
+msgid "a todo"
+msgstr ""
+
+#: pygenda_dialog_import.py:203
 msgid "Import to calendar:"
 msgstr ""
 
@@ -396,31 +408,35 @@ msgstr ""
 msgid "Edit To-do"
 msgstr ""
 
-#: pygenda_gui.py:962
+#: pygenda_gui.py:971
 msgid "Delete Entry"
 msgstr ""
 
-#: pygenda_gui.py:968
-msgid "Delete all repeats:\n“{:s}”?"
+#: pygenda_gui.py:977
+msgid ""
+"Delete all repeats:\n"
+"“{:s}”?"
 msgstr ""
 
-#: pygenda_gui.py:970
-msgid "Delete entry:\n“{:s}”?"
+#: pygenda_gui.py:979
+msgid ""
+"Delete entry:\n"
+"“{:s}”?"
 msgstr ""
 
-#: pygenda_gui.py:998 ui/main.ui:656
+#: pygenda_gui.py:1007 ui/main.ui:656
 msgid "Go To"
 msgstr ""
 
-#: pygenda_gui.py:1010
+#: pygenda_gui.py:1019
 msgid "Go"
 msgstr ""
 
-#: pygenda_gui.py:1048
+#: pygenda_gui.py:1057
 msgid "Source code & documentation: "
 msgstr ""
 
-#: pygenda_gui.py:1053
+#: pygenda_gui.py:1062
 msgid ""
 "A calendar/agenda application written in Python/GTK3. The UI is inspired by "
 "the Agenda apps on the Psion Series 3 and Series 5 PDAs.\n"
@@ -428,11 +444,11 @@ msgid ""
 "There will be bugs; please report them to: pygenda@semiprime.com."
 msgstr ""
 
-#: pygenda_gui.py:1054
+#: pygenda_gui.py:1063
 msgid "Thanks for testing &amp; feedback"
 msgstr ""
 
-#: pygenda_gui.py:1055
+#: pygenda_gui.py:1064
 # This information is be shown in the credits pane of the "About" dialog.
 # Translators are encouraged to add their own name here, and may add a
 # website/email too. Pseudonyms and anonymity are also welcome.
@@ -585,7 +601,8 @@ msgstr ""
 
 #: ui/dialog_event.ui:881
 msgid ""
-"<span weight=\"bold\">Warning:</span> Pygenda will <span style=\"italic\" weight=\"bold\">not</span> sound/display alarms.\n"
+"<span weight=\"bold\">Warning:</span> Pygenda will <span style=\"italic\" "
+"weight=\"bold\">not</span> sound/display alarms.\n"
 "A separate alarm handler is required for alarms to activate.\n"
 "(To remove this warning, see the documentation.)"
 msgstr ""
@@ -606,12 +623,12 @@ msgstr ""
 msgid "Tentative"
 msgstr ""
 
-#: ui/dialog_event.ui:992 ui/dialog_todo.ui:228
-msgid "Cancelled"
+#: ui/dialog_event.ui:992
+msgid "Confirmed"
 msgstr ""
 
-#: ui/dialog_event.ui:993
-msgid "Confirmed"
+#: ui/dialog_event.ui:993 ui/dialog_todo.ui:228
+msgid "Cancelled"
 msgstr ""
 
 #: ui/dialog_event.ui:1006 ui/dialog_todo.ui:318

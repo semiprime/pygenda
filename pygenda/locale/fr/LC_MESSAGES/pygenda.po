@@ -21,8 +21,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-25 19:07+0200\n"
-"PO-Revision-Date: 2024-05-07 23:00+0200\n"
+"POT-Creation-Date: 2024-08-17 13:05+0200\n"
+"PO-Revision-Date: 2024-08-17 13:05+0200\n"
 "Last-Translator: Matthew Lewis <pygenda@semiprime.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -39,7 +39,7 @@ msgstr "Propriétés de l’entrée"
 msgid "Summary:"
 msgstr "Sommaire :"
 
-#: pygenda_dialog_entryprops.py:129 pygenda_dialog_import.py:164
+#: pygenda_dialog_entryprops.py:129 pygenda_dialog_import.py:168
 msgid "Type:"
 msgstr "Type :"
 
@@ -68,7 +68,7 @@ msgstr "Date/heure de fin :"
 msgid "Duration:"
 msgstr "Durée :"
 
-#: pygenda_dialog_entryprops.py:145 pygenda_dialog_import.py:180
+#: pygenda_dialog_entryprops.py:145 pygenda_dialog_import.py:184
 #: ui/dialog_todo.ui:250
 msgid "Due date:"
 msgstr "Date limite :"
@@ -156,7 +156,7 @@ msgstr "Dates omises :"
 msgid ";"
 msgstr " ;"
 
-#: pygenda_dialog_entryprops.py:200 pygenda_dialog_import.py:177
+#: pygenda_dialog_entryprops.py:200 pygenda_dialog_import.py:181
 #: ui/dialog_event.ui:405
 msgid "Repeats:"
 msgstr "Répétition :"
@@ -190,7 +190,7 @@ msgid "Description ({}):"
 msgstr "Description ({}) :"
 
 #: pygenda_dialog_entryprops.py:268 pygenda_dialog_entryprops.py:271
-#: pygenda_dialog_import.py:162 ui/dialog_event.ui:107 ui/dialog_todo.ui:86
+#: pygenda_dialog_import.py:166 ui/dialog_event.ui:107 ui/dialog_todo.ui:86
 msgid "Description:"
 msgstr "Description :"
 
@@ -302,7 +302,7 @@ msgstr "Nouvel évènement"
 msgid "Edit Event"
 msgstr "Modifier évènement"
 
-#: pygenda_dialog_event.py:1202 pygenda_dialog_import.py:161
+#: pygenda_dialog_event.py:1202 pygenda_dialog_import.py:165
 #: ui/dialog_event.ui:423 ui/dialog_event.ui:717 ui/dialog_event.ui:990
 #: ui/dialog_todo.ui:185 ui/dialog_todo.ui:224
 msgid "None"
@@ -344,49 +344,59 @@ msgstr "fichiers iCalendar"
 msgid "All files"
 msgstr "Tous fichiers"
 
-#: pygenda_dialog_import.py:143
+#: pygenda_dialog_import.py:147
 msgid "Import entry"
 msgstr "Importer entrée"
 
-#: pygenda_dialog_import.py:145
+#: pygenda_dialog_import.py:149
 msgid "Skip"
 msgstr "Sauter"
 
-#: pygenda_dialog_import.py:147
+#: pygenda_dialog_import.py:151
 msgid "Import"
 msgstr "Importer"
 
-#: pygenda_dialog_import.py:154
+#: pygenda_dialog_import.py:158
 msgid "Found entry:"
 msgstr "Entrée trouvée :"
 
-# Added by hand - not detected by gettext
-#: pygenda_dialog_import.py:164 pygenda_dialog_entryprops.py:129
+#: pygenda_dialog_import.py:168 pygenda_dialog_entryprops.py:129
 msgid "Event"
 msgstr "Évènement"
 
-# Added by hand - not detected by gettext
-#: pygenda_dialog_import.py:164 pygenda_dialog_entryprops.py:129
+#: pygenda_dialog_import.py:168 pygenda_dialog_entryprops.py:129
 msgid "Todo"
 msgstr "Tâche"
 
-#: pygenda_dialog_import.py:169
+#: pygenda_dialog_import.py:173
 msgid "Date/time:"
 msgstr "Date/heure :"
 
-#: pygenda_dialog_import.py:171
+#: pygenda_dialog_import.py:175
 msgid "Invalid event, no date found"
 msgstr "Évènement mal formé, date pas trouvée"
 
-#: pygenda_dialog_import.py:184
+#: pygenda_dialog_import.py:188
 msgid "Invalid entry, no ID found"
 msgstr "Entrée mal formé, ID pas trouvée"
 
-#: pygenda_dialog_import.py:187
+#: pygenda_dialog_import.py:191
 msgid "An entry with this ID already exists"
 msgstr "Une entrée avec cet ID existe déjà"
 
-#: pygenda_dialog_import.py:196
+#: pygenda_dialog_import.py:199
+msgid "No calendar available to store {:s}"
+msgstr "Pas de calendrier pour stocker {:s}"
+
+#: pygenda_dialog_import.py:199
+msgid "an event"
+msgstr "un évènement"
+
+#: pygenda_dialog_import.py:199
+msgid "a todo"
+msgstr "une tâche"
+
+#: pygenda_dialog_import.py:203
 msgid "Import to calendar:"
 msgstr "Importer vers calendrier :"
 
@@ -398,31 +408,39 @@ msgstr "Nouvelle tâche"
 msgid "Edit To-do"
 msgstr "Modifier tâche"
 
-#: pygenda_gui.py:962
+#: pygenda_gui.py:971
 msgid "Delete Entry"
 msgstr "Supprimer l’entrée"
 
-#: pygenda_gui.py:968
-msgid "Delete all repeats:\n“{:s}”?"
-msgstr "Supprimer toutes les entrées\n« {:s} » ?"
+#: pygenda_gui.py:977
+msgid ""
+"Delete all repeats:\n"
+"“{:s}”?"
+msgstr ""
+"Supprimer toutes les entrées\n"
+"« {:s} » ?"
 
-#: pygenda_gui.py:970
-msgid "Delete entry:\n“{:s}”?"
-msgstr "Supprimer l’entrée\n« {:s} » ?"
+#: pygenda_gui.py:979
+msgid ""
+"Delete entry:\n"
+"“{:s}”?"
+msgstr ""
+"Supprimer l’entrée\n"
+"« {:s} » ?"
 
-#: pygenda_gui.py:998 ui/main.ui:656
+#: pygenda_gui.py:1007 ui/main.ui:656
 msgid "Go To"
 msgstr "Aller à"
 
-#: pygenda_gui.py:1010
+#: pygenda_gui.py:1019
 msgid "Go"
 msgstr "Y aller"
 
-#: pygenda_gui.py:1048
+#: pygenda_gui.py:1057
 msgid "Source code & documentation: "
 msgstr "Code source et documentation : "
 
-#: pygenda_gui.py:1053
+#: pygenda_gui.py:1062
 msgid ""
 "A calendar/agenda application written in Python/GTK3. The UI is inspired by "
 "the Agenda apps on the Psion Series 3 and Series 5 PDAs.\n"
@@ -435,11 +453,11 @@ msgstr ""
 "publiée à des fins de test et feedback. Il y aura des bogues ; veuillez les "
 "rapporter à : pygenda@semiprime.com."
 
-#: pygenda_gui.py:1054
+#: pygenda_gui.py:1063
 msgid "Thanks for testing &amp; feedback"
 msgstr "Merci pour les tests et les feedbacks"
 
-#: pygenda_gui.py:1055
+#: pygenda_gui.py:1064
 msgid "translator-credits"
 msgstr "Matthew Lewis"
 
@@ -569,11 +587,13 @@ msgstr "Alarme(s) activée(s) :"
 
 #: ui/dialog_event.ui:881
 msgid ""
-"<span weight=\"bold\">Warning:</span> Pygenda will <span style=\"italic\" weight=\"bold\">not</span> sound/display alarms.\n"
+"<span weight=\"bold\">Warning:</span> Pygenda will <span style=\"italic\" "
+"weight=\"bold\">not</span> sound/display alarms.\n"
 "A separate alarm handler is required for alarms to activate.\n"
 "(To remove this warning, see the documentation.)"
 msgstr ""
-"<span weight=\"bold\">Attention :</span> Pygenda n’active <span style=\"italic\" weight=\"bold\">pas</span> les alarmes.\n"
+"<span weight=\"bold\">Attention :</span> Pygenda n’active <span style="
+"\"italic\" weight=\"bold\">pas</span> les alarmes.\n"
 "Pour activer des alarmes, il faut un programme séparé pour s’en charger.\n"
 "(Pour désactiver cet avertissement, voir la documentation.)"
 
@@ -593,13 +613,13 @@ msgstr "Lieu :"
 msgid "Tentative"
 msgstr "Provisoire"
 
-#: ui/dialog_event.ui:992 ui/dialog_todo.ui:228
-msgid "Cancelled"
-msgstr "Annulé"
-
-#: ui/dialog_event.ui:993
+#: ui/dialog_event.ui:992
 msgid "Confirmed"
 msgstr "Confirmé"
+
+#: ui/dialog_event.ui:993 ui/dialog_todo.ui:228
+msgid "Cancelled"
+msgstr "Annulé"
 
 #: ui/dialog_event.ui:1006 ui/dialog_todo.ui:318
 msgid "Notes:"
