@@ -21,7 +21,7 @@ msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-17 13:05+0200\n"
-"PO-Revision-Date: 2024-05-10 19:33+0200\n"
+"PO-Revision-Date: 2024-08-19 12:03+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -388,15 +388,15 @@ msgstr "Er is al een item met deze id"
 
 #: pygenda_dialog_import.py:199
 msgid "No calendar available to store {:s}"
-msgstr ""
+msgstr "Er is geen agenda om te bewaren {:s}"
 
 #: pygenda_dialog_import.py:199
 msgid "an event"
-msgstr ""
+msgstr "een afspraak"
 
 #: pygenda_dialog_import.py:199
 msgid "a todo"
-msgstr ""
+msgstr "een taak"
 
 #: pygenda_dialog_import.py:203
 msgid "Import to calendar:"
@@ -449,7 +449,7 @@ msgid ""
 "WARNING: This is in-development code, released for testing and feedback. "
 "There will be bugs; please report them to: pygenda@semiprime.com."
 msgstr ""
-"Een kalender-/agendatoepassing gemaakt met behulp van Python/GTK3. De "
+"Een kalender-/agendatoepassing, gemaakt met behulp van Python/GTK3. De "
 "vormgeving is gebaseerd op de agenda-apps van de Psion Series 3- en Series 5-"
 "pda's.\n"
 "WAARSCHUWING: de toepassing is nog volop in ontwikkeling en slechts "
