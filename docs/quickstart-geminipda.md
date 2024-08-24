@@ -173,6 +173,21 @@ As before, save the file and exit: ctrl+o (confirm filename), ctrl+x.
 Now you can start Pygenda again, and it should look better
 (appropriate font sizes and other elements).
 
+Optional: Personalise your CSS (e.g. dark mode)
+-----------------------------------------------
+The custom CSS file `~/.config/pygenda/pygenda.css` gives the user
+lots of scope to customise the appearance of Pygenda to their own
+needs.
+
+One possibility is a "dark mode". An example dark mode CSS file is
+available: [darkmode.css](config-examples/darkmode.css). To use this,
+copy its contents into your user CSS file, below the import line, and
+edit the URLs in the CSS so that they point to the .svg files in the
+Pygenda install (these are the files for the icons in Year View; they
+are in the same directory as the gemini.css file, so the directory
+path will be the same for the import that you added above). You can
+then edit/tweak/add to the CSS as desired.
+
 Add a Pygenda icon to the menu
 ------------------------------
 To add a launch icon to your desktop menu, in a command prompt:

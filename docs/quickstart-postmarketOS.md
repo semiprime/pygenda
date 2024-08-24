@@ -168,9 +168,11 @@ This should open an empty file, where you can add the following
 You may want to adjust the exact values, depending on your taste and
 device.
 
-Much of the UI can be customised using the user CSS file (colours, fonts,
-etc.). See the example [gemini.css](../pygenda/css/gemini.css) for a
-practical example of adjusting the UI for a (different) handheld device.
+Much of the UI can be customised using the user CSS file (colours,
+fonts, etc.). See the examples [gemini.css](../pygenda/css/gemini.css)
+and [cosmo.css](../pygenda/css/cosmo.css) for real-world examples of
+adjusting the UI for specific handheld devices, or
+[darkmode.css](config-examples/darkmode.css) for an example "dark mode".
 
 Add a Pygenda icon to the menu
 ------------------------------

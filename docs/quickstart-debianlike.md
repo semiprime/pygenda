@@ -131,7 +131,10 @@ Some ideas for a Raspberry Pi desktop:
     }
 
 For more ideas, see [the default pygenda.css](../pygenda/css/pygenda.css).
-For an example for a mobile device, see [gemini.css](../pygenda/css/gemini.css).
+For examples of customising for specific small-screen devices, see
+[gemini.css](../pygenda/css/gemini.css) and
+[cosmo.css](../pygenda/css/cosmo.css). For an example "dark mode", see
+[darkmode.css](config-examples/darkmode.css).
 
 Add a Pygenda icon to the menu
 ------------------------------
