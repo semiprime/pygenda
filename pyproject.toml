@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=57.5", "setuptools_scm>=6.3"]
+requires = ["setuptools>=68.0.0", "setuptools_scm>=6.3.1"]
 
 
 [project]
