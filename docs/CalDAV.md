@@ -9,6 +9,10 @@ a number of downsides (possible data loss if multiple programs try to
 write to the file, slowdown updating large agendas). A server is
 recommended.
 
+In general, [EDS](Evolution_Data_Server.md) should be preferred over
+CalDAV, because EDS supports activating alarms. However, especially
+for older operating systems, some users may prefer CalDAV.
+
 This document describes how to set up Pygenda to use a CalDAV server.
 
 (I've only tried with a local server - a remote server should
@@ -19,59 +23,47 @@ Extra Pygenda dependencies for connecting to a CalDAV server
 ------------------------------------------------------------
 Python3 modules: caldav
 
-    pip3 install caldav # [or apt install python3-caldav]
+* Install with pip: `pip3 install caldav`
+* Install with apt: `apt install python3-caldav`
 
-Note 1: On the Gemini, new versions of the caldav module don't work,
-so you'll need to do:
+Note 1: On Gemian on the Gemini PDA and Cosmo Communicator, new
+versions of the caldav module don't work. Suggested ways to
+install older versions are in the respective quickstart guides:
+[Gemini](quickstart-geminipda.md), [Cosmo](quickstart-cosmocommunicator.md).
 
-    pip3 install caldav==0.11.0
-
-Note 2: The Python caldav module has dependencies outside Python: libxml2
-& libxslt development. To install these on Debian/Gemian:
+Note 2: The Python caldav module has dependencies outside Python:
+libxml2 & libxslt development. If you install caldav with pip, you
+might also need to install these libraries. On Debian:
 
     sudo apt install libxml2-dev libxslt-dev
-
-Note 3: Installing caldav with pip3 on a Gemini takes a long time
-(around ten minutes). In particular, I thought it had frozen when
-running setup.py for lxml.
 
 Using the Radicale CalDAV server
 --------------------------------
 You probably also want to install a CalDAV server. I tested using the
-Radicale CalDAV server (v3.0.6). https://radicale.org/
-(Radicale is written in Python, so it fits the ongoing "Python" theme.)
+Radicale CalDAV server (v3.0.6). (It seemed lightweight, simple to
+setup, and to still be maintained.)
+
+Radicale has good documentation on its website: https://radicale.org/
 
 If you already have a CalDAV server, you can skip to the next section.
 
-Install Radicale:
+If you're using a distro that includes a package for Radicale v3 (e.g.
+Debian Bullseye or later), then the best thing is probably to install
+that package and follow your distro's config instructions. You'll
+want Radicale to launch on startup/login.
 
-    pip3 install radicale
+If you're using a distro that doesn't package Radicale v3, it can be
+installed with pip. See the Gemini and Cosmo quickstart guides for
+hints about install/configuration on old operating systems.
 
-[I use pip, rather than apt, here because on the Gemini PDA, using apt
-gets an older version of Radicale (v1.1.1) while pip gets v3.x. If
-you're using a more recent Debian, you might prefer apt.]
-
-Start Radicale:
-
-    python3 -m radicale --storage-filesystem-folder=~/radicale-data
-
-[Change that filesystem path if you want.]
-
-Then go to the web interface in a web browser: http://localhost:5232/
+With Radicale running, open its web interface: http://localhost:5232/
 
 Login with your username of choice - remember the username for Pygenda
-setup, below. (Note, by default the password is ignored - see the
-Radicale documentation for how to edit your Radicale config to set up
-a password at https://radicale.org/).
+setup, below. (Note, by default the password is ignored. However your
+distribution may have configured it to be used.)
 
-Create an agenda (or import an existing one, or sync with a remote one).
-
-After configuring Pygenda to use the Radicale server (below), if
-you're happy with this setup, you can put your Radicale settings in
-`.config/radicale/config` and run radicale on startup. E.g. in LXQt on
-the Gemini, go to LXQT Configuration Center -> Session Settings ->
-Autostart, and add the command "`python3 -m radicale`" (this will write
-a .desktop file in `~/.config/autostart/`).
+Create one or more agendas (or import an existing one, or sync with a
+remote one). Note their names, and choose type "calendar and tasks".
 
 Configuring Pygenda to use the local Radicale (or another) server
 -----------------------------------------------------------------
@@ -81,13 +73,19 @@ Edit/create your `~/.config/pygenda/user.ini` file. Edit/add:
     type = caldav
     server = http://localhost:5232/
     username = CALDAV_USERNAME
-    # Optional:
-    display_name = Personal # The name you want displayed in the Pygenda UI
+    # Possibly optional:
     password = PASSWORD # Plaintext, so don't reuse your bank password...
     calendar = CALENDAR_NAME # Not needed if there's only one calendar
+    # Optional:
+    display_name = Personal # The name to display in the Pygenda UI
+    entry_type = One of "event", "todo", "all"
+    readonly = True/False
 
 It should be clear how to adjust these configuration options if you use
 a different CalDAV server.
+
+Note that for Radicale (maybe other servers too) a password is
+required, even when it is ignored.
 
 If you would like to add further calendars (i.e. sources/stores for
 calendar data), these can be placed in sections titled `calendar1`,
@@ -112,6 +110,6 @@ calendar data), these can be placed in sections titled `calendar1`,
 Synchronising devices
 ---------------------
 Using a server probably makes it easier to synchronise across devices.
-This is still something to investigate. Depending on your configuration,
-maybe try rsync, git, syncEvolution, Outlook CalDav Synchronizer,
-vdirsyncer.
+This is still something I'm investigating. Depending on your
+configuration and needs, maybe try rsync, git, syncEvolution, Outlook
+CalDav Synchronizer, vdirsyncer.

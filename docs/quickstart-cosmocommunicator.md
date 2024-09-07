@@ -172,11 +172,98 @@ In any case, I could only delete or move the Pygenda icon with
 a mouse (right click -> Panel Options -> Configure Panel, then
 hover the mouse pointer over the icon for options).
 
-CalDAV
-------
-Full information about using a CalDAV server is here: [CalDAV.md](CalDAV.md)
+CalDAV Server (Radicale)
+------------------------
+By default, Pygenda saves entries in a single file. This is convenient
+for testing, but it could lead to data loss (if multiple programs try
+to update the same file) or slowdown for large files. Hence, if you
+want to use Pygenda for more than just testing, we recommended that
+you store your agenda data in a server (running on the same device).
 
-To-do: add a CalDAV quickstart for Cosmo
+Pygenda supports CalDAV servers and the Evolution Data Server.
+Unfortunately, the package needed to access EDS is not available in
+Debian Buster, so for the Cosmo we will use a CalDAV server.
+
+In this section we go through a basic install and setup using the
+Radicale CalDAV server (version 3).
+
+For those who want more technical details (e.g. to configure Pygenda
+to use a different server), more complete information is available
+here: [CalDAV.md](CalDAV.md)
+
+First install the Radicale dependencies:
+
+    sudo apt install python3-defusedxml python3-passlib python3-vobject
+
+Now install radicale (use pip, rather than apt, so we get version 3):
+
+    pip3 install radicale --user --no-deps
+
+Create a configuration file for Radicale:
+
+    mkdir ~/.config/radicale
+    nano ~/.config/radicale/config
+
+Add the following content to the file and save it:
+
+    [storage]
+    filesystem_folder = ~/.radicale-data
+
+Now set Radicale to launch when you login:
+
+    mkdir ~/.config/autostart-scripts
+    ln -s ~/.local/bin/radicale ~/.config/autostart-scripts/
+
+Then logout and login again to start the Radicale server.
+
+To add calendars to Radicale, use the web interface. In a web browser
+go to: http://localhost:5232/
+
+(Hint: If you've not already set the display scaling factor on the
+Cosmo and the text in the web browser is too small to read, search for
+"scale" in the KDE App Launcher and under the "Displays" dialog,
+scroll down to the "Scale Display" button. The suggested value of "2"
+is reasonable, but I needed to change it and then change back again
+for it to work.)
+
+In the Radicale web interface, enter the user name of your choice,
+leave the password blank, and login. Once logged in you can create a
+new calendar. We suggest a Title of "agenda" (but you may want to
+create several calendars, e.g. "personal" and "work") and Type
+"calendar and tasks". Now close the browser.
+
+### Configuring Pygenda to use CalDAV
+
+Install the Python caldav package and dependencies (use pip to get a
+more recent version of caldav):
+
+    sudo apt install python3-lxml python3-requests python3-tz
+    pip3 install caldav==0.10.0 --user --no-deps
+
+Now edit the file ~/.config/pygenda/user.ini (see above, Configuration)
+and add the following:
+
+    [calendar]
+    type = caldav
+    server = http://localhost:5232/
+    username = USERNAME_ENTERED_ABOVE
+    password = pass
+    calendar = agenda
+
+A password is required, but it can be anything.
+
+If you used a different Title creating the calendar, in the Radicale
+web interface, use that instead of "agenda" for the calendar value (in
+fact, if you only have one calendar then you can omit that line). If
+you created more than one calendar, you can configure the others as
+[calendar1], [calendar2], etc., giving the appropriate names for the
+calendar setting in each section.
+
+Now test that Pygenda launches, and that you can create new entries.
+
+Security note: You may be concerned that the Radicale server is
+accessible to other people on the network. This should not be a
+problem because by default it only binds to localhost.
 
 Finally
 -------

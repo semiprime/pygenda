@@ -254,11 +254,91 @@ After all this, save the file and exit: ctrl+o (confirm filename), ctrl+x.
 
 You will need to log out and back in again for this change to take effect.
 
-CalDAV
-------
-Full information about using a CalDAV server is here: [CalDAV.md](CalDAV.md)
+CalDAV Server (Radicale)
+------------------------
+By default, Pygenda saves entries in a single file. This is convenient
+for testing, but it could lead to data loss (if multiple programs try
+to update the same file) or slowdown for large files. Hence, if you
+want to use Pygenda for more than just testing, we recommended that
+you store your agenda data in a server (running on the same device).
 
-To-do: add a CalDAV quickstart
+Pygenda supports CalDAV servers and the Evolution Data Server.
+Unfortunately, the package needed to access EDS is only available in
+Debian Bullseye (11) and later, so for the Gemini we will use a CalDAV
+server.
+
+In this section we go through a basic install and setup using the
+Radicale CalDAV server (version 3).
+
+For those who want more technical details (e.g. to configure Pygenda
+to use a different server), more complete information is available
+here: [CalDAV.md](CalDAV.md)
+
+First install Radicale and dependencies with pip:
+
+    pip3 install radicale --user
+
+Create a configuration file for Radicale:
+
+    mkdir ~/.config/radicale
+    nano ~/.config/radicale/config
+
+Add the following content to the file and save it:
+
+    [storage]
+    filesystem_folder = ~/.radicale-data
+
+Now set Radicale to launch when you login. In the LXQt app menu, go to
+Preferences -> LXQt Configuration Center -> Session Settings ->
+Autostart. Tap the "Add" button and add a command with name "Radicale"
+and command "`python3 -m radicale`" (this will create a .desktop file
+in `~/.config/autostart/`).
+
+Then logout and login again to start the Radicale server.
+
+To add calendars to Radicale, use the web interface. In a web browser
+go to: http://localhost:5232/
+
+In the Radicale web interface, enter the user name of your choice,
+leave the password blank, and login. Once logged in you can create a
+new calendar. We suggest a Title of "agenda" (but you may want to
+create several calendars, e.g. "personal" and "work") and Type
+"calendar and tasks". Now close the browser.
+
+### Configuring Pygenda to use CalDAV
+
+Install the Python caldav package and dependencies:
+
+    sudo apt install libxml2-dev libxslt-dev
+    pip3 install caldav==0.11.0 --user
+
+Note: Installing caldav takes a long time (around ten minutes). In
+particular, I thought it had frozen when running setup.py for lxml.
+
+Now edit the file ~/.config/pygenda/user.ini (see above, Configuration)
+and add the following:
+
+    [calendar]
+    type = caldav
+    server = http://localhost:5232/
+    username = USERNAME_ENTERED_ABOVE
+    password = pass
+    calendar = agenda
+
+A password is required, but it can be anything.
+
+If you used a different Title creating the calendar, in the Radicale
+web interface, use that instead of "agenda" for the calendar value (in
+fact, if you only have one calendar then you can omit that line). If
+you created more than one calendar, you can configure the others as
+[calendar1], [calendar2], etc., giving the appropriate names for the
+calendar setting in each section.
+
+Now test that Pygenda launches, and that you can create new entries.
+
+Security note: You may be concerned that the Radicale server is
+accessible to other people on the network. This should not be a
+problem because by default it only binds to localhost.
 
 Finally
 -------
