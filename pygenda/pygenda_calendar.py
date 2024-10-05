@@ -92,10 +92,10 @@ class Calendar:
     calConnectors = None # type:List[CalendarConnector]
     _default_connector_event = None # type:int
     _default_connector_todo = None # type:int
-    _entry_norep_list_sorted = None
-    _entry_rep_list = None
+    _entry_norep_list_sorted = None # type:Optional[list]
+    _entry_rep_list = None # type:Optional[list]
     _entry_norep_xover_list_sorted = None # type:Optional[list]
-    _todo_list = None
+    _todo_list = None # type:Optional[list]
 
     @classmethod
     def init(cls) -> None:
@@ -161,7 +161,7 @@ class Calendar:
 
 
         # Re-initialise connections and saved lists so init()
-        # can be called more tn once if necessary
+        # can be called more than once if necessary
         cls.calConnectors = []
         cls._default_connector_event = None # type:ignore[assignment]
         cls._default_connector_todo = None # type:ignore[assignment]
@@ -305,7 +305,6 @@ class Calendar:
             if not cls.calConnectors[e_inf.cal_idx].stores_todos():
                 raise ValueError('Tried to add todo to calendar that doesn\'t store todos')
             en = iTodo()
-            cls._todo_list = None # Clear todo cache as modified
         else:
             raise ValueError('Unrecognized entry type')
         en.add('UID', Calendar.gen_uid()) # Required
@@ -318,11 +317,6 @@ class Calendar:
             # Repeats - only add these if entry has a date(time)
             if e_inf.rep_type is not None and e_inf.rep_inter>0:
                 cls._event_add_repeat_from_info(en, e_inf)
-                cls._entry_rep_list = None # Clear rep cache as modified
-            else:
-                cls._entry_norep_list_sorted = None # Clear norep cache, mod'd
-                if cls._is_xover_entry(en):
-                    cls._entry_norep_xover_list_sorted = None
 
         cls._entry_set_status_from_info(en, e_inf)
         cls._event_set_location_from_info(en, e_inf)
@@ -340,7 +334,24 @@ class Calendar:
 
         entry = cls.calConnectors[e_inf.cal_idx].add_entry(en) # Write to store
         entry._cal_idx = e_inf.cal_idx
+
+        cls._update_lists_new_entry(en)
+
         return entry
+
+
+    @classmethod
+    def _update_lists_new_entry(cls, en:Union[iEvent,iTodo]) -> None:
+        # Clear/update appropriate lists for new entry.
+        # Note: en should be a *new* entry, not an updated entry.
+        if cls._entry_belongs_in_norep_list(en):
+            cls._entry_norep_list_sorted = None
+        if cls._entry_rep_list is not None and cls._entry_belongs_in_rep_list(en):
+            cls._entry_rep_list.append(en) # unsorted, so just add entry
+        if cls._entry_belongs_in_norep_xover_list(en):
+            cls._entry_norep_xover_list_sorted = None
+        if isinstance(en, iTodo):
+            cls._todo_list = None
 
 
     @classmethod
@@ -502,16 +513,8 @@ class Calendar:
         en = cls.calConnectors[cal_idx].add_entry(en) # Write to store
         en._cal_idx = cal_idx
 
-        # Clear appropriate lists
-        if new_dt_start is not None:
-            if en_repeats:
-                cls._entry_rep_list = None
-            else:
-                cls._entry_norep_list_sorted = None
-                if cls._is_xover_entry(en):
-                    cls._entry_norep_xover_list_sorted = None
-        if not en_is_event: # is Todo
-            cls._todo_list = None # Clear todo cache as modified
+        cls._update_lists_new_entry(en)
+
         return en
 
 
@@ -534,8 +537,11 @@ class Calendar:
         else:
             raise ValueError('Unrecognized entry type')
 
-        clear_rep = False
-        clear_norep = False
+        # Check which lists the entry was in previously
+        was_in_norep_list = cls._entry_belongs_in_norep_list(en)
+        was_in_rep_list = cls._entry_belongs_in_rep_list(en)
+        was_in_norep_xover_list = cls._entry_belongs_in_norep_xover_list(en)
+        was_in_todo_list = isinstance(en, iTodo)
 
         if 'UID' not in en:
             en.add('UID', Calendar.gen_uid()) # Should be present
@@ -567,17 +573,9 @@ class Calendar:
         # Repeats (including exception dates)
         if 'RRULE' in en:
             del(en['RRULE'])
-            clear_rep = True
-        elif had_date:
-            # Previously had start time, but no repeats
-            clear_norep = True
         cls._del_entry_field(en, 'EXDATE')
         if e_inf.rep_type is not None and e_inf.rep_inter>0:
             cls._event_add_repeat_from_info(en, e_inf)
-            clear_rep = True
-        elif e_inf.start_dt is not None:
-            # Now has start time, but no repeats
-            clear_norep = True
 
         # Other properties: status (cancelled, tentative, etc.), location
         cls._entry_set_status_from_info(en, e_inf)
@@ -589,17 +587,9 @@ class Calendar:
             en.subcomponents.remove(alm)
         cls._entry_set_alarms_from_info(en, e_inf)
 
-        # This needs optimising - some cases cause too much cache flushing !!
-        if clear_norep:
-            cls._entry_norep_list_sorted = None
-            cls._entry_norep_xover_list_sorted = None
-        if clear_rep:
-            cls._entry_rep_list = None
-        if e_inf.type==EntryInfo.TYPE_TODO or isinstance(en, iTodo):
-            cls._todo_list = None
-
         if en._cal_idx == e_inf.cal_idx:
             cls.calConnectors[e_inf.cal_idx].update_entry(en) # Write to store
+            new_en = en
         else:
             # Need to move entry to new calendar.
             # Write new then delete old - to reduce chance of data loss.
@@ -607,6 +597,24 @@ class Calendar:
             new_en = cls.calConnectors[e_inf.cal_idx].add_entry(en)
             new_en._cal_idx = e_inf.cal_idx
             cls.calConnectors[old_cal_idx].delete_entry(en)
+
+        # Now clear/update lists depending on previous & new states
+        if was_in_norep_list or cls._entry_belongs_in_norep_list(new_en):
+            cls._entry_norep_list_sorted = None
+        if cls._entry_rep_list is not None:
+            if was_in_rep_list != cls._entry_belongs_in_rep_list(new_en):
+                # List not sorted, so no need to re-sort if no change
+                if was_in_rep_list:
+                    cls._entry_rep_list.remove(en)
+                else:
+                    cls._entry_rep_list.append(new_en)
+            elif was_in_rep_list is True and en is not new_en:
+                cls._entry_rep_list.remove(en)
+                cls._entry_rep_list.append(new_en)
+        if was_in_norep_xover_list or cls._entry_belongs_in_norep_xover_list(new_en):
+            cls._entry_norep_xover_list_sorted = None
+        if was_in_todo_list or isinstance(new_en, iTodo):
+            cls._todo_list = None
 
 
     @staticmethod
@@ -777,15 +785,15 @@ class Calendar:
         if cls.calendar_readonly(entry):
             raise ValueError('Tried to delete entry from calendar set readonly')
 
-        # Need to clear cache containing the entry...
-        if 'DTSTART' in entry:
-            if 'RRULE' in entry:
-                cls._entry_rep_list = None
-            else:
-                cls._entry_norep_list_sorted = None
-                cls._entry_norep_xover_list_sorted = None
-        if type(entry)==iTodo:
-            cls._todo_list = None
+        # Need to remove entry from any internal lists...
+        if cls._entry_norep_list_sorted is not None and cls._entry_belongs_in_norep_list(entry):
+            cls._entry_norep_list_sorted.remove(entry)
+        if cls._entry_rep_list is not None and cls._entry_belongs_in_rep_list(entry):
+            cls._entry_rep_list.remove(entry)
+        if cls._entry_norep_xover_list_sorted is not None and cls._entry_belongs_in_norep_xover_list(entry):
+            cls._entry_norep_xover_list_sorted.remove(entry)
+        if cls._todo_list is not None and isinstance(entry, iTodo):
+            cls._todo_list.remove(entry)
 
         cls.calConnectors[entry._cal_idx].delete_entry(entry)
 
@@ -834,8 +842,28 @@ class Calendar:
             for conn in cls.calConnectors:
                 if conn.stores_events():
                     evs = conn.cal.walk('VEVENT')
-                    cls._entry_norep_list_sorted.extend([e for e in evs if 'RRULE' not in e])
+                    cls._entry_norep_list_sorted.extend([e for e in evs if Calendar._event_belongs_in_norep_list(e)])
             cls._entry_norep_list_sorted.sort()
+
+
+    @staticmethod
+    def _event_belongs_in_norep_list(ev:iEvent) -> bool:
+        # Return True if ev should be in _entry_norep_list_sorted
+        return 'RRULE' not in ev or ev['RRULE'] is None
+
+
+    @staticmethod
+    def _todo_belongs_in_norep_list(td:iTodo) -> bool:
+        # Return True if td should be in _entry_norep_list_sorted
+        return False
+
+
+    @staticmethod
+    def _entry_belongs_in_norep_list(en:Union[iEvent,iTodo]) -> bool:
+        # Return True if en should be in _entry_norep_list_sorted
+        if isinstance(en, iEvent):
+            return Calendar._event_belongs_in_norep_list(en)
+        return Calendar._todo_belongs_in_norep_list(en)
 
 
     @classmethod
@@ -848,7 +876,27 @@ class Calendar:
             for conn in cls.calConnectors:
                 if conn.stores_events():
                     evs = conn.cal.walk('VEVENT')
-                    cls._entry_rep_list.extend([e for e in evs if 'RRULE' in e and e['RRULE'] is not None])
+                    cls._entry_rep_list.extend([e for e in evs if Calendar._event_belongs_in_rep_list(e)])
+
+
+    @staticmethod
+    def _event_belongs_in_rep_list(ev:iEvent) -> bool:
+        # Return True if ev should be in _entry_rep_list
+        return 'RRULE' in ev and ev['RRULE'] is not None
+
+
+    @staticmethod
+    def _todo_belongs_in_rep_list(td:iTodo) -> bool:
+        # Return True if td should be in _entry_rep_list
+        return False
+
+
+    @staticmethod
+    def _entry_belongs_in_rep_list(en:Union[iEvent,iTodo]) -> bool:
+        # Return True if en should be in _entry_rep_list
+        if isinstance(en, iEvent):
+            return Calendar._event_belongs_in_rep_list(en)
+        return Calendar._todo_belongs_in_rep_list(en)
 
 
     @classmethod
@@ -858,31 +906,46 @@ class Calendar:
             cls._entry_norep_xover_list_sorted = []
             for conn in cls.calConnectors:
                 evs = conn.cal.walk('vEvent')
-                cls._entry_norep_xover_list_sorted.extend([e for e in evs if 'RRULE' not in e and cls._is_xover_entry(e)])
+                cls._entry_norep_xover_list_sorted.extend([e for e in evs if Calendar._event_belongs_in_norep_xover_list(e)])
             cls._entry_norep_xover_list_sorted.sort()
 
 
     @staticmethod
-    def _is_xover_entry(e:iEvent) -> bool:
-        # Helper function to determine if simple/non-repeating entry
-        # crosses over from one (localtime) day to the next
-        if 'DTEND' in e:
-            st = e['DTSTART'].dt
-            end = e['DTEND'].dt
+    def _event_belongs_in_norep_xover_list(ev:iEvent) -> bool:
+        # Return True if ev should be in _entry_norep_xover_list_sorted
+        if 'RRULE' in ev and ev['RRULE'] is not None:
+            return False
+        if 'DTEND' in ev:
+            st = ev['DTSTART'].dt
+            end = ev['DTEND'].dt
             if isinstance(st, dt_datetime):
                 st = date_to_datetime(st, True).astimezone(get_local_tz())
                 end = date_to_datetime(end, True).astimezone(get_local_tz())
-        elif 'DURATION' in e:
-            st = e['DTSTART'].dt
+        elif 'DURATION' in ev:
+            st = ev['DTSTART'].dt
             if isinstance(st, dt_datetime):
                 st = date_to_datetime(st, True).astimezone(get_local_tz())
-            end = dt_add_delta(st, e['DURATION'].dt)
+            end = dt_add_delta(st, ev['DURATION'].dt)
         else:
             return False
         enddate = datetime_to_date(end)
         if not isinstance(end,dt_datetime) or end.time()==dt_time(hour=0,minute=0,second=0):
             enddate -= timedelta(days=1)
         return datetime_to_date(st) < enddate # type:ignore[no-any-return]
+
+
+    @staticmethod
+    def _todo_belongs_in_norep_xover_list(td:iTodo) -> bool:
+        # Return True if td should be in _entry_norep_xover_list_sorted
+        return False
+
+
+    @staticmethod
+    def _entry_belongs_in_norep_xover_list(en:Union[iEvent,iTodo]) -> bool:
+        # Return True if en should be in _entry_norep_xover_list_sorted
+        if isinstance(en, iEvent):
+            return Calendar._event_belongs_in_norep_xover_list(en)
+        return Calendar._todo_belongs_in_norep_xover_list(en)
 
 
     @classmethod
@@ -897,17 +960,17 @@ class Calendar:
             cls._update_entry_norep_list()
             # bisect to find starting point
             ii = 0
-            llen = len(cls._entry_norep_list_sorted)
+            llen = len(cls._entry_norep_list_sorted) # type:ignore[arg-type]
             top = llen
             while ii<top:
                 mid = (ii+top)//2
-                if dt_lt(cls._entry_norep_list_sorted[mid]['DTSTART'].dt,start):
+                if dt_lt(cls._entry_norep_list_sorted[mid]['DTSTART'].dt,start): # type:ignore[index]
                     ii = mid+1
                 else:
                     top = mid
             # ii is now the start, append occs to ret_list
             while ii < llen:
-                e = cls._entry_norep_list_sorted[ii]
+                e = cls._entry_norep_list_sorted[ii] # type:ignore[index]
                 e_st = e['DTSTART'].dt
                 if dt_lte(stop, e_st):
                     break
@@ -915,7 +978,7 @@ class Calendar:
                 ii += 1
         if include_repeated:
             cls._update_entry_rep_list()
-            for e in cls._entry_rep_list:
+            for e in cls._entry_rep_list: # type:ignore[union-attr]
                 merge_repeating_entries_sort(ret_list,e,start,stop)
         return ret_list
 
@@ -987,7 +1050,7 @@ class Calendar:
         # Return list of "todo"s
         # !! Not sure if we need to track list - to review later when/if there is filtering
         cls._update_todo_list()
-        return cls._todo_list
+        return cls._todo_list # type:ignore[return-value]
 
 
     @classmethod
@@ -998,17 +1061,17 @@ class Calendar:
         txt_n = txt.casefold() # !! also need to remove accents !!
         # Non-repeating entries
         cls._update_entry_norep_list()
-        for ev in cls._entry_norep_list_sorted:
+        for ev in cls._entry_norep_list_sorted: # type:ignore[union-attr]
             if 'SUMMARY' in ev and txt_n in ev['SUMMARY'].casefold():
                 ret_list.append(ev)
         # Repeating entries
         cls._update_entry_rep_list()
-        for ev in cls._entry_rep_list:
+        for ev in cls._entry_rep_list: # type:ignore[union-attr]
             if 'SUMMARY' in ev and txt_n in ev['SUMMARY'].casefold():
                 ret_list.append(ev)
         # Todo entries
         cls._update_todo_list()
-        for td in cls._todo_list:
+        for td in cls._todo_list: # type:ignore[union-attr]
             if 'SUMMARY' in td and txt_n in td['SUMMARY'].casefold():
                 ret_list.append(td)
         return ret_list
