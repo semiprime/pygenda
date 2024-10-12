@@ -413,7 +413,7 @@ class View_DayUnit_Base(View):
     _BULLET_ALLDAY = u'✦' # alternatives:❖⍟✪⦿❂♦⧫⏣⎔⌾⌘⌑⎊⎈⁕⧓⚫⚭⚙✷✦
     _BULLET_MULTIDAY_START = u'‣'
     _BULLET_ONGOING = u'»'
-    _BULLET_TODO = u'🅣' # alternative:Ⓣ
+    _BULLET_TODO = u'Ⓣ' # alternative:🅣
 
     @classmethod
     def marker_label(cls, ev:iCal.Event, dt_st:dt_date, is_ongoing:bool=False) -> Gtk.Label:
