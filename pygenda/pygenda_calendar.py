@@ -964,14 +964,14 @@ class Calendar:
             top = llen
             while ii<top:
                 mid = (ii+top)//2
-                if dt_lt(cls._entry_norep_list_sorted[mid]['DTSTART'].dt,start): # type:ignore[index]
+                if dt_lt(cls._entry_norep_list_sorted[mid]._sort_dt(),start): # type:ignore[index]
                     ii = mid+1
                 else:
                     top = mid
             # ii is now the start, append occs to ret_list
             while ii < llen:
                 e = cls._entry_norep_list_sorted[ii] # type:ignore[index]
-                e_st = e['DTSTART'].dt
+                e_st = e._sort_dt()
                 if dt_lte(stop, e_st):
                     break
                 ret_list.append((e,e_st))

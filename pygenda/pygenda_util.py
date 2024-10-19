@@ -217,14 +217,30 @@ def dt_lt(dt_a:date, dt_b:date) -> bool:
     return dt_a < dt_b
 
 
-# We want to be able to sort events/todos by datetime
-def _entry_lt(self, other) -> bool:
-    # Return True if start date/time of self < start date/time of other
-    return dt_lt(self['DTSTART'].dt,other['DTSTART'].dt)
+# We want to be able to sort events/todos by datetime.
+# These functions return the relevant datetime for comparison.
+def _event_sort_dt(self) -> date:
+    return self['DTSTART'].dt # type:ignore[no-any-return]
 
-# Attach method to classes so it can be used to sort
-iCal.Event.__lt__ = _entry_lt
-iCal.Todo.__lt__ = _entry_lt
+def _todo_sort_dt(self) -> date:
+    return self['DUE'].dt # type:ignore[no-any-return]
+
+iCal.Event._sort_dt = _event_sort_dt
+iCal.Todo._sort_dt = _todo_sort_dt
+
+
+# And these functions do the comparison between events/todos.
+def _event_lt(self, other) -> bool:
+    # Return True if start date/time of self < start date/time of other
+    return dt_lt(self['DTSTART'].dt, other._sort_dt())
+
+def _todo_lt(self, other) -> bool:
+    # Return True if start date/time of self < start date/time of other
+    return dt_lt(self['DUE'].dt, other._sort_dt())
+
+# Attach methods to classes so they will be used to sort
+iCal.Event.__lt__ = _event_lt
+iCal.Todo.__lt__ = _todo_lt
 
 
 def dt_add_delta(dt:date, delta:timedelta) -> datetime:
