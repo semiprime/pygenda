@@ -376,7 +376,10 @@ class View_DayUnit_Base(View):
         # Assigned to the 'Enter' key in Week and Year views.
         en = cls.get_cursor_entry()
         if en is not None:
-            GUI.edit_or_display_event(en)
+            if isinstance(en, iTodo):
+                GUI.edit_or_display_todo(en)
+            else:
+                GUI.edit_or_display_event(en)
         elif GUI.create_events:
             date = cls.cursor_date()
             EventDialogController.new_event(date=date)
