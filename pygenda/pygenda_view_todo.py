@@ -3,7 +3,7 @@
 # pygenda_view_todo.py
 # Provides the "To-Do View" for Pygenda.
 #
-# Copyright (C) 2022,2023 Matthew Lewis
+# Copyright (C) 2022-2024 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -307,6 +307,15 @@ class View_Todo(View):
         if not cats:
             return filt=='UNCATEGORIZED'
         return filt in cats
+
+
+    @staticmethod
+    def first_list_index(td:iTodo) -> Optional[int]:
+        # Return index of first todo list containing td
+        for i in range(len(View_Todo._list_filters)):
+            if View_Todo._todo_matches_filter(td, View_Todo._list_filters[i]):
+                return i
+        return None
 
 
     @staticmethod

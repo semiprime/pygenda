@@ -3,7 +3,7 @@
 # pygenda_dialog_todo.py
 # Code for Todo dialog (used to create/update to-do items)
 #
-# Copyright (C) 2022,2023 Matthew Lewis
+# Copyright (C) 2022-2024 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -25,7 +25,7 @@ from gi.repository import Gtk, Gdk
 from icalendar import Todo as iTodo
 from locale import gettext as _
 from datetime import datetime as dt_datetime
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Callable
 
 # pygenda components
 from .pygenda_gui import GUI
@@ -61,6 +61,7 @@ class TodoDialogController:
     buf_notes_scroller = None # type: Gtk.ScrolledWindow
 
     list_default_cats = None # type: list
+    todolist_index = None # type: Callable
 
     @classmethod
     def init(cls) -> None:
@@ -92,6 +93,10 @@ class TodoDialogController:
         cls._init_calendarfields()
         cls._init_duedate()
         cls._init_notes()
+
+        # Delayed import to set function to get a todo's todo list
+        from .pygenda_view_todo import View_Todo
+        cls.todolist_index = View_Todo.first_list_index
 
 
     @classmethod
@@ -216,6 +221,10 @@ class TodoDialogController:
 
         if list_idx is not None:
             cls.wid_todolist.set_active(list_idx)
+        elif todo is not None:
+            idx = cls.todolist_index(todo)
+            if idx is not None:
+                cls.wid_todolist.set_active(idx)
 
 
     @classmethod
