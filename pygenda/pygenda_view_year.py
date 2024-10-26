@@ -25,7 +25,7 @@ from gi.repository import Gtk, Gdk, GLib
 import calendar
 from datetime import date as dt_date, datetime as dt_datetime, timedelta
 from locale import gettext as _
-from icalendar import cal as iCal, Todo as iTodo
+from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
 from typing import Tuple
 
 # pygenda components
@@ -41,6 +41,7 @@ from .pygenda_util import start_end_dts_occ
 class View_Year(View_DayUnit_Base):
     Config.set_defaults('year_view',{
         'show_event_location': 'always',
+        'show_todos': True,
         'zoom_levels': 5,
         'default_zoom': 2,
     })
@@ -169,6 +170,7 @@ class View_Year(View_DayUnit_Base):
         cls._loc_max_chars = Config.get_int('year_view','location_max_chars')
         if cls._loc_max_chars is None:
             cls._loc_max_chars = 0
+        cls.show_todos = Config.get_bool('year_view','show_todos')
 
 
     @classmethod
@@ -323,6 +325,8 @@ class View_Year(View_DayUnit_Base):
         cls._visible_occurrences = Calendar.occurrence_list(dt, dt+timedelta(days=1))
         r = 0
         for occ in cls._visible_occurrences:
+            if not cls.show_todos and isinstance(occ[0], iTodo):
+                continue
             occ_dt_sta,occ_dt_end = start_end_dts_occ(occ)
             row = Gtk.Box()
             # Create entry mark (bullet or time) & add to row
@@ -444,7 +448,9 @@ class View_Year(View_DayUnit_Base):
         date = dt_date(year=yr,month=1,day=1)
         oneday = timedelta(days=1)
         single_list = Calendar.occurrence_list(date, dt_date(year=yr+1,month=1,day=1), include_single=True, include_repeated=False)
-        occ_dates_single = [cls._local_date(o[1]) for o in single_list]
+        occ_dates_single = [cls._local_date(o[1]) for o in single_list if isinstance(o[0],iEvent)]
+        if cls.show_todos:
+            occ_dates_todo = [cls._local_date(o[1]) for o in single_list if isinstance(o[0],iTodo)]
         reps_list = Calendar.occurrence_list(date, dt_date(year=yr+1,month=1,day=1), include_single=False, include_repeated=True)
         # Now simplify this list to keep the info we need...
         reps_list = [(o[0]['RRULE']['FREQ'][0],cls._local_date(o[1])) for o in reps_list if 'FREQ' in o[0]['RRULE']]
@@ -467,6 +473,11 @@ class View_Year(View_DayUnit_Base):
                     ctx.add_class('yearview_entry_single')
                 else:
                     ctx.remove_class('yearview_entry_single')
+                if cls.show_todos:
+                    if date in occ_dates_todo:
+                        ctx.add_class('yearview_entry_todo')
+                    else:
+                        ctx.remove_class('yearview_entry_todo')
                 ctx.remove_class('yearview_entry_repeated')
                 ctx.remove_class('yearview_entry_repeated_year')
                 ctx.remove_class('yearview_entry_repeated_month')

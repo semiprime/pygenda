@@ -843,6 +843,9 @@ class Calendar:
                 if conn.stores_events():
                     evs = conn.cal.walk('VEVENT')
                     cls._entry_norep_list_sorted.extend([e for e in evs if Calendar._event_belongs_in_norep_list(e)])
+                if conn.stores_todos():
+                    tds = conn.cal.walk('VTODO')
+                    cls._entry_norep_list_sorted.extend([t for t in tds if Calendar._todo_belongs_in_norep_list(t)])
             cls._entry_norep_list_sorted.sort()
 
 
@@ -855,7 +858,7 @@ class Calendar:
     @staticmethod
     def _todo_belongs_in_norep_list(td:iTodo) -> bool:
         # Return True if td should be in _entry_norep_list_sorted
-        return False
+        return 'DUE' in td
 
 
     @staticmethod

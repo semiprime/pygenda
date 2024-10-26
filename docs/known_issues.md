@@ -88,7 +88,9 @@ Medium
 
 * Need InfoPrints (a.k.a. toast notifications) for some situations
 
-* Todo items cannot be shown in Week or Year views
+* Only to-do items with due dates can be shown in Week or Year views.
+  There may be a need to show others (e.g. with start dates, with
+  status "action required", with high priority).
 
 * Todo due-dates display improvements: date without year; date with day;
   date like "tomorrow", "today", "2 days", "yesterday!"; don't show if

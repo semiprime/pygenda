@@ -44,8 +44,8 @@ Usage is intended to be intuitive, but a few things are worth noting:
 
 * The icons in Year View are configurable via CSS (although it can be
   a bit fiddly). The default CSS shows a star for yearly events, a
-  purple circle for other repeating events, and a yellow disc for other
-  events.
+  purple circle for other repeating events, a yellow disc for other
+  events, and a green "T" for Todos.
 
 * Hint: To convert To-dos into Events, or vice-versa, cut & paste them.
 

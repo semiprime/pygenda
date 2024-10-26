@@ -44,6 +44,7 @@ class View_Week(View_DayUnit_Base):
         'pageright_datepos': 'right',
         'show_ongoing_event': 'first_day',
         'show_event_location': 'always',
+        'show_todos': True,
         'zoom_levels': 5,
         'default_zoom': 1,
     })
@@ -176,6 +177,7 @@ class View_Week(View_DayUnit_Base):
         cls._loc_max_chars = Config.get_int('week_view','location_max_chars')
         if cls._loc_max_chars is None:
             cls._loc_max_chars = 0
+        cls.show_todos = Config.get_bool('week_view','show_todos')
 
 
     @classmethod
@@ -287,19 +289,20 @@ class View_Week(View_DayUnit_Base):
             while True:
                 if occ is None:
                     break
-                occ_dt_sta,occ_dt_end = start_end_dts_occ(occ)
-                if dt_lte(dt_nxt, occ_dt_sta):
-                    # into next day so break this loop
-                    break
-                # First, see if we've hit the cursor target entry
-                if cls._target_entry is not None and cls._target_entry is occ[0] and dt==View._cursor_date:
-                    View._cursor_idx_in_date = cls._day_ent_count[i]
-                    cls._target_entry = None
-                cls._add_day_entry_row(occ[0], occ_dt_sta, occ_dt_end, i, cls._show_location)
-                if cls._show_ongoing:
-                    # Add to 'ongoing' list if occurrence goes into next day
-                    if occ_dt_end and dt_lt(rollover_dt, occ_dt_end):
-                        ongoing.append(occ)
+                if cls.show_todos or not isinstance(occ[0], iTodo):
+                    occ_dt_sta,occ_dt_end = start_end_dts_occ(occ)
+                    if dt_lte(dt_nxt, occ_dt_sta):
+                        # into next day so break this loop
+                        break
+                    # First, see if we've hit the cursor target entry
+                    if cls._target_entry is not None and cls._target_entry is occ[0] and dt==View._cursor_date:
+                        View._cursor_idx_in_date = cls._day_ent_count[i]
+                        cls._target_entry = None
+                    cls._add_day_entry_row(occ[0], occ_dt_sta, occ_dt_end, i, cls._show_location)
+                    if cls._show_ongoing:
+                      # Add to 'ongoing' list if occurrence goes into next day
+                        if occ_dt_end and dt_lt(rollover_dt, occ_dt_end):
+                            ongoing.append(occ)
                 try:
                     occ = next(itr)
                 except StopIteration:
