@@ -57,7 +57,6 @@ class View_Year(View_DayUnit_Base):
     _show_datecontent_pending = False
     _date_content_count = 0
     _scroll_to_cursor_required = False
-    _target_entry = None
 
     SHOW_LOC_ALWAYS = 1 # constant 'enum' for _show_location flag
 

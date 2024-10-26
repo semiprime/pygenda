@@ -53,7 +53,6 @@ class View_Week(View_DayUnit_Base):
     _week_viewed = None # So view will be fully redrawn when needed
     _last_cursor = None
     _scroll_to_cursor_in_day = None
-    _target_entry = None
     _is_repeat_key = False
 
     CURSOR_STYLE = 'weekview_cursor'

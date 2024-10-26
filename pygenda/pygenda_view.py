@@ -346,6 +346,9 @@ class View:
 class View_DayUnit_Base(View):
     # Used as base class for Day & Year views
 
+    show_todos = False # Set to True by child class if shows todos
+    _target_entry = None
+
     @classmethod
     def paste_entry(cls, en:Union[iEvent,iTodo]) -> None:
         # Creates new entry based on entry en.
@@ -407,7 +410,28 @@ class View_DayUnit_Base(View):
                     dt = dt.astimezone(get_local_tz())
                 dt = dt.date()
             cls.cursor_set_date(dt)
-        cls._target_entry = ev # type:ignore # Week/Year View classes have this
+        cls._target_entry = ev
+        return True # Indicates success, so use this view
+
+
+    @classmethod
+    def cursor_goto_todo(cls, todo:iTodo, list_idx:int) -> bool:
+        # Move cursor to given todo.
+        # Sets target, so can jump on next redraw.
+        # Returns True if moved to Todo entry, False to
+        # indicate the caller should try another view.
+        if not cls.show_todos:
+            return False # Not showing any todos - try another view
+        if 'DUE' not in todo:
+            return False
+        dt = todo['DUE'].dt
+        if isinstance(dt, dt_datetime):
+            if dt.tzinfo is not None:
+                # dt has a timezone, so convert to local time
+                dt = dt.astimezone(get_local_tz())
+            dt = dt.date()
+        cls.cursor_set_date(dt)
+        cls._target_entry = todo
         return True # Indicates success, so use this view
 
 
