@@ -25,7 +25,7 @@ from gi.repository import Gtk, Gdk, GLib
 import calendar
 from datetime import date as dt_date, datetime as dt_datetime, timedelta
 from locale import gettext as _
-from icalendar import cal as iCal
+from icalendar import cal as iCal, Todo as iTodo
 from typing import Tuple
 
 # pygenda components
@@ -366,8 +366,15 @@ class View_Year(View_DayUnit_Base):
         cls._last_entry_cursor = i
         cls._scroll_to_cursor_required = True # to be read in draw handler
         # Enable/disable menu items
-        ro = Calendar.calendar_readonly(cls.get_cursor_entry())
-        GUI.set_menu_elts(on_event=True, read_only=ro, can_create_here=cch)
+        on_ev = False
+        on_td = False
+        en = cls.get_cursor_entry()
+        if isinstance(en, iTodo):
+            on_td = True
+        else:
+            on_ev = True
+        ro = Calendar.calendar_readonly(en)
+        GUI.set_menu_elts(on_event=on_ev, on_todo=on_td, read_only=ro, can_create_here=cch)
 
 
     @classmethod

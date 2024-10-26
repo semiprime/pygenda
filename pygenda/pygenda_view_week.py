@@ -3,7 +3,7 @@
 # pygenda_view_week.py
 # Provides the "Week View" for Pygenda.
 #
-# Copyright (C) 2022,2023 Matthew Lewis
+# Copyright (C) 2022-2024 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -24,7 +24,7 @@ from gi.repository import Gtk, Gdk, GLib
 
 from calendar import day_abbr,month_name
 from datetime import time as dt_time, date as dt_date, datetime as dt_datetime, timedelta
-from icalendar import cal as iCal
+from icalendar import cal as iCal, Todo as iTodo
 from locale import gettext as _
 from typing import Optional
 
@@ -363,10 +363,18 @@ class View_Week(View_DayUnit_Base):
             cls._scroll_to_cursor_in_day = None
 
         # Enable/disable menu items
-        on_ev = (ecount!=0)
-        ro = on_ev and Calendar.calendar_readonly(cls.get_cursor_entry())
+        on_ev = False
+        on_td = False
+        ro = False
+        if ecount!=0:
+            en = cls.get_cursor_entry()
+            if isinstance(en, iTodo):
+                on_td = True
+            else:
+                on_ev = True
+            ro = Calendar.calendar_readonly(en)
         cch = GUI.create_events
-        GUI.set_menu_elts(on_event=on_ev, read_only=ro, can_create_here=cch)
+        GUI.set_menu_elts(on_event=on_ev, on_todo=on_td, read_only=ro, can_create_here=cch)
 
 
     @classmethod
