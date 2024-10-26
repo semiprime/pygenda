@@ -239,7 +239,7 @@ class TodoDialogController:
         cls.wid_priority.set_active(0)
         cls.wid_status.set_active(0)
         cls.wid_duedate_switch.set_active(False)
-        cls.wid_duedate.set_date(None) # today
+        cls.wid_duedate.set_date(GUI.cursor_date())
         cls.buf_notes.set_text('')
 
 

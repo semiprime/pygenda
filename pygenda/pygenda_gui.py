@@ -1108,3 +1108,10 @@ class GUI:
             return [], []
         tdv = cls.views[todo_idx]
         return tdv._list_titles, tdv._list_default_cats
+
+
+    @classmethod
+    def cursor_date(cls) -> Optional[dt_date]:
+        # Returns date (maybe datetime in the future) with cursor.
+        # None means no date (e.g. Todo View)
+        return cls.views[cls._view_idx].cursor_date() # type:ignore[no-any-return]
