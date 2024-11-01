@@ -170,18 +170,21 @@ class Calendar:
         cls._entry_norep_xover_list_sorted = None
         cls._todo_list = None
 
+        i = 0 # Calendar index
         caltype = Config.get('calendar','type')
         if caltype is not None:
-            do_create_conn('calendar', caltype)
+            if Config.get_bool('calendar', 'enabled') is not False:
+                do_create_conn('calendar', caltype)
+            i += 1 # if 'calendar' exists, next check for 'calendar1'
 
-        # look for 'calendar1', 'calendar2' etc.
-        i = len(cls.calConnectors) # if no 'calendar' start at 'calendar0'
+        # look for 'calendar0'  , 'calendar1', 'calendar2' etc.
         while True:
             sect = 'calendar'+str(i)
             caltype = Config.get(sect, 'type')
             if caltype is None:
                 break
-            do_create_conn(sect, caltype)
+            if Config.get_bool(sect, 'enabled') is not False:
+                do_create_conn(sect, caltype)
             i += 1
 
         if i==0:

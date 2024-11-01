@@ -93,6 +93,7 @@ calendar data), these can be placed in sections titled `calendar1`,
 
     [calendar1]
     type = caldav
+    enabled = True
     display_name = Work
     server = http://localhost:5232/
     username = skroob

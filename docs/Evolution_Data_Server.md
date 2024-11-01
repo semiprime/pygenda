@@ -64,6 +64,7 @@ sections titled `calendar2`, `calendar3`, etc. Example:
     [calendar2]
     # Holiday list downloaded from https://....
     type = icalfile
+    enabled = True
     display_name = Holidays
     filename = ~/.config/pygenda/holidays_UK.ics
     entry_type = event
