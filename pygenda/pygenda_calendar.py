@@ -335,7 +335,7 @@ class Calendar:
         entry = cls.calConnectors[e_inf.cal_idx].add_entry(en) # Write to store
         entry._cal_idx = e_inf.cal_idx
 
-        cls._update_lists_new_entry(en)
+        cls._update_lists_new_entry(entry)
 
         return entry
 
