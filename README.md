@@ -1,7 +1,8 @@
 Pygenda
 =======
 Pygenda is a calendar/agenda application written in Python3/GTK3 and
-designed for "PDA" devices such as Planet Computers' Gemini. The user
+designed for clamshell "PDA" devices with keyboards such as Planet
+Computers' Gemini PDA and Cosmo Communicator (running Linux). The user
 interface is inspired by the Agenda programs on the Psion Series 3 and
 Series 5 range of PDAs.
 
@@ -20,6 +21,23 @@ enough that the author is now using Pygenda as his main agenda, so
 maybe other people will also find it useful. Feedback is welcome at
 pygenda@semiprime.com – suggestions, questions about how to get something
 working, or just to say that you tried it out.
+
+Run/install
+-----------
+The simplest way to get started is to follow one of the following "quick start"
+guides (only a few devices, so far):
+
+* [**Gemini PDA**](docs/quickstart-geminipda.md) running Gemian
+* [**Cosmo Communicator**](docs/quickstart-cosmocommunicator.md) running Gemian
+* [**PostmarketOS**](docs/quickstart-postmarketOS.md)
+* [**Debian-like systems**](docs/quickstart-debianlike.md) e.g. Raspberry Pi OS (but see above for Gemian)
+
+More technical information is given below and in linked documents for
+those who want/need it.
+
+(I'd like Pygenda to be available in Mobile Linux repositories so that
+it's more easily installable. If you can help with that it would be
+very welcome.)
 
 Video and screenshots
 ---------------------
@@ -56,19 +74,6 @@ for more details.
 
 You should have received a copy of the GNU General Public License along
 with Pygenda (see COPYING file). If not, see <https://www.gnu.org/licenses/>.
-
-Run/install
------------
-The simplest way to get started is to follow one of the following "quick start"
-guides (only a few devices, so far):
-
-* [**Gemini PDA**](docs/quickstart-geminipda.md) running Gemian
-* [**Cosmo Communicator**](docs/quickstart-cosmocommunicator.md) running Gemian
-* [**PostmarketOS**](docs/quickstart-postmarketOS.md)
-* [**Debian-like systems**](docs/quickstart-debianlike.md) e.g. Raspberry Pi OS (but see above for Gemian)
-
-The sections below are for those running from source (e.g. from a
-GitHub clone), or who want to know more technical details.
 
 Dependencies
 ------------

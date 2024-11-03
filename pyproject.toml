@@ -11,7 +11,7 @@ authors = [
 # license = "GPLv3 only"
 description = "An agenda application inspired by Agenda programs on Psion PDAs."
 readme = "description.md"
-keywords = [ "calendar", "agenda", "todolist", "diary", "pda", "psion", "geminipda", "linux-mobile" ]
+keywords = [ "calendar", "agenda", "todolist", "diary", "pda", "psion", "geminipda", "cosmocommunicator", "linux-mobile" ]
 
 requires-python = ">=3.5"
 dependencies = [
