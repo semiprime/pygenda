@@ -56,6 +56,7 @@ class CalendarConnector:
     TYPE_EVENT = 2
     TYPE_TODO = 4
     TYPE_ALL = 6
+    SHOW_IN_GRID = 8
 
     def is_readonly(self) -> bool:
         # Return True if connector is read-only
@@ -68,6 +69,10 @@ class CalendarConnector:
     def stores_todos(self) -> bool:
         # Return True if calendar stores todo entries
         return (self.flags & CalendarConnector.TYPE_TODO)!=0
+
+    def show_in_grid(self) -> bool:
+        # Return True if calendar entries to be shown in grid (Year View)
+        return (self.flags & CalendarConnector.SHOW_IN_GRID)!=0
 
     def add_entry(self, entry:Union[iEvent,iTodo]) -> Union[iEvent,iTodo]:
         # Add a new entry component to the calendar data and store it.
@@ -143,6 +148,10 @@ class Calendar:
                 conn.displayname = dn
             elif not conn.displayname: # Don't want empty display name
                 conn.displayname = sect
+
+            # Get show_in_grid attribute (default is True, so None->enable)
+            if Config.get_bool(sect, 'show_in_grid') is not False:
+                conn.flags |= CalendarConnector.SHOW_IN_GRID
 
             # Add _cal_idx attribute so we can find calendar from entry.
             # Also "fix tz": make sure entry timezones are detailed.
@@ -955,7 +964,7 @@ class Calendar:
 
 
     @classmethod
-    def occurrence_list(cls, start:dt_date, stop:dt_date, include_single:bool=True, include_repeated:bool=True) -> list:
+    def occurrence_list(cls, start:dt_date, stop:dt_date, include_single:bool=True, include_repeated:bool=True, in_grid:bool=False) -> list:
         # Return list of occurences in range start <= . < stop.
         # Designed to be called by View classes to get events in range.
         # An "occurrence" is a pair: (event,datetime)
@@ -980,12 +989,14 @@ class Calendar:
                 e_st = e._sort_dt()
                 if dt_lte(stop, e_st):
                     break
-                ret_list.append((e,e_st))
+                if not in_grid or cls.calConnectors[e._cal_idx].show_in_grid():
+                    ret_list.append((e,e_st))
                 ii += 1
         if include_repeated:
             cls._update_entry_rep_list()
             for e in cls._entry_rep_list: # type:ignore[union-attr]
-                merge_repeating_entries_sort(ret_list,e,start,stop)
+                if not in_grid or cls.calConnectors[e._cal_idx].show_in_grid():
+                    merge_repeating_entries_sort(ret_list,e,start,stop)
         return ret_list
 
 

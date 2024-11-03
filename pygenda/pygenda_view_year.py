@@ -447,11 +447,11 @@ class View_Year(View_DayUnit_Base):
         yr = cls._year_viewed
         date = dt_date(year=yr,month=1,day=1)
         oneday = timedelta(days=1)
-        single_list = Calendar.occurrence_list(date, dt_date(year=yr+1,month=1,day=1), include_single=True, include_repeated=False)
+        single_list = Calendar.occurrence_list(date, dt_date(year=yr+1,month=1,day=1), include_single=True, include_repeated=False, in_grid=True)
         occ_dates_single = [cls._local_date(o[1]) for o in single_list if isinstance(o[0],iEvent)]
         if cls.show_todos:
             occ_dates_todo = [cls._local_date(o[1]) for o in single_list if isinstance(o[0],iTodo)]
-        reps_list = Calendar.occurrence_list(date, dt_date(year=yr+1,month=1,day=1), include_single=False, include_repeated=True)
+        reps_list = Calendar.occurrence_list(date, dt_date(year=yr+1,month=1,day=1), include_single=False, include_repeated=True, in_grid=True)
         # Now simplify this list to keep the info we need...
         reps_list = [(o[0]['RRULE']['FREQ'][0],cls._local_date(o[1])) for o in reps_list if 'FREQ' in o[0]['RRULE']]
         occ_dates_repeated = [o[1] for o in reps_list]
