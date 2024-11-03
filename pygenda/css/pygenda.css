@@ -621,7 +621,10 @@ buttonbox > button, .dialogbutton {
 .textentry, .longtextentry {
 	border-width:1px;
 	padding:1px 5px;
-	min-width:15em;
+}
+
+.textentry {
+	min-width:17em;
 }
 
 .textentry:focus, .longtextentry.focus {
@@ -631,6 +634,7 @@ buttonbox > button, .dialogbutton {
 }
 
 .longtextentry {
+	min-width:21em;
 	padding-right:1px;
 	background:white;
 	border-radius:3px;
