@@ -222,9 +222,12 @@ For more details/options, see [Evolution_Data_Server.md](Evolution_Data_Server.m
 
 Finally
 -------
-Please email me at pygenda@semiprime.com to let me know you've tried
-Pygenda. I also welcome bug reports, feature requests, bug fixes, and
-corrections to the documentation.
+I'd be grateful if you emailed me at pygenda@semiprime.com to let me
+know that you've tried Pygenda. It's a small project without lots of
+testers, so even feedback to say "it worked for me" is useful to let
+me know I haven't accidentally broken it. (I also welcome bug reports,
+feature requests, bug fixes, translations, corrections & additions to
+the documentation, new features, etc.)
 
 Appendix: Updating Pygenda
 --------------------------
