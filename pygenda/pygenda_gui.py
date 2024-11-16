@@ -384,6 +384,7 @@ class GUI:
         cls._init_spinbuttons()
         cls._init_comboboxes()
         cls._init_entryboxes()
+        cls._init_switches()
 
         # Menu bar & softkey bar made insensitive in .ui for startup.
         # We make them sensitive here before activating view.
@@ -543,6 +544,14 @@ class GUI:
 
 
     @classmethod
+    def _init_switches(cls) -> None:
+        # Connect Switch events to handlers for extra features.
+        for sw_id in ('dialogevent_switch_alarm','switch_todo_duedate'):
+            sw = cls._builder.get_object(sw_id)
+            sw.connect('key-press-event', cls._switch_keypress)
+
+
+    @classmethod
     def set_menu_elts(cls, on_event:bool=False, on_todo:bool=False, read_only:bool=False, can_create_here=False) -> None:
         # Called from Views as the cursor is moved. Enables/disables/hides
         # menu items appropriate for the current cursor item.
@@ -660,6 +669,20 @@ class GUI:
             return True # done, don't propagate
 
         return False # propagate event
+
+
+    @staticmethod
+    def _switch_keypress(wid:Gtk.Switch, ev:Gdk.EventKey) -> bool:
+        # Called to handle extra switch keyboard controls
+        if ev.keyval==Gdk.KEY_Left:
+            if wid.get_active():
+                wid.activate()
+                return True
+        elif ev.keyval==Gdk.KEY_Right:
+            if not wid.get_active():
+                wid.activate()
+                return True
+        return False # unhandled, so propagate event
 
 
     @staticmethod
