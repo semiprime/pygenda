@@ -517,30 +517,26 @@ scrollbar {
 	border-radius:0.3em;
 }
 
-.needs-action > .todoview_itemtext {
+.todo.needs-action, .needs-action > .todoview_itemtext {
 	color:red;
 	font-weight:bold;
 }
 
-.completed > .todoview_itemtext {
+.todo.completed, .completed > .todoview_itemtext {
 	text-decoration:line-through;
 }
 
-.in-process > .todoview_itemtext {
+.todo.in-process, .in-process > .todoview_itemtext {
+	color: green;
 	font-style:italic;
 }
 
-.cancelled > .todoview_itemtext {
+.todo.cancelled, .event.cancelled, .cancelled > .todoview_itemtext {
 	color:gray;
 	text-decoration:line-through #444;
 }
 
-/* Entries */
-
-.cancelled {
-	color:gray;
-	text-decoration:line-through;
-}
+/* Event statuses */
 
 .tentative {
 	color:gray;

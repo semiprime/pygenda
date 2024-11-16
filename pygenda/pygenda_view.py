@@ -213,7 +213,10 @@ class View:
                 z_tm = format_time(dt_st)
                 z_txt = u'({:s} {:s}) '.format(z_tm,z_nm)
         lab.set_text(u'{:s}{:s}{:s}{:s}{:s}'.format(z_txt,d_txt,endtm,l_txt,icons))
-        View.add_event_styles(lab, ev)
+        if isinstance(ev, iEvent):
+            View.add_event_styles(lab, ev)
+        elif isinstance(ev, iTodo):
+            View.add_todo_styles(lab, ev)
         return lab
 
 
@@ -265,9 +268,20 @@ class View:
     def add_event_styles(wid:Gtk.Label, ev:iCal.Event) -> None:
         # Adds formatting class to label corresponding to event status.
         # Allows entry to be formatted appropriately by CSS.
+        ctx = wid.get_style_context()
+        ctx.add_class('event')
         if 'STATUS' in ev and ev['STATUS'] in Calendar.STATUS_LIST_EVENT:
-            ctx = wid.get_style_context()
             ctx.add_class(ev['STATUS'].lower())
+
+
+    @staticmethod
+    def add_todo_styles(wid:Gtk.Label, td:iCal.Todo) -> None:
+        # Adds formatting class to label corresponding to todo status.
+        # Allows entry to be formatted appropriately by CSS.
+        ctx = wid.get_style_context()
+        ctx.add_class('todo')
+        if 'STATUS' in td and td['STATUS'] in Calendar.STATUS_LIST_TODO:
+            ctx.add_class(td['STATUS'].lower())
 
 
     @staticmethod
