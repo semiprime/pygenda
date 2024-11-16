@@ -3,7 +3,7 @@
 # pygenda_dialog_event.py
 # Code for Event dialog (used to create/update events)
 #
-# Copyright (C) 2022,2023 Matthew Lewis
+# Copyright (C) 2022-2024 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -259,11 +259,11 @@ class EventDialogController:
         # Initialise widgets etc in the Event dialog under the "Alarm" tab.
         # Called on app startup.
         cls.show_alarm_warning = Config.get_bool('new_event','show_alarm_warning')
-        cls.wid_alarmstack = GUI._builder.get_object('alarm-stack')
-        cls.wid_alarmset = GUI._builder.get_object('alarm-set')
-        cls._revealer_alarmlist = GUI._builder.get_object('revealer_alarmlist')
+        cls.wid_alarmstack = GUI._builder.get_object('dialogevent_alarmstack')
+        cls.wid_alarmset = GUI._builder.get_object('dialogevent_switch_alarm')
+        cls._revealer_alarmlist = GUI._builder.get_object('dialogevent_revealer_alarmlist')
 
-        cls.wid_alarmlist = GUI._builder.get_object('alarm-list')
+        cls.wid_alarmlist = GUI._builder.get_object('dialogevent_alarm_list')
         cls.alarmlist_model = Gtk.ListStore(object, str, str) # AlarmInfo + cols
         cls.wid_alarmlist.set_model(cls.alarmlist_model)
         cls.wid_alarmlist.append_column(Gtk.TreeViewColumn(_('Time before event'),Gtk.CellRendererText(), text=1))

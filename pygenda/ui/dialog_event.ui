@@ -774,7 +774,7 @@
 									</packing>
 								</child>
 								<child>
-									<object class="GtkStack" id="alarm-stack">
+									<object class="GtkStack" id="dialogevent_alarmstack">
 										<property name="visible">True</property>
 										<property name="can-focus">False</property>
 										<child>
@@ -803,7 +803,7 @@
 															</packing>
 														</child>
 														<child>
-															<object class="GtkSwitch" id="alarm-set">
+															<object class="GtkSwitch" id="dialogevent_switch_alarm">
 																<property name="visible">True</property>
 																<property name="can-focus">True</property>
 																<property name="halign">start</property>
@@ -824,7 +824,7 @@
 													</packing>
 												</child>
 												<child>
-													<object class="GtkRevealer" id="revealer_alarmlist">
+													<object class="GtkRevealer" id="dialogevent_revealer_alarmlist">
 														<property name="visible">True</property>
 														<property name="can-focus">False</property>
 														<child>
@@ -838,7 +838,7 @@
 																<property name="shadow-type">in</property>
 																<property name="overlay-scrolling">False</property>
 																<child>
-																	<object class="GtkTreeView" id="alarm-list">
+																	<object class="GtkTreeView" id="dialogevent_alarm_list">
 																		<property name="visible">True</property>
 																		<property name="can-focus">True</property>
 																		<property name="headers-clickable">False</property>
