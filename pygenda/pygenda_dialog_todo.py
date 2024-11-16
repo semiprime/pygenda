@@ -133,6 +133,8 @@ class TodoDialogController:
         cls.wid_duedate.connect('changed', cls._validated_field_changed)
         cls.wid_duedate_switch.connect('state-set', cls._toggle_duedate)
         cls.wid_duedate.get_style_context().add_class('hidden') # Remove -ve width warnings
+        # Allow keyboard navigation from date widget to switch
+        cls.wid_duedate.set_left_widget(cls.wid_duedate_switch)
 
 
     @classmethod
