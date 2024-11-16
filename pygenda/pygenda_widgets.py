@@ -3,7 +3,7 @@
 # pygenda_widgets.py
 # Date, Time and Duration entry widgets for Pygenda.
 #
-# Copyright (C) 2022,2023 Matthew Lewis
+# Copyright (C) 2022-2024 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -52,6 +52,7 @@ class _WidgetDateTimeBase(Gtk.Box):
     SEPARATOR_KEYS = ()
     FOCUS_STYLE = 'focus'
     field_shortcuts = ()
+    left_wid = None # type:Gtk.Widget
 
     def __init__(self, *args, **kwds):
         super().__init__(orientation=Gtk.Orientation.HORIZONTAL, spacing=2, *args, **kwds)
@@ -133,9 +134,13 @@ class _WidgetDateTimeBase(Gtk.Box):
             sel_bnds = False
 
         # Move left/right
-        if at_st and idx>0 and (ev.keyval==Gdk.KEY_Left or (not sel_bnds and ev.keyval==Gdk.KEY_BackSpace)):
-            self._elts[idx-1].grab_focus()
-            return True
+        if at_st:
+            if idx>0 and (ev.keyval==Gdk.KEY_Left or (not sel_bnds and ev.keyval==Gdk.KEY_BackSpace)):
+                self._elts[idx-1].grab_focus()
+                return True
+            if self.left_wid is not None and idx==0 and ev.keyval==Gdk.KEY_Left:
+                self.left_wid.grab_focus()
+                return True
         if at_end and ev.keyval==Gdk.KEY_Right and idx+1<len(self._elts):
             self._elts[idx+1].grab_focus()
             return True
@@ -223,6 +228,12 @@ class _WidgetDateTimeBase(Gtk.Box):
     def grab_focus(self) -> None:
         # Provide implementation of widget class's grab_focus()
         self._elts[0].grab_focus()
+
+
+    def set_left_widget(self, wid:Gtk.Widget) -> None:
+        # Set the "left widget", i.e. widget to go to if left key
+        # is pressed at start of entry space (assumes LTR layout)
+        self.left_wid = wid
 
 
 # Allow _WidgetDateTimeBase to emit its own 'changed' signals
