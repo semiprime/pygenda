@@ -426,6 +426,9 @@ class GUI:
         lang = Config.get('global', 'language')
         if not lang:
             lang = locale.getlocale()
+            if lang is None or (isinstance(lang, tuple) and lang[0] is None):
+                print("Warning: No system language found, falling back to English. This could cause errors later (e.g. opening dialogs) if English is not installed on the system. Perhaps change Pygenda user.ini file to use an installed language.", file=stderr)
+                lang = 'en'
         if isinstance(lang,str) and '.' not in lang:
             # Need to include encoding
             lang = (lang,'UTF-8')
