@@ -42,10 +42,12 @@ Usage is intended to be intuitive, but a few things are worth noting:
   widget moves to hour/minute fields. (These shortcut keys are localised,
   for example in French they are a/m/j/h/m.)
 
-* The icons in Year View are configurable via CSS (although it can be
-  a bit fiddly). The default CSS shows a star for yearly events, a
-  purple circle for other repeating events, a yellow disc for other
-  events, and a green "T" for Todos.
+* The icons in Year View are configurable via CSS. The default CSS
+  shows a star for yearly events, a purple circle for monthly and weekly
+  events, a yellow disc for other events, and a green "T" for Todos.
+  Writing this CSS can be a bit fiddly, so a script, make_css_yearicons.py,
+  is provided in the tools directory that generates the current icon
+  CSS, and which can be modified to produce customised CSS.
 
 * Hint: To convert To-dos into Events, or vice-versa, cut & paste them.
 
