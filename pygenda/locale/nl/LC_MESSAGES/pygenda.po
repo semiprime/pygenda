@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-17 13:05+0200\n"
+"POT-Creation-Date: 2024-12-01 13:48+0100\n"
 "PO-Revision-Date: 2024-08-19 12:03+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -402,19 +402,19 @@ msgstr "een taak"
 msgid "Import to calendar:"
 msgstr "Importeren naar agenda:"
 
-#: pygenda_dialog_todo.py:157
+#: pygenda_dialog_todo.py:164
 msgid "New To-do"
 msgstr "Nieuwe taak"
 
-#: pygenda_dialog_todo.py:168
+#: pygenda_dialog_todo.py:175
 msgid "Edit To-do"
 msgstr "Taak bewerken"
 
-#: pygenda_gui.py:971
+#: pygenda_gui.py:997
 msgid "Delete Entry"
 msgstr "Item verwijderen"
 
-#: pygenda_gui.py:977
+#: pygenda_gui.py:1003
 msgid ""
 "Delete all repeats:\n"
 "“{:s}”?"
@@ -422,7 +422,7 @@ msgstr ""
 "Wilt u alle herhalingen verwijderen?\n"
 "“{:s}”"
 
-#: pygenda_gui.py:979
+#: pygenda_gui.py:1005
 msgid ""
 "Delete entry:\n"
 "“{:s}”?"
@@ -430,19 +430,19 @@ msgstr ""
 "Wilt u het volgende item verwijderen?\n"
 "“{:s}”"
 
-#: pygenda_gui.py:1007 ui/main.ui:656
+#: pygenda_gui.py:1033 ui/main.ui:656
 msgid "Go To"
 msgstr "Ga naar"
 
-#: pygenda_gui.py:1019
+#: pygenda_gui.py:1045
 msgid "Go"
 msgstr "Gaan"
 
-#: pygenda_gui.py:1057
+#: pygenda_gui.py:1083
 msgid "Source code & documentation: "
 msgstr "Broncode en documentatie: "
 
-#: pygenda_gui.py:1062
+#: pygenda_gui.py:1088
 msgid ""
 "A calendar/agenda application written in Python/GTK3. The UI is inspired by "
 "the Agenda apps on the Psion Series 3 and Series 5 PDAs.\n"
@@ -456,11 +456,11 @@ msgstr ""
 "uitgebracht om feedback te kunnen ontvangen. Er zullen gegarandeerd bugs "
 "zijn; meld ze via pygenda@semiprime.com."
 
-#: pygenda_gui.py:1063
+#: pygenda_gui.py:1089
 msgid "Thanks for testing &amp; feedback"
 msgstr "Bedankt voor het testen en de feedback"
 
-#: pygenda_gui.py:1064
+#: pygenda_gui.py:1090
 msgid "translator-credits"
 msgstr "Heimen Stoffels (github.com/Vistaus)"
 
@@ -488,11 +488,11 @@ msgstr "_Weekweergave"
 msgid "week_view_accel"
 msgstr "w"
 
-#: pygenda_view_week.py:227
+#: pygenda_view_week.py:228
 msgid "Week 53/Week 1"
 msgstr "Week 53/Week 1"
 
-#: pygenda_view_week.py:229
+#: pygenda_view_week.py:230
 msgid "Week {}"
 msgstr "Week {}"
 
@@ -504,7 +504,7 @@ msgstr "_Jaarweergave"
 msgid "year_view_accel"
 msgstr "j"
 
-#: pygenda_widgets.py:62
+#: pygenda_widgets.py:63
 msgid "ymdhm"
 msgstr "jmdum"
 

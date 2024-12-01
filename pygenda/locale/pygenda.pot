@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pygenda\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-17 13:05+0200\n"
+"POT-Creation-Date: 2024-12-01 13:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -400,43 +400,43 @@ msgstr ""
 msgid "Import to calendar:"
 msgstr ""
 
-#: pygenda_dialog_todo.py:157
+#: pygenda_dialog_todo.py:164
 msgid "New To-do"
 msgstr ""
 
-#: pygenda_dialog_todo.py:168
+#: pygenda_dialog_todo.py:175
 msgid "Edit To-do"
 msgstr ""
 
-#: pygenda_gui.py:971
+#: pygenda_gui.py:997
 msgid "Delete Entry"
 msgstr ""
 
-#: pygenda_gui.py:977
+#: pygenda_gui.py:1003
 msgid ""
 "Delete all repeats:\n"
 "“{:s}”?"
 msgstr ""
 
-#: pygenda_gui.py:979
+#: pygenda_gui.py:1005
 msgid ""
 "Delete entry:\n"
 "“{:s}”?"
 msgstr ""
 
-#: pygenda_gui.py:1007 ui/main.ui:656
+#: pygenda_gui.py:1033 ui/main.ui:656
 msgid "Go To"
 msgstr ""
 
-#: pygenda_gui.py:1019
+#: pygenda_gui.py:1045
 msgid "Go"
 msgstr ""
 
-#: pygenda_gui.py:1057
+#: pygenda_gui.py:1083
 msgid "Source code & documentation: "
 msgstr ""
 
-#: pygenda_gui.py:1062
+#: pygenda_gui.py:1088
 msgid ""
 "A calendar/agenda application written in Python/GTK3. The UI is inspired by "
 "the Agenda apps on the Psion Series 3 and Series 5 PDAs.\n"
@@ -444,11 +444,11 @@ msgid ""
 "There will be bugs; please report them to: pygenda@semiprime.com."
 msgstr ""
 
-#: pygenda_gui.py:1063
+#: pygenda_gui.py:1089
 msgid "Thanks for testing &amp; feedback"
 msgstr ""
 
-#: pygenda_gui.py:1064
+#: pygenda_gui.py:1090
 # This information is be shown in the credits pane of the "About" dialog.
 # Translators are encouraged to add their own name here, and may add a
 # website/email too. Pseudonyms and anonymity are also welcome.
@@ -487,11 +487,11 @@ msgstr ""
 msgid "week_view_accel"
 msgstr ""
 
-#: pygenda_view_week.py:227
+#: pygenda_view_week.py:228
 msgid "Week 53/Week 1"
 msgstr ""
 
-#: pygenda_view_week.py:229
+#: pygenda_view_week.py:230
 msgid "Week {}"
 msgstr ""
 
@@ -507,7 +507,7 @@ msgstr ""
 msgid "year_view_accel"
 msgstr ""
 
-#: pygenda_widgets.py:62
+#: pygenda_widgets.py:63
 # Note to translators: the "translation" of this string should be the
 # five letters that act as shortcuts in the date and time editors.
 # In English this corresponds to year/month/day/hour/minute = "ymdhm",
