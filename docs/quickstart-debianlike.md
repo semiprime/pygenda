@@ -82,6 +82,10 @@ configuration that you can select from or modify as required:
 
     [global]
     24hr = True
+    # Localisation settings should be picked up from the system.
+    # If not, language & date order (DMY, MDY, YMD) can be set with:
+    #language = fr
+    #date_ord = DMY
     
     [startup]
     # Fullscreen UIs are often preferable on handheld devices.

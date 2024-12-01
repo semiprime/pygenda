@@ -109,7 +109,11 @@ configuration that you can select from or modify as required:
     24hr = True
     # The hide_titlebar option_when_maximized seems to break the menu
     # under Phosh, but might be useful in other UI environments.
-    # hide_titlebar_when_maximized = True
+    #hide_titlebar_when_maximized = True
+    # Localisation settings should be picked up from the system.
+    # If not, language & date order (DMY, MDY, YMD) can be set with:
+    #language = fr
+    #date_ord = DMY
     
     [startup]
     # Fullscreen UIs are often preferable on handheld devices.

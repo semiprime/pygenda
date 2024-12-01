@@ -144,6 +144,10 @@ basic configuration, which you can modify as required:
 
     [global]
     24hr = True
+    # Localisation settings should be picked up from the system.
+    # If not, language & date order (DMY, MDY, YMD) can be set with:
+    #language = fr
+    #date_ord = DMY
     
     [startup]
     # You probably want the UI either maximised or full-screen,
