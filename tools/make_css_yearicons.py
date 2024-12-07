@@ -40,8 +40,8 @@ def print_groups(gps, cursor):
     if cursor:
         tuples = [ t+'.yearview_cursor' for t in tuples ]
     print(', '.join(tuples), end='')
-        
-    
+
+
 # In the CSS file, the styles need to be listed with all single-icon
 # groups first, then all double-icon groups, then triple-icon groups,
 # etc. The mapping below sets this order.
