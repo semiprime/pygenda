@@ -42,6 +42,7 @@ Known issues specific to postmarketOS (observed on Phosh) include:
 * Translations are not loaded for strings in .ui files (i.e. most of the UI).
 * The menubar behaves badly when using the touchscreen: submenus sometimes do not appear (seems to happen in other GTK3 apps too, but not GTK4?).
 * The menubar is even more broken in fullscreen mode, or when app is maximised and the titlebar is hidden.
+* The todo bullet in Week/Year view takes up too much vertical space.
 * Sometimes the UI stops responding to taps (I'm not sure when this occurs).
 * There's no portrait mode.
 
