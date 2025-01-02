@@ -3,7 +3,7 @@
 # pygenda_view_week.py
 # Provides the "Week View" for Pygenda.
 #
-# Copyright (C) 2022-2024 Matthew Lewis
+# Copyright (C) 2022-2025 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -270,8 +270,12 @@ class View_Week(View_DayUnit_Base):
         oneday = timedelta(days=1)
         for i in range(7):
             dt_nxt = dt + oneday
-            # Delete anything previously written to day v-box
-            cls._day_rows[i].foreach(Gtk.Widget.destroy)
+            # Delete anything previously written to day v-box.
+            # I'd like to use _day_rows[i].foreach(destroy) here, but
+            # for some reason it causes crashes on Gemian on Cosmo
+            # (easily reproducible by navigating test02_repeats.ics).
+            for c in cls._day_rows[i].get_children():
+                c.destroy()
             if cls._show_ongoing:
                 # Add rows for the ongoing events
                 rollover_dt += oneday
