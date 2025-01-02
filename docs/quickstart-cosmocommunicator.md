@@ -95,7 +95,7 @@ This should open an empty file. Add the following line:
 (If you've installed Pygenda some other way, or are using a different
 version of Python3, change the path as appropriate.)
 
-Save the file and exit (on Nano: ctrl+o (confirm filename), ctrl+x).
+Save the file and exit (on Nano: ctrl+s, ctrl+x).
 
 Now edit the Pygenda configuration file:
 

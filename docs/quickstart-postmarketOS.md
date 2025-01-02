@@ -134,7 +134,7 @@ configuration that you can select from or modify as required:
 (Lines starting with a `#` are comments, so can be changed or omitted.
 For other settings, see [defaults.ini](config-examples/defaults.ini).)
 
-Save the file and exit. (In nano: ctrl+o, confirm filename, ctrl+x.)
+Save the file and exit. (In nano: ctrl+s, ctrl+x.)
 
 Now you can start Pygenda again, and your options should take effect.
 
