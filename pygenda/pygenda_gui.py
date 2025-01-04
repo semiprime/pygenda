@@ -3,7 +3,7 @@
 # pygenda_gui.py
 # Top-level GUI code and shared elements (e.g. menu, soft keys)
 #
-# Copyright (C) 2022-2024 Matthew Lewis
+# Copyright (C) 2022-2025 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -1076,7 +1076,7 @@ class GUI:
         # Display the "About Pygenda" dialog
         dialog = Gtk.AboutDialog(parent=cls._window)
         dialog.set_program_name('Pygenda')
-        dialog.set_copyright(u'Copyright © 2022–2024 Matthew Lewis')
+        dialog.set_copyright(u'Copyright © 2022–2025 Matthew Lewis')
         dialog.set_license_type(Gtk.License.GPL_3_0_ONLY)
         github_url = 'https://github.com/semiprime/pygenda'
         dialog.set_website(github_url)
