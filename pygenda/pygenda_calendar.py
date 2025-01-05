@@ -4,7 +4,7 @@
 # Connects to agenda data provider - either an iCal file, a CalDAV server,
 # or an Evolution Data Server.
 #
-# Copyright (C) 2022-2024 Matthew Lewis
+# Copyright (C) 2022-2025 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -139,7 +139,7 @@ class Calendar:
 
             # Create new connector
             conn = CTMAP[caltype](sect, flags)
-            if conn.cal.is_broken:
+            if conn.cal.errors:
                 print('Warning: Non-conformant ical data, '+sect, file=stderr)
 
             # Set display name (might already be set by constructor)
