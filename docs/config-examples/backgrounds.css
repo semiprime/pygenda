@@ -5,8 +5,16 @@
 /* Note: these haven't been tested when used with darkmode.css - some
    modifications probably needed. */
 
-/*** 1. Plain colors for each view ***/
+/*** 1. Plain colors ***/
 /* For nicer colors, find someone with a better graphic skills than me :-) */
+
+/* All views: */
+
+.view {
+	background-color:lightblue;
+}
+
+/* Individual views: */
 
 #view_week {
 	background-color:#e9bbd2;
@@ -23,6 +31,12 @@
 /* Depending on your desktop, you may also want to set the scrollbar
    background. I find this useful in XFCE, but not on the Gemini.
    (For some reason, "transparent" doesn't seem to work here.) */
+
+.view scrollbar trough {
+	background-color:skyblue;
+}
+
+/* or */
 
 #view_week scrollbar trough {
 	background-color:#d5abc0;
