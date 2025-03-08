@@ -1,6 +1,6 @@
 /*****************************
   pygenda.css
-  Copyright (C) 2022-2024 Matthew Lewis
+  Copyright (C) 2022-2025 Matthew Lewis
 
   This file is part of Pygenda.
 
@@ -27,6 +27,12 @@ scrollbar {
 	min-width:5em;
 }
 
+.view {
+	color:black;
+	background-color:white;
+	font-family:'DejaVu Sans';
+}
+
 .view, #view_loading {
 	min-width:600px;
 	min-height:300px;
@@ -38,10 +44,6 @@ scrollbar {
 
 
 /* Week View */
-
-#view_week {
-	background-color:white;
-}
 
 #weekview_titlearea {
 	padding:3px;
@@ -66,7 +68,6 @@ scrollbar {
 }
 
 #weekview_labelweek {
-	font-family:'DejaVu Sans';
 	font-size:9pt;
 }
 
@@ -114,7 +115,6 @@ scrollbar {
 .weekview_daytext {
 	padding:4px;
 	color:black;
-	font-family:'DejaVu Sans';
 	font-weight:normal;
 }
 
@@ -155,18 +155,13 @@ scrollbar {
 
 /* Year View */
 
-#view_year {
-	color:black;
-	background-color:white;
-}
-
 #yearview_labelyear {
-	font-family:'DejaVu Sans';
 	font-size:14pt;
 	font-weight:bold;
 }
 
 .yearview_day_label, .yearview_month_label {
+	font-size:10pt;
 	font-weight:bold;
 }
 
@@ -231,10 +226,6 @@ scrollbar {
 	font-family:'DejaVu Sans Condensed';
 	font-weight:bold;
 	padding-right:0.8ex;
-}
-
-#yearview_datecontent {
-	font-family:'DejaVu Sans';
 }
 
 .zoom0 #yearview_datecontent, .zoom0 #yearview_labeldate {
@@ -442,7 +433,6 @@ scrollbar {
 /* Todo View */
 
 .todoview_title {
-	font-family:'DejaVu Sans';
 	font-weight:bold;
 }
 
@@ -477,7 +467,6 @@ scrollbar {
 
 .todoview_items {
 	padding:4px;
-	font-family:'DejaVu Sans';
 }
 
 .todoview_item {

@@ -138,6 +138,10 @@ scrollbar slider {
 	padding:2px;
 }
 
+.yearview_day_label, .yearview_month_label {
+	font-size:13pt;
+}
+
 .yearview_daycell {
 	font-size:9pt;
 }
