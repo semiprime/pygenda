@@ -3,7 +3,7 @@
 # pygenda_view_year.py
 # Provides the "Year View" for Pygenda.
 #
-# Copyright (C) 2022-2024 Matthew Lewis
+# Copyright (C) 2022-2025 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -325,22 +325,29 @@ class View_Year(View_DayUnit_Base):
         cls._visible_occurrences = Calendar.occurrence_list(dt, dt+timedelta(days=1))
         r = 0
         for occ in cls._visible_occurrences:
-            if not cls.show_todos and isinstance(occ[0], iTodo):
+            en = occ[0]
+            if not cls.show_todos and isinstance(en, iTodo):
                 continue
             occ_dt_sta,occ_dt_end = start_end_dts_occ(occ)
             row = Gtk.Box()
+            ctx = row.get_style_context()
+            ctx.add_class('yearview_item')
+            if isinstance(en, iEvent):
+                View.add_event_styles(row, en)
+            elif isinstance(en, iTodo):
+                View.add_todo_styles(row, en)
             # Create entry mark (bullet or time) & add to row
-            mark_label = cls.marker_label(occ[0], occ_dt_sta)
-            ctx = mark_label.get_style_context()
-            ctx.add_class('yearview_marker') # add style for CSS
+            mark_label = cls.marker_label(en, occ_dt_sta)
             row.add(mark_label)
             # Create entry content label & add to row
-            cont_label = cls.entry_text_label(occ[0], occ_dt_sta, occ_dt_end, add_location=cls._show_location, loc_max_chars=cls._loc_max_chars)
+            cont_label = cls.entry_text_label(en, occ_dt_sta, occ_dt_end, add_location=cls._show_location, loc_max_chars=cls._loc_max_chars)
             cont_label.set_hexpand(True) # Also sets hexpand_set to True
+            ctx = cont_label.get_style_context()
+            ctx.add_class('itemtext')
             row.add(cont_label)
             cls._date_content.add(row)
             # See if we've hit the cursor target entry
-            if cls._target_entry is not None and cls._target_entry is occ[0]:
+            if cls._target_entry is not None and cls._target_entry is en:
                 View._cursor_idx_in_date = r
                 cls._target_entry = None
             r += 1

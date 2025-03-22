@@ -114,15 +114,15 @@ scrollbar slider {
 	font-size:19pt;
 }
 
-.zoom2 .weekview_marker {
+.zoom2 .weekview_item > .marker {
 	font-family:'DejaVu Sans Condensed';
 }
 
-.zoom3 .weekview_marker {
+.zoom3 .weekview_item > .marker {
 	font-family:'DejaVu Sans Condensed';
 }
 
-.zoom4 .weekview_marker {
+.zoom4 .weekview_item > .marker {
 	font-family:'DejaVu Sans Condensed';
 }
 

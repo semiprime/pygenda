@@ -4,7 +4,7 @@
 # "View" class definition - base class for Week/Year/Todo View.
 # Provides default implementations of functions.
 #
-# Copyright (C) 2022-2024 Matthew Lewis
+# Copyright (C) 2022-2025 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -213,10 +213,6 @@ class View:
                 z_tm = format_time(dt_st)
                 z_txt = u'({:s} {:s}) '.format(z_tm,z_nm)
         lab.set_text(u'{:s}{:s}{:s}{:s}{:s}'.format(z_txt,d_txt,endtm,l_txt,icons))
-        if isinstance(ev, iEvent):
-            View.add_event_styles(lab, ev)
-        elif isinstance(ev, iTodo):
-            View.add_todo_styles(lab, ev)
         return lab
 
 
@@ -265,8 +261,8 @@ class View:
 
 
     @staticmethod
-    def add_event_styles(wid:Gtk.Label, ev:iCal.Event) -> None:
-        # Adds formatting class to label corresponding to event status.
+    def add_event_styles(wid:Gtk.Widget, ev:iCal.Event) -> None:
+        # Adds formatting class corresponding to event status to widget.
         # Allows entry to be formatted appropriately by CSS.
         ctx = wid.get_style_context()
         ctx.add_class('event')
@@ -275,8 +271,8 @@ class View:
 
 
     @staticmethod
-    def add_todo_styles(wid:Gtk.Label, td:iCal.Todo) -> None:
-        # Adds formatting class to label corresponding to todo status.
+    def add_todo_styles(wid:Gtk.Widget, td:iCal.Todo) -> None:
+        # Adds formatting class corresponding to todo status to widget.
         # Allows entry to be formatted appropriately by CSS.
         ctx = wid.get_style_context()
         ctx.add_class('todo')
@@ -477,5 +473,7 @@ class View_DayUnit_Base(View):
         else:
             mark = cls._BULLET
         lab.set_text(mark)
+        ctx = lab.get_style_context()
+        ctx.add_class('marker')
 
         return lab

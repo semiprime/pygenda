@@ -24,9 +24,9 @@ from gi.repository import Gtk, Gdk, GLib
 
 from calendar import day_abbr,month_name
 from datetime import time as dt_time, date as dt_date, datetime as dt_datetime, timedelta
-from icalendar import cal as iCal, Todo as iTodo
+from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
 from locale import gettext as _
-from typing import Optional
+from typing import Optional, Union
 
 # pygenda components
 from .pygenda_view import View, View_DayUnit_Base
@@ -314,8 +314,6 @@ class View_Week(View_DayUnit_Base):
             if cls._day_ent_count[i]==0:
                 # an empty day, need something for cursor
                 mark_label = Gtk.Label()
-                ctx = mark_label.get_style_context()
-                ctx.add_class('weekview_marker')
                 mark_label.set_halign(Gtk.Align.START) # else cursor fills line
                 cls._day_rows[i].add(mark_label)
             dt = dt_nxt
@@ -324,22 +322,28 @@ class View_Week(View_DayUnit_Base):
 
 
     @classmethod
-    def _add_day_entry_row(cls, ev:iCal.Event, dt_st:dt_date, dt_end:dt_date, dayidx:int, show_loc:bool, is_ongoing:bool=False) -> None:
-        # Add Gtk labels for event 'ev', occurrence at time/date from 'dt_st'
+    def _add_day_entry_row(cls, en:Union[iEvent,iTodo], dt_st:dt_date, dt_end:dt_date, dayidx:int, show_loc:bool, is_ongoing:bool=False) -> None:
+        # Add Gtk labels for entry 'en', occurrence at time/date from 'dt_st'
         # to 'dt_end', in day 'dayidx' (e.g. 0=Monday if week starts Monday).
         # Used when displaying week contents.
         row = Gtk.Box()
+        ctx = row.get_style_context()
+        ctx.add_class('weekview_item')
+        if isinstance(en, iEvent):
+            View.add_event_styles(row, en)
+        elif isinstance(en, iTodo):
+            View.add_todo_styles(row, en)
         # Create entry mark (bullet or time) & add to row
-        mark_label = cls.marker_label(ev, dt_st, is_ongoing)
-        ctx = mark_label.get_style_context()
-        ctx.add_class('weekview_marker') # add style for CSS
+        mark_label = cls.marker_label(en, dt_st, is_ongoing)
         row.add(mark_label)
         # Create entry content label & add to row
-        cont_label = cls.entry_text_label(ev, dt_st, dt_end, add_location=show_loc, loc_max_chars=cls._loc_max_chars)
+        cont_label = cls.entry_text_label(en, dt_st, dt_end, add_location=show_loc, loc_max_chars=cls._loc_max_chars)
         cont_label.set_hexpand(True) # Also sets hexpand_set to True
+        ctx = cont_label.get_style_context()
+        ctx.add_class('itemtext')
         row.add(cont_label)
         cls._day_rows[dayidx].add(row)
-        cls._day_entries[dayidx].append(ev)
+        cls._day_entries[dayidx].append(en)
         cls._day_ent_count[dayidx] += 1
 
 

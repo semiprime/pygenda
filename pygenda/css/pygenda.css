@@ -138,8 +138,7 @@ scrollbar {
 	font-size:12pt;
 }
 
-.weekview_marker {
-	color:black;
+.weekview_item > .marker, .weekview_cursor {
 	padding-left:1.5px;
 	padding-right:1.5px;
 	margin-right:0.2em;
@@ -252,7 +251,7 @@ scrollbar {
 	border:0;
 }
 
-.yearview_marker {
+.yearview_item > .marker {
 	padding-left:1.5px;
 	padding-right:1.5px;
 	margin-right:0.2em;
@@ -493,7 +492,7 @@ scrollbar {
 	font-size:12pt;
 }
 
-.todoview_marker {
+.todoview_item > .marker, .todoview_cursor {
 	padding-left:1.5px;
 	padding-right:1.5px;
 	margin-right:0.2em;
@@ -506,32 +505,32 @@ scrollbar {
 	border-radius:0.3em;
 }
 
-.todo.needs-action, .needs-action > .todoview_itemtext {
+.todo.needs-action > .itemtext, .todoview_item.needs-action > .itemtext {
 	color:red;
 	font-weight:bold;
 }
 
-.todo.completed, .completed > .todoview_itemtext {
+.todo.completed > .itemtext, .todoview_item.completed > .itemtext {
 	text-decoration:line-through;
 }
 
-.todo.in-process, .in-process > .todoview_itemtext {
+.todo.in-process > .itemtext, .todoview_item.in-process > .itemtext {
 	color: green;
 	font-style:italic;
 }
 
-.todo.cancelled, .event.cancelled, .cancelled > .todoview_itemtext {
+.cancelled > .itemtext {
 	color:gray;
 	text-decoration:line-through #444;
 }
 
 /* Event statuses */
 
-.tentative {
+.tentative > .itemtext{
 	color:gray;
 }
 
-.confirmed {
+.confirmed > .itemtext {
 	font-weight:bold;
 	/* font-style:italic; */
 	/* text-decoration:underline; */

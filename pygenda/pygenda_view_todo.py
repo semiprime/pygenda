@@ -3,7 +3,7 @@
 # pygenda_view_todo.py
 # Provides the "To-Do View" for Pygenda.
 #
-# Copyright (C) 2022-2024 Matthew Lewis
+# Copyright (C) 2022-2025 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -253,7 +253,7 @@ class View_Todo(View):
                     mark_label = Gtk.Label(chr(0x2789+td['PRIORITY']) if 'PRIORITY' in td else u'•')
                     mark_label.set_halign(Gtk.Align.END)
                     mark_label.set_valign(Gtk.Align.START)
-                    mark_label.get_style_context().add_class('todoview_marker')
+                    mark_label.get_style_context().add_class('marker')
                     row.add(mark_label)
                     txt = ''
                     if 'DUE' in td:
@@ -263,7 +263,7 @@ class View_Todo(View):
                     txt += td['SUMMARY'] if 'SUMMARY' in td else ''
                     txt += cls.entry_icons(td, True)
                     item_text = Gtk.Label(txt)
-                    item_text.get_style_context().add_class('todoview_itemtext')
+                    item_text.get_style_context().add_class('itemtext')
                     item_text.set_xalign(0)
                     item_text.set_yalign(0)
                     item_text.set_line_wrap(True)
@@ -279,8 +279,6 @@ class View_Todo(View):
                 # an empty list, need something for cursor
                 mark_label = Gtk.Label()
                 mark_label.set_halign(Gtk.Align.START) # else cursor fills line
-                ctx = mark_label.get_style_context()
-                ctx.add_class('todoview_marker')
                 new_list_content.add(mark_label)
             new_list_content.get_style_context().add_class('todoview_items')
             cls._list_scroller[i].add(new_list_content)

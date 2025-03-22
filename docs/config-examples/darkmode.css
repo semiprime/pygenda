@@ -48,7 +48,7 @@ scrollbar trough {
 	color:#aaa;
 }
 
-.weekview_daytext, .weekview_marker {
+.weekview_daytext, .weekview_item {
 	color:#eee;
 }
 
@@ -177,6 +177,6 @@ scrollbar trough {
 	background-color:#b00;
 }
 
-.cancelled > .todoview_itemtext {
+.cancelled > .itemtext {
 	text-decoration:line-through #999;
 }
