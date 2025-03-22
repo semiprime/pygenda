@@ -53,7 +53,7 @@ class View_Todo(View):
     _target_todo = None
     _target_cursor_y = None # type: Optional[float]
     _scroll_to_cursor_required = False
-    CURSOR_STYLE = 'todoview_cursor'
+    CURSOR_STYLE = 'cursor'
 
     @staticmethod
     def view_name() -> str:
@@ -427,7 +427,7 @@ class View_Todo(View):
     @classmethod
     def _show_cursor(cls) -> None:
         # Locates bullet corresponding to the current cursor and adds
-        # 'todoview_cursor' class to it, so cursor is visible via CSS styling.
+        # 'cursor' class to it, so cursor is visible via CSS styling.
 
         # First correct cursor if required (e.g. item was deleted)
         if not (0 <= cls._cursor_list < cls._list_count):
@@ -471,7 +471,7 @@ class View_Todo(View):
 
     @classmethod
     def _hide_cursor(cls) -> None:
-        # Clears 'todoview_cursor' style class from cursor position,
+        # Clears 'cursor' style class from cursor position,
         # so cursor is no longer visible.
         if cls._last_cursor_list is not None:
             ctx = cls._get_cursor_ctx(cls._last_cursor_list, cls._last_cursor_idx_in_list)

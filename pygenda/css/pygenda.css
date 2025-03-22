@@ -138,14 +138,16 @@ scrollbar {
 	font-size:12pt;
 }
 
-.weekview_item > .marker, .weekview_cursor {
+/* Marker & cursor for Week, Year, Todo views */
+
+.marker, .cursor {
 	padding-left:1.5px;
 	padding-right:1.5px;
 	margin-right:0.2em;
 	min-width:1ex;
 }
 
-.weekview_cursor {
+.cursor {
 	color:white;
 	background-color:black;
 	border-radius:0.3em;
@@ -249,19 +251,6 @@ scrollbar {
 
 #yearview_datecontent_scroller {
 	border:0;
-}
-
-.yearview_item > .marker {
-	padding-left:1.5px;
-	padding-right:1.5px;
-	margin-right:0.2em;
-	min-width:1ex;
-}
-
-.yearview_entry_cursor {
-	color:rgba(255,255,255,0.93);
-	background-color:black;
-	border-radius:0.3em;
 }
 
 .yearview_entry_single, .yearview_entry_repeated_day, .yearview_entry_repeated_hour, .yearview_entry_repeated_minute, .yearview_entry_repeated_second {
@@ -490,19 +479,6 @@ scrollbar {
 
 .zoom4 .todoview_items {
 	font-size:12pt;
-}
-
-.todoview_item > .marker, .todoview_cursor {
-	padding-left:1.5px;
-	padding-right:1.5px;
-	margin-right:0.2em;
-	min-width:1ex;
-}
-
-.todoview_cursor {
-	color:white;
-	background-color:black;
-	border-radius:0.3em;
 }
 
 .todo.needs-action > .itemtext, .todoview_item.needs-action > .itemtext {

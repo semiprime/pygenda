@@ -56,7 +56,7 @@ class View_Week(View_DayUnit_Base):
     _scroll_to_cursor_in_day = None
     _is_repeat_key = False
 
-    CURSOR_STYLE = 'weekview_cursor'
+    CURSOR_STYLE = 'cursor'
     SHOW_LOC_ALWAYS = 1 # constant 'enum' for _show_location flag
 
     @staticmethod
@@ -350,7 +350,7 @@ class View_Week(View_DayUnit_Base):
     @classmethod
     def _show_cursor(cls) -> None:
         # Locates bullet/date corresponding to the current cursor and adds
-        # 'weekview_cursor' class to it so cursor is visible via CSS styling.
+        # 'cursor' class to it so cursor is visible via CSS styling.
         dy = day_in_week(View._cursor_date)
         ecount = cls._day_ent_count[dy]
         i = View._cursor_idx_in_date
@@ -402,7 +402,7 @@ class View_Week(View_DayUnit_Base):
 
     @classmethod
     def _hide_cursor(cls) -> None:
-        # Clears 'weekview_cursor' style class from cursor position,
+        # Clears 'cursor' style class from cursor position,
         # so cursor is no longer visible.
         if cls._last_cursor is not None:
             # _last_cursor is an int split into two parts:

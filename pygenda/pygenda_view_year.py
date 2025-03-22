@@ -50,7 +50,7 @@ class View_Year(View_DayUnit_Base):
     GRID_COLUMNS = 37
     GRID_ROWS = 12 # One per month
     GRID_CURSOR_STYLE = 'yearview_cursor'
-    ENTRY_CURSOR_STYLE = 'yearview_entry_cursor'
+    ENTRY_CURSOR_STYLE = 'cursor'
     _target_col = None
     _year_viewed = -1 # Indicates next redraw will draw year
     _last_cursor = None
