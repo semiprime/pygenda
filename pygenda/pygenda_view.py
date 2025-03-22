@@ -26,7 +26,7 @@ from gi.repository.Pango import WrapMode as PWrapMode
 
 from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
 from datetime import date as dt_date, datetime as dt_datetime, timedelta
-from typing import Optional, Union
+from typing import Optional, Union, Tuple
 
 from .pygenda_gui import GUI
 from .pygenda_config import Config
@@ -188,7 +188,7 @@ class View:
 
 
     @staticmethod
-    def entry_text_label(ev:iCal.Event, dt_st:dt_date, dt_end:dt_date, add_location:bool=False, loc_max_chars:int=0) -> Gtk.Label:
+    def entry_text_label(en:Union[iCal.Event,iCal.Todo], dt_st:dt_date, dt_end:dt_date, add_location:bool=False, loc_max_chars:int=0) -> Gtk.Label:
         # Returns a GtkLabel with entry summary + icons as content.
         # Used by Week & Year views to display entries.
         lab = Gtk.Label()
@@ -197,10 +197,10 @@ class View:
         lab.set_xalign(0)
         lab.set_yalign(0)
         endtm = View.entry_endtime(dt_st,dt_end,True)
-        icons = View.entry_icons(ev,True)
-        d_txt = ev['SUMMARY'] if 'SUMMARY' in ev else ''
-        if add_location and 'LOCATION' in ev:
-            loc = ev['LOCATION']
+        icons = View.entry_icons(en,True)
+        d_txt = en['SUMMARY'] if 'SUMMARY' in en else ''
+        if add_location and 'LOCATION' in en:
+            loc = en['LOCATION']
             if loc_max_chars>0 and len(loc)>loc_max_chars:
                 loc = loc[:loc_max_chars] + u'…'
             l_txt = ' (@{:s})'.format(loc)
@@ -208,7 +208,7 @@ class View:
             l_txt = ''
         z_txt = ''
         if isinstance(dt_st,dt_datetime) and dt_st.tzinfo is not None and dt_st.utcoffset()!=dt_st.astimezone(get_local_tz()).utcoffset():
-            z_nm = tzinfo_display_name(ev['DTSTART'])
+            z_nm = tzinfo_display_name(en['DTSTART'])
             if z_nm:
                 z_tm = format_time(dt_st)
                 z_txt = u'({:s} {:s}) '.format(z_tm,z_nm)
@@ -453,27 +453,33 @@ class View_DayUnit_Base(View):
     _BULLET_TODO = u'Ⓣ' # alternative:🅣
 
     @classmethod
-    def marker_label(cls, ev:iCal.Event, dt_st:dt_date, is_ongoing:bool=False) -> Gtk.Label:
-        # Returns bullet or entry time suitable for marking entries.
-        # Used to display entries in Week and Year views.
+    def entry_markerlab_class(cls, en:Union[iCal.Event,iCal.Todo], dt_st:dt_date, is_ongoing:bool=False) -> Tuple[Gtk.Label,Optional[str]]:
+        # Returns marker label (bullet or time) and style class for entry.
+        # Used by Week and Year views when displaying entries.
         lab = Gtk.Label()
         lab.set_halign(Gtk.Align.END)
         lab.set_valign(Gtk.Align.START)
         if is_ongoing:
             mark = cls._BULLET_ONGOING
+            cl = 'multiday_ongoing' # type:Optional[str]
         elif datetime_to_time(dt_st)!=False:
             mark = format_time(dt_st, True)
-        elif type(ev) is iCal.Todo:
+            cl = 'timed'
+        elif type(en) is iCal.Todo:
             mark = cls._BULLET_TODO
-        elif 'DTEND' in ev:
-            if dt_lte(ev['DTEND'].dt, ev['DTSTART'].dt+timedelta(days=1)):
+            cl = 'todo'
+        elif 'DTEND' in en:
+            if dt_lte(en['DTEND'].dt, en['DTSTART'].dt+timedelta(days=1)):
                 mark = cls._BULLET_ALLDAY
+                cl = 'allday'
             else:
                 mark = cls._BULLET_MULTIDAY_START
+                cl = 'multiday_start'
         else:
             mark = cls._BULLET
+            cl = None
         lab.set_text(mark)
         ctx = lab.get_style_context()
         ctx.add_class('marker')
 
-        return lab
+        return lab, cl
