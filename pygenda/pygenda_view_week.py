@@ -329,6 +329,7 @@ class View_Week(View_DayUnit_Base):
         row = Gtk.Box()
         ctx = row.get_style_context()
         ctx.add_class('weekview_item')
+        ctx.add_class(Calendar.calendar_displayclass(en))
         if isinstance(en, iEvent):
             View.add_event_styles(row, en)
         elif isinstance(en, iTodo):

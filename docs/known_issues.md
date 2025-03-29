@@ -70,8 +70,7 @@ Major
 
 Medium
 ------
-* Support for multiple calendar sources is basic. To add: styling,
-  set default calendar.
+* Should be able to set default calendar (for new entries, pasting).
 
 * Import functionality is work-in-progress (can't specify todo list,
   can't replace existing entries, needs better error messages when

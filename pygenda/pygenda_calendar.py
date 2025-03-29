@@ -38,6 +38,7 @@ from typing import Optional, Union, Tuple, List
 from copy import deepcopy
 from math import ceil
 from calendar import monthrange
+from string import punctuation as str_punctuation
 
 # Pygenda components
 from .pygenda_config import Config
@@ -50,6 +51,7 @@ from .pygenda_entryinfo import EntryInfo
 class CalendarConnector:
     cal = None # type:iCalendar
     displayname = None # type:str
+    displayclass = None # type:str
     flags = 0
 
     READONLY = 1
@@ -148,6 +150,15 @@ class Calendar:
                 conn.displayname = dn
             elif not conn.displayname: # Don't want empty display name
                 conn.displayname = sect
+
+            # Set display class (for CSS selection by calendar)
+            dc = Config.get(sect, 'class')
+            if not dc:
+                dc = conn.displayname.strip().lower()
+            remove = str_punctuation.translate(str.maketrans('', '', '-'))
+            dc = dc.translate(str.maketrans(' ', '-', remove))
+            dc = 'calendar-'+dc
+            conn.displayclass = dc
 
             # Get show_in_grid attribute (default is True, so None->enable)
             if Config.get_bool(sect, 'show_in_grid') is not False:
@@ -293,6 +304,13 @@ class Calendar:
         # Returns display names for given entry en
         dn = cls.calConnectors[en._cal_idx].displayname # type:str
         return dn
+
+
+    @classmethod
+    def calendar_displayclass(cls, en:Union[iEvent,iTodo]) -> str:
+        # Returns CSS class for given entry en
+        dc = cls.calConnectors[en._cal_idx].displayclass # type:str
+        return dc
 
 
     @classmethod
