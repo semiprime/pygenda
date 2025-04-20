@@ -3,7 +3,7 @@
 # pygenda_dialog_event.py
 # Code for Event dialog (used to create/update events)
 #
-# Copyright (C) 2022-2024 Matthew Lewis
+# Copyright (C) 2022-2025 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -425,7 +425,7 @@ class EventDialogController:
             desc += ' (' + a_info.attendee + ')'
         elif act=='Display' and a_info.desc is not None:
             desc += ' '
-            desc += _(u'“{:s}”').format(a_info.desc)
+            desc += _('“{:s}”').format(a_info.desc)
         cls.alarmlist_model.set(itr, 0,a_info, 1,str(-a_info.tdelta), 2,desc)
 
 

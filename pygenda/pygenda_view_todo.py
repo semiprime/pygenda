@@ -251,7 +251,7 @@ class View_Todo(View):
                     ctx.add_class('todoview_item')
                     ctx.add_class(Calendar.calendar_displayclass(td))
                     # Potential markers: ①-0x245f ➀-0x277f ❶-0x2775 ➊-0x2789
-                    mark_label = Gtk.Label(chr(0x2789+td['PRIORITY']) if 'PRIORITY' in td else u'•')
+                    mark_label = Gtk.Label(chr(0x2789+td['PRIORITY']) if 'PRIORITY' in td else '•')
                     mark_label.set_halign(Gtk.Align.END)
                     mark_label.set_valign(Gtk.Align.START)
                     mark_label.get_style_context().add_class('marker')

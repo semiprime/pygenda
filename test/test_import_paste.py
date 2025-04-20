@@ -5,7 +5,7 @@
 # Unit tests for importing/pasting events.
 # (Both of these use the Calendar.new_entry_from_example() function.)
 #
-# Copyright (C) 2024 Matthew Lewis
+# Copyright (C) 2024,2025 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -367,7 +367,7 @@ class TestImportPaste(unittest.TestCase):
     #@unittest.skip
     def test_import_07_event_status(self) -> None:
         # Import event with a status
-        SHORT_DESC = u'Test event with status'
+        SHORT_DESC = 'Test event with status'
         DT_ST = datetime(2014,10,1,23,59)
         STATUS = 'CANCELLED'
         ev = self._new_event(SHORT_DESC, DT_ST, status=STATUS)
@@ -394,8 +394,8 @@ class TestImportPaste(unittest.TestCase):
     #@unittest.skip
     def test_import_08_event_longdesc(self) -> None:
         # Import event with a long description
-        SHORT_DESC = u'Test event with long desc & non-ascii like θ'
-        LONG_DESC = u"""Big long description with some newlines
+        SHORT_DESC = 'Test event with long desc & non-ascii like θ'
+        LONG_DESC = """Big long description with some newlines
 Like that one
 and non-ascii characters like ë & ☉
 """
@@ -613,7 +613,7 @@ and non-ascii characters like ë & ☉
     def test_import_16_todo_longdesc(self) -> None:
         # Import todo with longdesc
         SHORT_DESC = 'Test todo with long description'
-        LONG_DESC = u'Lørem ipsum dolor sit åmet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ût enim ad minim veñam, quis nostrud exercitation üllamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit eße cillum dolore eu fugiat nulla pariatur. Excepteur sint occæcat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+        LONG_DESC = 'Lørem ipsum dolor sit åmet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ût enim ad minim veñam, quis nostrud exercitation üllamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit eße cillum dolore eu fugiat nulla pariatur. Excepteur sint occæcat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
         td = self._new_todo(SHORT_DESC, longdesc=LONG_DESC)
         self._do_import(td)
 
@@ -871,7 +871,7 @@ and non-ascii characters like ë & ☉
     #@unittest.skip
     def test_paste_07_event_status(self) -> None:
         # Paste event with a status
-        SHORT_DESC = u'Test event with status'
+        SHORT_DESC = 'Test event with status'
         DT_ST = date(2025,10,31)
         STATUS = 'TENTATIVE'
         ev = self._new_event(SHORT_DESC, DT_ST, status=STATUS)
@@ -903,8 +903,8 @@ and non-ascii characters like ë & ☉
     #@unittest.skip
     def test_paste_08_event_longdesc(self) -> None:
         # Paste event with a long description
-        SHORT_DESC = u'Test event with long desc & non-ascii like €'
-        LONG_DESC = u"""Big long description with some newlines
+        SHORT_DESC = 'Test event with long desc & non-ascii like €'
+        LONG_DESC = """Big long description with some newlines
 Like this one
 and non-ascii characters like é & â
 """
@@ -939,7 +939,7 @@ and non-ascii characters like é & â
     #@unittest.skip
     def test_paste_09_event_location(self) -> None:
         # Paste event with a location
-        SHORT_DESC = u'Test event with a location'
+        SHORT_DESC = 'Test event with a location'
         LOCATION = 'Liverpool'
         DT_ST = date(2026,1,8)
         ev = self._new_event(SHORT_DESC, DT_ST, location=LOCATION)
@@ -1157,7 +1157,7 @@ and non-ascii characters like é & â
     def test_paste_16_todo_longdesc(self) -> None:
         # Paste todo with longdesc
         SHORT_DESC = 'Test todo with long description'
-        LONG_DESC = u"""
+        LONG_DESC = """
 
 This description has some newlines and unicode emoji.
 

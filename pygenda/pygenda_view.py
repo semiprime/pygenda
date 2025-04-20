@@ -202,7 +202,7 @@ class View:
         if add_location and 'LOCATION' in en:
             loc = en['LOCATION']
             if loc_max_chars>0 and len(loc)>loc_max_chars:
-                loc = loc[:loc_max_chars] + u'…'
+                loc = loc[:loc_max_chars] + '…'
             l_txt = ' (@{:s})'.format(loc)
         else:
             l_txt = ''
@@ -211,14 +211,14 @@ class View:
             z_nm = tzinfo_display_name(en['DTSTART'])
             if z_nm:
                 z_tm = format_time(dt_st)
-                z_txt = u'({:s} {:s}) '.format(z_tm,z_nm)
-        lab.set_text(u'{:s}{:s}{:s}{:s}{:s}'.format(z_txt,d_txt,endtm,l_txt,icons))
+                z_txt = '({:s} {:s}) '.format(z_tm,z_nm)
+        lab.set_text('{:s}{:s}{:s}{:s}{:s}'.format(z_txt,d_txt,endtm,l_txt,icons))
         return lab
 
 
-    ICON_NOTES = u'✉' # alternatives: ◻☐🀙⊟🗈🗎▤, enclosing square⃞ with ≡
-    ICON_ALARM = u'♫' # alternatives: alarm clock ⏰ (U+23F0), bell 🕭,🔔 (U+1F56D,U+1F514), speaker 🔊
-    ICON_REPEAT = u'⟳'
+    ICON_NOTES = '✉' # alternatives: ◻☐🀙⊟🗈🗎▤, enclosing square⃞ with ≡
+    ICON_ALARM = '♫' # alternatives: alarm clock ⏰ (U+23F0), bell 🕭,🔔 (U+1F56D,U+1F514), speaker 🔊
+    ICON_REPEAT = '⟳'
 
     @staticmethod
     def entry_icons(en:Union[iEvent,iTodo], prefix_space:bool) -> str:
@@ -231,7 +231,7 @@ class View:
         if 'RRULE' in en:
             icons += View.ICON_REPEAT
         if prefix_space and icons:
-            icons = u' {:s}'.format(icons) # thin space
+            icons = ' {:s}'.format(icons) # thin space
         return icons
 
 
@@ -256,7 +256,7 @@ class View:
             else:
                 t_str = format_compact_datetime(dt_end, st_date.year!=end_date.year, True)
         if frame_text and t_str:
-            t_str = u' (→{:s})'.format(t_str)
+            t_str = ' (→{:s})'.format(t_str)
         return t_str
 
 
@@ -446,11 +446,11 @@ class View_DayUnit_Base(View):
 
 
     # Bullets to use as markers in Week/Year views
-    _BULLET = u'•'
-    _BULLET_ALLDAY = u'✦' # alternatives:❖⍟✪⦿❂♦⧫⏣⎔⌾⌘⌑⎊⎈⁕⧓⚫⚭⚙✷✦
-    _BULLET_MULTIDAY_START = u'‣'
-    _BULLET_ONGOING = u'»'
-    _BULLET_TODO = u'Ⓣ' # alternative:🅣
+    _BULLET = '•'
+    _BULLET_ALLDAY = '✦' # alternatives:❖⍟✪⦿❂♦⧫⏣⎔⌾⌘⌑⎊⎈⁕⧓⚫⚭⚙✷✦
+    _BULLET_MULTIDAY_START = '‣'
+    _BULLET_ONGOING = '»'
+    _BULLET_TODO = 'Ⓣ' # alternative:🅣
 
     @classmethod
     def entry_markerlab_class(cls, en:Union[iCal.Event,iCal.Todo], dt_st:dt_date, is_ongoing:bool=False) -> Tuple[Gtk.Label,Optional[str]]:

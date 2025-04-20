@@ -3,7 +3,7 @@
 # pygenda_dialog_find.py
 # Code for find dialog
 #
-# Copyright (C) 2022,2023 Matthew Lewis
+# Copyright (C) 2022-2025 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -81,7 +81,7 @@ class FindDialogController:
             i = 0
             for en in res:
                 if isinstance(en, iTodo):
-                    l_left = Gtk.Label(u'Ⓣ')
+                    l_left = Gtk.Label('Ⓣ')
                     l_left.set_halign(Gtk.Align.END)
                 else:
                     dt = en['DTSTART'].dt

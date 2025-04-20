@@ -211,13 +211,13 @@ class View_Week(View_DayUnit_Base):
         # Month label
         if dt.month == dt_end.month:
             mn = month_name[dt.month].capitalize()
-            ml = u'{mon:s} {yr:d}'.format(mon=mn, yr=dt.year)
+            ml = '{mon:s} {yr:d}'.format(mon=mn, yr=dt.year)
         elif dt.year == dt_end.year:
             msn = month_abbr[dt.month].capitalize()
-            ml = u'{mon_st:s} – {mon_end:s} {yr:d}'.format(mon_st=msn, mon_end=month_abbr[dt_end.month], yr=dt.year)
+            ml = '{mon_st:s} – {mon_end:s} {yr:d}'.format(mon_st=msn, mon_end=month_abbr[dt_end.month], yr=dt.year)
         else: # month & year different
             msn = month_abbr[dt.month].capitalize()
-            ml = u'{mon_st:s} {yr_st:d} – {mon_end:s} {yr_end:d}'.format(mon_st=msn, mon_end=month_abbr[dt_end.month], yr_st=dt.year, yr_end=dt_end.year)
+            ml = '{mon_st:s} {yr_st:d} – {mon_end:s} {yr_end:d}'.format(mon_st=msn, mon_end=month_abbr[dt_end.month], yr_st=dt.year, yr_end=dt_end.year)
         cls._month_label.set_text(ml)
 
         # Week number label
@@ -246,7 +246,7 @@ class View_Week(View_DayUnit_Base):
             dn = day_abbr[dt.weekday()]
             if dn[-1]=='.':
                 dn = dn[:-1] # remove dot
-            cls._day_label[i].set_text(u'{day:s}\n{date:d}'.format(day=dn,date=dt.day))
+            cls._day_label[i].set_text('{day:s}\n{date:d}'.format(day=dn,date=dt.day))
             dt += timedelta(days=1)
 
 

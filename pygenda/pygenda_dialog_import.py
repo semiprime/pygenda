@@ -3,7 +3,7 @@
 # pygenda_dialog_import.py
 # Code for import dialogs
 #
-# Copyright (C) 2024 Matthew Lewis
+# Copyright (C) 2024,2025 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -160,7 +160,7 @@ class ImportController:
         if 'SUMMARY' in en:
             desc_txt = en['SUMMARY']
             if len(desc_txt)>60:
-                desc_txt = desc_txt[:60]+u'…'
+                desc_txt = desc_txt[:60]+'…'
         else:
             desc_txt = _('None')
         cls._add_row_prop(_('Description:'), desc_txt)

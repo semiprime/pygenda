@@ -3,7 +3,7 @@
 #
 # Generate test file for Pygenda
 #
-# Copyright (C) 2022,2023 Matthew Lewis
+# Copyright (C) 2022-2025 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -132,7 +132,7 @@ print_vevent('Thanksgiving (US)', '1942-11-26', repeat='YEARLY', bymonthday=[11,
 print_vevent('Thanksgiving (Canada)', '1957-10-14', repeat='YEARLY', bymonthday=[10,'2MO'], daycount=1)
 print_vevent('Australia Day', '1994-01-26', repeat='YEARLY', daycount=1)
 print_vevent('Waitangi Day (NZ)', '1947-02-06', repeat='YEARLY', daycount=1)
-print_vevent(u'Fête nationale française (Bastille Day)', '1880-07-14', repeat='YEARLY', daycount=1)
+print_vevent('Fête nationale française (Bastille Day)', '1880-07-14', repeat='YEARLY', daycount=1)
 print_vevent('Mother\'s Day (US)', '2000-05-14', repeat='YEARLY', bymonthday=[5,'2SU'], daycount=1)
 print_vevent('Father\'s Day', '2000-06-18', repeat='YEARLY', bymonthday=[6,'3SU'], daycount=1)
 print_vevent('Winter Solstice (northern hemisphere)', '0001-12-21', repeat='YEARLY', daycount=1)
@@ -239,12 +239,12 @@ print_vtodo('Buy: hats & sunglasses for the kids', cat='holiday')
 print_vtodo('Find power adaptors', cat='holiday')
 
 # Spanish vocab
-print_vtodo(u'el museo - museum', cat='spanish')
-print_vtodo(u'el billete de ida y vuelta - return ticket', cat='spanish')
-print_vtodo(u'el horario - timetable', cat='spanish')
-print_vtodo(u'el mapa - map', cat='spanish')
-print_vtodo(u'la heladería - ice cream shop', cat='spanish')
-print_vtodo(u'la tumbona - sunbed', cat='spanish')
-print_vtodo(u'el secador de pelo - hair dryer', cat='spanish')
+print_vtodo('el museo - museum', cat='spanish')
+print_vtodo('el billete de ida y vuelta - return ticket', cat='spanish')
+print_vtodo('el horario - timetable', cat='spanish')
+print_vtodo('el mapa - map', cat='spanish')
+print_vtodo('la heladería - ice cream shop', cat='spanish')
+print_vtodo('la tumbona - sunbed', cat='spanish')
+print_vtodo('el secador de pelo - hair dryer', cat='spanish')
 
 print('END:VCALENDAR', end='\r\n')

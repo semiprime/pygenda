@@ -3,7 +3,7 @@
 # pygenda_dialog_entryprops.py
 # Code for dialog to show entry properties
 #
-# Copyright (C) 2023,2024 Matthew Lewis
+# Copyright (C) 2023-2025 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -223,7 +223,7 @@ class EntryPropertiesDialog:
                     trig = a['TRIGGER'].dt
                     if isinstance(trig,timedelta) and trig<timedelta(0):
                         # More intuitive way to show negative deltas
-                        a_info += u'−'
+                        a_info += '−'
                         trig = -trig
                     a_info += str(trig)
                     if 'ACTION' in a:
@@ -243,7 +243,7 @@ class EntryPropertiesDialog:
                             if 'DESCRIPTION' in a:
                                 # Spec says only one description
                                 a_info += '\n'
-                                a_info += _(u'“{:s}”').format(a['DESCRIPTION'])
+                                a_info += _('“{:s}”').format(a['DESCRIPTION'])
                         if act=='Audio' and 'ATTACH' in a:
                             a_info += '\n'
                             a_info += a['ATTACH']

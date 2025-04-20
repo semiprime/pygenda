@@ -3,7 +3,7 @@
 # pygenda_util.py
 # Miscellaneous utility functions for Pygenda.
 #
-# Copyright (C) 2022-2024 Matthew Lewis
+# Copyright (C) 2022-2025 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -174,7 +174,7 @@ def tzinfo_display_name(idt) -> Optional[str]:
             sl = nm.rfind('/')
             if sl>=0:
                 nm = nm[sl+1:]
-            nm = nm.replace('_',u' ')
+            nm = nm.replace('_',' ')
             return nm
     if idt.dt.tzinfo is not None:
         return(str(idt.dt.tzinfo))
