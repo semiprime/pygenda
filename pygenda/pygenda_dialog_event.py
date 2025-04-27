@@ -40,7 +40,7 @@ from .pygenda_gui import GUI
 from .pygenda_widgets import WidgetDate, WidgetTime, WidgetDuration
 from .pygenda_calendar import Calendar, RepeatInfo
 from .pygenda_entryinfo import EntryInfo, AlarmInfo
-from .pygenda_util import datetime_to_date, parse_timedelta
+from .pygenda_util import datetime_to_date, parse_timedelta, test_anniversary
 
 
 # Exception used to indicate dialog can't display event properties.
@@ -960,6 +960,8 @@ class EventDialogController:
 
         # Repeats tab
         if 'RRULE' in event:
+            if test_anniversary(event):
+                raise EventPropertyBeyondEditDialog('Editing anniversaries not supported')
             cls._seed_repeatstab(event['RRULE'])
 
         # Alarm tab

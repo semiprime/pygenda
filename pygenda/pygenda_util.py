@@ -22,6 +22,7 @@
 
 from calendar import day_abbr,month_abbr
 from icalendar import cal as iCal
+from icalendar.prop import vBoolean
 from datetime import date, time, datetime, timedelta, tzinfo, timezone
 from dateutil import tz as du_tz
 from tzlocal import get_localzone
@@ -354,3 +355,20 @@ def utc_now_stamp() -> datetime:
     # Return current time suitable for use as an iCalendar timestamp.
     # Spec says it must be UTC. iCal stuctures go to second accuracy.
     return datetime.now(timezone.utc).replace(microsecond=0)
+
+
+def test_anniversary(ev:iCal.Event) -> bool:
+    # Return True if event is an Anniversary; False o/w
+
+    # Use custom iCal property 'X-PYGENDA-ANNIVERSARY'
+    try:
+        is_anniv = vBoolean.from_ical(ev['X-PYGENDA-ANNIVERSARY']) # type:bool
+    except (KeyError, ValueError):
+        # Doesn't exist or string contents not True or False
+        # Check 'X-EPOCAGENDAENTRYTYPE' for compatibility with EPOC
+        try:
+            is_anniv = (ev['X-EPOCAGENDAENTRYTYPE'] == 'ANNIVERSARY')
+        except KeyError:
+            is_anniv = False
+
+    return is_anniv

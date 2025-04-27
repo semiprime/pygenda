@@ -31,6 +31,7 @@ from typing import Union
 # pygenda components
 from .pygenda_gui import GUI
 from .pygenda_calendar import Calendar
+from .pygenda_util import test_anniversary
 
 
 class EntryPropertiesDialog:
@@ -183,6 +184,9 @@ class EntryPropertiesDialog:
                     if len(val) == 1:
                         val = val[0]
                     rep_info += '{} {}'.format(_(self.RRULE_RPTPROPLIST[by]), str(val))
+        if test_anniversary(self.entry):
+            rep_info = _('Anniversary, ') + rep_info
+
         if 'EXDATE' in self.entry:
             exdts = Calendar.caldatetime_tree_to_dt_list(self.entry['EXDATE'])
             if rep_info:
