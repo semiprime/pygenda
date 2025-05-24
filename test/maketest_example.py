@@ -47,7 +47,7 @@ def print_vevent(desc, date, time=None, endtime=None, daycount=None, repeat=None
     if isinstance(date, str):
         date = datetime.strptime(date,'%Y-%m-%d').date()
     print('BEGIN:VEVENT', end='\r\n')
-    print('SUMMARY:{:s}'.format(desc), end='\r\n')
+    print('SUMMARY:{:s}'.format(escape_str(desc)), end='\r\n')
     if time is not None:
         if isinstance(time, str):
             time = datetime.strptime(time,'%H:%M').time()
@@ -86,7 +86,7 @@ def print_vevent(desc, date, time=None, endtime=None, daycount=None, repeat=None
 
 def print_vtodo(desc, cat=None, priority=None, status=None, duedate=None):
     print('BEGIN:VTODO', end='\r\n')
-    print('SUMMARY:{:s}'.format(desc), end='\r\n')
+    print('SUMMARY:{:s}'.format(escape_str(desc)), end='\r\n')
     if cat is not None:
         print('CATEGORIES:{:s}'.format(cat), end='\r\n')
     if priority is not None:
@@ -99,6 +99,13 @@ def print_vtodo(desc, cat=None, priority=None, status=None, duedate=None):
         print('DUE;VALUE=DATE:{:04d}{:02d}{:02d}'.format(duedate.year, duedate.month, duedate.day), end='\r\n')
     print_stamp_uid()
     print('END:VTODO', end='\r\n')
+
+
+def escape_str(st):
+    st = st.replace('\\', r'\\')
+    st = st.replace(',', '\,')
+    st = st.replace(';', '\;')
+    return st
 
 
 def print_daylight_saving_changes():
