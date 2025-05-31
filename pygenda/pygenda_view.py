@@ -26,12 +26,13 @@ from gi.repository.Pango import WrapMode as PWrapMode
 
 from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
 from datetime import date as dt_date, datetime as dt_datetime, timedelta
+from locale import gettext as _ # type:ignore
 from typing import Optional, Union, Tuple
 
 from .pygenda_gui import GUI
 from .pygenda_config import Config
 from .pygenda_dialog_event import EventDialogController
-from .pygenda_util import datetime_to_time, datetime_to_date, date_to_datetime, format_time, format_compact_date, format_compact_time, format_compact_datetime, dt_lte, get_local_tz, tzinfo_display_name
+from .pygenda_util import datetime_to_time, datetime_to_date, date_to_datetime, format_time, format_compact_date, format_compact_time, format_compact_datetime, dt_lte, get_local_tz, tzinfo_display_name, test_anniversary
 from .pygenda_calendar import Calendar
 from .pygenda_entryinfo import EntryInfo
 
@@ -186,6 +187,20 @@ class View:
         cls.zoom_lvl = (cls.zoom_lvl+inc)%cls.zoom_lvls # type:ignore
         cls.zoom_ctx.add_class('zoom'+str(cls.zoom_lvl)) # type:ignore
 
+    # Strings to show aniiversary times
+    ANNIV_FMT = {
+        'START': _(' ({st:d})'),
+        'COUNT': _(' ({ct:d} years)'),
+        'BOTH': _(' ({st:d}, {ct:d} years)'),
+        'NONE': ''
+        }
+
+    ANNIV_FMT_1YR = {
+        'START': _(' ({st:d})'),
+        'COUNT': _(' (1 year)'),
+        'BOTH': _(' ({st:d}, 1 year)'),
+        'NONE': ''
+        }
 
     @staticmethod
     def entry_text_label(en:Union[iCal.Event,iCal.Todo], dt_st:dt_date, dt_end:dt_date, add_location:bool=False, loc_max_chars:int=0) -> Gtk.Label:
@@ -198,6 +213,7 @@ class View:
         lab.set_yalign(0)
         endtm = View.entry_endtime(dt_st,dt_end,True)
         icons = View.entry_icons(en,True)
+
         d_txt = en['SUMMARY'] if 'SUMMARY' in en else ''
         if add_location and 'LOCATION' in en:
             loc = en['LOCATION']
@@ -206,13 +222,28 @@ class View:
             l_txt = ''.join((' (@',loc,')'))
         else:
             l_txt = ''
+
         z_txt = ''
         if isinstance(dt_st,dt_datetime) and dt_st.tzinfo is not None and dt_st.utcoffset()!=dt_st.astimezone(get_local_tz()).utcoffset():
             z_nm = tzinfo_display_name(en['DTSTART'])
             if z_nm:
                 z_tm = format_time(dt_st)
                 z_txt = ''.join(('(',z_tm,' ',z_nm,') '))
-        lab.set_text(''.join((z_txt,d_txt,endtm,l_txt,icons)))
+
+        anniv_txt = ''
+        if 'X-PYGENDA-ANNIVERSARY-SHOW' in en and test_anniversary(en):
+            show = en['X-PYGENDA-ANNIVERSARY-SHOW'].upper()
+            styr = en['DTSTART'].dt.year
+            count = dt_st.year-styr
+            try:
+                if count==1:
+                    anniv_txt = View.ANNIV_FMT_1YR[show].format(st=styr)
+                else:
+                    anniv_txt = View.ANNIV_FMT[show].format(st=styr, ct=count)
+            except KeyError:
+                pass
+
+        lab.set_text(''.join((z_txt,d_txt,endtm,anniv_txt,l_txt,icons)))
         return lab
 
 
@@ -228,7 +259,7 @@ class View:
             icons += View.ICON_NOTES
         if en.walk('VALARM'):
             icons += View.ICON_ALARM
-        if 'RRULE' in en:
+        if 'RRULE' in en and not test_anniversary(en):
             icons += View.ICON_REPEAT
         if prefix_space and icons:
             icons = ' ' + icons # thin space
@@ -451,6 +482,7 @@ class View_DayUnit_Base(View):
     _BULLET_MULTIDAY_START = '‣'
     _BULLET_ONGOING = '»'
     _BULLET_TODO = 'Ⓣ' # alternative:🅣
+    _BULLET_ANNIVERSARY = '🕯︎' # candle
 
     @classmethod
     def entry_markerlab_class(cls, en:Union[iCal.Event,iCal.Todo], dt_st:dt_date, is_ongoing:bool=False) -> Tuple[Gtk.Label,Optional[str]]:
@@ -462,6 +494,9 @@ class View_DayUnit_Base(View):
         if is_ongoing:
             mark = cls._BULLET_ONGOING
             cl = 'multiday_ongoing' # type:Optional[str]
+        elif test_anniversary(en):
+            mark = cls._BULLET_ANNIVERSARY
+            cl = 'anniversary'
         elif datetime_to_time(dt_st)!=False:
             mark = format_time(dt_st, True)
             cl = 'timed'
