@@ -147,6 +147,14 @@ scrollbar {
 	min-width:1ex;
 }
 
+.anniversary > .marker {
+	font-family:'Noto Emoji','Noto Color Emoji';
+	padding-left:0;
+	padding-right:0;
+	margin-left:-1pt;
+	margin-right:0.1em;
+}
+
 .cursor {
 	color:white;
 	background-color:black;
