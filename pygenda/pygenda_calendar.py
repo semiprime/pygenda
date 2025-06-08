@@ -601,9 +601,11 @@ class Calendar:
         cls._event_add_end_dur_from_info(en, e_inf)
 
         # Repeats (including exception dates)
-        if 'RRULE' in en:
-            del(en['RRULE'])
+        cls._del_entry_field(en, 'RRULE')
         cls._del_entry_field(en, 'EXDATE')
+        cls._del_entry_field(en, 'X-PYGENDA-ANNIVERSARY')
+        cls._del_entry_field(en, 'X-EPOCAGENDAENTRYTYPE')
+        cls._del_entry_field(en, 'X-PYGENDA-ANNIVERSARY-SHOW')
         if e_inf.rep_type is not None and e_inf.rep_inter>0:
             cls._event_add_repeat_from_info(en, e_inf)
 
@@ -736,6 +738,11 @@ class Calendar:
         if e_inf.rep_bymonthday is not None:
             rr_options['BYMONTHDAY'] = [e_inf.rep_bymonthday]
         ev.add('RRULE', rr_options)
+
+        # Anniversary, use X-PYGENDA-ANNIVERSARY[-SHOW] - custom iCal extensions
+        if e_inf.anniv:
+            ev.add('X-PYGENDA-ANNIVERSARY', 'TRUE', parameters={'VALUE':'BOOLEAN'})
+            ev.add('X-PYGENDA-ANNIVERSARY-SHOW', 'COUNT')
 
         # Add exception date/times
         if e_inf.rep_exceptions:
