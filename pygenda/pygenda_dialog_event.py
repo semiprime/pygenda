@@ -362,10 +362,11 @@ class EventDialogController:
         # Callback. Called when event repeat type is changed by user.
         # Reveals/hides relevant sub-options.
         # wid should be the repeat-type combobox
-        st = wid.get_active()>0
+        anniv = (wid.get_active_id()=='anniv') # Boolean
+        st = not anniv and wid.get_active()>0
         cls._do_multireveal(cls.revs_repeat, st)
-        r_yearly = (wid.get_active_id()=='YEARLY') # Boolean
-        r_monthly = (not r_yearly and wid.get_active_id()=='MONTHLY')
+        r_yearly = (st and wid.get_active_id()=='YEARLY') # Boolean
+        r_monthly = (st and not r_yearly and wid.get_active_id()=='MONTHLY')
         # We assume that repeat-on comboboxes are set up, just make visible
         cls._do_multireveal(cls.revs_repeaton, r_monthly or r_yearly)
         cls.wid_repeaton_year.set_visible(r_yearly)
@@ -570,7 +571,7 @@ class EventDialogController:
         if cls.wid_rep_forever.get_active():
             return
         rtype = cls.wid_rep_type.get_active_id()
-        if rtype is None:
+        if rtype is None or rtype=='anniv':
             return
         if cls.rep_occs_determines_end:
             cls._sync_rep_ends_from_occs(rtype)
@@ -960,9 +961,7 @@ class EventDialogController:
 
         # Repeats tab
         if 'RRULE' in event:
-            if test_anniversary(event):
-                raise EventPropertyBeyondEditDialog('Editing anniversaries not supported')
-            cls._seed_repeatstab(event['RRULE'])
+            cls._seed_repeatstab(event['RRULE'], test_anniversary(event))
 
         # Alarm tab
         valarms = event.walk('VALARM')
@@ -1043,11 +1042,15 @@ class EventDialogController:
 
 
     @classmethod
-    def _seed_repeatstab(cls, rrule:vRecur) -> None:
+    def _seed_repeatstab(cls, rrule:vRecur, anniv:int) -> None:
         # Called when dialog is opened for an existing event.
         # Assumes that start date has already been set from event.
         rrfreq = rrule['FREQ'][0]
-        if rrfreq in ('YEARLY','MONTHLY','WEEKLY','DAILY'):
+        if anniv == -1:
+            raise EventPropertyBeyondEditDialog('Editing this anniversary type not supported')
+        if anniv == 1:
+            cls.wid_rep_type.set_active_id('anniv')
+        elif rrfreq in ('YEARLY','MONTHLY','WEEKLY','DAILY'):
             cls.wid_rep_type.set_active_id(rrfreq)
         else:
             raise EventPropertyBeyondEditDialog('Editing repeat freq \'{}\' not (yet) supported'.format(rrfreq))
@@ -1286,12 +1289,19 @@ class EventDialogController:
     def _fillin_repeatinfo(cls, ei:EntryInfo) -> None:
         # Add repeat info from dialog to ei
         reptype = cls.wid_rep_type.get_active_id()
-        if reptype is not None:
+        if reptype is None:
+            return
+
+        # Repeat type details, default values
+        inter = 1
+        byday = None
+        bymonth = None
+        bymonthday = None # type: Optional[str]
+        count = None
+        until = None
+        anniv = (reptype=='anniv')
+        if not anniv:
             inter = cls.get_repeat_interval()
-            # Repeat type details, e.g. monthly, 2nd Monday of month
-            byday = None
-            bymonth = None
-            bymonthday = None # type: Optional[str]
             if reptype=='YEARLY':
                 repon = cls.wid_repeaton_year.get_active_id()
                 dt = cls.get_date_start()
@@ -1322,14 +1332,12 @@ class EventDialogController:
                         dayabbr = cls._weekday_abbr(dt)
                         byday = str(dayocc)+dayabbr # e.g. '-2MO', 2nd last Mon
             # If not "repeat forever", when repeats stop
-            count = None
-            until = None
             if not cls.wid_rep_forever.get_active():
                 if cls.rep_occs_determines_end:
                     count = cls.get_repeat_occurrences()
                 else:
                     until = cls.wid_rep_enddt.get_date_or_none()
-            ei.set_repeat_info(reptype, interval=inter, count=count, until=until, byday=byday, bymonth=bymonth, bymonthday=bymonthday, except_list=cls._get_exceptions_list_for_type())
+        ei.set_repeat_info(reptype if not anniv else 'YEARLY', interval=inter, count=count, until=until, byday=byday, bymonth=bymonth, bymonthday=bymonthday, except_list=cls._get_exceptions_list_for_type(), anniv=anniv)
 
 
     @classmethod
@@ -1414,13 +1422,15 @@ class EventDialogController:
         else:
             ctx.remove_class(GUI.STYLE_ERR)
 
-        # Shared Boolean used in checking repeat enddate & occs
-        reps_active = cls.wid_rep_type.get_active()>0 and not cls.wid_rep_forever.get_active()
+        # Boolean used in checking repeat enddate & occs
+        rep_end_active = ( cls.wid_rep_type.get_active()>0 and
+            cls.wid_rep_type.get_active_id()!='anniv' and
+            not cls.wid_rep_forever.get_active() )
 
         # Check end repeat date is good
         ctx = cls.wid_rep_enddt.get_style_context()
         end_dt = cls.wid_rep_enddt.get_date_or_none()
-        if reps_active and (end_dt is None or (st_dt is not None and end_dt<st_dt)):
+        if rep_end_active and (end_dt is None or (st_dt is not None and end_dt<st_dt)):
             ret = False
             if set_style:
                 ctx.add_class(GUI.STYLE_ERR)
@@ -1430,7 +1440,7 @@ class EventDialogController:
 
         # Check repeat occurrences is good
         ctx = cls.wid_rep_occs.get_style_context()
-        if reps_active and cls.wid_rep_occs.get_value()<1:
+        if rep_end_active and cls.wid_rep_occs.get_value()<1:
             ret = False
             if set_style:
                 ctx.add_class(GUI.STYLE_ERR)

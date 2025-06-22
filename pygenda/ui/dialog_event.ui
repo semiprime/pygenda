@@ -422,6 +422,7 @@
 												<items>
 													<item translatable="yes">None</item>
 													<item id="YEARLY" translatable="yes">Yearly</item>
+													<item id="anniv" translatable="yes">Anniversary</item>
 													<item id="MONTHLY" translatable="yes">Monthly</item>
 													<item id="WEEKLY" translatable="yes">Weekly</item>
 													<item id="DAILY" translatable="yes">Daily</item>

@@ -357,18 +357,33 @@ def utc_now_stamp() -> datetime:
     return datetime.now(timezone.utc).replace(microsecond=0)
 
 
-def test_anniversary(ev:iCal.Event) -> bool:
-    # Return True if event is an Anniversary; False o/w
+def test_anniversary(ev:iCal.Event) -> int:
+    # Return 0 if event is not an Anniversary.
+    # Return 1 if event is an Anniversary of a type Pygenda can edit.
+    # Return -1 if event is an Anniversary, but NOT a type Pygenda
+    #           can edit - e.g. by weekday of month.
 
     # Use custom iCal property 'X-PYGENDA-ANNIVERSARY'
-    try:
-        is_anniv = vBoolean.from_ical(ev['X-PYGENDA-ANNIVERSARY']) # type:bool
-    except (KeyError, ValueError):
-        # Doesn't exist or string contents not True or False
-        # Check 'X-EPOCAGENDAENTRYTYPE' for compatibility with EPOC
-        try:
-            is_anniv = (ev['X-EPOCAGENDAENTRYTYPE'] == 'ANNIVERSARY')
-        except KeyError:
-            is_anniv = False
+    if 'X-PYGENDA-ANNIVERSARY' in ev:
+        if not vBoolean.from_ical(ev['X-PYGENDA-ANNIVERSARY']):
+            return 0
+    # Check 'X-EPOCAGENDAENTRYTYPE' for compatibility with EPOC
+    elif ('X-EPOCAGENDAENTRYTYPE' not in ev) or (ev['X-EPOCAGENDAENTRYTYPE'] != 'ANNIVERSARY'):
+        return 0
 
-    return is_anniv
+    # Check other properties are valid (e.g. yearly repeat).
+    try:
+        rr = ev['RRULE']
+        if rr['FREQ'][0] != 'YEARLY':
+            return 0 # Some other type of repeat
+    except KeyError:
+        return 0 # No RRULE or no FREQ, so not a repeating entry
+
+    expected = 1
+    if 'INTERVAL' in rr:
+        if int(rr['INTERVAL'][0]) != 1:
+            return 0
+        expected += 1
+    if len(rr) != expected:
+        return -1 # Can't edit anniv with other elements, e.g. BYDAY
+    return 1

@@ -184,7 +184,7 @@ class EntryPropertiesDialog:
                     if len(val) == 1:
                         val = val[0]
                     rep_info += '{} {}'.format(_(self.RRULE_RPTPROPLIST[by]), str(val))
-        if test_anniversary(self.entry):
+        if test_anniversary(self.entry) != 0:
             rep_info = _('Anniversary, ') + rep_info
 
         if 'EXDATE' in self.entry:

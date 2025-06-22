@@ -231,7 +231,7 @@ class View:
                 z_txt = ''.join(('(',z_tm,' ',z_nm,') '))
 
         anniv_txt = ''
-        if 'X-PYGENDA-ANNIVERSARY-SHOW' in en and test_anniversary(en):
+        if 'X-PYGENDA-ANNIVERSARY-SHOW' in en and test_anniversary(en)!=0:
             show = en['X-PYGENDA-ANNIVERSARY-SHOW'].upper()
             styr = en['DTSTART'].dt.year
             count = dt_st.year-styr
@@ -259,7 +259,7 @@ class View:
             icons += View.ICON_NOTES
         if en.walk('VALARM'):
             icons += View.ICON_ALARM
-        if 'RRULE' in en and not test_anniversary(en):
+        if 'RRULE' in en and test_anniversary(en)==0:
             icons += View.ICON_REPEAT
         if prefix_space and icons:
             icons = ' ' + icons # thin space
@@ -494,7 +494,7 @@ class View_DayUnit_Base(View):
         if is_ongoing:
             mark = cls._BULLET_ONGOING
             cl = 'multiday_ongoing' # type:Optional[str]
-        elif test_anniversary(en):
+        elif test_anniversary(en) != 0:
             mark = cls._BULLET_ANNIVERSARY
             cl = 'anniversary'
         elif datetime_to_time(dt_st)!=False:
