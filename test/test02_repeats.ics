@@ -3,7 +3,7 @@ VERSION:2.0
 PRODID:-//Semiprime//PygendaTest//EN
 BEGIN:VTIMEZONE
 TZID:Europe/London
-COMMENT:Quick (probably wrong) tz info, so file validates
+COMMENT:Quick (probably wrong) tz info\, so file validates
 BEGIN:DAYLIGHT
 DTSTART:20020331T020000
 RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
@@ -19,7 +19,7 @@ END:STANDARD
 END:VTIMEZONE
 BEGIN:VTIMEZONE
 TZID:America/New_York
-COMMENT:Quick (probably wrong) tz info, so file validates
+COMMENT:Quick (probably wrong) tz info\, so file validates
 BEGIN:DAYLIGHT
 DTSTART:20070311T020000
 RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
@@ -530,7 +530,7 @@ UID:Pygenda-test02-0123521
 RRULE:FREQ=WEEKLY
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:Monthly repeat, with BYDAY and BYMONTHDAY
+SUMMARY:Monthly repeat\, with BYDAY and BYMONTHDAY
 DTSTART;VALUE=DATE:20230109
 DTSTAMP:20200101T000000
 UID:Pygenda-test02-0123522
