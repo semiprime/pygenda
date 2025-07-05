@@ -43,7 +43,7 @@ def print_stamp_uid():
     uid += 1
 
 
-def print_vevent(desc, date, time=None, endtime=None, daycount=None, repeat=None, interval=1, repeat_count=None, bymonthday=None, status=None):
+def print_vevent(desc, date, time=None, endtime=None, daycount=None, repeat=None, interval=1, repeat_count=None, bymonthday=None, status=None, anniv=False):
     if isinstance(date, str):
         date = datetime.strptime(date,'%Y-%m-%d').date()
     print('BEGIN:VEVENT', end='\r\n')
@@ -79,6 +79,11 @@ def print_vevent(desc, date, time=None, endtime=None, daycount=None, repeat=None
             '' if bymonthday is None else ';BYDAY={:s}'.format(bymonthday),
             '' if repeat_count is None else ';COUNT={:d}'.format(repeat_count)
             ), end='\r\n')
+    if anniv:
+        print('X-PYGENDA-ANNIVERSARY;VALUE=BOOLEAN:TRUE', end='\r\n')
+        #print('X-EPOCAGENDAENTRYTYPE:ANNIVERSARY', end='\r\n')
+        if isinstance(anniv, str):
+            print('X-PYGENDA-ANNIVERSARY-SHOW:'+anniv, end='\r\n')
     if status is not None:
         print('STATUS:{:s}'.format(status.upper()), end='\r\n')
     print('END:VEVENT', end='\r\n')
@@ -111,8 +116,8 @@ def escape_str(st):
 def print_daylight_saving_changes():
     print_vevent('Clocks go forward (Europe)', '2000-03-26', time='1:00', repeat='YEARLY', bymonthday=[3,'-1SU'])
     print_vevent('Clocks go back (Europe)', '2000-10-29', time='1:00', repeat='YEARLY', bymonthday=[10,'-1SU'])
-    print_vevent('Clocks go forward (US)', '2000-03-12', time='2:00', repeat='YEARLY', bymonthday=[3,'2SU'])
-    print_vevent('Clocks go back (US)', '2000-11-05', time='2:00', repeat='YEARLY', bymonthday=[11,'1SU'])
+    print_vevent('Clocks go forward (USA)', '2000-03-12', time='2:00', repeat='YEARLY', bymonthday=[3,'2SU'])
+    print_vevent('Clocks go back (USA)', '2000-11-05', time='2:00', repeat='YEARLY', bymonthday=[11,'1SU'])
 
 
 def print_holidays():
@@ -124,9 +129,9 @@ def print_holidays():
     print_vevent('Bonfire Night', '2000-11-05', repeat='YEARLY', daycount=1)
     print_vevent('Halloween', '2000-10-31', repeat='YEARLY', daycount=1)
     print_vevent('Valentine\'s Day', '2000-02-14', repeat='YEARLY', daycount=1)
-    print_vevent('Armistice Day', '1918-11-11', repeat='YEARLY', daycount=1)
-    print_vevent('VE Day', '1945-05-08', repeat='YEARLY', daycount=1)
-    print_vevent('VJ Day', '1945-08-15', repeat='YEARLY', daycount=1)
+    print_vevent('Armistice Day', '1918-11-11', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('VE Day', '1945-05-08', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('VJ Day', '1945-08-15', repeat='YEARLY', daycount=1, anniv='BOTH')
     print_vevent('May Day', '2000-05-01', repeat='YEARLY', daycount=1)
     print_vevent('May Day bank holiday (UK)', '2000-05-01', repeat='YEARLY', bymonthday=[5,'1MO'], daycount=1)
     print_vevent('Spring bank holiday (UK)', '2000-05-29', repeat='YEARLY', bymonthday=[5,'-1MO'], daycount=1)
@@ -134,13 +139,17 @@ def print_holidays():
     print_vevent('April Fools\' Day', '2000-04-01', repeat='YEARLY', daycount=1)
     print_vevent('Burns\' Night', '1759-01-25', repeat='YEARLY', daycount=1)
     print_vevent('St Patrick\'s Day', '2000-03-17', repeat='YEARLY', daycount=1)
-    print_vevent('Independence Day (US)', '1776-07-04', repeat='YEARLY', daycount=1)
-    print_vevent('Thanksgiving (US)', '1942-11-26', repeat='YEARLY', bymonthday=[11,'4TH'], daycount=1)
+    print_vevent('St George\'s Day', '0303-04-23', repeat='YEARLY', daycount=1, anniv='NONE')
+    print_vevent('St Andrew\'s Day', '2000-11-30', repeat='YEARLY', daycount=1)
+    print_vevent('St David\'s Day', '0589-03-01', repeat='YEARLY', daycount=1, anniv='NONE')
+    print_vevent('Independence Day (USA)', '1776-07-04', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('Thanksgiving (USA)', '1942-11-26', repeat='YEARLY', bymonthday=[11,'4TH'], daycount=1)
+    print_vevent('Canada Day', '1867-07-01', repeat='YEARLY', daycount=1)
     print_vevent('Thanksgiving (Canada)', '1957-10-14', repeat='YEARLY', bymonthday=[10,'2MO'], daycount=1)
     print_vevent('Australia Day', '1994-01-26', repeat='YEARLY', daycount=1)
     print_vevent('Waitangi Day (NZ)', '1947-02-06', repeat='YEARLY', daycount=1)
     print_vevent('Fête nationale française (Bastille Day)', '1880-07-14', repeat='YEARLY', daycount=1)
-    print_vevent('Mother\'s Day (US)', '2000-05-14', repeat='YEARLY', bymonthday=[5,'2SU'], daycount=1)
+    print_vevent('Mother\'s Day (USA)', '2000-05-14', repeat='YEARLY', bymonthday=[5,'2SU'], daycount=1)
     print_vevent('Father\'s Day', '2000-06-18', repeat='YEARLY', bymonthday=[6,'3SU'], daycount=1)
     print_vevent('Winter Solstice (northern hemisphere)', '0001-12-21', repeat='YEARLY', daycount=1)
     print_vevent('Summer Solstice (northern hemisphere)', '0001-06-21', repeat='YEARLY', daycount=1)
@@ -192,8 +201,16 @@ def print_annual_days():
     print_vevent('Holocaust Memorial Day', '1945-01-27', repeat='YEARLY', daycount=1)
     print_vevent('International Women\'s Day', '1977-03-08', repeat='YEARLY', daycount=1)
     print_vevent('International Men\'s Day', '1999-11-19', repeat='YEARLY', daycount=1)
-    print_vevent('Martin Luther King Jr. Day (US)', '1986-01-20', repeat='YEARLY', bymonthday=[1,'3MO'], daycount=1)
+    print_vevent('International Trans Day of Visibility', '2009-03-31', repeat='YEARLY', daycount=1)
+    print_vevent('Bisexual Pride Day', '1999-09-23', repeat='YEARLY', daycount=1)
+    print_vevent('International Day Against Homophobia, Biphobia and Transphobia', '2005-05-17', repeat='YEARLY', daycount=1)
+    print_vevent('Martin Luther King Jr. Day (USA)', '1986-01-20', repeat='YEARLY', bymonthday=[1,'3MO'], daycount=1)
+    print_vevent('Juneteenth (USA), end of slavery in Texas', '1865-06-19', repeat='YEARLY', anniv='BOTH')
+    print_vevent('Black History Month (USA & Canada)', '1970-02-01', repeat='YEARLY')
+    print_vevent('Black History Month (UK & Ireland)', '1987-10-01', repeat='YEARLY')
+    print_vevent('World AIDS day', '1988-12-01', repeat='YEARLY', daycount=1)
     print_vevent('International Talk Like a Pirate Day', '1995-09-19', repeat='YEARLY', daycount=1)
+    print_vevent('World Introvert Day', '2012-01-02', repeat='YEARLY', daycount=1)
     print_vevent('Pi Day', '2000-03-14', repeat='YEARLY', daycount=1)
     print_vevent('Perseids meteor shower', '2000-08-12', repeat='YEARLY')
     print_vevent('Leonids meteor shower', '2000-11-17', repeat='YEARLY')
@@ -201,8 +218,28 @@ def print_annual_days():
 
 def print_historical_anniversaries():
     # Birthdays of historical figures, anniversaries of historical events
-    print_vevent('Beethoven\'s birthday', '1770-12-16', repeat='YEARLY', daycount=1)
-    print_vevent('Fall of the Berlin Wall (1989)', '1989-11-09', repeat='YEARLY', daycount=1)
+    print_vevent('Cervantes\' birthday (maybe)', '1547-09-29', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('Shakespeare\'s birthday (maybe)', '1564-04-23', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('Beethoven\'s birthday', '1770-12-16', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('Jane Austen\'s birthday', '1775-12-16', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('Charles Babbage\'s birthday', '1891-12-26', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('Charles Darwin\'s birthday', '1809-02-12', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('Ada Lovelace\'s birthday', '1815-12-10', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('13th Amendment of US Constitution ratified (abolished slavery)', '1865-12-06', repeat='YEARLY', anniv='BOTH')
+    print_vevent('Marie Skłodowska-Curie\'s birthday', '1867-11-07', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('Albert Einstein\'s birthday', '1879-03-14', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('Alan Turing\'s birthday', '1912-06-23', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('Nelson Mandela\'s birthday', '1918-07-18', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('Nelson Mandela released from prison', '1990-02-11', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('Representation of the People Act 1918 passed, allowing women to vote in the UK', '1918-02-06', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('Sophie Scholl\'s birthday', '1921-05-09', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('Anne Frank\'s birthday', '1929-06-12', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('Yuri Gagarin becomes first man in space', '1961-04-12', repeat='YEARLY', anniv='BOTH')
+    print_vevent('Valentina Tereshkova becomes first woman in space', '1963-06-16', repeat='YEARLY', anniv='BOTH')
+    print_vevent('Neil Armstrong becomes first man to walk on the Moon', '1969-07-20', repeat='YEARLY', anniv='BOTH')
+    print_vevent('Boston Tea Party', '1773-12-16', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('India & Pakistan gain independence from Britain', '1947-08-15', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('Fall of the Berlin Wall', '1989-11-09', repeat='YEARLY', daycount=1, anniv='BOTH')
 
 
 def print_work_events():
@@ -220,16 +257,16 @@ def print_work_events():
 
 def print_personal_anniversaries():
     # Birthdays (fictional!)
-    print_vevent('Dad\'s birthday', '1953-04-02', repeat='YEARLY', daycount=1)
-    print_vevent('Mum\'s birthday', '1955-07-12', repeat='YEARLY', daycount=1)
-    print_vevent('Grandma\'s birthday', '1930-11-29', repeat='YEARLY', daycount=1)
-    print_vevent('J\'s birthday', '1980-09-17', repeat='YEARLY', daycount=1)
-    print_vevent('Mo\'s birthday', '1979-02-16', repeat='YEARLY', daycount=1)
-    print_vevent('Matt P\'s birthday', '1980-03-22', repeat='YEARLY', daycount=1)
-    print_vevent('Matt B\'s birthday', '1982-10-29', repeat='YEARLY', daycount=1)
-    print_vevent('Nila\'s birthday', '1983-01-25', repeat='YEARLY', daycount=1)
-    print_vevent('Antoine\'s birthday', '1983-05-04', repeat='YEARLY', daycount=1)
-    print_vevent('The twins\' birthday', '2012-06-01', repeat='YEARLY', daycount=1)
+    print_vevent('Dad\'s birthday', '1953-04-02', repeat='YEARLY', daycount=1, anniv='COUNT')
+    print_vevent('Mum\'s birthday', '1955-07-12', repeat='YEARLY', daycount=1, anniv='COUNT')
+    print_vevent('Grandma\'s birthday', '1930-11-29', repeat='YEARLY', daycount=1, anniv='COUNT')
+    print_vevent('J\'s birthday', '1980-09-17', repeat='YEARLY', daycount=1, anniv='COUNT')
+    print_vevent('Mo\'s birthday', '1979-02-16', repeat='YEARLY', daycount=1, anniv='COUNT')
+    print_vevent('Matt P\'s birthday', '1980-03-22', repeat='YEARLY', daycount=1, anniv='COUNT')
+    print_vevent('Matt B\'s birthday', '1982-10-29', repeat='YEARLY', daycount=1, anniv='COUNT')
+    print_vevent('Nila\'s birthday', '1983-01-25', repeat='YEARLY', daycount=1, anniv='COUNT')
+    print_vevent('Antoine\'s birthday', '1983-05-04', repeat='YEARLY', daycount=1, anniv='COUNT')
+    print_vevent('The twins\' birthday', '2012-06-01', repeat='YEARLY', daycount=1, anniv='COUNT')
 
 
 def print_personal_events():
@@ -245,7 +282,7 @@ def print_personal_events():
     print_vevent('New bed delivered', '{:04d}-02-01'.format(YEAR), time='9:00',endtime='12:00')
     print_vevent('Thai with Jay+Rich?', '{:04d}-{:02d}-{:02d}'.format(YEAR, 3, 14),status='tentative')
 
-	# Some to-dos
+    # Some to-dos
     # config assumed:
     #list0_filter = UNCATEGORIZED
     #list1_title = Exercises
