@@ -25,6 +25,7 @@ from datetime import datetime,timedelta, date as dt_date
 YEAR = datetime.now().year
 STAMPDATE = '{}0101T000000'.format(YEAR)
 uid = 1234567
+MAX_LINE_BYTES = 74
 
 
 #
@@ -47,7 +48,10 @@ def print_vevent(desc, date, time=None, endtime=None, daycount=None, repeat=None
     if isinstance(date, str):
         date = datetime.strptime(date,'%Y-%m-%d').date()
     print('BEGIN:VEVENT', end='\r\n')
-    print('SUMMARY:{:s}'.format(escape_str(desc)), end='\r\n')
+    summary = 'SUMMARY:{:s}'.format(escape_str(desc))
+    print(summary[:MAX_LINE_BYTES], end='\r\n')
+    for i in range(MAX_LINE_BYTES,len(summary), MAX_LINE_BYTES-1):
+        print(' ' + summary[i:i+MAX_LINE_BYTES-1], end='\r\n')
     if time is not None:
         if isinstance(time, str):
             time = datetime.strptime(time,'%H:%M').time()
@@ -91,7 +95,10 @@ def print_vevent(desc, date, time=None, endtime=None, daycount=None, repeat=None
 
 def print_vtodo(desc, cat=None, priority=None, status=None, duedate=None):
     print('BEGIN:VTODO', end='\r\n')
-    print('SUMMARY:{:s}'.format(escape_str(desc)), end='\r\n')
+    summary = 'SUMMARY:{:s}'.format(escape_str(desc))
+    print(summary[:MAX_LINE_BYTES], end='\r\n')
+    for i in range(MAX_LINE_BYTES,len(summary), MAX_LINE_BYTES-1):
+        print(' ' + summary[i:i+MAX_LINE_BYTES-1], end='\r\n')
     if cat is not None:
         print('CATEGORIES:{:s}'.format(cat), end='\r\n')
     if priority is not None:
