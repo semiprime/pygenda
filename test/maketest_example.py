@@ -24,8 +24,9 @@ from datetime import datetime,timedelta, date as dt_date
 
 YEAR = datetime.now().year
 STAMPDATE = '{}0101T000000'.format(YEAR)
-uid = 1234567
 MAX_LINE_BYTES = 74
+uid = 1234567
+uid_gp = None
 
 
 #
@@ -38,10 +39,19 @@ day_offset2 = Mar01.weekday() # 0=Mon, 1=Tue...
 
 
 def print_stamp_uid():
-    global uid
+    global uid, uid_gp
     print('DTSTAMP;VALUE=DATE-TIME:{}Z'.format(STAMPDATE), end='\r\n')
-    print('UID:Pygenda-{:08d}'.format(uid), end='\r\n')
+    if uid_gp is None:
+        print('UID:Pygenda-{:08d}'.format(uid), end='\r\n')
+    else:
+        print('UID:Pygenda-{:05d}-{:08d}'.format(uid_gp,uid), end='\r\n')
     uid += 1
+
+
+def start_uid_group(gp:int):
+    global uid, uid_gp
+    uid = 1234567
+    uid_gp = gp
 
 
 def print_vevent(desc, date, time=None, endtime=None, daycount=None, repeat=None, interval=1, repeat_count=None, bymonthday=None, status=None, anniv=False):
@@ -121,6 +131,7 @@ def escape_str(st):
 
 
 def print_daylight_saving_changes():
+    start_uid_group(2388)
     print_vevent('Clocks go forward (Europe)', '2000-03-26', time='1:00', repeat='YEARLY', bymonthday=[3,'-1SU'])
     print_vevent('Clocks go back (Europe)', '2000-10-29', time='1:00', repeat='YEARLY', bymonthday=[10,'-1SU'])
     print_vevent('Clocks go forward (USA)', '2000-03-12', time='2:00', repeat='YEARLY', bymonthday=[3,'2SU'])
@@ -129,6 +140,7 @@ def print_daylight_saving_changes():
 
 def print_holidays():
     # Anniversaries and various yearly events
+    start_uid_group(12322)
     print_vevent('New Year', '0001-01-01', repeat='YEARLY', daycount=1)
     print_vevent('Christmas!', '0001-12-25', repeat='YEARLY', daycount=1)
     print_vevent('Christmas Eve', '0001-12-24', repeat='YEARLY', daycount=1)
@@ -197,6 +209,7 @@ def print_moon_phases():
         '2027-01-07','2027-02-06','2027-03-08','2027-04-06','2027-05-06','2027-06-04','2027-07-04','2027-08-02','2027-08-31','2027-09-30','2027-10-29','2027-11-28','2027-12-27',
     )
 
+    start_uid_group(63652)
     for fm_date in FULLMOON_DATES:
         print_vevent('🌕 Full moon', fm_date)
     for nm_date in NEWMOON_DATES:
@@ -205,6 +218,7 @@ def print_moon_phases():
 
 def print_annual_days():
     # Annual days, not holidays
+    start_uid_group(72662)
     print_vevent('Holocaust Memorial Day', '1945-01-27', repeat='YEARLY', daycount=1)
     print_vevent('International Women\'s Day', '1977-03-08', repeat='YEARLY', daycount=1)
     print_vevent('International Men\'s Day', '1999-11-19', repeat='YEARLY', daycount=1)
@@ -225,6 +239,7 @@ def print_annual_days():
 
 def print_historical_anniversaries():
     # Birthdays of historical figures, anniversaries of historical events
+    start_uid_group(47157)
     print_vevent('Cervantes\' birthday (maybe)', '1547-09-29', repeat='YEARLY', daycount=1, anniv='BOTH')
     print_vevent('Shakespeare\'s birthday (maybe)', '1564-04-23', repeat='YEARLY', daycount=1, anniv='BOTH')
     print_vevent('Beethoven\'s birthday', '1770-12-16', repeat='YEARLY', daycount=1, anniv='BOTH')
@@ -251,6 +266,7 @@ def print_historical_anniversaries():
 
 def print_work_events():
     # Work events
+    start_uid_group(93425)
     day_back = 11-(day_offset+3)%7 # first Mon after 4th Jan
     print_vevent('Back to work', '{:04d}-01-{:02d}'.format(YEAR,day_back))
     print_vevent('Team meeting', '{:04d}-01-{:02d}'.format(YEAR,1+(7-day_offset)%7), time='10:30', repeat='MONTHLY', bymonthday='1MO')
@@ -264,6 +280,7 @@ def print_work_events():
 
 def print_personal_anniversaries():
     # Birthdays (fictional!)
+    start_uid_group(58781)
     print_vevent('Dad\'s birthday', '1953-04-02', repeat='YEARLY', daycount=1, anniv='COUNT')
     print_vevent('Mum\'s birthday', '1955-07-12', repeat='YEARLY', daycount=1, anniv='COUNT')
     print_vevent('Grandma\'s birthday', '1930-11-29', repeat='YEARLY', daycount=1, anniv='COUNT')
@@ -278,6 +295,7 @@ def print_personal_anniversaries():
 
 def print_personal_events():
     # Social & personal events
+    start_uid_group(46711)
     first_wed = 12-(day_offset+1)%7 # first Wed after 2nd Jan
     print_vevent('Guitar lesson', '{:04d}-01-{:02d}'.format(YEAR, first_wed), time='19:00', repeat='WEEKLY', interval=2)
     print_vevent('Dentist', '{:04d}-03-{:02d}'.format(YEAR, 1 if day_offset2<5 else 8-day_offset2), time='9:00')
