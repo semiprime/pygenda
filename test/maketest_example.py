@@ -21,6 +21,8 @@
 #
 
 from datetime import datetime,timedelta, date as dt_date
+from argparse import ArgumentParser
+
 
 YEAR = datetime.now().year
 STAMPDATE = '{}0101T000000'.format(YEAR)
@@ -347,21 +349,58 @@ def print_personal_events():
     print_vtodo('el secador de pelo - hair dryer', cat='spanish')
 
 
+#
+# Parse arguments
+#
+parser = ArgumentParser()
+parser.add_argument('--public-holidays', action='store_true')
+parser.add_argument('--celebration-days', action='store_true')
+parser.add_argument('--historical-events', action='store_true')
+parser.add_argument('--dst-changes', action='store_true')
+parser.add_argument('--work', action='store_true')
+parser.add_argument('--personal', action='store_true')
+parser.add_argument('--personal-anniversaries', action='store_true')
+parser.add_argument('--moon-phases', action='store_true')
+args = parser.parse_args()
+
+do_all =     not args.public_holidays \
+         and not args.celebration_days \
+         and not args.historical_events \
+         and not args.dst_changes \
+         and not args.work \
+         and not args.personal \
+         and not args.personal_anniversaries \
+         and not args.moon_phases
 
 #
-# Start outputting things
+# Output iCal file
 #
 print('BEGIN:VCALENDAR', end='\r\n')
 print('VERSION:2.0', end='\r\n')
 print('PRODID:-//Semiprime//PygendaTest//EN', end='\r\n')
 
-print_holidays()
-print_annual_days()
-print_historical_anniversaries()
-print_daylight_saving_changes()
-print_work_events()
-print_personal_anniversaries()
-print_moon_phases()
-print_personal_events()
+if do_all or args.public_holidays:
+    print_holidays()
+
+if do_all or args.celebration_days:
+    print_annual_days()
+
+if do_all or args.historical_events:
+    print_historical_anniversaries()
+
+if do_all or args.dst_changes:
+    print_daylight_saving_changes()
+
+if do_all or args.work:
+    print_work_events()
+
+if do_all or args.personal_anniversaries:
+    print_personal_anniversaries()
+
+if do_all or args.moon_phases:
+    print_moon_phases()
+
+if do_all or args.personal:
+    print_personal_events()
 
 print('END:VCALENDAR', end='\r\n')
