@@ -6,9 +6,9 @@ Gemian Linux.
 
 The guide is intended for users who want to install/run/test Pygenda.
 If you want to contribute to or modify Pygenda, then you probably want
-to get the latest version from GitHub (which is usually a little ahead
-of the latest official release). This guide may be useful to refer to
-for dependencies and configuration information.
+to get the latest version from Codeberg or GitHub (which are usually a
+little ahead of the latest official release). This guide may be useful
+to refer to for dependencies and configuration information.
 
 Note that Pygenda is alpha software, and as such has **lots of
 missing/incomplete features** as well as **bugs**. It is released for

@@ -6,9 +6,9 @@ operating system for mobile devices such as phones). It is intended
 for users who want to test Pygenda.
 
 If you want to contribute to or modify Pygenda, then you probably want
-to get the latest version from GitHub (which is usually a little ahead
-of the latest release). This guide may be useful to refer to for
-configuration.
+to get the latest version from codeberg or GitHub (which are usually a
+little ahead of the latest release). This guide may be useful to refer
+to for initial configuration.
 
 Pygenda is designed for devices with a physical keyboard, for example
 a Gemini PDA, a Chromebook, or a PinePhone with its keyboard attachment.

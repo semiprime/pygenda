@@ -44,3 +44,4 @@ pygenda = ["mypy.ini", "*.pot", "*.po"]
 
 [project.urls]
 Homepage = "https://github.com/semiprime/pygenda"
+"Homepage (Codeberg)" = "https://codeberg.org/semiprime/pygenda"

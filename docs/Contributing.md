@@ -10,7 +10,9 @@ with, and then I'd need to change all the "I"s to "we"s and "me"s to
 Send feedback
 -------------
 Feedback can be sent to pygenda@semiprime.com, or for bug
-reports/feature requests, you can raise an issue on GitHub.
+reports/feature requests, you can raise an issue on
+[Codeberg](https://codeberg.org/semiprime/pygenda) or
+[GitHub](https://github.com/semiprime/pygenda).
 
 Even a quick note to say you tried it is useful (we want to confirm
 that Pygenda runs for other people too). And if you let us know what
@@ -35,8 +37,8 @@ the French translation was not done by a native speaker).
 The easiest way to create a new translation is to take the most recent
 template ([locale/pygenda.pot](../pygenda/locale/pygenda.pot)) and add
 the translated strings. You can email the new file to us or make a PR
-on GitHub (please check that you agree with the licence – see
-[COPYING](../COPYING)).
+on Codeberg or GitHub (please check that you agree with the licence –
+see [COPYING](../COPYING)).
 
 Other devices
 -------------

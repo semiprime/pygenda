@@ -14,7 +14,8 @@ files or data stored on calendar servers).**
 There are currently **lots of missing/incomplete features** as well as
 **bugs**. For a list of known issues, see: [known_issues.md](docs/known_issues.md).
 If you find any new bugs, please send them to pygenda@semiprime.com,
-or raise them as issues on GitHub.
+or raise them as issues on [Codeberg](https://codeberg.org/semiprime/pygenda)
+or [GitHub](https://github.com/semiprime/pygenda).
 
 *However*, it currently has Week, Year and Todo Views that are functional
 enough that the author is now using Pygenda as his main agenda, so
@@ -59,7 +60,11 @@ Todo View:
 
 Source code
 -----------
-Source is available at: https://github.com/semiprime/pygenda
+Source code is available at:
+
+* https://codeberg.org/semiprime/pygenda (based in the EU, open source)
+* https://github.com/semiprime/pygenda (based in the USA, closed source)
+* https://pypi.org/project/pygenda/#files (releases only)
 
 License (GPL3)
 --------------
@@ -95,7 +100,8 @@ release (best for testing). The "quickstart" guides above can serve
 as a guide.
 
 If you want to try the latest development code (best for contributing)
-then get the version from GitHub.
+then get the version from [Codeberg](https://codeberg.org/semiprime/pygenda)
+or [GitHub](https://github.com/semiprime/pygenda).
 
 Launching Pygenda from Source
 -----------------------------
