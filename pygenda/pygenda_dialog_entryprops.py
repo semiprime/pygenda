@@ -185,7 +185,7 @@ class EntryPropertiesDialog:
                         val = val[0]
                     rep_info += '{} {}'.format(_(self.RRULE_RPTPROPLIST[by]), str(val))
         if test_anniversary(self.entry) != 0:
-            rep_info = _('Anniversary, ') + rep_info
+            rep_info = ', '.join((_('Anniversary'), rep_info))
 
         if 'EXDATE' in self.entry:
             exdts = Calendar.caldatetime_tree_to_dt_list(self.entry['EXDATE'])

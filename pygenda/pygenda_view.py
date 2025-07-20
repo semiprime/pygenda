@@ -187,18 +187,18 @@ class View:
         cls.zoom_lvl = (cls.zoom_lvl+inc)%cls.zoom_lvls # type:ignore
         cls.zoom_ctx.add_class('zoom'+str(cls.zoom_lvl)) # type:ignore
 
-    # Strings to show aniiversary times
+    # Strings to show anniversary times
     ANNIV_FMT = {
-        'START': _(' ({st:d})'),
-        'COUNT': _(' ({ct:d} years)'),
-        'BOTH': _(' ({st:d}, {ct:d} years)'),
+        'START': ' ({st:d})',
+        'COUNT': ' ({{ct:d}} {:s})'.format(_('years')),
+        'BOTH': ' ({{st:d}}, {{ct:d}} {:s})'.format(_('years')),
         'NONE': ''
         }
 
     ANNIV_FMT_1YR = {
-        'START': _(' ({st:d})'),
-        'COUNT': _(' (1 year)'),
-        'BOTH': _(' ({st:d}, 1 year)'),
+        'START': ' ({st:d})',
+        'COUNT': ' (1 {:s})'.format(_('year')),
+        'BOTH': ' ({{st:d}}, 1 {:s})'.format(_('year')),
         'NONE': ''
         }
 
