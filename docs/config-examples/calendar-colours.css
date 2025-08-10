@@ -1,0 +1,47 @@
+/* CSS example for adding coloured backgrounds to entries
+ * according to the calendar where they are stored.
+ */
+
+
+/* Styling for entries where a background colour is wanted.
+ * In this example we have two calendars: "work" & "personal".
+ *
+ * Class names for calendars are in the form "calendar-xxx"
+ * where xxx can be set in the .ini file, calendar property
+ * "class" (defaults to the calendar display name in lower
+ * case with punctuation removed & spaces replaced with dashes).
+ */
+.calendar-work > .itemtext,
+.calendar-personal > .itemtext {
+	border-radius:0.3em;
+	padding:0.2em;
+	padding-top:0;
+	margin-bottom:5px;
+	margin-right:5px;
+	box-shadow:2px 2px 3px 0px black;
+}
+
+/* Tweak spacing above whole entry, so entry bullet & text are aligned */
+.calendar-work,
+.calendar-personal {
+	margin-top:1px;
+}
+
+/* Assign background colours to specific calendars */
+.calendar-work > .itemtext {
+	background:Khaki;
+}
+
+.calendar-personal > .itemtext {
+	background:PowderBlue;
+}
+
+/* Customisation notes:
+ *
+ * To just add backgrounds in one view, add the xxxxview_item class.
+ * For example, change .calendar-work to .weekview_item.calendar-work
+ * 
+ * To only select events, or only todos, in Week/Year view, add the
+ * appropriate selector. For example, change .calendar-work to
+ * .event.calendar-work or .todo.calendar-work
+ */

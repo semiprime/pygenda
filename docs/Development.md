@@ -101,7 +101,7 @@ Checklist for releases
 * Run test_entries.py, test_repeats.py, test_import_paste.py & test_ongoing.py
   unit tests
 * Check all test files (testxx_*.ics & generated files) display correctly
-* Check darkmode & backgrounds CSS still work
+* Check darkmode, backgrounds & calendar colours CSS examples still work
 * Check mouse clicks/touchscreen taps/swipes work (all views)
 * Check start_week_day!=Monday still works (all views)
 * Increase version number in pygenda_version.py & pyproject.toml
