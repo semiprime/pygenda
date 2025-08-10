@@ -62,6 +62,13 @@ Pygenda in a Python virtual environment.)
 installed either as a general GUI component or with gir1.2-gtk-3.0.
 However, if it doesn't seem to be installed, try `sudo apt install libgtk-3-0`.)
 
+Install Noto Emoji font
+-----------------------
+For the candle icon (maybe others) you should install a recent Noto Emoji
+font. The easiest way is to download the font from https://fonts.google.com/noto/specimen/Noto+Emoji and save the `NotoEmoji-VariableFont_wght.ttf` file
+in the `~/.fonts/` directory. (For more details and alternatives, like
+installing the font system wide, see https://wiki.debian.org/Fonts#Manually.)
+
 Install Pygenda
 ---------------
 Enter the following command to download and install Pygenda from the

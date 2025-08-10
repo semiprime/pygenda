@@ -97,6 +97,13 @@ Now use the "pip" Python package tool to update itself:
 (This version of pip has better support for installation of binary
 "wheel" packages.)
 
+Install Noto Emoji font
+-----------------------
+For the candle icon (maybe others) you should install a recent Noto Emoji
+font. The easiest way is to download the font from https://fonts.google.com/noto/specimen/Noto+Emoji and save the `NotoEmoji-VariableFont_wght.ttf` file
+in the `~/.fonts/` directory. (For more details and alternatives, like
+installing the font system wide, see https://wiki.debian.org/Fonts#Manually.)
+
 Install Pygenda
 ---------------
 Enter the following command to download and install Pygenda (and the

@@ -32,7 +32,7 @@ Enter the following commands in the command prompt (requires password):
     sudo apt update
     sudo apt install python3
     sudo apt install python3-pip
-    sudo apt install fonts-dejavu
+    sudo apt install fonts-dejavu fonts-noto-color-emoji
     sudo apt install python3-gi python3-cairo python3-icalendar python3-dateutil python3-tzlocal python3-num2words
 
 (Note: I'm using the apt versions of the Python3 module dependencies here.

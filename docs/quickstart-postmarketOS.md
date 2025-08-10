@@ -57,6 +57,7 @@ Enter the following commands in a command prompt (requires password):
     sudo apk add python3
     sudo apk add py3-pip
     sudo apk add gtk+3.0
+    sudo apk add font-dejavu font-noto-emoji
     sudo apk add py3-gobject3 py3-cairo py3-icalendar py3-dateutil py3-tzlocal py3-num2words
 
 (Note: I'm using the apk versions of the Python3 module dependencies here.

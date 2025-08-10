@@ -85,6 +85,7 @@ Dependencies
 * Python3. Version >=3.5 (because Gemini's "Gemian" Linux provides Python 3.5).
 * GTK+3 library
 * Python libraries: PyGObject3 (for gi), pycairo, icalendar, python-dateutil, tzlocal, num2words.
+* Fonts: DejaVu Sans, Noto Emoji (you can change these in the user CSS file if you wish)
 
 If you want to access a CalDAV server from Pygenda there are some
 extra dependencies. See setup details in: [CalDAV.md](docs/CalDAV.md)
