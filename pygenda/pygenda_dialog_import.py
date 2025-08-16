@@ -77,7 +77,7 @@ class ImportController:
             except:
                 print('Error: Failed to parse ical file '+filename, file=stderr)
                 return
-        if cal.is_broken:
+        if cal.errors:
             print('Error: Non-conformant ical data '+filename, file=stderr)
             return
 
