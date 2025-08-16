@@ -157,7 +157,7 @@ Medium
 * Startup is slow on Gemini. Possible optimisation: run independent
   tasks asynchronously.
 
-* If calendar data is updated externally while Pygenda is runing (e.g.
+* If calendar data is updated externally while Pygenda is running (e.g.
   another instance of Pygenda, or some other app, updates database)
   the changes are not detected/displayed.
 
@@ -212,9 +212,14 @@ Minor
 * Ctrl+Left-Shift+X/C/V/N don't work on Gemini (UI eats keypress?)
   Workaround: Use Right-Shift.
 
-* Anniversary event year (e.g. "20 years") not displayed (they're
-  just annual repeats). (Maybe add category "Anniversary"?)
-  (Symbian seem to have used X-EPOCAGENDAENTRYTYPE:ANNIVERSARY)
+* Anniversaries lack some configurable options that are available on Psion
+  devices (e.g. display start year, repeat types available)
+
+* Anniversaries have no special icon in Year View grid
+
+* Anniversaries are imported as standard annual repeating entries
+
+* Anniversaries can have a time, but this is not displayed
 
 * Event dialog needs some indication if tab contents are non-default
   (e.g. if there are repeats, alarms - maybe show a tick in the tab handle)

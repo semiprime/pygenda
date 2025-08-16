@@ -57,6 +57,10 @@ Usage is intended to be intuitive, but a few things are worth noting:
 * On a touchscreen, you can navigate by swiping left/right (Week View)
   or up/down (Year View).
 
+* On Psion devices, Anniversaries were an entry type. On Pygenda,
+  the same functionality is available by setting the repeat type
+  of an event to "Anniversary".
+
 * The UI for setting alarms is a placeholder, to test storage and
   activation of alarms (where testing is welcome).
   Keys:
