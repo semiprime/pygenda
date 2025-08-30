@@ -1,6 +1,6 @@
 # Dutch translations for Pygenda
 # Nederlandse vertaling van Pygenda
-# Copyright (C) 2024 Heimen Stoffels
+# Copyright (C) 2024,2025 Heimen Stoffels
 #
 # This file is part of Pygenda.
 #
