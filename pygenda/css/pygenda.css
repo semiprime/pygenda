@@ -27,13 +27,13 @@ scrollbar {
 	min-width:5em;
 }
 
-.view {
+.agendaview {
 	color:black;
 	background-color:white;
 	font-family:'DejaVu Sans';
 }
 
-.view, #view_loading {
+.agendaview, #view_loading {
 	min-width:600px;
 	min-height:300px;
 }

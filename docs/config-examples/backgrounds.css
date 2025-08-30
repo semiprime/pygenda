@@ -10,7 +10,7 @@
 
 /* All views: */
 
-.view {
+.agendaview {
 	background-color:lightblue;
 }
 
@@ -32,7 +32,7 @@
    background. I find this useful in XFCE, but not on the Gemini.
    (For some reason, "transparent" doesn't seem to work here.) */
 
-.view scrollbar trough {
+.agendaview scrollbar trough {
 	background-color:skyblue;
 }
 

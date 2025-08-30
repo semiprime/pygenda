@@ -501,7 +501,7 @@ class GUI:
             m = import_module('.pygenda_view_{:s}'.format(v.lower()),package='pygenda')
             cls.views.append(getattr(m, 'View_{:s}'.format(v)))
             cls.view_widgets.append(cls.views[-1].init())
-            cls.view_widgets[-1].get_style_context().add_class('view')
+            cls.view_widgets[-1].get_style_context().add_class('agendaview')
 
         # Add views to menu, so the user can switch to them
         menu_views_list = cls._builder.get_object('menu_views_list')

@@ -39,7 +39,7 @@ dialog {
 	font-size:40px;
 }
 
-.view, #view_loading {
+.agendaview, #view_loading {
 	min-width:800px;
 	min-height:400px;
 }
