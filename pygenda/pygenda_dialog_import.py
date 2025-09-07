@@ -30,6 +30,7 @@ from typing import Optional, Union, Tuple
 # Pygenda components
 from .pygenda_gui import GUI
 from .pygenda_calendar import Calendar
+from .pygenda_util import test_anniversary
 
 
 # Singleton class to manage importing file
@@ -177,7 +178,10 @@ class ImportController:
             if can_import and 'RRULE' in en:
                 rr = en['RRULE']
                 if 'FREQ' in rr:
-                    rep_type = rr['FREQ'][0].capitalize()
+                    if test_anniversary(en) != 0:
+                        rep_type = _('Anniversary')
+                    else:
+                        rep_type = rr['FREQ'][0].capitalize()
                     cls._add_row_prop(_('Repeats:'), _(rep_type))
         else: # en is Todo
             if 'DUE' in en:

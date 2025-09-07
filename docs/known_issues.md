@@ -217,8 +217,6 @@ Minor
 
 * Anniversaries have no special icon in Year View grid
 
-* Anniversaries are imported as standard annual repeating entries
-
 * Anniversaries can have a time, but this is not displayed
 
 * Event dialog needs some indication if tab contents are non-default

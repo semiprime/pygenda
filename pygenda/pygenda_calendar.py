@@ -518,6 +518,9 @@ class Calendar:
                 en_repeats = True
                 cls._en_add_elt_from_en(en, exen, 'RRULE')
                 cls._en_add_elt_from_en(en, exen, 'EXDATE')
+                cls._en_add_elt_from_en(en, exen, 'X-PYGENDA-ANNIVERSARY')
+                cls._en_add_elt_from_en(en, exen, 'X-EPOCAGENDAENTRYTYPE')
+                cls._en_add_elt_from_en(en, exen, 'X-PYGENDA-ANNIVERSARY-SHOW')
             if use_ex_alarms:
                 alms = exen.walk('VALARM')
                 for alm in alms:
