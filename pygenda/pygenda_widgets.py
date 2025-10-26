@@ -3,7 +3,7 @@
 # pygenda_widgets.py
 # Date, Time and Duration entry widgets for Pygenda.
 #
-# Copyright (C) 2022-2024 Matthew Lewis
+# Copyright (C) 2022-2025 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -193,12 +193,23 @@ class _WidgetDateTimeBase(Gtk.Box):
 
         # Type a digit
         if ev.keyval>=Gdk.KEY_0 and ev.keyval<=Gdk.KEY_9:
+            if not sel_bnds and c_pos!=txt_len and txt_len==entry.get_max_length():
+                # Field full, so overwrite
+                # We don't know if in overwite or insert mode, so do all logic
+                txt = entry.get_text()
+                entry.set_text(''.join((txt[:c_pos],str(ev.keyval-Gdk.KEY_0),txt[c_pos+1:])))
+                if one_from_max and idx+1<len(self._elts):
+                    # Move to next field
+                    self._elts[idx+1].grab_focus()
+                else:
+                    entry.set_position(c_pos+1)
+                return True
             if at_end and one_from_max and idx+1<len(self._elts):
                 # In this case, handle insert and move to next field here
                 entry.insert_text(str(ev.keyval-Gdk.KEY_0),-1)
                 self._elts[idx+1].grab_focus()
                 return True
-            # Otherwise number keys can safely be handled by standard code
+            # Otherwise, number keys can be handled by standard code
             return False
         # Return False to allow key to be handled if it's in "safe" list
         return ev.keyval not in (self.ALLOWED_KEYS_WITH_CTRL if ev.state==Gdk.ModifierType.CONTROL_MASK else self.ALLOWED_KEYS)
