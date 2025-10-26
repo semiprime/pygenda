@@ -34,7 +34,7 @@ from os import stat as os_stat, chmod as os_chmod, rename as os_rename, path as 
 import stat
 from time import monotonic as time_monotonic
 import tempfile
-from typing import Optional, Union, Tuple, List
+from typing import Optional, Union, Tuple, List, Any, Set
 from copy import deepcopy
 from math import ceil
 from calendar import monthrange
@@ -531,7 +531,7 @@ class Calendar:
             cls._en_add_elt_from_en(en, exen, 'CATEGORIES')
         elif e_cats:
             # Convert to list - to work around bug passing set to old icalendar
-            en.add('CATEGORIES', list(e_cats))
+            en.add('CATEGORIES', list(e_cats)) # type:ignore[arg-type]
         cls._en_add_elt_from_en(en, exen, 'PRIORITY')
         if 'STATUS' in exen:
             # Only add status if it is valid for entry type
@@ -1474,7 +1474,7 @@ class RepeatInfo:
         if 'EXDATE' in event:
             self._set_exdates(event['EXDATE'])
         else:
-            self.exdates = None
+            self.exdates = None # type:Optional[Set]
         if self._isby_weekday_in_month:
             self._set_start_in_rng_byweekdayinmonth(start)
         else:
@@ -1538,7 +1538,7 @@ class RepeatInfo:
 
     def _set_yearly(self, rrule:vRecur, interval:int) -> None:
         # Called on construction if a simple yearly repeat
-        self.delta = relativedelta(years=interval)
+        self.delta = relativedelta(years=interval) # type:Any
         if 'BYDAY' in rrule:
             if 'BYMONTH' not in rrule:
                 raise RepeatUnsupportedError('YEARLY repeat with BYDAY without BYMONTH')
@@ -1707,7 +1707,7 @@ class RepeatInfo:
         # Used by _set_start_in_rng_***() functions to initialise repeats.
         # Updates self.start_in_rng to get close to target date/time based on
         # jumps of self.delta (which must be a timedelta or a relativedelta).
-        d = target - self.start_in_rng
+        d = target - self.start_in_rng # type:Any
         if d > timedelta(0): # start provided was after first repeat, so inc
             # Want to do as much as possible in one increment
             if isinstance(self.delta, timedelta):
@@ -1834,7 +1834,7 @@ class RepeatIter_simpledelta:
             if not self.rinfo.is_exdate(self.dt):
                 break
         if self.rinfo.subday_rpt:
-            r = r.astimezone(get_local_tz())
+            r = r.astimezone(get_local_tz()) # type:ignore[attr-defined]
         return r
 
 
@@ -1860,7 +1860,7 @@ class RepeatIter_multidelta(RepeatIter_simpledelta):
             if not self.rinfo.is_exdate(self.dt):
                 break
         if self.rinfo.subday_rpt:
-            r = r.astimezone(get_local_tz())
+            r = r.astimezone(get_local_tz()) # type:ignore[attr-defined]
         return r
 
 
@@ -1886,7 +1886,7 @@ class RepeatIter_byweekdayinmonth(RepeatIter_simpledelta):
             if not self.rinfo.is_exdate(self.dt_toret):
                 break
         if self.rinfo.subday_rpt:
-            ret = ret.astimezone(get_local_tz())
+            ret = ret.astimezone(get_local_tz()) # type:ignore[attr-defined]
         return ret
 
 
