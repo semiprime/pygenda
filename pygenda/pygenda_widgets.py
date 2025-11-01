@@ -34,11 +34,11 @@ from gi.repository import Gtk, Gdk, GLib, GObject
 
 from datetime import date as dt_date, time as dt_time, timedelta
 from calendar import monthrange
-from typing import Optional
+from typing import Optional, Union, List, Tuple
 
 # for internationalisation/localisation
 import locale
-_ = locale.gettext
+_ = locale.gettext # type:ignore[attr-defined]
 
 # pygenda components
 from .pygenda_config import Config
@@ -49,9 +49,9 @@ class _WidgetDateTimeBase(Gtk.Box):
     # Not to be used directly.
     ALLOWED_KEYS = (Gdk.KEY_BackSpace, Gdk.KEY_Delete, Gdk.KEY_Right, Gdk.KEY_Left, Gdk.KEY_Up, Gdk.KEY_Down, Gdk.KEY_Tab, Gdk.KEY_ISO_Left_Tab, Gdk.KEY_Return, Gdk.KEY_Escape)
     ALLOWED_KEYS_WITH_CTRL = (Gdk.KEY_a, Gdk.KEY_c, Gdk.KEY_x)
-    SEPARATOR_KEYS = ()
+    SEPARATOR_KEYS = () # type:Tuple
     FOCUS_STYLE = 'focus'
-    field_shortcuts = ()
+    field_shortcuts = () # type:Union[List,Tuple]
     left_wid = None # type:Gtk.Widget
 
     def __init__(self, *args, **kwds):
@@ -360,10 +360,9 @@ class WidgetDate(_WidgetDateTimeBase):
             d = 1
 
         try:
-            dt = dt_date(year=y, month=m, day=d)
+            return dt_date(year=y, month=m, day=d)
         except ValueError:
-            dt = None
-        return dt
+            return None
 
 
     def is_valid_date(self) -> bool:
@@ -381,8 +380,8 @@ class WidgetTime(_WidgetDateTimeBase):
     SEPARATOR_KEYS = (Gdk.KEY_colon, Gdk.KEY_period)
     am_str = None # Initialise these later when we have locale config
     pm_str = None
-    am_keys = None
-    pm_keys = None
+    am_keys = None # type:Tuple
+    pm_keys = None # type:Tuple
 
     def __init__(self, dt, *args, **kwds):
         super().__init__(*args, **kwds)
@@ -488,9 +487,9 @@ class WidgetTime(_WidgetDateTimeBase):
             entry.set_active_id('p' if entry.get_active_id()=='a' else 'a')
             return True
         if ev.keyval==Gdk.KEY_Up:
-            return entry.get_toplevel().child_focus(Gtk.DirectionType.UP)
+            return entry.get_toplevel().child_focus(Gtk.DirectionType.UP) # type:ignore[no-any-return]
         if ev.keyval==Gdk.KEY_Down:
-            return entry.get_toplevel().child_focus(Gtk.DirectionType.DOWN)
+            return entry.get_toplevel().child_focus(Gtk.DirectionType.DOWN) # type:ignore[no-any-return]
         if ev.keyval==Gdk.KEY_Return:
             dlg = entry.get_toplevel()
             if dlg:
