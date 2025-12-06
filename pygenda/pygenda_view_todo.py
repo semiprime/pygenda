@@ -24,7 +24,7 @@ from gi.repository import Gtk, Gdk, GLib
 from gi.repository.Pango import WrapMode as PWrapMode
 
 from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
-from locale import gettext as _
+from locale import gettext as _ # type:ignore[attr-defined]
 from typing import Optional, List, Tuple, Union
 
 # pygenda components
@@ -58,7 +58,7 @@ class View_Todo(View):
     @staticmethod
     def view_name() -> str:
         # Return (localised) string to use in menu
-        return _('_Todo View')
+        return _('_Todo View') # type:ignore[no-any-return]
 
     @staticmethod
     def accel_key() -> int:
@@ -242,7 +242,7 @@ class View_Todo(View):
                     if cls._target_todo is not None and cls._target_todo is td:
                         cls._cursor_list = i
                         cls._cursor_idx_in_list = count
-                        if i>=cls._target_listidx:
+                        if i >= cls._target_listidx: # type:ignore[operator]
                             # We've reached the target list, so go no further
                             cls._target_listidx = None
                             cls._target_todo = None
@@ -475,7 +475,7 @@ class View_Todo(View):
         # Clears 'cursor' style class from cursor position,
         # so cursor is no longer visible.
         if cls._last_cursor_list is not None:
-            ctx = cls._get_cursor_ctx(cls._last_cursor_list, cls._last_cursor_idx_in_list)
+            ctx = cls._get_cursor_ctx(cls._last_cursor_list, cls._last_cursor_idx_in_list) # type:ignore[arg-type]
             if ctx is not None:
                 ctx.remove_class(cls.CURSOR_STYLE)
             cls._last_cursor_list = None
