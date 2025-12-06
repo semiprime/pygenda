@@ -24,7 +24,7 @@ from gi.repository import Gtk, Gdk, GLib
 
 import calendar
 from datetime import date as dt_date, datetime as dt_datetime, timedelta
-from locale import gettext as _
+from locale import gettext as _ # type:ignore[attr-defined]
 from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
 from typing import Tuple
 
@@ -54,7 +54,7 @@ class View_Year(View_DayUnit_Base):
     _target_col = None
     _year_viewed = -1 # Indicates next redraw will draw year
     _last_cursor = None
-    _visible_occurrences = None
+    _visible_occurrences = None # type:list
     _show_datecontent_pending = False
     _date_content_count = 0
     _scroll_to_cursor_required = False
@@ -64,7 +64,7 @@ class View_Year(View_DayUnit_Base):
     @staticmethod
     def view_name() -> str:
         # Return (localised) string to use in menu
-        return _('_Year View')
+        return _('_Year View') # type:ignore[no-any-return]
 
     @staticmethod
     def accel_key() -> int:
