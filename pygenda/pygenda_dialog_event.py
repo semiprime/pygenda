@@ -814,7 +814,7 @@ class EventDialogController:
         response,ei = cls._do_event_dialog(event=event, subtab=subtab)
         if response==Gtk.ResponseType.OK:
             if ei.desc:
-                Calendar.update_entry(event, ei)
+                event = Calendar.update_entry(event, ei)
                 GUI.cursor_goto_event(event)
                 GUI.view_redraw(en_changes=True)
             else: # Description text has been deleted in dialog

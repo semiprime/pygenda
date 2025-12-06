@@ -552,7 +552,7 @@ class Calendar:
 
 
     @classmethod
-    def update_entry(cls, en:Union[iEvent,iTodo], e_inf:EntryInfo) -> None:
+    def update_entry(cls, en:Union[iEvent,iTodo], e_inf:EntryInfo) -> Union[iEvent,iTodo]:
         # Update entry using details from EntryInfo e_inf.
 
         # First check entry is not in or being moved to a read-only calendar
@@ -650,6 +650,8 @@ class Calendar:
             cls._entry_norep_xover_list_sorted = None
         if was_in_todo_list or isinstance(new_en, iTodo):
             cls._todo_list = None
+
+        return new_en
 
 
     @staticmethod

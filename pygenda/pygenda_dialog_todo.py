@@ -3,7 +3,7 @@
 # pygenda_dialog_todo.py
 # Code for Todo dialog (used to create/update to-do items)
 #
-# Copyright (C) 2022-2024 Matthew Lewis
+# Copyright (C) 2022-2025 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -176,7 +176,7 @@ class TodoDialogController:
         response,ei,list_idx = cls._do_todo_dialog(todo=todo, list_idx=list_idx)
         if response==Gtk.ResponseType.OK:
             if ei.desc:
-                Calendar.update_entry(todo, ei)
+                todo = Calendar.update_entry(todo, ei)
                 GUI.cursor_goto_todo(todo, list_idx)
                 GUI.view_redraw(en_changes=True)
             else: # Description text has been deleted in dialog
