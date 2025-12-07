@@ -246,32 +246,7 @@ class View_Todo(View):
                             # We've reached the target list, so go no further
                             cls._target_listidx = None
                             cls._target_todo = None
-                    row = Gtk.Box()
-                    ctx = row.get_style_context()
-                    ctx.add_class('todoview_item')
-                    ctx.add_class(Calendar.calendar_displayclass(td))
-                    # Potential markers: ①-0x245f ➀-0x277f ❶-0x2775 ➊-0x2789
-                    mark_label = Gtk.Label(chr(0x2789+td['PRIORITY']) if 'PRIORITY' in td else '•')
-                    mark_label.set_halign(Gtk.Align.END)
-                    mark_label.set_valign(Gtk.Align.START)
-                    mark_label.get_style_context().add_class('marker')
-                    row.add(mark_label)
-                    txt = ''
-                    if 'DUE' in td:
-                        due_dt = td['DUE'].dt
-                        due_dt_st = due_dt.strftime(GUI.date_formatting_numeric)
-                        txt += '({:s} {:s}) '.format(_('Due:'), due_dt_st)
-                    txt += td['SUMMARY'] if 'SUMMARY' in td else ''
-                    txt += cls.entry_icons(td, True)
-                    item_text = Gtk.Label(txt)
-                    item_text.get_style_context().add_class('itemtext')
-                    item_text.set_xalign(0)
-                    item_text.set_yalign(0)
-                    item_text.set_line_wrap(True)
-                    item_text.set_line_wrap_mode(PWrapMode.WORD_CHAR)
-                    if 'STATUS' in td and td['STATUS'] in Calendar.STATUS_LIST_TODO:
-                        ctx.add_class(td['STATUS'].lower())
-                    row.add(item_text)
+                    row = cls._row_from_todo(td)
                     new_list_content.add(row)
                     cls._list_items[-1].append(td)
                     count += 1
@@ -288,6 +263,39 @@ class View_Todo(View):
         cls._target_listidx = None
         cls._target_todo = None
         cls._show_cursor()
+
+
+    @classmethod
+    def _row_from_todo(cls, td:iTodo) -> Gtk.Box:
+        # Return a Gtk Box widget for the given todo, suitable
+        # for adding to a Box that represents a list
+        row = Gtk.Box()
+        ctx = row.get_style_context()
+        ctx.add_class('todoview_item')
+        ctx.add_class(Calendar.calendar_displayclass(td))
+        # Potential markers: ①-0x245f ➀-0x277f ❶-0x2775 ➊-0x2789
+        mark_label = Gtk.Label(chr(0x2789+td['PRIORITY']) if 'PRIORITY' in td else '•')
+        mark_label.set_halign(Gtk.Align.END)
+        mark_label.set_valign(Gtk.Align.START)
+        mark_label.get_style_context().add_class('marker')
+        row.add(mark_label)
+        txt = ''
+        if 'DUE' in td:
+            due_dt = td['DUE'].dt
+            due_dt_st = due_dt.strftime(GUI.date_formatting_numeric)
+            txt += '({:s} {:s}) '.format(_('Due:'), due_dt_st)
+        txt += td['SUMMARY'] if 'SUMMARY' in td else ''
+        txt += cls.entry_icons(td, True)
+        item_text = Gtk.Label(txt)
+        item_text.get_style_context().add_class('itemtext')
+        item_text.set_xalign(0)
+        item_text.set_yalign(0)
+        item_text.set_line_wrap(True)
+        item_text.set_line_wrap_mode(PWrapMode.WORD_CHAR)
+        if 'STATUS' in td and td['STATUS'] in Calendar.STATUS_LIST_TODO:
+            ctx.add_class(td['STATUS'].lower())
+        row.add(item_text)
+        return row
 
 
     @classmethod
