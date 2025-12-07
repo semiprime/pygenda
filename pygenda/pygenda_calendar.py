@@ -1074,22 +1074,10 @@ class Calendar:
     def _update_todo_list(cls) -> None:
         # Re-build _todo_list, if it has been cleared (==None)
         if cls._todo_list is None:
-            # Get events with no repeat rule & sort
             cls._todo_list = []
             for conn in cls.calConnectors:
                 if conn.stores_todos():
                     cls._todo_list.extend(conn.cal.walk('VTODO'))
-            # !! Should really sort elsewhere - in View??
-            cls._todo_list.sort(key=cls._todo_sortindex_priority)
-
-
-    @staticmethod
-    def _todo_sortindex_priority(t:iTodo) -> Tuple[int,dt_datetime,dt_datetime]:
-        # Return sort keys used to sort todos by priority
-        key_pri = t['PRIORITY'] if 'PRIORITY' in t else 10
-        key_dtime = date_to_datetime(t['DUE'].dt).timestamp() if 'DUE' in t else float('inf')
-        key_ctime = t['CREATED'].dt.timestamp() if 'CREATED' in t else 0
-        return key_pri, key_dtime, key_ctime
 
 
     @classmethod

@@ -24,6 +24,7 @@ from gi.repository import Gtk, Gdk, GLib
 from gi.repository.Pango import WrapMode as PWrapMode
 
 from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
+from datetime import datetime as dt_datetime
 from locale import gettext as _ # type:ignore[attr-defined]
 from typing import Optional, List, Tuple, Union
 
@@ -34,6 +35,7 @@ from .pygenda_config import Config
 from .pygenda_gui import GUI
 from .pygenda_dialog_todo import TodoDialogController
 from .pygenda_entryinfo import EntryInfo
+from .pygenda_util import date_to_datetime
 
 
 # Singleton class for Todo View
@@ -237,19 +239,20 @@ class View_Todo(View):
             new_list_content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
             count = 0
             cls._list_items.append([])
-            for td in todos:
-                if cls._todo_matches_filter(td, cls._list_filters[i]):
-                    if cls._target_todo is not None and cls._target_todo is td:
-                        cls._cursor_list = i
-                        cls._cursor_idx_in_list = count
-                        if i >= cls._target_listidx: # type:ignore[operator]
-                            # We've reached the target list, so go no further
-                            cls._target_listidx = None
-                            cls._target_todo = None
-                    row = cls._row_from_todo(td)
-                    new_list_content.add(row)
-                    cls._list_items[-1].append(td)
-                    count += 1
+            filtered_todos = [ td for td in todos if cls._todo_matches_filter(td, cls._list_filters[i]) ]
+            filtered_todos.sort(key=cls._todo_sortindex_priority)
+            for td in filtered_todos:
+                if cls._target_todo is not None and cls._target_todo is td:
+                    cls._cursor_list = i
+                    cls._cursor_idx_in_list = count
+                    if i >= cls._target_listidx: # type:ignore[operator]
+                        # We've reached the target list, so go no further
+                        cls._target_listidx = None
+                        cls._target_todo = None
+                row = cls._row_from_todo(td)
+                new_list_content.add(row)
+                cls._list_items[-1].append(td)
+                count += 1
             cls._item_counts[i] = count
             if count==0:
                 # an empty list, need something for cursor
@@ -263,6 +266,17 @@ class View_Todo(View):
         cls._target_listidx = None
         cls._target_todo = None
         cls._show_cursor()
+
+
+    @staticmethod
+    def _todo_sortindex_priority(t:iTodo) -> Tuple[int,dt_datetime,dt_datetime]:
+        # Return sort keys used to sort todos by priority.
+        # Sort keys are currently fixed, but this could be changed
+        # to allow different sorting rules for each list.
+        key_pri = t['PRIORITY'] if 'PRIORITY' in t else 10
+        key_dtime = date_to_datetime(t['DUE'].dt).timestamp() if 'DUE' in t else float('inf')
+        key_ctime = t['CREATED'].dt.timestamp() if 'CREATED' in t else 0
+        return key_pri, key_dtime, key_ctime
 
 
     @classmethod
