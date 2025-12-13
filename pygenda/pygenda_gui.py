@@ -36,7 +36,7 @@ from typing import Optional, Tuple, List, Union, Any, Type
 
 # for internationalisation/localisation
 import locale
-_ = locale.gettext
+_ = locale.gettext # type:ignore[attr-defined]
 
 # pygenda components
 from .pygenda_config import Config
@@ -441,8 +441,8 @@ class GUI:
                 # Add extra info for users on Debian-like systems
                 print(" On Debian try: uncomment corresponding line in /etc/locale.gen & run locale-gen", file=stderr)
             print(" Trying to continue with default locale...", file=stderr)
-        locale.bindtextdomain('pygenda', cls._LOCALE_DIR)
-        locale.textdomain('pygenda')
+        locale.bindtextdomain('pygenda', cls._LOCALE_DIR) # type:ignore[attr-defined]
+        locale.textdomain('pygenda') # type:ignore[attr-defined]
 
 
     @classmethod
@@ -498,8 +498,8 @@ class GUI:
     def _init_views(cls) -> None:
         # Get Gtk Widgets for views; add view switching options to menu
         for v in GUI._VIEWS:
-            m = import_module('.pygenda_view_{:s}'.format(v.lower()),package='pygenda')
-            cls.views.append(getattr(m, 'View_{:s}'.format(v)))
+            mod = import_module('.pygenda_view_{:s}'.format(v.lower()),package='pygenda')
+            cls.views.append(getattr(mod, 'View_{:s}'.format(v)))
             cls.view_widgets.append(cls.views[-1].init())
             cls.view_widgets[-1].get_style_context().add_class('agendaview')
 
@@ -616,9 +616,9 @@ class GUI:
             wid.spin(Gtk.SpinType.STEP_BACKWARD, 1)
             return True # done
         if ev.keyval==Gdk.KEY_Up:
-            return wid.get_toplevel().child_focus(Gtk.DirectionType.UP)
+            return wid.get_toplevel().child_focus(Gtk.DirectionType.UP) # type:ignore[no-any-return]
         if ev.keyval==Gdk.KEY_Down:
-            return wid.get_toplevel().child_focus(Gtk.DirectionType.DOWN)
+            return wid.get_toplevel().child_focus(Gtk.DirectionType.DOWN) # type:ignore[no-any-return]
         return False # unhandled, so propagate event
 
 
@@ -649,9 +649,9 @@ class GUI:
             return True # done, don't propagate
 
         if ev.keyval==Gdk.KEY_Up:
-            return wid.get_toplevel().child_focus(Gtk.DirectionType.UP)
+            return wid.get_toplevel().child_focus(Gtk.DirectionType.UP) # type:ignore[no-any-return]
         if ev.keyval==Gdk.KEY_Down:
-            return wid.get_toplevel().child_focus(Gtk.DirectionType.DOWN)
+            return wid.get_toplevel().child_focus(Gtk.DirectionType.DOWN) # type:ignore[no-any-return]
         if ev.keyval in (Gdk.KEY_Left,Gdk.KEY_Right):
             # Return - otherwise detected as alphabetic (not sure why!)
             return False
