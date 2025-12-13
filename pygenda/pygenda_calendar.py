@@ -1765,7 +1765,8 @@ class RepeatInfo:
         # Examining other applications, have decided: if dt is a datetime,
         # and repeat is daily/weekly/monthly/yearly, return True if date
         # component is in exdates.
-        return self.timed_rpt and not self.subday_rpt and dt.date() in self.exdates
+        return (self.timed_rpt and not self.subday_rpt
+                and dt.date() in self.exdates) # type:ignore[attr-defined]
 
 
     def firstday_to_byweekdayinmonth(self, dt:dt_date) -> dt_date:
@@ -1916,9 +1917,9 @@ def first_occ(rrstr:str, dtstart:dt_date) -> dt_date:
     rr = rrulestr(rrstr, dtstart=dtstart)
     has_time = isinstance(dtstart, dt_datetime)
     st = dtstart if has_time else dt_datetime.combine(dtstart, dt_time())
-    ret = rr.after(st, inc=True)
+    ret = rr.after(st, inc=True) # type:dt_date
     if ret and not has_time:
-        ret = ret.date()
+        ret = ret.date() # type:ignore[attr-defined]
     return ret
 
 
@@ -1962,7 +1963,7 @@ def repeats_in_range_with_rrstr(ev:iEvent, start:dt_date, stop:dt_date) -> list:
     st = date_to_datetime(start, is_timed)
     sp = date_to_datetime(stop, is_timed)
     sp -= timedelta(milliseconds=1)
-    ret = rr.between(after=st,before=sp,inc=True)
+    ret = rr.between(after=st,before=sp,inc=True) # type:list
     if not is_timed:
         ret = [d.date() for d in ret]
     elif is_hr_min_sec:
