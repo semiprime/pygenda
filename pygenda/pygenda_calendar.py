@@ -380,8 +380,8 @@ class Calendar:
             cls._entry_rep_list.append(en) # unsorted, so just add entry
         if cls._entry_belongs_in_norep_xover_list(en):
             cls._entry_norep_xover_list_sorted = None
-        if isinstance(en, iTodo):
-            cls._todo_list = None
+        if cls._todo_list is not None and isinstance(en, iTodo):
+            cls._todo_list.append(en)
 
 
     @classmethod
@@ -648,8 +648,12 @@ class Calendar:
                 cls._entry_rep_list.append(new_en)
         if was_in_norep_xover_list or cls._entry_belongs_in_norep_xover_list(new_en):
             cls._entry_norep_xover_list_sorted = None
-        if was_in_todo_list or isinstance(new_en, iTodo):
-            cls._todo_list = None
+
+        if cls._todo_list is not None:
+            if was_in_todo_list:
+                cls._todo_list.remove(en)
+            if isinstance(new_en, iTodo):
+                cls._todo_list.append(new_en)
 
         return new_en
 
@@ -1083,8 +1087,7 @@ class Calendar:
     @classmethod
     def todo_list(cls) -> list:
         # Return list of "todo"s
-        # !! Not sure if we need to track list - to review later when/if there is filtering
-        cls._update_todo_list()
+        cls._update_todo_list() # Probably only needed on first call
         return cls._todo_list # type:ignore[return-value]
 
 
