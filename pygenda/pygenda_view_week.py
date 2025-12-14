@@ -25,7 +25,7 @@ from gi.repository import Gtk, Gdk, GLib
 from calendar import day_abbr,month_name
 from datetime import time as dt_time, date as dt_date, datetime as dt_datetime, timedelta
 from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
-from locale import gettext as _
+from locale import gettext as _ # type:ignore[attr-defined]
 from typing import Optional, Union
 
 # pygenda components
@@ -50,8 +50,8 @@ class View_Week(View_DayUnit_Base):
     })
 
     _day_ent_count = [0]*7 # entry count for each day
-    _day_entries = ([], [], [], [], [], [], [])
-    _week_viewed = None # So view will be fully redrawn when needed
+    _day_entries = ([], [], [], [], [], [], []) # type:tuple
+    _week_viewed = None # type:Optional[dt_date]
     _last_cursor = None
     _scroll_to_cursor_in_day = None
     _is_repeat_key = False
@@ -62,7 +62,7 @@ class View_Week(View_DayUnit_Base):
     @staticmethod
     def view_name() -> str:
         # Return (localised) string to use in menu
-        return _('_Week View')
+        return _('_Week View') # type:ignore[no-any-return]
 
     @staticmethod
     def accel_key() -> int:
