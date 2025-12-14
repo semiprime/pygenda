@@ -50,7 +50,7 @@ class View_Week(View_DayUnit_Base):
     })
 
     _day_ent_count = [0]*7 # entry count for each day
-    _day_entries = [[], [], [], [], [], [], []]
+    _day_entries = ([], [], [], [], [], [], [])
     _week_viewed = None # So view will be fully redrawn when needed
     _last_cursor = None
     _scroll_to_cursor_in_day = None
@@ -256,7 +256,7 @@ class View_Week(View_DayUnit_Base):
         # Called on view redraw.
         cls._last_cursor = None
         dt = start_of_week(View._cursor_date)
-        cls._day_entries = [[], [], [], [], [], [], []] # reset stored events
+        cls._day_entries = ([], [], [], [], [], [], []) # reset stored events
         cls._day_ent_count = [0]*7
         sorted_occurrences = Calendar.occurrence_list(dt, dt+timedelta(days=7))
         itr = iter(sorted_occurrences)
