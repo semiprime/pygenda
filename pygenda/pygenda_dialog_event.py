@@ -1263,8 +1263,9 @@ class EventDialogController:
         ei = EntryInfo(cal_idx=cal_idx, desc=desc, start_dt=dt, status=stat, location=loc)
         if cls.wid_timed_buttons[2].get_active():
             # "Day entry" selected, read number of days from widget
-            d = max(1,int(cls.wid_allday_count.get_value()))
-            ei.set_end_dt(dt+timedelta(days=d))
+            if dt is not None:
+                d = max(1,int(cls.wid_allday_count.get_value()))
+                ei.set_end_dt(dt+timedelta(days=d))
         elif cls.dur_determines_end:
             ei.set_duration(cls.wid_dur.get_duration_or_none())
         else:
