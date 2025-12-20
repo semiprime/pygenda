@@ -30,7 +30,7 @@ from sys import stderr
 from typing import Optional, Union, Tuple, List
 
 # for internationalisation/localisation
-from locale import gettext as _, getlocale
+from locale import gettext as _, getlocale # type:ignore[attr-defined]
 from calendar import day_name, month_name, monthrange
 from num2words import num2words
 
@@ -324,11 +324,12 @@ class EventDialogController:
     def _radiobutton_keypress(wid:Gtk.RadioButton, ev:Gdk.EventKey) -> bool:
         # Custom hander for up/down keys on radiobuttons.
         # Note: Assumes there's nothing to left/right so can use TAB_FWD/BKWD
+        ret = False # False means event still needs handling
         if ev.keyval==Gdk.KEY_Up:
-            return wid.get_toplevel().child_focus(Gtk.DirectionType.TAB_BACKWARD)
-        if ev.keyval==Gdk.KEY_Down:
-            return wid.get_toplevel().child_focus(Gtk.DirectionType.TAB_FORWARD)
-        return False # Indicates event still needs handling - propagate it
+            ret = wid.get_toplevel().child_focus(Gtk.DirectionType.TAB_BACKWARD)
+        elif ev.keyval==Gdk.KEY_Down:
+            ret = wid.get_toplevel().child_focus(Gtk.DirectionType.TAB_FORWARD)
+        return ret
 
 
     @classmethod
@@ -728,7 +729,8 @@ class EventDialogController:
     @staticmethod
     def _weekday_abbr(dt:dt_date) -> str:
         # Convenience function, returns rrule weekday abbreviation
-        return RepeatInfo.DAY_ABBR[dt.weekday()]
+        abbr = RepeatInfo.DAY_ABBR[dt.weekday()] # type:str
+        return abbr
 
 
     @classmethod
@@ -1038,7 +1040,7 @@ class EventDialogController:
             # One of duration or endtime in event.
             # Set both fields in dialog. Values have been made to match above.
             cls.wid_dur.set_duration(dur)
-            cls.wid_endtime.set_time(end_dttm.time())
+            cls.wid_endtime.set_time(end_dttm.time()) # type:ignore[union-attr]
 
 
     @classmethod
@@ -1105,7 +1107,8 @@ class EventDialogController:
             if len(bymonth) > 1:
                 raise EventPropertyBeyondEditDialog('Editing YEARLY repeat with multiple BYMONTH not supported')
             bymonth = bymonth[0]
-            dt_st = cls.get_date_start() # Won't be none, because seeded
+            # Won't be none, because seeded:
+            dt_st = cls.get_date_start() #type:dt_date #type:ignore[assignment]
             if int(bymonth) != dt_st.month:
                 raise EventPropertyBeyondEditDialog('YEARLY repeat with mismatching BYMONTH')
             byday_day = byday[-2:]
@@ -1136,7 +1139,8 @@ class EventDialogController:
                 raise EventPropertyBeyondEditDialog('Editing MONTHLY repeat with multiple \'BYDAY\' not (yet) supported')
             byday = byday[0]
             byday_day = byday[-2:]
-            dt_st = cls.get_date_start() # Won't be none, because seeded
+            # Won't be none, because seeded:
+            dt_st = cls.get_date_start() #type:dt_date #type:ignore[assignment]
             if cls._weekday_abbr(dt_st) != byday_day:
                 raise EventPropertyBeyondEditDialog('Repeat BYDAY does not match start date')
             try:
@@ -1157,7 +1161,8 @@ class EventDialogController:
                 bymday = int(bymday[0])
             except ValueError:
                 raise EventPropertyBeyondEditDialog('Non-integer value for BYMONTHDAY')
-            dt_st = cls.get_date_start() # Won't be none, because seeded
+            # Won't be none, because seeded:
+            dt_st = cls.get_date_start() # type:ignore[no-redef,assignment]
             if bymday>=0:
                 if dt_st.day != bymday:
                     raise EventPropertyBeyondEditDialog('Repeat BYMONTHDAY does not match start date')
@@ -1469,15 +1474,16 @@ class EventDialogController:
 
 
     @classmethod
-    def get_date_start(cls) -> dt_date:
+    def get_date_start(cls) -> Optional[dt_date]:
         # Convenience function to get start date from dialog (None if invalid)
-        return cls.wid_date.get_date_or_none()
+        dt = cls.wid_date.get_date_or_none() # type:Optional[dt_date]
+        return dt
 
 
     @classmethod
-    def get_datetime_start(cls) -> dt_date:
+    def get_datetime_start(cls) -> Optional[dt_date]:
         # Returns start date & time from dialog if time set; o/w just the date
-        dt = cls.wid_date.get_date_or_none()
+        dt = cls.wid_date.get_date_or_none() # type:Optional[dt_date]
         if dt is not None and cls.wid_timed_buttons[1].get_active():
             # timed event
             tm = cls.wid_time.get_time_or_none()
@@ -1675,8 +1681,8 @@ class DateLabel(Gtk.Label):
         # Return <0 if self<dl2; 0 if equal; >0 otherwise.
         # Used to sort ListBox.
         # !! If using datetime, then this won't distinguish within day
-        o1 = self.date.toordinal()
-        o2 = dl2.date.toordinal()
+        o1 = self.date.toordinal() # type:int
+        o2 = dl2.date.toordinal() # type:int
         return o1-o2
 
 
@@ -1785,4 +1791,6 @@ class ExceptionsDialogController:
     @staticmethod
     def _sort_func(row1:Gtk.ListBoxRow, row2:Gtk.ListBoxRow) -> int:
         # Used as sort function for listbox.
-        return row1.get_child().compare(row2.get_child())
+        w1 = row1.get_child() # type:DateLabel
+        w2 = row2.get_child() # type:DateLabel
+        return w1.compare(w2)
