@@ -35,7 +35,7 @@ from .pygenda_config import Config
 def datetime_to_date(dt:date) -> date:
     # Extract date from datetime object (which might be a date)
     try:
-        return dt.date()
+        return dt.date() # type:ignore[no-any-return,attr-defined]
     except AttributeError:
         return dt
 
@@ -44,7 +44,7 @@ def datetime_to_time(dt:date):
     # Extract time from datetime object.
     # Return False if no time component.
     try:
-        return dt.time()
+        return dt.time() # type:ignore[attr-defined]
     except AttributeError:
         return False
 
@@ -78,7 +78,7 @@ def date_to_datetime(dt:date, tz:Union[tzinfo,bool]=None) -> datetime:
     # Hence this function can be used to guarantee we have datetime with a timezone
     dt_ret= dt if isinstance(dt,datetime) else datetime(dt.year,dt.month,dt.day)
     if tz and dt_ret.tzinfo is None:
-        dt_ret = dt_ret.replace(tzinfo=_local_tz if tz is True else tz)
+        dt_ret = dt_ret.replace(tzinfo=_local_tz if tz is True else tz) # type:ignore[arg-type]
     return dt_ret
 
 
@@ -186,7 +186,8 @@ def day_in_week(dt:date) -> int:
     # Return the day number of dt in the week
     # Depends on config setting global/start_week_day
     day = dt.weekday()
-    start_day = Config.get_int('global', 'start_week_day')
+    start_day_conf = Config.get_int('global', 'start_week_day')
+    start_day = 0 if start_day_conf is None else start_day_conf # type:int
     return (day-start_day)%7
 
 
