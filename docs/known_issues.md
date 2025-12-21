@@ -285,6 +285,3 @@ Testing
 * Need to test with corrupt iCal files. (Including when files become
   corrupt while the program is running.) Use a fuzzer?
   ? https://pypi.org/project/pythonfuzz/
-
-* Need more complete checking from type annotations, so `mypy .` gives
-  useful results.

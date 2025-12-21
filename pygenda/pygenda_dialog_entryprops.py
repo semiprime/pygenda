@@ -25,7 +25,7 @@ from gi.repository.Pango import WrapMode as PWrapMode
 
 from datetime import datetime as dt_datetime, timedelta
 from icalendar import Event as iEvent, Todo as iTodo, vDDDTypes
-from locale import gettext as _
+from locale import gettext as _ # type:ignore[attr-defined]
 from typing import Union
 
 # pygenda components

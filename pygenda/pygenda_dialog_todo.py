@@ -23,7 +23,7 @@
 from gi.repository import Gtk, Gdk
 
 from icalendar import Todo as iTodo
-from locale import gettext as _
+from locale import gettext as _ # type:ignore[attr-defined]
 from datetime import datetime as dt_datetime
 from typing import Optional, Tuple, Callable
 

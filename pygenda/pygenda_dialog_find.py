@@ -23,7 +23,7 @@
 from gi.repository import Gtk
 
 from icalendar import Todo as iTodo
-from locale import gettext as _
+from locale import gettext as _ # type:ignore[attr-defined]
 
 # pygenda components
 from .pygenda_gui import GUI
