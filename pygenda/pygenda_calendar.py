@@ -233,7 +233,7 @@ class Calendar:
         filename = Config.get(calsect,'filename')
         # Use either the provided filename or a default name.
         if filename is None:
-             filename = '{}/{}'.format(Config.CONFIG_DIR,Config.DEFAULT_ICAL_FILENAME)
+             filename = '{}/{}'.format(Config.DEFAULT_CONFIG_DIR,Config.DEFAULT_ICAL_FILENAME)
         else:
              # Expand '~' (so it can be used in config file)
              filename =  os_path.expanduser(filename)
