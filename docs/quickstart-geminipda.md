@@ -199,6 +199,10 @@ are in the same directory as the gemini.css file, so the directory
 path will be the same for the import that you added above). You can
 then edit/tweak/add to the CSS as desired.
 
+The user CSS file can also be changed by setting the global/css_file
+setting in the .ini file, making switching to different styling more
+convenient.
+
 Add a Pygenda icon to the menu
 ------------------------------
 To add a launch icon to your desktop menu, in a command prompt:

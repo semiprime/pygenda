@@ -180,6 +180,10 @@ and [cosmo.css](../pygenda/css/cosmo.css) for real-world examples of
 adjusting the UI for specific handheld devices, or
 [darkmode.css](config-examples/darkmode.css) for an example "dark mode".
 
+The user CSS file can also be changed by setting the global/css_file
+setting in the .ini file, making switching to different styling more
+convenient.
+
 Add a Pygenda icon to the menu
 ------------------------------
 If you have installed Pygenda "locally" (in your user directory), as

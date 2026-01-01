@@ -7,7 +7,9 @@ See [defaults.ini](defaults.ini) for a complete list of settings.
 Either use them as provided by soft-linking to them from the
 `~/.config/pygenda/` directory as `pygenda.css` or `user.ini`, copy
 to that directory and edit to your own taste, or for css files
-`@import` the files and make your own additions.
+`@import` the files and make your own additions. (Note, the user
+CSS file can also be changed by setting the global/css_file setting
+in the .ini file.)
 
 You can also check the default css for ideas:
 [css/pygenda.css](../../pygenda/css/pygenda.css) in the source directory.
