@@ -4,7 +4,7 @@
 # Connects to agenda data provider - either an iCal file, a CalDAV server,
 # or an Evolution Data Server.
 #
-# Copyright (C) 2022-2025 Matthew Lewis
+# Copyright (C) 2022-2026 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -30,7 +30,6 @@ from sys import stderr
 from uuid import uuid1
 from pathlib import Path
 from functools import reduce
-from os import stat as os_stat, chmod as os_chmod, rename as os_rename, path as os_path
 import stat
 from time import monotonic as time_monotonic
 import tempfile
@@ -228,16 +227,13 @@ class Calendar:
 
     @staticmethod
     def _parse_config_icalfile(calsect:str, flags:int) -> CalendarConnector:
-        # Reads config setting for an icalfile and returns an
-        # appropriate calendar connector object
-        filename = Config.get(calsect,'filename')
-        # Use either the provided filename or a default name.
+        # Reads config filename setting for an icalfile and returns an
+        # calendar connector object for that file.
+        # First (!!hacky), if only calendar, use 'pygenda.ics' so app starts
+        default = 'pygenda.ics' if len(Calendar.calConnectors)==0 else None
+        filename = Config.get_filepath(calsect, 'filename', default)
         if filename is None:
-             filename = '{}/{}'.format(Config.DEFAULT_CONFIG_DIR,Config.DEFAULT_ICAL_FILENAME)
-        else:
-             # Expand '~' (so it can be used in config file)
-             filename =  os_path.expanduser(filename)
-        # Create a connector for that file
+            raise ValueError('Unable to get filename for ical file')
         return CalendarConnectorICalFile(filename, flags)
 
 
@@ -1135,16 +1131,16 @@ class CalendarConnectorICalFile(CalendarConnector):
     BACKUP_EXT = 'bak'
     NEWFILE_EXT = 'new'
 
-    def __init__(self, filename:str, flags:int):
+    def __init__(self, filename:Path, flags:int):
         self._filename = filename
         self.flags = flags
-        if Path(filename).exists():
+        if filename.exists():
             # We want to read all entries here, even ones we can't handle
             # (e.g. journal entries), so that when the iCal data is written
             # back to the file nothing is lost.
-            with open(filename, 'rb') as file:
+            with filename.open('rb') as file:
                 self.cal = iCalendar.from_ical(file.read())
-            if os_stat(filename).st_mode&stat.S_IWUSR == 0:
+            if filename.stat().st_mode & stat.S_IWUSR == 0:
                 # File is readonly, set flags so this is respected
                 self.flags |= CalendarConnector.READONLY
         elif self.is_readonly():
@@ -1162,7 +1158,7 @@ class CalendarConnectorICalFile(CalendarConnector):
         # Implementation tries to minimise possibility/extent of data loss.
         file_exists = False
         try:
-            mode = os_stat(self._filename).st_mode
+            mode = self._filename.stat().st_mode
             file_exists = True
         except FileNotFoundError:
             mode = stat.S_IRUSR|stat.S_IWUSR # Default - private to user
@@ -1171,20 +1167,20 @@ class CalendarConnectorICalFile(CalendarConnector):
         # zero-length for a time, so a crash would lose data.
         # We save to a new file, so a crash before the write completes
         # will leave original file in place to be opened on restart.
-        realfile = os_path.realpath(self._filename)
-        tfdir = os_path.dirname(realfile)
-        tfpre = '{:s}.{:s}-{:s}-'.format(os_path.basename(realfile),self.NEWFILE_EXT,dt_datetime.now().strftime('%Y%m%d%H%M%S'))
-        with tempfile.NamedTemporaryFile(mode='wb', prefix=tfpre, dir=tfdir, delete=False) as tf:
-            temp_filename = tf.name
-            os_chmod(temp_filename, mode)
+        tfdir = self._filename.parent
+        tfdir.mkdir(parents=True, exist_ok=True)
+        tfpre = '{:s}.{:s}-{:s}-'.format(self._filename.name,self.NEWFILE_EXT,dt_datetime.now().strftime('%Y%m%d%H%M%S'))
+        with tempfile.NamedTemporaryFile(mode='wb', prefix=tfpre, dir=str(tfdir), delete=False) as tf:
+            temp_filename = Path(tf.name)
+            temp_filename.chmod(mode)
             tf.write(self.cal.to_ical())
 
         # Possibly make a backup of original file before overwriting
         if file_exists and time_monotonic() - self._backup_saved_time > self.BACKUP_PERIOD:
-            os_rename(self._filename, '{:s}.{:s}'.format(self._filename,self.BACKUP_EXT))
+            self._filename.rename('.'.join((str(self._filename),self.BACKUP_EXT)))
             self._backup_saved_time = time_monotonic() # re-read time
         # Rename temp saved version to desired name
-        os_rename(temp_filename, realfile)
+        temp_filename.rename(self._filename)
 
 
     def add_entry(self, entry:Union[iEvent,iTodo]) -> Union[iEvent,iTodo]:
