@@ -3,7 +3,7 @@
 # pygenda_config.py
 # Provides the Config class, to access configuration settings.
 #
-# Copyright (C) 2022-2025 Matthew Lewis
+# Copyright (C) 2022-2026 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -36,7 +36,6 @@ class Config:
     DEFAULT_CONFIG_FILE = DEFAULT_CONFIG_DIR + '/pygenda.ini'
     DEFAULT_CONFIG_FILE_USER = DEFAULT_CONFIG_DIR + '/user.ini'
     config_dir = DEFAULT_CONFIG_DIR
-    DEFAULT_ICAL_FILENAME = 'pygenda.ics' # Put this here to avoid cyclic dep.
 
     date = None
 
@@ -90,7 +89,7 @@ class Config:
         parser = argparse.ArgumentParser(description=__doc__)
         parser.add_argument('-c', '--config', metavar='FILE', type=str, default=None, help='Config file. Default: {:s}, {:s}'.format(Config.DEFAULT_CONFIG_FILE,Config.DEFAULT_CONFIG_FILE_USER))
         parser.add_argument('-d', '--date', metavar='DATE', type=str, default=None, help='Cursor startup date (YYYY-MM-DD)')
-        parser.add_argument('-f', '--file', metavar='FILE', type=str, default=None, help='Calendar file. Default: {:s} in config directory'.format(Config.DEFAULT_ICAL_FILENAME))
+        parser.add_argument('-f', '--file', metavar='FILE', type=str, default=None, help="Calendar file. Default: 'pygenda.ics' in config directory")
         parser.add_argument('-v', '--view', metavar='VIEW', type=str, default=None, help='Opening view')
         return parser.parse_args()
 
