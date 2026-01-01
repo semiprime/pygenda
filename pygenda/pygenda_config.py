@@ -63,7 +63,7 @@ class Config:
         # Read 'file' from command line (iCal file)
         if cl_args.file:
             cls.set('calendar', 'type', 'icalfile')
-            cls.set('calendar', 'filename', cl_args.file)
+            cls.set('calendar', 'filename', str(Path.cwd()/Path(cl_args.file)))
             cls.set('calendar', 'display_name', 'iCal File')
             cls.set('calendar', 'readonly', None)
             cls.set('calendar', 'entry_type', None)
