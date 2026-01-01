@@ -3,7 +3,7 @@
 # pygenda_gui.py
 # Top-level GUI code and shared elements (e.g. menu, soft keys)
 #
-# Copyright (C) 2022-2025 Matthew Lewis
+# Copyright (C) 2022-2026 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -58,7 +58,6 @@ ImportController = None # type:Any
 # Singleton class for top-level GUI control
 class GUI:
     _CSS_FILE_APP = '{:s}/css/pygenda.css'.format(ospath.dirname(__file__))
-    _CSS_FILE_USER = GLib.get_user_config_dir() + '/pygenda/pygenda.css'
     _LOCALE_DIR = '{:s}/locale/'.format(ospath.dirname(__file__))
     _VIEWS = ('Week','Year','Todo') # Order gives order in menus
     SPINBUTTON_INC_KEY = (Gdk.KEY_plus,Gdk.KEY_greater)
@@ -227,11 +226,13 @@ class GUI:
         css_prov = Gtk.CssProvider()
         css_prov.load_from_path(cls._CSS_FILE_APP)
         Gtk.StyleContext.add_provider_for_screen(cls._window.get_screen(), css_prov, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+        css_file = Config.get_filename('global', 'css_file', 'pygenda.css')
         try:
             css_prov_u = Gtk.CssProvider()
-            css_prov_u.load_from_path(cls._CSS_FILE_USER)
+            css_prov_u.load_from_path(css_file)
             Gtk.StyleContext.add_provider_for_screen(cls._window.get_screen(), css_prov_u, Gtk.STYLE_PROVIDER_PRIORITY_USER)
-        except:
+        except GLib.GError as e:
+            # Optional user-CSS file not found - ignore & continue
             pass
 
         # Set position/display of soft keys before showing loading indicator
