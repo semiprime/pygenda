@@ -1,6 +1,6 @@
 /*****************************
   pygenda.css
-  Copyright (C) 2022-2025 Matthew Lewis
+  Copyright (C) 2022-2026 Matthew Lewis
 
   This file is part of Pygenda.
 
@@ -283,14 +283,14 @@ scrollbar {
 	background-image:url("loop.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
 }
 
-.yearview_entry_repeated_year {
+.yearview_entry_repeated_year, .yearview_entry_anniversary {
 	background-image:url("star.svg");
 	background-size:100% auto;
 	background-position:center;
 	background-repeat:no-repeat;
 }
 
-.yearview_entry_repeated_year.yearview_cursor {
+.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_anniversary.yearview_cursor {
 	background-image:url("star.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
 }
 
@@ -316,14 +316,14 @@ scrollbar {
 	background-image:url("disc+loop.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
 }
 
-.yearview_entry_single.yearview_entry_repeated_year, .yearview_entry_repeated_day.yearview_entry_repeated_year, .yearview_entry_repeated_hour.yearview_entry_repeated_year, .yearview_entry_repeated_minute.yearview_entry_repeated_year, .yearview_entry_repeated_second.yearview_entry_repeated_year {
+.yearview_entry_single.yearview_entry_repeated_year, .yearview_entry_single.yearview_entry_anniversary, .yearview_entry_repeated_day.yearview_entry_repeated_year, .yearview_entry_repeated_day.yearview_entry_anniversary, .yearview_entry_repeated_hour.yearview_entry_repeated_year, .yearview_entry_repeated_hour.yearview_entry_anniversary, .yearview_entry_repeated_minute.yearview_entry_repeated_year, .yearview_entry_repeated_minute.yearview_entry_anniversary, .yearview_entry_repeated_second.yearview_entry_repeated_year, .yearview_entry_repeated_second.yearview_entry_anniversary {
 	background-image:url("disc+star.svg");
 	background-size:100% auto;
 	background-position:center;
 	background-repeat:no-repeat;
 }
 
-.yearview_entry_single.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_year.yearview_cursor {
+.yearview_entry_single.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_single.yearview_entry_anniversary.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_anniversary.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_anniversary.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_anniversary.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_anniversary.yearview_cursor {
 	background-image:url("disc+star.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
 }
 
@@ -338,14 +338,14 @@ scrollbar {
 	background-image:url("disc+T.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
 }
 
-.yearview_entry_repeated_month.yearview_entry_repeated_year, .yearview_entry_repeated_week.yearview_entry_repeated_year {
+.yearview_entry_repeated_month.yearview_entry_repeated_year, .yearview_entry_repeated_month.yearview_entry_anniversary, .yearview_entry_repeated_week.yearview_entry_repeated_year, .yearview_entry_repeated_week.yearview_entry_anniversary {
 	background-image:url("loop+star.svg");
 	background-size:100% auto;
 	background-position:center;
 	background-repeat:no-repeat;
 }
 
-.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor {
+.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_month.yearview_entry_anniversary.yearview_cursor, .yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_week.yearview_entry_anniversary.yearview_cursor {
 	background-image:url("loop+star.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
 }
 
@@ -360,25 +360,25 @@ scrollbar {
 	background-image:url("loop+T.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
 }
 
-.yearview_entry_repeated_year.yearview_entry_todo {
+.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_anniversary.yearview_entry_todo {
 	background-image:url("star+T.svg");
 	background-size:100% auto;
 	background-position:center;
 	background-repeat:no-repeat;
 }
 
-.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor {
+.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_anniversary.yearview_entry_todo.yearview_cursor {
 	background-image:url("star+T.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
 }
 
-.yearview_entry_single.yearview_entry_repeated_month.yearview_entry_repeated_year, .yearview_entry_single.yearview_entry_repeated_week.yearview_entry_repeated_year, .yearview_entry_repeated_day.yearview_entry_repeated_month.yearview_entry_repeated_year, .yearview_entry_repeated_day.yearview_entry_repeated_week.yearview_entry_repeated_year, .yearview_entry_repeated_hour.yearview_entry_repeated_month.yearview_entry_repeated_year, .yearview_entry_repeated_hour.yearview_entry_repeated_week.yearview_entry_repeated_year, .yearview_entry_repeated_minute.yearview_entry_repeated_month.yearview_entry_repeated_year, .yearview_entry_repeated_minute.yearview_entry_repeated_week.yearview_entry_repeated_year, .yearview_entry_repeated_second.yearview_entry_repeated_month.yearview_entry_repeated_year, .yearview_entry_repeated_second.yearview_entry_repeated_week.yearview_entry_repeated_year {
+.yearview_entry_single.yearview_entry_repeated_month.yearview_entry_repeated_year, .yearview_entry_single.yearview_entry_repeated_month.yearview_entry_anniversary, .yearview_entry_single.yearview_entry_repeated_week.yearview_entry_repeated_year, .yearview_entry_single.yearview_entry_repeated_week.yearview_entry_anniversary, .yearview_entry_repeated_day.yearview_entry_repeated_month.yearview_entry_repeated_year, .yearview_entry_repeated_day.yearview_entry_repeated_month.yearview_entry_anniversary, .yearview_entry_repeated_day.yearview_entry_repeated_week.yearview_entry_repeated_year, .yearview_entry_repeated_day.yearview_entry_repeated_week.yearview_entry_anniversary, .yearview_entry_repeated_hour.yearview_entry_repeated_month.yearview_entry_repeated_year, .yearview_entry_repeated_hour.yearview_entry_repeated_month.yearview_entry_anniversary, .yearview_entry_repeated_hour.yearview_entry_repeated_week.yearview_entry_repeated_year, .yearview_entry_repeated_hour.yearview_entry_repeated_week.yearview_entry_anniversary, .yearview_entry_repeated_minute.yearview_entry_repeated_month.yearview_entry_repeated_year, .yearview_entry_repeated_minute.yearview_entry_repeated_month.yearview_entry_anniversary, .yearview_entry_repeated_minute.yearview_entry_repeated_week.yearview_entry_repeated_year, .yearview_entry_repeated_minute.yearview_entry_repeated_week.yearview_entry_anniversary, .yearview_entry_repeated_second.yearview_entry_repeated_month.yearview_entry_repeated_year, .yearview_entry_repeated_second.yearview_entry_repeated_month.yearview_entry_anniversary, .yearview_entry_repeated_second.yearview_entry_repeated_week.yearview_entry_repeated_year, .yearview_entry_repeated_second.yearview_entry_repeated_week.yearview_entry_anniversary {
 	background-image:url("disc+loop+star.svg");
 	background-size:100% auto;
 	background-position:center;
 	background-repeat:no-repeat;
 }
 
-.yearview_entry_single.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_single.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor {
+.yearview_entry_single.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_single.yearview_entry_repeated_month.yearview_entry_anniversary.yearview_cursor, .yearview_entry_single.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_single.yearview_entry_repeated_week.yearview_entry_anniversary.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_month.yearview_entry_anniversary.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_week.yearview_entry_anniversary.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_month.yearview_entry_anniversary.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_week.yearview_entry_anniversary.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_month.yearview_entry_anniversary.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_week.yearview_entry_anniversary.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_month.yearview_entry_anniversary.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_week.yearview_entry_anniversary.yearview_cursor {
 	background-image:url("disc+loop+star.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
 }
 
@@ -393,36 +393,36 @@ scrollbar {
 	background-image:url("disc+loop+T.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
 }
 
-.yearview_entry_single.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_day.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_hour.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_minute.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_second.yearview_entry_repeated_year.yearview_entry_todo {
+.yearview_entry_single.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_single.yearview_entry_anniversary.yearview_entry_todo, .yearview_entry_repeated_day.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_day.yearview_entry_anniversary.yearview_entry_todo, .yearview_entry_repeated_hour.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_hour.yearview_entry_anniversary.yearview_entry_todo, .yearview_entry_repeated_minute.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_minute.yearview_entry_anniversary.yearview_entry_todo, .yearview_entry_repeated_second.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_second.yearview_entry_anniversary.yearview_entry_todo {
 	background-image:url("disc+star+T.svg");
 	background-size:100% auto;
 	background-position:center;
 	background-repeat:no-repeat;
 }
 
-.yearview_entry_single.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor {
+.yearview_entry_single.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_single.yearview_entry_anniversary.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_anniversary.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_anniversary.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_anniversary.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_anniversary.yearview_entry_todo.yearview_cursor {
 	background-image:url("disc+star+T.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
 }
 
-.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo {
+.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_month.yearview_entry_anniversary.yearview_entry_todo, .yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_week.yearview_entry_anniversary.yearview_entry_todo {
 	background-image:url("loop+star+T.svg");
 	background-size:100% auto;
 	background-position:center;
 	background-repeat:no-repeat;
 }
 
-.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor {
+.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_month.yearview_entry_anniversary.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_week.yearview_entry_anniversary.yearview_entry_todo.yearview_cursor {
 	background-image:url("loop+star+T.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
 }
 
-.yearview_entry_single.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_single.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_day.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_day.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_hour.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_hour.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_minute.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_minute.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_second.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_second.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo {
+.yearview_entry_single.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_single.yearview_entry_repeated_month.yearview_entry_anniversary.yearview_entry_todo, .yearview_entry_single.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_single.yearview_entry_repeated_week.yearview_entry_anniversary.yearview_entry_todo, .yearview_entry_repeated_day.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_day.yearview_entry_repeated_month.yearview_entry_anniversary.yearview_entry_todo, .yearview_entry_repeated_day.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_day.yearview_entry_repeated_week.yearview_entry_anniversary.yearview_entry_todo, .yearview_entry_repeated_hour.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_hour.yearview_entry_repeated_month.yearview_entry_anniversary.yearview_entry_todo, .yearview_entry_repeated_hour.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_hour.yearview_entry_repeated_week.yearview_entry_anniversary.yearview_entry_todo, .yearview_entry_repeated_minute.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_minute.yearview_entry_repeated_month.yearview_entry_anniversary.yearview_entry_todo, .yearview_entry_repeated_minute.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_minute.yearview_entry_repeated_week.yearview_entry_anniversary.yearview_entry_todo, .yearview_entry_repeated_second.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_second.yearview_entry_repeated_month.yearview_entry_anniversary.yearview_entry_todo, .yearview_entry_repeated_second.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo, .yearview_entry_repeated_second.yearview_entry_repeated_week.yearview_entry_anniversary.yearview_entry_todo {
 	background-image:url("disc+loop+star+T.svg");
 	background-size:100% auto;
 	background-position:center;
 	background-repeat:no-repeat;
 }
 
-.yearview_entry_single.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_single.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor {
+.yearview_entry_single.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_single.yearview_entry_repeated_month.yearview_entry_anniversary.yearview_entry_todo.yearview_cursor, .yearview_entry_single.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_single.yearview_entry_repeated_week.yearview_entry_anniversary.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_month.yearview_entry_anniversary.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_day.yearview_entry_repeated_week.yearview_entry_anniversary.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_month.yearview_entry_anniversary.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_hour.yearview_entry_repeated_week.yearview_entry_anniversary.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_month.yearview_entry_anniversary.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_minute.yearview_entry_repeated_week.yearview_entry_anniversary.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_month.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_month.yearview_entry_anniversary.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_week.yearview_entry_repeated_year.yearview_entry_todo.yearview_cursor, .yearview_entry_repeated_second.yearview_entry_repeated_week.yearview_entry_anniversary.yearview_entry_todo.yearview_cursor {
 	background-image:url("disc+loop+star+T.svg"), linear-gradient(90deg, #000 9%, transparent 9%, transparent 91%, #000 91%), linear-gradient(#000 8%, transparent 8%, transparent 92%, #000 92%);
 }
 

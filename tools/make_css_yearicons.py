@@ -13,7 +13,7 @@
 groups = [
     ['yearview_entry_single', 'yearview_entry_repeated_day', 'yearview_entry_repeated_hour', 'yearview_entry_repeated_minute', 'yearview_entry_repeated_second'],
     ['yearview_entry_repeated_month', 'yearview_entry_repeated_week'],
-    ['yearview_entry_repeated_year'],
+    ['yearview_entry_repeated_year', 'yearview_entry_anniversary'],
     ['yearview_entry_todo']
 ]
 
