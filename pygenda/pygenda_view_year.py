@@ -290,10 +290,12 @@ class View_Year(View_DayUnit_Base):
     def redraw(cls, en_changes:bool) -> None:
         # Called when redraw required.
         # en_changes: bool indicating if displayed entries need updating too
+        do_clear = True
         if cls._year_viewed != View._cursor_date.year:
             cls._draw_year()
             cls._last_cursor = None
             en_changes = True
+            do_clear = False
         cls._show_cursor()
         cls._show_datelabel()
         # Queue delayed redraw of day content
@@ -305,7 +307,7 @@ class View_Year(View_DayUnit_Base):
             # Priority below draw, so datelabel will be redrawn while moving
             GLib.idle_add(cls._show_datecontent,priority=GLib.PRIORITY_HIGH_IDLE+40)
         if en_changes:
-            GLib.idle_add(cls._show_gridcontent,priority=GLib.PRIORITY_HIGH_IDLE+35)
+            GLib.idle_add(cls._show_gridcontent,do_clear,priority=GLib.PRIORITY_HIGH_IDLE+35)
 
 
     @classmethod
@@ -469,9 +471,10 @@ class View_Year(View_DayUnit_Base):
 
 
     @classmethod
-    def _show_gridcontent(cls) -> None:
+    def _show_gridcontent(cls, do_clear:bool) -> None:
         # Set styles to show events in grid.
         # Can be slow, so called in idle from redraw.
+        # do_clear: true => we need to clear content-related styling in grid
         yr = cls._year_viewed
         date = dt_date(year=yr,month=1,day=1)
         oneday = timedelta(days=1)
@@ -499,24 +502,25 @@ class View_Year(View_DayUnit_Base):
                     ctx.add_class('yearview_entry_single')
                     while date == occ_dates_single_next:
                         occ_dates_single_next = next(occ_dates_single_iter,None)
-                else:
+                elif do_clear:
                     ctx.remove_class('yearview_entry_single')
                 if cls.show_todos:
                     if date == occ_dates_todo_next:
                         ctx.add_class('yearview_entry_todo')
                         while date == occ_dates_todo_next:
                             occ_dates_todo_next = next(occ_dates_todo_iter,None)
-                    else:
+                    elif do_clear:
                         ctx.remove_class('yearview_entry_todo')
-                ctx.remove_class('yearview_entry_repeated')
-                ctx.remove_class('yearview_entry_repeated_year')
-                ctx.remove_class('yearview_entry_repeated_month')
-                ctx.remove_class('yearview_entry_repeated_week')
-                ctx.remove_class('yearview_entry_repeated_day')
-                ctx.remove_class('yearview_entry_repeated_hour')
-                ctx.remove_class('yearview_entry_repeated_minute')
-                ctx.remove_class('yearview_entry_repeated_second')
-                ctx.remove_class('yearview_entry_anniversary')
+                if do_clear:
+                    ctx.remove_class('yearview_entry_repeated')
+                    ctx.remove_class('yearview_entry_repeated_year')
+                    ctx.remove_class('yearview_entry_repeated_month')
+                    ctx.remove_class('yearview_entry_repeated_week')
+                    ctx.remove_class('yearview_entry_repeated_day')
+                    ctx.remove_class('yearview_entry_repeated_hour')
+                    ctx.remove_class('yearview_entry_repeated_minute')
+                    ctx.remove_class('yearview_entry_repeated_second')
+                    ctx.remove_class('yearview_entry_anniversary')
                 if date == reps_list_next_dt:
                     ctx.add_class('yearview_entry_repeated')
                     while date == reps_list_next_dt:
