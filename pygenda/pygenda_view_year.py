@@ -26,7 +26,7 @@ import calendar
 from datetime import date as dt_date, datetime as dt_datetime, timedelta
 from locale import gettext as _ # type:ignore[attr-defined]
 from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
-from typing import Tuple
+from typing import Tuple, Union
 
 # pygenda components
 from .pygenda_view import View, View_DayUnit_Base
@@ -34,7 +34,7 @@ from .pygenda_gui import GUI
 from .pygenda_dialog_event import EventDialogController
 from .pygenda_config import Config
 from .pygenda_calendar import Calendar
-from .pygenda_util import start_end_dts_occ
+from .pygenda_util import start_end_dts_occ, test_anniversary
 
 
 # Singleton class for Year View
@@ -454,8 +454,18 @@ class View_Year(View_DayUnit_Base):
         'DAILY': 'yearview_entry_repeated_day',
         'HOURLY': 'yearview_entry_repeated_hour',
         'MINUTELY': 'yearview_entry_repeated_minute',
-        'SECONDLY': 'yearview_entry_repeated_second'
+        'SECONDLY': 'yearview_entry_repeated_second',
+        'ANNIV': 'yearview_entry_anniversary'
         }
+
+
+    @staticmethod
+    def _rep_id(en:Union[iEvent,iTodo]) -> str:
+        # Utility function to return an identifier for repeat type
+        id = en['RRULE']['FREQ'][0] # type:str
+        if id=='YEARLY' and test_anniversary(en):
+            id = 'ANNIV'
+        return id
 
 
     @classmethod
@@ -475,7 +485,7 @@ class View_Year(View_DayUnit_Base):
             occ_dates_todo_next = next(occ_dates_todo_iter,None)
         reps_list = Calendar.occurrence_list(date, dt_date(year=yr+1,month=1,day=1), include_single=False, include_repeated=True, in_grid=True)
         # Now simplify this list to keep the info we need...
-        reps_list = [(o[0]['RRULE']['FREQ'][0],cls._local_date(o[1])) for o in reps_list if 'FREQ' in o[0]['RRULE']]
+        reps_list = [(cls._rep_id(o[0]),cls._local_date(o[1])) for o in reps_list if 'FREQ' in o[0]['RRULE']]
         reps_list_iter = iter(reps_list)
         reps_list_next_fr,reps_list_next_dt = next(reps_list_iter, (None,None))
 
@@ -506,6 +516,7 @@ class View_Year(View_DayUnit_Base):
                 ctx.remove_class('yearview_entry_repeated_hour')
                 ctx.remove_class('yearview_entry_repeated_minute')
                 ctx.remove_class('yearview_entry_repeated_second')
+                ctx.remove_class('yearview_entry_anniversary')
                 if date == reps_list_next_dt:
                     ctx.add_class('yearview_entry_repeated')
                     while date == reps_list_next_dt:
