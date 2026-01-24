@@ -3,7 +3,7 @@
 # pygenda_view_year.py
 # Provides the "Year View" for Pygenda.
 #
-# Copyright (C) 2022-2025 Matthew Lewis
+# Copyright (C) 2022-2026 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -447,31 +447,37 @@ class View_Year(View_DayUnit_Base):
         return dt.astimezone().date()
 
 
+    MAP = {
+        'YEARLY': 'yearview_entry_repeated_year',
+        'MONTHLY': 'yearview_entry_repeated_month',
+        'WEEKLY': 'yearview_entry_repeated_week',
+        'DAILY': 'yearview_entry_repeated_day',
+        'HOURLY': 'yearview_entry_repeated_hour',
+        'MINUTELY': 'yearview_entry_repeated_minute',
+        'SECONDLY': 'yearview_entry_repeated_second'
+        }
+
+
     @classmethod
     def _show_gridcontent(cls) -> None:
         # Set styles to show events in grid.
         # Can be slow, so called in idle from redraw.
-        # Potential optimisations here. Rather than getting occurences and
-        # then splitting, we can add a custom calendar function to return
-        # just the dates. Particularly for the repeated entries.
         yr = cls._year_viewed
         date = dt_date(year=yr,month=1,day=1)
         oneday = timedelta(days=1)
         single_list = Calendar.occurrence_list(date, dt_date(year=yr+1,month=1,day=1), include_single=True, include_repeated=False, in_grid=True)
         occ_dates_single = [cls._local_date(o[1]) for o in single_list if isinstance(o[0],iEvent)]
+        occ_dates_single_iter = iter(occ_dates_single)
+        occ_dates_single_next = next(occ_dates_single_iter,None)
         if cls.show_todos:
             occ_dates_todo = [cls._local_date(o[1]) for o in single_list if isinstance(o[0],iTodo)]
+            occ_dates_todo_iter = iter(occ_dates_todo)
+            occ_dates_todo_next = next(occ_dates_todo_iter,None)
         reps_list = Calendar.occurrence_list(date, dt_date(year=yr+1,month=1,day=1), include_single=False, include_repeated=True, in_grid=True)
         # Now simplify this list to keep the info we need...
         reps_list = [(o[0]['RRULE']['FREQ'][0],cls._local_date(o[1])) for o in reps_list if 'FREQ' in o[0]['RRULE']]
-        occ_dates_repeated = [o[1] for o in reps_list]
-        occ_dates_repeated_year = [o[1] for o in reps_list if o[0]=='YEARLY']
-        occ_dates_repeated_month = [o[1] for o in reps_list if o[0]=='MONTHLY']
-        occ_dates_repeated_week = [o[1] for o in reps_list if o[0]=='WEEKLY']
-        occ_dates_repeated_day = [o[1] for o in reps_list if o[0]=='DAILY']
-        occ_dates_repeated_hour = [o[1] for o in reps_list if o[0]=='HOURLY']
-        occ_dates_repeated_minute = [o[1] for o in reps_list if o[0]=='MINUTELY']
-        occ_dates_repeated_second = [o[1] for o in reps_list if o[0]=='SECONDLY']
+        reps_list_iter = iter(reps_list)
+        reps_list_next_fr,reps_list_next_dt = next(reps_list_iter, (None,None))
 
         for m in range(1,13):
             day,daycount = calendar.monthrange(yr,m)
@@ -479,13 +485,17 @@ class View_Year(View_DayUnit_Base):
             for d in range(daycount):
                 l = cls._grid_cells.get_child_at(x,y)
                 ctx = l.get_style_context()
-                if date in occ_dates_single:
+                if date == occ_dates_single_next:
                     ctx.add_class('yearview_entry_single')
+                    while date == occ_dates_single_next:
+                        occ_dates_single_next = next(occ_dates_single_iter,None)
                 else:
                     ctx.remove_class('yearview_entry_single')
                 if cls.show_todos:
-                    if date in occ_dates_todo:
+                    if date == occ_dates_todo_next:
                         ctx.add_class('yearview_entry_todo')
+                        while date == occ_dates_todo_next:
+                            occ_dates_todo_next = next(occ_dates_todo_iter,None)
                     else:
                         ctx.remove_class('yearview_entry_todo')
                 ctx.remove_class('yearview_entry_repeated')
@@ -496,22 +506,12 @@ class View_Year(View_DayUnit_Base):
                 ctx.remove_class('yearview_entry_repeated_hour')
                 ctx.remove_class('yearview_entry_repeated_minute')
                 ctx.remove_class('yearview_entry_repeated_second')
-                if date in occ_dates_repeated:
+                if date == reps_list_next_dt:
                     ctx.add_class('yearview_entry_repeated')
-                    if date in occ_dates_repeated_year:
-                        ctx.add_class('yearview_entry_repeated_year')
-                    if date in occ_dates_repeated_month:
-                        ctx.add_class('yearview_entry_repeated_month')
-                    if date in occ_dates_repeated_week:
-                        ctx.add_class('yearview_entry_repeated_week')
-                    if date in occ_dates_repeated_day:
-                        ctx.add_class('yearview_entry_repeated_day')
-                    if date in occ_dates_repeated_hour:
-                        ctx.add_class('yearview_entry_repeated_hour')
-                    if date in occ_dates_repeated_minute:
-                        ctx.add_class('yearview_entry_repeated_minute')
-                    if date in occ_dates_repeated_second:
-                        ctx.add_class('yearview_entry_repeated_second')
+                    while date == reps_list_next_dt:
+                        ctx.add_class(cls.MAP[reps_list_next_fr]) # type:ignore[index]
+                        reps_list_next_fr,reps_list_next_dt = next(reps_list_iter, (None,None))
+
                 date += oneday
                 x += 1
 
