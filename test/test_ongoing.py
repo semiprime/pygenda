@@ -4,7 +4,7 @@
 # test_ongoing.py
 # Run unit tests for ongoing entries in Pygenda
 #
-# Copyright (C) 2023 Matthew Lewis
+# Copyright (C) 2023-2026 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -25,6 +25,7 @@ import unittest
 from datetime import date, datetime, timedelta
 from dateutil import tz
 from os import remove as os_remove
+from os.path import dirname, realpath
 
 # Add '..' to path, so this can be run from test directory
 import sys
@@ -39,7 +40,7 @@ from pygenda.pygenda_util import get_local_tz, _set_local_tz as set_local_tz
 
 class TestOngoing(unittest.TestCase):
     maxDiff = None # show unlimited chars when showing diffs
-    TESTFILE_NAME = 'test_ongoing_TESTFILE.ics'
+    TESTFILE_NAME = '/'.join((dirname(realpath(__file__)),'test_ongoing_TESTFILE.ics'))
 
     @classmethod
     def setUpClass(cls):

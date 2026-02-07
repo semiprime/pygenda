@@ -4,7 +4,7 @@
 # test_entries.py
 # Unit tests for events/todos - creation/modification/deletion
 #
-# Copyright (C) 2023,2024 Matthew Lewis
+# Copyright (C) 2023-2026 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -24,6 +24,7 @@
 import unittest
 from datetime import date, datetime, timedelta
 from os import remove as os_remove
+from os.path import dirname, realpath
 from icalendar import Event as iEvent, Todo as iTodo
 from time import sleep
 
@@ -39,7 +40,7 @@ from pygenda.pygenda_config import Config
 
 class TestEntries(unittest.TestCase):
     maxDiff = None # show unlimited chars when showing diffs
-    TESTFILE_NAME = 'test_entries_TESTFILE.ics'
+    TESTFILE_NAME = '/'.join((dirname(realpath(__file__)),'test_entries_TESTFILE.ics'))
     uid_list = []
 
     @classmethod

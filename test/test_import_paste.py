@@ -5,7 +5,7 @@
 # Unit tests for importing/pasting events.
 # (Both of these use the Calendar.new_entry_from_example() function.)
 #
-# Copyright (C) 2024,2025 Matthew Lewis
+# Copyright (C) 2024-2026 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -26,6 +26,7 @@ import unittest
 from datetime import date, time, datetime, timezone, timedelta
 from dateutil import tz
 from os import remove as os_remove
+from os.path import dirname, realpath
 from icalendar import Calendar as iCalendar, Event as iEvent, Todo as iTodo, Alarm as iAlarm
 
 # Add '..' to path, so this can be run from test directory
@@ -41,7 +42,7 @@ from pygenda.pygenda_util import get_local_tz, _set_local_tz as set_local_tz
 
 class TestImportPaste(unittest.TestCase):
     maxDiff = None # show unlimited chars when showing diffs
-    TESTFILE_NAME = 'test_import_paste_TESTFILE.ics'
+    TESTFILE_NAME = '/'.join((dirname(realpath(__file__)),'test_import_paste_TESTFILE.ics'))
     UID_BASE = 'Pygenda-test-import-paste-5415-'
     uid_index = 0
 
