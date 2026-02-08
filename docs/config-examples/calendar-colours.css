@@ -30,10 +30,12 @@
 /* Assign background colours to specific calendars */
 .calendar-work > .itemtext {
 	background:Khaki;
+	color:black;
 }
 
 .calendar-personal > .itemtext {
 	background:PowderBlue;
+	color:black;
 }
 
 /* Customisation notes:
