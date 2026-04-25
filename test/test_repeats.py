@@ -305,7 +305,6 @@ class TestRepeats(unittest.TestCase):
     #@unittest.skip
     def test_12_yearly_bydayinmonth_twice(self) -> None:
         # Create yearly repeating event on two months
-        # Thanksgiving (US) - 4th Thursday of November.
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
             date(2013,2,12),
@@ -750,8 +749,7 @@ class TestRepeats(unittest.TestCase):
 
     #@unittest.skip
     def test_26_monthly_timed_exdate(self) -> None:
-        # Create timed monthly repeating event
-        # (with the potential to fall on a leap-day)
+        # Create timed monthly repeating event, with exception
         event = self.create_event(
             'Event {}'.format(sys._getframe().f_code.co_name),
             datetime(1998,3,28,12,3), # time 12:03
