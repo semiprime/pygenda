@@ -98,8 +98,8 @@ Checklist for releases
 * Regenerate .po and .mo localisation files (see above)
 * Check at least one non-English language
 * Check any iCal files in validator, e.g. https://icalendar.org/validator.html
-* Run test_entries.py, test_repeats.py, test_import_paste.py & test_ongoing.py
-  unit tests
+* Run test_entries.py, test_repeats.py, test_import_paste.py, test_ongoing.py
+  & test_prevnext.py unit tests
 * Check all test files (testxx_*.ics & generated files) display correctly
 * Check darkmode, backgrounds & calendar colours CSS examples still work
 * Check mouse clicks/touchscreen taps/swipes work (all views)
