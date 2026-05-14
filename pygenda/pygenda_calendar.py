@@ -2008,3 +2008,67 @@ def repeats_in_range(ev:iEvent, start:dt_date, stop:dt_date) -> list:
     #if ret != repeats_in_range_with_rrstr(ev, start, stop):
     #    print('Error: Wrong repeats for "{:s}"'.format(ev['SUMMARY']), file=stderr)
     return ret
+
+
+def _in_datelist(dt:dt_datetime, lst:list, is_timed:bool) -> bool:
+    if is_timed:
+        # Take care of comparing TZ-aware and not-aware dates
+        dt_tz = dt.tzinfo
+        if dt_tz is None:
+            for cmp in lst:
+                if date_to_datetime(dt, tz=cmp.tzinfo) == cmp:
+                    return True
+        else:
+            for cmp in lst:
+                if dt == date_to_datetime(cmp, tz=dt_tz):
+                    return True
+        return False
+    else:
+        return datetime_to_date(dt) in lst
+
+
+def previous_next_occurrence(en:Union[iEvent,iTodo], start:dt_date, limit_tries:bool=True) -> Tuple[Optional[dt_date], Optional[dt_date]]:
+    # Given a repeating entry en, return a pair of the previous
+    # and next occurrences relative to date.
+    # Returned datetimes have local timezone.
+    # Note: previous is *exclusive* of start, and next is *inclusive*
+    # Assumes that entry has an RRULE.
+    rr, is_hr_min_sec, is_timed = _rrule_from_entry(en)
+
+    st = date_to_datetime(start, is_timed)
+    pre = rr.before(st, inc=False)
+    nxt = rr.after(st, inc=True)
+    if 'EXDATE' in en:
+        TRIES_LIMIT = 20
+        exdate_list = Calendar.caldatetime_tree_to_dt_list(en['EXDATE'])
+        i = 0
+        while pre is not None and _in_datelist(pre, exdate_list, is_timed):
+            if limit_tries:
+                i += 1
+                if i == TRIES_LIMIT:
+                    pre = None
+                    break
+            pre = rr.before(pre, inc = False)
+        i = 0
+        while nxt is not None and _in_datelist(nxt, exdate_list, is_timed):
+            if limit_tries:
+                i += 1
+                if i == TRIES_LIMIT:
+                    nxt = None
+                    break
+            nxt = rr.after(nxt, inc = False)
+    if is_timed:
+        # After doing calculations in UTC, convert results to local time
+        tz = get_local_tz()
+        if pre is not None:
+            pre = pre.astimezone(tz)
+        if nxt is not None:
+            nxt = nxt.astimezone(tz)
+    else:
+        # We want to return dates, rather than datetimes
+        if pre is not None:
+            pre = pre.date()
+        if nxt is not None:
+            nxt = nxt.date()
+    return pre, nxt
+
