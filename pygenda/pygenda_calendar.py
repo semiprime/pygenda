@@ -24,7 +24,7 @@
 from icalendar import Calendar as iCalendar, Event as iEvent, Todo as iTodo, Alarm as iAlarm, vRecur
 from datetime import timedelta, datetime as dt_datetime, time as dt_time, date as dt_date, timezone
 from dateutil.relativedelta import relativedelta
-from dateutil.rrule import rrulestr
+from dateutil.rrule import rrulestr, rrule as rruleobj
 from dateutil import tz as du_tz
 from sys import stderr
 from uuid import uuid1
@@ -995,7 +995,7 @@ class Calendar:
 
     @classmethod
     def occurrence_list(cls, start:dt_date, stop:dt_date, include_single:bool=True, include_repeated:bool=True, in_grid:bool=False) -> list:
-        # Return list of occurences in range start <= . < stop.
+        # Return list of occurrences in range start <= . < stop.
         # Designed to be called by View classes to get events in range.
         # An "occurrence" is a pair: (event,datetime)
         #  for repeating entries, datetime may not be the DTSTART entry
@@ -1652,7 +1652,7 @@ class RepeatInfo:
     def _set_start_in_rng(self, start:dt_date) -> None:
         # Set start date within given range (so will be on/after 'dtstart')
         # N.B. At this point 'start' may be a date or datetime (matching timed_rpt)
-        self.start_in_rng = self.start # first occurence of event
+        self.start_in_rng = self.start # first occurrence of event
         if isinstance(self.delta, list):
             self.delta_index = 0
         if start is not None:
@@ -1813,9 +1813,9 @@ class RepeatIter_simpledelta:
         return self
 
     def __next__(self) -> dt_date:
-        # Return date/dattime for next occurence in range.
+        # Return date/dattime for next occurrence in range.
         # Excluded dates are taken into account.
-        # Raises StopIteration at end of occurence list.
+        # Raises StopIteration at end of occurrence list.
         if self.dt is None or dt_lte(self.rinfo.stop_exc,self.dt):
             raise StopIteration
         r = self.dt
@@ -1830,7 +1830,7 @@ class RepeatIter_simpledelta:
 
 class RepeatIter_multidelta(RepeatIter_simpledelta):
     # Iterator class for RepeatInfo where we have different deltas
-    # (e.g. we may have different gaps between occurences, such as
+    # (e.g. we may have different gaps between occurrences, such as
     # a weekly repeat that occurs on Mondays and Wednesdays).
 
     def __init__(self, rinfo:RepeatInfo):
@@ -1838,9 +1838,9 @@ class RepeatIter_multidelta(RepeatIter_simpledelta):
         self.i = rinfo.delta_index
 
     def __next__(self) -> dt_date:
-        # Return date/datetime for next occurence in range.
+        # Return date/datetime for next occurrence in range.
         # Excluded dates are taken into account.
-        # Raises StopIteration at end of occurence list.
+        # Raises StopIteration at end of occurrence list.
         if self.dt is None or dt_lte(self.rinfo.stop_exc,self.dt):
             raise StopIteration
         r = self.dt
@@ -1864,9 +1864,9 @@ class RepeatIter_byweekdayinmonth(RepeatIter_simpledelta):
         self.dt_ref = rinfo.start_in_rng
 
     def __next__(self) -> dt_date:
-        # Return date/datetime for next occurence in range.
+        # Return date/datetime for next occurrence in range.
         # Excluded dates are taken into account.
-        # Raises StopIteration at end of occurence list.
+        # Raises StopIteration at end of occurrence list.
         if self.dt_toret is None or dt_lte(self.rinfo.stop_exc, self.dt_toret):
             raise StopIteration
         ret = self.dt_toret
@@ -1919,24 +1919,24 @@ def first_occ(rrstr:str, dtstart:dt_date) -> dt_date:
     return ret
 
 
-def repeats_in_range_with_rrstr(ev:iEvent, start:dt_date, stop:dt_date) -> list:
-    # Get repeat dates within given range using dateutil.rrule module.
-    # Slow, but comprehensive. Used as a fallback from repeats_in_range()
-    # when quick methods can't be used.
-    # Repeats are super clunky.
-    # Can caching results help?
-    dt = ev['DTSTART'].dt
-    rr_for_str = ev['RRULE'] # reference to rrule
+def _rrule_from_entry(en:Union[iEvent,iTodo]) -> Tuple[rruleobj, bool, bool]:
+    # Returns tuple:
+    #    * an rrule object for an entry
+    #    * a bool, True if repeat is hour/minute/day
+    #    * a bool, True if we need to consider time of entry
+    # Assumes that entry has an RRULE.
+    dt = en['DTSTART'].dt
+    rr_for_str = en['RRULE'] # reference to rrule
     is_hr_min_sec = rr_for_str['FREQ'][0] in RepeatInfo.SUBDAY_REPEATS
-    is_timed = is_hr_min_sec or isinstance(dt,dt_datetime)
+    is_timed = is_hr_min_sec or isinstance(dt, dt_datetime)
     until_set = False
     if is_timed:
-        dt = date_to_datetime(dt,True) # Ensure timed & with timezone
+        dt = date_to_datetime(dt, True) # Ensure timed & with timezone
         if 'UNTIL' in rr_for_str:
             # Make sure until is timed with timezone
-            until = date_to_datetime(rr_for_str['UNTIL'][0],True)
+            until = date_to_datetime(rr_for_str['UNTIL'][0], True)
             until = until.astimezone(timezone.utc) # rrulestr needs UTC
-            rr_for_str = deepcopy(rr_for_str) # So we don't modify the event
+            rr_for_str = deepcopy(rr_for_str) # So we don't modify the entry
             rr_for_str['UNTIL'][0] = until
             until_set = True
     if is_hr_min_sec:
@@ -1954,8 +1954,18 @@ def repeats_in_range_with_rrstr(ev:iEvent, start:dt_date, stop:dt_date) -> list:
         i_until_z = rrstr.find('Z', i_until_st)
         if i_until_z == -1 or i_until_z > i_until_end:
             rrstr = rrstr[:i_until_end] + 'Z' + rrstr[i_until_end:]
-    has_exd = 'EXDATE' in ev
-    rr = rrulestr(rrstr,dtstart=dt,forceset=has_exd)
+    has_exd = 'EXDATE' in en
+    return rrulestr(rrstr, dtstart=dt, forceset=has_exd), is_hr_min_sec,is_timed
+
+
+def repeats_in_range_with_rrstr(ev:iEvent, start:dt_date, stop:dt_date) -> list:
+    # Get repeat dates within given range using dateutil.rrule module.
+    # Slow, but comprehensive. Used as a fallback from repeats_in_range()
+    # when quick methods can't be used.
+    # Repeats are super clunky.
+    # Can caching results help?
+    rr, is_hr_min_sec, is_timed = _rrule_from_entry(ev)
+
     st = date_to_datetime(start, is_timed)
     sp = date_to_datetime(stop, is_timed)
     sp -= timedelta(milliseconds=1)
@@ -1965,7 +1975,7 @@ def repeats_in_range_with_rrstr(ev:iEvent, start:dt_date, stop:dt_date) -> list:
     elif is_hr_min_sec:
         # After doing calculations in UTC, convert results to local time
         ret = [d.astimezone(get_local_tz()) for d in ret]
-    if has_exd:
+    if 'EXDATE' in ev:
         exdate_list = Calendar.caldatetime_tree_to_dt_list(ev['EXDATE'])
         for exdt in exdate_list:
             if is_timed:
