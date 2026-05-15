@@ -4,7 +4,7 @@
 # "View" class definition - base class for Week/Year/Todo View.
 # Provides default implementations of functions.
 #
-# Copyright (C) 2022-2025 Matthew Lewis
+# Copyright (C) 2022-2026 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -33,7 +33,7 @@ from .pygenda_gui import GUI
 from .pygenda_config import Config
 from .pygenda_dialog_event import EventDialogController
 from .pygenda_util import datetime_to_time, datetime_to_date, date_to_datetime, format_time, format_compact_date, format_compact_time, format_compact_datetime, dt_lte, get_local_tz, tzinfo_display_name, test_anniversary
-from .pygenda_calendar import Calendar
+from .pygenda_calendar import Calendar, previous_next_occurrence
 from .pygenda_entryinfo import EntryInfo
 
 
@@ -440,10 +440,10 @@ class View_DayUnit_Base(View):
     def cursor_goto_event(cls, ev:iEvent) -> bool:
         # Move cursor to given event.
         # Set target, so can jump on next redraw.
-        repeats = 'RRULE' in ev # Boolean
-        if not repeats:
+        if  'RRULE' in ev:
+            cls.cursor_set_date(cls.nearest_date(ev))
+        else:
             # Move cursor to first day of event
-            # !! Need to make repeating case do something sensible
             dt = ev['DTSTART'].dt
             if isinstance(dt, dt_datetime):
                 if dt.tzinfo is not None:
@@ -453,6 +453,21 @@ class View_DayUnit_Base(View):
             cls.cursor_set_date(dt)
         cls._target_entry = ev
         return True # Indicates success, so use this view
+
+
+    @classmethod
+    def nearest_date(cls, ev:iEvent) -> dt_date:
+        # Simple default implementation
+        prev, next = previous_next_occurrence(ev, View._cursor_date)
+        if prev is None:
+            return datetime_to_date(next) # type:ignore[no-any-return]
+        if next is None:
+            return datetime_to_date(prev) # type:ignore[no-any-return]
+        prev = datetime_to_date(prev)
+        next = datetime_to_date(next)
+        dprev = View._cursor_date - prev
+        dnext = next - View._cursor_date
+        return next if dprev > dnext else prev # type:ignore[no-any-return]
 
 
     @classmethod

@@ -200,7 +200,11 @@ Minor
 * If editable calendars only accept todo items then "New entry" softkey
   is disabled - even in Todo View.
 
-* After creating/editing a repeating event, cursor not always on that event
+* Refinements to moving cursor to a repeating event after creating/editing.
+  Is "goto nearest" always the best strategy? Should it favour staying
+  on the same displayed week/year? What about when entries are over
+  several days and the end of one occurrence is nearer than the start of
+  another occurrence?
 
 * Todo View navigation refinements: left/right can sometimes make the cursor
   move to an unexpected entry (need to find a better algorithm); if there
