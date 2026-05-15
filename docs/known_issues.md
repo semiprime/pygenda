@@ -74,9 +74,9 @@ Medium
 
 * Import functionality is work-in-progress (can't specify todo list,
   can't replace existing entries, needs better error messages when
-  file could not be parsed, filechooser dialog isn't good on mobile,
-  how should alarms be handled?, a progress indicator when there are
-  multiple entries would be nice, more keyboard shortcuts).
+  file could not be parsed, needs an "import all" button, filechooser
+  dialog isn't good on mobile, how should alarms be handled?, more
+  keyboard shortcuts).
 
 * How do we share events? Do we need an "Export" function?
 

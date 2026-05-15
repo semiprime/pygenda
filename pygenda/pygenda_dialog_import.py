@@ -3,7 +3,7 @@
 # pygenda_dialog_import.py
 # Code for import dialogs
 #
-# Copyright (C) 2024,2025 Matthew Lewis
+# Copyright (C) 2024-2026 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -89,14 +89,17 @@ class ImportController:
             print('Notice: No event or todo entries found in '+filename, file=stderr)
             return
 
+        count = 1
+        total = len(entries)
         jump_to_en = None # Store the first entry imported - to move cursor to
         for en in entries:
-            new_en = cls._process_entry(en)
+            new_en = cls._process_entry(en, count, total)
             if new_en is False:
                 # False indicates import has been cancelled, so stop here
                 break
             if jump_to_en is None and new_en is not None:
                 jump_to_en = new_en
+            count += 1
 
         if jump_to_en is not None:
             if isinstance(jump_to_en, iEvent):
@@ -129,10 +132,10 @@ class ImportController:
 
 
     @classmethod
-    def _process_entry(cls, en:Union[iEvent,iTodo]) -> Union[iEvent,iTodo,bool,None]:
+    def _process_entry(cls, en:Union[iEvent,iTodo], count:int, total:int) -> Union[iEvent,iTodo,bool,None]:
         # Import or skip entry in iCal file, depending on user interaction.
         # Return entry if entry imported, None if skipped, False if cancelled.
-        res,cal = cls._import_entry_dialog(en)
+        res,cal = cls._import_entry_dialog(en, count, total)
         if res==Gtk.ResponseType.DELETE_EVENT:
             return False
         if res==Gtk.ResponseType.ACCEPT:
@@ -142,7 +145,7 @@ class ImportController:
 
 
     @classmethod
-    def _import_entry_dialog(cls, en:Union[iEvent,iTodo]) -> Tuple[int,Optional[int]]:
+    def _import_entry_dialog(cls, en:Union[iEvent,iTodo], count:int, total:int) -> Tuple[int,Optional[int]]:
         # Show/manage dialog to query importing single entry.
         # This will be shown for each entry in an imported iCal file.
         dialog = Gtk.Dialog(title=_('Import entry'), parent=GUI._window,
@@ -156,7 +159,11 @@ class ImportController:
         dialog.get_content_area().add(cls._dialog_grid)
         cls._dialog_y = 0
 
-        cls._add_row(_('Found entry:'), style=GUI.STYLE_SECTLABEL, halign=Gtk.Align.START)
+        if total == 1:
+            foundtxt = _('Found entry:')
+        else:
+            foundtxt = _('Found entry ({:d} of {:d}):').format(count,total)
+        cls._add_row(foundtxt, style=GUI.STYLE_SECTLABEL, halign=Gtk.Align.START)
 
         if 'SUMMARY' in en:
             desc_txt = en['SUMMARY']
