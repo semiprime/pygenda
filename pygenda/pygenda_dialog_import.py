@@ -77,9 +77,11 @@ class ImportController:
                 cal = iCalendar.from_ical(file.read())
             except:
                 print('Error: Failed to parse ical file '+filename, file=stderr)
+                GUI.show_error_alert(_("Error reading ical file"))
                 return
         if cal.errors:
             print('Error: Non-conformant ical data '+filename, file=stderr)
+            GUI.show_error_alert(_("Error reading ical data"))
             return
 
         entries = cal.walk('VEVENT')
@@ -87,6 +89,7 @@ class ImportController:
 
         if not entries:
             print('Notice: No event or todo entries found in '+filename, file=stderr)
+            GUI.show_notice_alert(_("No event or todo entries found"))
             return
 
         count = 1

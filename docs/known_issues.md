@@ -73,10 +73,9 @@ Medium
 * Should be able to set default calendar (for new entries, pasting).
 
 * Import functionality is work-in-progress (can't specify todo list,
-  can't replace existing entries, needs better error messages when
-  file could not be parsed, needs an "import all" button, filechooser
-  dialog isn't good on mobile, how should alarms be handled?, more
-  keyboard shortcuts).
+  can't replace existing entries, needs an "import all" button,
+  filechooser dialog isn't good on mobile, how should alarms be
+  handled?, more keyboard shortcuts).
 
 * How do we share events? Do we need an "Export" function?
 
