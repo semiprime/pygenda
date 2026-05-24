@@ -67,6 +67,7 @@ class GUI:
     STYLE_SECTLABEL = 'sectlabel'
     STYLE_ALERTLABEL = 'alertlabel'
     STYLE_ERR = 'dialog_error'
+    STYLE_TXT_ALERT_DLG = 'alertdialogtxt'
 
     views = [] # type: List[Type]
     view_widgets = [] # type: List[Gtk.Widget]
@@ -771,6 +772,34 @@ class GUI:
                 if v != cls._view_idx:
                     cls.switch_view(None, v, redraw=False)
                 break
+
+
+    @classmethod
+    def _show_alert(cls, title:str, msg:str) -> None:
+        # Show a simple dialog window to alert user
+        dialog = Gtk.Dialog(title=title, parent=cls._window,
+            flags=Gtk.DialogFlags.MODAL|Gtk.DialogFlags.DESTROY_WITH_PARENT,
+            buttons=(Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE))
+        dialog.set_resizable(False)
+        lab = Gtk.Label(msg)
+        lab.set_justify(Gtk.Justification.CENTER)
+        lab.get_style_context().add_class(GUI.STYLE_TXT_ALERT_DLG)
+        dialog.get_content_area().add(lab)
+        dialog.show_all()
+        dialog.run()
+        dialog.destroy()
+
+
+    @classmethod
+    def show_error_alert(cls, msg:str) -> None:
+        # Show a simple dialog window to alert user to an error
+        cls._show_alert(_('Error'), msg)
+
+
+    @classmethod
+    def show_notice_alert(cls, msg:str) -> None:
+        # Show a simple dialog window to alert user to something
+        cls._show_alert(_('Notice'), msg)
 
 
     # Main

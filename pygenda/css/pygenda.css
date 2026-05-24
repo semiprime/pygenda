@@ -698,3 +698,8 @@ list row:selected {
 list row:focus {
 	background:#398ee7
 }
+
+/* Error/alert dialogs */
+.alertdialogtxt {
+	margin:1ex;
+}
