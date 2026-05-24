@@ -199,8 +199,11 @@ class ImportController:
 
         # Check entry UID. If present, use it to test if entry already exists
         if 'UID' not in en:
+            # No UID means we can't easily check for duplicates.
+            # Previously, we blocked import on this condition.
+            # However, some export tools on Psions don't add UIDs, so to
+            # support import from Psions, show an alert, but allow import.
             cls._add_row(_('Invalid entry, no ID found'), style=GUI.STYLE_ALERTLABEL, halign=Gtk.Align.CENTER)
-            can_import = False
         elif Calendar.get_entry_by_uid(en['UID']) is not None: # entry exists?
             cls._add_row(_('An entry with this ID already exists'), style=GUI.STYLE_ALERTLABEL, halign=Gtk.Align.CENTER)
             can_import = False
