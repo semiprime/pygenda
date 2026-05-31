@@ -31,9 +31,8 @@ its current state – including on device/UI combinations that I cannot
 test. Feedback can be sent to pygenda@semiprime.com.
 
 This guide has been tested on a Wileyfox Swift ('crackling') device
-running PostmarketOS 23.06 with Phosh 0.30.0 (pre-built postmarketOS
-image, id 20230912-0014, with python3-3.11.5-r0 and gtk+3.0-3.24.38-r1).
-It was revised for PostmarketOS 23.12.
+running PostmarketOS 25.12 with Phosh 0.51.0-r2 (pre-built postmarketOS
+image, id 20260525-2012, with python3-3.12.13-r0 and gtk+3.0-3.24.51-r0).
 
 Known issues
 ------------
@@ -44,6 +43,8 @@ Known issues specific to postmarketOS (observed on Phosh) include:
 * The menubar is even more broken in fullscreen mode, or when app is maximised and the titlebar is hidden.
 * The todo bullet in Week/Year view takes up too much vertical space. (Workaround: install the Symbola font and put the following in the User CSS file: `.todo > .marker { font-family:'Symbola'; }` )
 * Sometimes the UI stops responding to taps (I'm not sure when this occurs).
+* New entry dialog is too big for the screen (on tested device).
+* Date & time entry widgets have poor appearance and behaviour.
 * There's no portrait mode.
 
 Install dependencies
@@ -96,7 +97,8 @@ that it starts.
 
 Configuration
 -------------
-Enter the following to edit the Pygenda ini file:
+Enter the following to edit the Pygenda ini file (assuming the nano
+text editor is installed):
 
     mkdir -p ~/.config/pygenda/
     nano ~/.config/pygenda/user.ini
@@ -152,18 +154,22 @@ a CSS file as follows:
 
 This should open an empty file, where you can add the following
 
-    .view, #view_loading {
+    .agendaview, #view_loading {
         min-width:400px;
         min-height:200px;
     }
     
+    #yearview_labelyear {
+        font-size:11pt;
+    }
+
     /* The following two options reduce the width of the Year View */
     .yearview_day_label, .yearview_month_label {
-        font-size:10.5pt;
+        font-size:9.5pt;
     }
     
     .yearview_daycell {
-        font-size:7pt;
+        font-size:6pt;
     }
     
     /* To reduce the width of individual to-do lists */
@@ -191,7 +197,7 @@ described above, you can create a soft link to the pygenda.desktop file
 from the user's ~/.local/share/applications directory:
 
     cd ~/.local/share/applications
-    ln -s ~/.local/lib/python3.11/site-packages/pygenda/app/pygenda.desktop
+    ln -s ~/.local/lib/python3.12/site-packages/pygenda/app/pygenda.desktop
 
 Evolution Data Server
 ---------------------
@@ -255,6 +261,6 @@ menu in Pygenda, or run:
 If an update breaks something, please let us know about the problem at
 pygenda@semiprime.com. Then you can go back to an older version using:
 
-    pip3 install --user pygenda==0.2.9
+    pip3 install --user pygenda==0.3.8
 
-(Change 0.2.9 to your desired version.)
+(Change 0.3.8 to your desired version.)
