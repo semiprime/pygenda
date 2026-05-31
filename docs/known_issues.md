@@ -192,6 +192,9 @@ Medium
   Not sure about the best way to handle this situation. Might be solved
   if Pygenda can detect changes in the file and re-read it.
 
+* On Gemini & Cosmo, tapping a drop-down box makes it open & instantly
+  close. Possibly acting on up & down events. Workaround: press space.
+
 Minor
 -----
 (Note: minor bugs can still be irritating!)
