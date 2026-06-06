@@ -47,8 +47,8 @@ class ImportController:
             cls._import_file(filenm)
 
 
-    @classmethod
-    def _get_file(cls) -> Optional[str]:
+    @staticmethod
+    def _get_file() -> Optional[str]:
         # Opens file chooser, returns filename or None
         chooser = Gtk.FileChooserNative.new(_('Import File'), GUI._window, Gtk.FileChooserAction.OPEN, _('_Import'), None)
 
@@ -112,9 +112,9 @@ class ImportController:
             GUI.view_redraw(en_changes=True)
 
 
-    @classmethod
-    def _get_calendar_combobox(cls, is_event:bool) -> Union[bool,Gtk.ComboBox]:
-        # Return a combobox for selecting calendar for events.
+    @staticmethod
+    def _get_calendar_combobox(is_event:bool) -> Union[bool,Gtk.ComboBox]:
+        # Return a combobox for selecting calendar for entries.
         # Returns True => Only one calendar available, so no combobox required.
         # Returns False => No calendars available, so can't import.
         if is_event:
@@ -209,7 +209,7 @@ class ImportController:
             can_import = False
 
         # If necessary, add dropdown box to select calendar to import into
-        cb_cal = False
+        cb_cal = False # type:Union[bool,Gtk.ComboBox]
         if can_import:
             cb_cal = cls._get_calendar_combobox(en_is_event)
             if cb_cal is False:
@@ -224,7 +224,7 @@ class ImportController:
 
         dialog.show_all()
         res = dialog.run() # type:int
-        dest_cal = None if isinstance(cb_cal, bool) else int(cb_cal.get_active_id()) # type:ignore[attr-defined]
+        dest_cal = None if isinstance(cb_cal, bool) else int(cb_cal.get_active_id())
         dialog.destroy()
         cls._dialog_grid = None # so grid & contents are cleaned up
         return res, dest_cal
