@@ -134,21 +134,42 @@ class ImportController:
         return combobox
 
 
+    @staticmethod
+    def _get_todolist_combobox() -> Union[bool,Gtk.ComboBox]:
+        # Return a combobox for selecting todo lists.
+        # Returns True => Only one list available, so no combobox required.
+        # Returns False => No lists available, so can't import.
+        todo_titles,_ = GUI.todo_titles_default_cats()
+        if len(todo_titles) == 0:
+            # We can't import this entry!
+            return False
+        if len(todo_titles) == 1:
+            # No need for a combobox when there's no choice to make
+            return True
+
+        combobox = Gtk.ComboBoxText()
+        for t in todo_titles:
+            combobox.append_text(t)
+        combobox.connect('key-press-event', GUI._combobox_keypress, Gtk.ResponseType.ACCEPT)
+        return combobox
+
+
     @classmethod
     def _process_entry(cls, en:Union[iEvent,iTodo], count:int, total:int) -> Union[iEvent,iTodo,bool,None]:
         # Import or skip entry in iCal file, depending on user interaction.
         # Return entry if entry imported, None if skipped, False if cancelled.
-        res,cal = cls._import_entry_dialog(en, count, total)
+        res,cal,tdlist = cls._import_entry_dialog(en, count, total)
         if res==Gtk.ResponseType.DELETE_EVENT:
             return False
         if res==Gtk.ResponseType.ACCEPT:
-            new_en = Calendar.import_entry(en, cal_idx=cal)
+            cats = GUI.todo_titles_default_cats()[1][0 if tdlist is None else tdlist]
+            new_en = Calendar.import_entry(en, cal_idx=cal, cats=cats)
             return new_en
         return None
 
 
     @classmethod
-    def _import_entry_dialog(cls, en:Union[iEvent,iTodo], count:int, total:int) -> Tuple[int,Optional[int]]:
+    def _import_entry_dialog(cls, en:Union[iEvent,iTodo], count:int, total:int) -> Tuple[int,Optional[int],Optional[int]]:
         # Show/manage dialog to query importing single entry.
         # This will be shown for each entry in an imported iCal file.
         dialog = Gtk.Dialog(title=_('Import entry'), parent=GUI._window,
@@ -219,15 +240,30 @@ class ImportController:
                 cb_cal.set_active(0) # type:ignore[union-attr]
                 cls._add_row_widget(_('Import to calendar:'), cb_cal)
 
+        cb_todolist = False # type:Union[bool,Gtk.ComboBox]
+        if can_import and not en_is_event:
+            cb_todolist = cls._get_todolist_combobox()
+            if cb_todolist is False:
+                cls._add_row(_('No todo list available for todo'), style=GUI.STYLE_ALERTLABEL, halign=Gtk.Align.CENTER)
+                can_import = False
+            elif cb_todolist is not True:
+                cb_todolist.set_active(0) # type:ignore[union-attr]
+                cls._add_row_widget(_('Import into list:'), cb_todolist)
+
         # If can_import, sensitise the "Import" button
         import_button.set_sensitive(can_import)
 
         dialog.show_all()
         res = dialog.run() # type:int
         dest_cal = None if isinstance(cb_cal, bool) else int(cb_cal.get_active_id())
+        dest_list = None # type:Optional[int]
+        if not isinstance(cb_todolist, bool):
+            dest_list = cb_todolist.get_active()
+            if dest_list == -1:
+                dest_list = None
         dialog.destroy()
         cls._dialog_grid = None # so grid & contents are cleaned up
-        return res, dest_cal
+        return res, dest_cal, dest_list
 
 
     @classmethod
