@@ -388,9 +388,9 @@ class Calendar:
 
 
     @classmethod
-    def import_entry(cls, exen:Union[iEvent,iTodo], cal_idx:int)-> Union[iEvent,iTodo]:
+    def import_entry(cls, exen:Union[iEvent,iTodo], cal_idx:int, cats:Optional[list]=None)-> Union[iEvent,iTodo]:
         # Import - a wrapper fn around _new_entry_from_example()
-        return cls._new_entry_from_example(exen, e_cats=None, cal_idx=cal_idx, use_ex_uid_created=True, use_ex_rpts=True, use_ex_alarms=False)
+        return cls._new_entry_from_example(exen, e_cats=cats, cal_idx=cal_idx, use_ex_uid_created=True, use_ex_rpts=True, use_ex_alarms=False)
 
 
     @staticmethod
