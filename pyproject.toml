@@ -41,7 +41,6 @@ pygenda = ["mypy.ini", "*.pot", "*.po"]
 
 [tool.setuptools_scm]
 
-
 [project.urls]
-Homepage = "https://github.com/semiprime/pygenda"
 "Homepage (Codeberg)" = "https://codeberg.org/semiprime/pygenda"
+"Homepage (GitHub)" = "https://github.com/semiprime/pygenda"

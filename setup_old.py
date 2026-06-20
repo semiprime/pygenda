@@ -3,7 +3,7 @@
 #
 # setup_old.py for Pygenda
 #
-# Copyright (C) 2022,2023 Matthew Lewis
+# Copyright (C) 2022-2026 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -72,11 +72,11 @@ assert pygenda_version is not None
 setup(
     name = "pygenda",
     version = pygenda_version,
-    url = "https://github.com/semiprime/pygenda",
+    url = "https://codeberg.org/semiprime/pygenda",
     author = "Matthew Lewis",
     author_email = "pygenda@semiprime.com",
     description = "An agenda application inspired by Agenda programs on Psion PDAs.",
-    long_description = "Pygenda is a calendar/agenda application written in Python3/GTK3. The UI is inspired by the Agenda programs on the Psion Series 3 and Series 5 range of keyboard PDAs, with the aim of being suitable for devices such as Planet Computers' Gemini (running Linux).\n\nFor more information/latest source, see https://github.com/semiprime/pygenda",
+    long_description = "Pygenda is a calendar/agenda application written in Python3/GTK3. The UI is inspired by the Agenda programs on the Psion Series 3 and Series 5 range of keyboard PDAs, with the aim of being suitable for devices such as Planet Computers' Gemini (running Linux).\n\nFor more information/latest source, see https://codeberg.org/semiprime/pygenda",
     packages = ["pygenda"],
     cmdclass = {'bdist_egg': PygendaEggInstall}, # use custom install above
     package_data = {'': ['ui/*.ui', 'css/*.css', 'css/*.svg', 'libpygenda_clipboard.so', 'locale/*/LC_MESSAGES/pygenda.mo', 'app/pygenda.desktop']}, # files for bdists
