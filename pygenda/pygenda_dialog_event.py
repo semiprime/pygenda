@@ -3,7 +3,7 @@
 # pygenda_dialog_event.py
 # Code for Event dialog (used to create/update events)
 #
-# Copyright (C) 2022-2025 Matthew Lewis
+# Copyright (C) 2022-2026 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -88,6 +88,7 @@ class EventDialogController:
     wid_rep_forever = None # type: Gtk.CheckButton
     wid_repeaton_year = None # type: Gtk.ComboBox
     wid_repeaton_month = None # type: Gtk.ComboBox
+    wid_repeaton_week = None # type: Gtk.ComboBox
     wid_rep_occs = None # type: Gtk.SpinButton
     wid_rep_enddt = None # type: WidgetDate
     revs_rep_ends = None
@@ -98,6 +99,7 @@ class EventDialogController:
     _rep_handler_type = 0
     _rep_handler_repon_year = 0
     _rep_handler_repon_month = 0
+    _rep_handler_repon_week = 0
     _rep_handler_inter = 0
     _rep_handler_occs = 0
     _rep_handler_enddt = 0
@@ -229,6 +231,7 @@ class EventDialogController:
         cls.wid_rep_forever = GUI._builder.get_object('repeat_forever')
         cls.wid_repeaton_year = GUI._builder.get_object('combo_repeaton_year')
         cls.wid_repeaton_month = GUI._builder.get_object('combo_repeaton_month')
+        cls.wid_repeaton_week = GUI._builder.get_object('combo_repeaton_week')
 
         cls.wid_rep_occs = GUI._builder.get_object('repeat_occurrences')
         cls.wid_rep_enddt = WidgetDate()
@@ -243,6 +246,7 @@ class EventDialogController:
         cls._rep_handler_type = cls.wid_rep_type.connect('changed', cls._repend_changed,0)
         cls._rep_handler_repon_year = cls.wid_repeaton_year.connect('changed', cls._repend_changed,0)
         cls._rep_handler_repon_month = cls.wid_repeaton_month.connect('changed', cls._repend_changed,0)
+        cls._rep_handler_repon_week = cls.wid_repeaton_week.connect('changed', cls._repend_changed,0)
         cls._rep_handler_inter = cls.wid_rep_interval.connect('changed', cls._repend_changed,0)
         cls._rep_handler_occs = cls.wid_rep_occs.connect('changed', cls._repend_changed,1)
         cls._rep_handler_enddt = cls.wid_rep_enddt.connect('changed', cls._repend_changed,2)
@@ -368,10 +372,12 @@ class EventDialogController:
         cls._do_multireveal(cls.revs_repeat, st)
         r_yearly = (st and wid.get_active_id()=='YEARLY') # Boolean
         r_monthly = (st and not r_yearly and wid.get_active_id()=='MONTHLY')
+        r_weekly = (st and not (r_yearly or r_monthly) and wid.get_active_id()=='WEEKLY')
         # We assume that repeat-on comboboxes are set up, just make visible
-        cls._do_multireveal(cls.revs_repeaton, r_monthly or r_yearly)
+        cls._do_multireveal(cls.revs_repeaton, r_monthly or r_yearly or r_weekly)
         cls.wid_repeaton_year.set_visible(r_yearly)
         cls.wid_repeaton_month.set_visible(r_monthly)
+        cls.wid_repeaton_week.set_visible(r_weekly)
         return False # propagate event
 
 
@@ -462,6 +468,7 @@ class EventDialogController:
         cls.wid_rep_type.handler_block(cls._rep_handler_type)
         cls.wid_repeaton_year.handler_block(cls._rep_handler_repon_year)
         cls.wid_repeaton_month.handler_block(cls._rep_handler_repon_month)
+        cls.wid_repeaton_week.handler_block(cls._rep_handler_repon_week)
         cls.wid_rep_interval.handler_block(cls._rep_handler_inter)
         cls.wid_rep_occs.handler_block(cls._rep_handler_occs)
         cls.wid_rep_enddt.handler_block(cls._rep_handler_enddt)
@@ -479,6 +486,7 @@ class EventDialogController:
         cls.wid_rep_type.handler_unblock(cls._rep_handler_type)
         cls.wid_repeaton_year.handler_unblock(cls._rep_handler_repon_year)
         cls.wid_repeaton_month.handler_unblock(cls._rep_handler_repon_month)
+        cls.wid_repeaton_week.handler_unblock(cls._rep_handler_repon_week)
         cls.wid_rep_interval.handler_unblock(cls._rep_handler_inter)
         cls.wid_rep_occs.handler_unblock(cls._rep_handler_occs)
         cls.wid_rep_enddt.handler_unblock(cls._rep_handler_enddt)
@@ -915,6 +923,7 @@ class EventDialogController:
         cls.wid_rep_type.set_active(0) # Sends signal to hide fields
         cls.wid_repeaton_year.set_active(0)
         cls.wid_repeaton_month.set_active(0)
+        cls.wid_repeaton_week.set_active(0)
         cls.wid_rep_interval.set_value(1)
         cls.wid_rep_forever.set_active(True)
         cls.rep_occs_determines_end = True
