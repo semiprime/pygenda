@@ -31,7 +31,7 @@ from typing import Optional, Union, Tuple, List
 
 # for internationalisation/localisation
 from locale import gettext as _, getlocale # type:ignore[attr-defined]
-from calendar import day_name, month_name, monthrange
+from calendar import day_name, day_abbr, month_name, monthrange
 from num2words import num2words
 
 # pygenda components
@@ -749,6 +749,7 @@ class EventDialogController:
         cls._block_rep_occend_signals()
         cls._repon_wid_datesync_yearly()
         cls._repon_wid_datesync_monthly()
+        cls._repon_wid_datesync_weekly()
         cls._unblock_rep_occend_signals()
         return False # propagate event
 
@@ -805,6 +806,25 @@ class EventDialogController:
         else:
             cls.wid_repeaton_month.append('WEEKDAY_FROMEND',_('{ord:s} to last {day:s} of month').format(ord=num2words(fromend//7+1,to='ordinal_num',lang=lang),day=daynm))
         cls.wid_repeaton_month.set_active(active) # restore saved value
+
+
+    @classmethod
+    def _repon_wid_datesync_weekly(cls) -> None:
+        # Rewrites text of repeat-on weekly widget to reflect start date.
+        # Note: Should be called with signals blocked, o/w get side-effects.
+        dt = cls.wid_date.get_date_or_none()
+        if dt is None:
+            return # invalid date (eg 31st Feb)
+        active = cls.wid_repeaton_week.get_active() # save current value
+        cls.wid_repeaton_week.remove_all()
+        weekday = dt.weekday()
+        cls.wid_repeaton_week.append('STD',day_name[weekday])
+        if weekday in cls.WORKDAYS:
+            daylist = cls.WORKDAYS
+        else:
+            daylist = cls._nonwork_days()
+        cls.wid_repeaton_week.append('MULTIDAY', _('Days: {:s}').format(cls._daynumbers_to_string(daylist)))
+        cls.wid_repeaton_week.set_active(active) # restore saved value
 
 
     @classmethod
@@ -891,6 +911,7 @@ class EventDialogController:
             cls._seed_from_event(event)
         cls._repon_wid_datesync_yearly() # Done at end, so date used is correct
         cls._repon_wid_datesync_monthly()
+        cls._repon_wid_datesync_weekly()
 
         cls._seed_rep_exception_list(event) # If event==None this clears exlist
 
@@ -1704,6 +1725,17 @@ class EventDialogController:
     def _nonwork_days(cls) -> set:
         # Return set of non-work days
         return set(range(7)) - cls.WORKDAYS
+
+
+    @staticmethod
+    def _daynumbers_to_string(daylist:set) -> str:
+        # Given a set like {0,2,3} return "Mon, Wed, Thu", localised
+        if len(daylist) == 0:
+            return _("None") # type:ignore[no-any-return]
+        ordered = sorted(daylist)
+        if len(ordered) == 1:
+            return day_name[ordered[0]] # type:ignore[no-any-return]
+        return ", ".join((day_abbr[d] for d in ordered))
 
 
 class DateLabel(Gtk.Label):
