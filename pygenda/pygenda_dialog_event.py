@@ -1356,7 +1356,7 @@ class EventDialogController:
 
         # Repeat type details, default values
         inter = 1
-        byday = None
+        byday = None # type: Union[None,str,list]
         bymonth = None
         bymonthday = None # type: Optional[str]
         count = None
@@ -1393,6 +1393,18 @@ class EventDialogController:
                         dayocc = cls._weekday_fromend_in_month(dt)
                         dayabbr = cls._weekday_abbr(dt)
                         byday = str(dayocc)+dayabbr # e.g. '-2MO', 2nd last Mon
+
+            elif reptype=='WEEKLY':
+                repon = cls.wid_repeaton_week.get_active_id()
+                dt = cls.get_date_start()
+                if dt is not None:
+                    if repon=='MULTIDAY':
+                        if dt.weekday() in cls.WORKDAYS:
+                            byday = [RepeatInfo.DAY_ABBR[d] for d in cls.WORKDAYS]
+                        else:
+                            nwd = cls._nonwork_days()
+                            byday = [RepeatInfo.DAY_ABBR[d] for d in nwd]
+
             # If not "repeat forever", when repeats stop
             if not cls.wid_rep_forever.get_active():
                 if cls.rep_occs_determines_end:
