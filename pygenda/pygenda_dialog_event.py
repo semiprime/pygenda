@@ -61,6 +61,7 @@ class EventDialogController:
     TAB_ALARM = 2
     TAB_DETAILS = 3
     TAB_COUNT = 4
+    WORKDAYS = {0,1,2,3,4}
 
     dialog = None  # type: Gtk.Dialog
     wid_desc = None # type: Gtk.Entry
@@ -1070,11 +1071,8 @@ class EventDialogController:
             cls._seed_reptab_yearly(rrule)
         elif rrfreq == 'MONTHLY':
             cls._seed_reptab_monthly(rrule)
-
-        if rrfreq == 'WEEKLY' and 'BYDAY' in rrule:
-            rr_byday = rrule['BYDAY']
-            if isinstance(rr_byday, list) and len(rr_byday)>1:
-                raise EventPropertyBeyondEditDialog('Editing WEEKLY repeat with multiple \'BYDAY\' not (yet) supported')
+        elif rrfreq == 'WEEKLY':
+            cls._seed_reptab_weekly(rrule)
 
         cls.wid_rep_interval.set_value(int(rrule['INTERVAL'][0]) if 'INTERVAL' in rrule else 1)
         if 'COUNT' in rrule:
@@ -1181,6 +1179,34 @@ class EventDialogController:
                 if dt_st_fromend != bymday:
                     raise EventPropertyBeyondEditDialog('Repeat BYMONTHDAY does not match start date')
                 cls.wid_repeaton_month.set_active_id('FROMEND')
+
+
+    @classmethod
+    def _seed_reptab_weekly(cls, rrule:vRecur) -> None:
+        # Called when dialog is opened for a weekly repeating event
+        if 'BYDAY' in rrule:
+            if 'WKST' in rrule:
+                raise EventPropertyBeyondEditDialog('Editing WEEKLY repeat with \'WKST\' not supported')
+            rr_byday = rrule['BYDAY']
+            if isinstance(rr_byday, list) and len(rr_byday)>1:
+                if cls._byday_is_workdays(rr_byday) or cls._byday_is_nonworkdays(rr_byday):
+                    cls.wid_repeaton_week.set_active_id('MULTIDAY')
+                    return
+                raise EventPropertyBeyondEditDialog('Editing WEEKLY repeat with arbitrary \'BYDAY\' not supported')
+        cls.wid_repeaton_week.set_active_id('STD')
+
+
+    @classmethod
+    def _byday_is_workdays(cls, rr_byday:list) -> bool:
+        # Return True if byday from event rrule matches workdays list
+        return set(rr_byday) == {RepeatInfo.DAY_ABBR[d] for d in cls.WORKDAYS}
+
+
+    @classmethod
+    def _byday_is_nonworkdays(cls, rr_byday:list) -> bool:
+        # Return True if byday from event rrule matches non-workdays list
+        nwd = cls._nonwork_days()
+        return set(rr_byday) == {RepeatInfo.DAY_ABBR[d] for d in nwd}
 
 
     @classmethod
@@ -1672,6 +1698,12 @@ class EventDialogController:
         wid.set_model(Gtk.ListStore())
         wid.set_model(cls.alarmlist_model)
         return False
+
+
+    @classmethod
+    def _nonwork_days(cls) -> set:
+        # Return set of non-work days
+        return set(range(7)) - cls.WORKDAYS
 
 
 class DateLabel(Gtk.Label):
