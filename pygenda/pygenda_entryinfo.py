@@ -3,7 +3,7 @@
 # pygenda_entryinfo.py
 # Class to encapsulate entry details passed from dialog to calendar.
 #
-# Copyright (C) 2022-2025 Matthew Lewis
+# Copyright (C) 2022-2026 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -22,7 +22,7 @@
 
 from datetime import date as dt_date, time as dt_time, datetime as dt_datetime, timedelta
 from copy import deepcopy
-from typing import Optional, List
+from typing import Optional, Union, List
 
 
 class EntryInfo:
@@ -81,7 +81,7 @@ class EntryInfo:
         self.duration = dur
 
 
-    def set_repeat_info(self, reptype:str, interval:int=None, count:int=None, until:dt_date=None, byday:str=None, bymonth:str=None, bymonthday:str=None, except_list=None, anniv=False) -> None:
+    def set_repeat_info(self, reptype:str, interval:int=None, count:int=None, until:dt_date=None, byday:Union[str,list]=None, bymonth:str=None, bymonthday:str=None, except_list=None, anniv=False) -> None:
         # Set repeat details for this Entry
         assert until is None or count is None
         self.rep_type = reptype

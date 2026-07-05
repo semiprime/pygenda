@@ -737,7 +737,10 @@ class Calendar:
         elif e_inf.rep_count is not None:
             rr_options['COUNT'] = [e_inf.rep_count]
         if e_inf.rep_byday is not None:
-            rr_options['BYDAY'] = [e_inf.rep_byday]
+            if isinstance(e_inf.rep_byday, list):
+                rr_options['BYDAY'] = e_inf.rep_byday
+            else:
+                rr_options['BYDAY'] = [e_inf.rep_byday]
         if e_inf.rep_bymonth is not None:
             rr_options['BYMONTH'] = [e_inf.rep_bymonth]
         if e_inf.rep_bymonthday is not None:
