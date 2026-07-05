@@ -519,8 +519,8 @@ class EventDialogController:
     @classmethod
     def _repend_changed(cls, wid:Gtk.Widget, el:int) -> bool:
         # Handler for signals from any widget that might result in either the
-        # repeat end-date or occurence count changing. Prompts recalculation
-        # and possibly also updates which of end-date/occurences is the leader.
+        # repeat end-date or occurrence count changing. Prompts recalculation
+        # and possibly also updates which of end-date/occurrences is the leader.
         # Variable el indicates if either possible leader was updated.
         if el == 1: # Occurrences edited, make it "leader"
             cls.rep_occs_determines_end = True
@@ -567,7 +567,7 @@ class EventDialogController:
 
     @classmethod
     def _sync_rep_occs_end(cls) -> None:
-        # Function to recalculate repeat end-date or occurences count.
+        # Function to recalculate repeat end-date or occurrences count.
         # Called when widgets that might affect repeat counts are updated.
         if cls.wid_rep_forever.get_active():
             return
@@ -583,7 +583,7 @@ class EventDialogController:
     @classmethod
     def _sync_rep_ends_from_occs(cls, rtype:str) -> None:
         # Function to recalculate & update repeat End Date
-        # from Occurences count.
+        # from Occurrences count.
         stdt = cls.get_date_start()
         if stdt is not None:
             span = (cls.get_repeat_occurrences()-1) * cls.get_repeat_interval()
@@ -619,7 +619,7 @@ class EventDialogController:
 
     @classmethod
     def _sync_occs_from_rep_ends(cls, rtype:str) -> None:
-        # Function to recalculate & update repeat Occurences count
+        # Function to recalculate & update repeat Occurrences count
         # from End Date.
         # Uses dateutil:rrule to do calculation.
         rend = cls.wid_rep_enddt.get_date_or_none()
