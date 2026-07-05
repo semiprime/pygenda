@@ -609,7 +609,11 @@ class EventDialogController:
                 else:
                     delta = relativedelta(months=span)
             elif rtype=='WEEKLY':
-                delta = timedelta(days=span*7)
+                if cls.wid_repeaton_week.get_active() > 0:
+                    cls._sync_rep_end_from_occ_rrule(rtype)
+                    return
+                else:
+                    delta = timedelta(days=span*7)
             elif rtype=='DAILY':
                 delta = timedelta(days=span)
             elif rtype=='HOURLY':
@@ -669,16 +673,15 @@ class EventDialogController:
             # !! Don't know how to sync
             print('Warning: Sync for {} not implemented'.format(rtype), file=stderr)
             return None
+        bymt = None
+        bymtdy = None
+        bywkdy = None
         if rtype=='YEARLY':
             bymt,bywkdy = cls._get_yearly_bymonth_byweekday()
-            bymtdy = None
         elif rtype=='MONTHLY':
             bymtdy,bywkdy = cls._get_monthly_bymonthday_byweekday()
-            bymt = None
-        else:
-            bymt = None
-            bymtdy = None
-            bywkdy = None
+        elif rtype=='WEEKLY':
+            bywkdy = cls._get_weekly_byweekday()
         interv = cls.get_repeat_interval()
         rr = du_rrule.rrule(fr, dtstart=dtst, interval=interv, count=occs, until=rend, bymonth=bymt, bymonthday=bymtdy, byweekday=bywkdy)
         return rr
@@ -719,6 +722,23 @@ class EventDialogController:
                 dayocc = cls._weekday_fromend_in_month(dtst)
                 bywkdy = cls.MAP_RDAY_TO_RRULEDAY[dtst.weekday()](dayocc)
         return bymtdy,bywkdy
+
+
+    @classmethod
+    def _get_weekly_byweekday(cls) -> Union[None,int,set]:
+        # Return byweekday for weekly repeats to pass to rrule
+        repon = cls.wid_repeaton_week.get_active_id()
+        dtst = cls.get_date_start()
+        bywkdy = None # type:Union[None,int,set]
+        if dtst is not None:
+            if repon=='STD':
+                bywkdy = dtst.weekday()
+            elif repon=='MULTIDAY':
+                if dtst.weekday() in cls.WORKDAYS:
+                    bywkdy = cls.WORKDAYS
+                else:
+                    bywkdy = cls._nonwork_days()
+        return bywkdy
 
 
     @staticmethod
