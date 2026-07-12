@@ -198,9 +198,6 @@ Minor
 -----
 (Note: minor bugs can still be irritating!)
 
-* If editable calendars only accept todo items then "New entry" softkey
-  is disabled - even in Todo View.
-
 * Refinements to moving cursor to a repeating event after creating/editing.
   Is "goto nearest" always the best strategy? Should it favour staying
   on the same displayed week/year? What about when entries are over

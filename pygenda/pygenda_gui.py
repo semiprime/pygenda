@@ -348,10 +348,10 @@ class GUI:
         cls.create_todos = len(Calendar.calendar_displaynames_todo_rw())!=0
         if not cls.create_events:
             cls._builder.get_object('menuelt-new-event').set_sensitive(False)
-            cls._builder.get_object('button0').set_sensitive(False)
         if not cls.create_todos:
             cls._builder.get_object('menuelt-new-todo').set_sensitive(False)
         if not cls.create_events and not cls.create_todos:
+            cls._builder.get_object('button0').set_sensitive(False)
             cls._builder.get_object('menuelt-paste').set_sensitive(False)
             cls._builder.get_object('menuelt-import').set_sensitive(False)
 
@@ -834,9 +834,12 @@ class GUI:
     def handler_newentry(cls, *args) -> bool:
         # Callback for "Create new entry" signal (softkey)
         # Create new event or new todo, depending on the View.
-        if cls.views[cls._view_idx].default_entry_is_todo():
+        if cls.create_todos and (not cls.create_events or cls.views[cls._view_idx].default_entry_is_todo()):
             return cls.handler_newtodo(cls, *args)
-        return cls.handler_newevent(cls, *args)
+        if cls.create_events:
+            return cls.handler_newevent(cls, *args)
+        return True # don't propagate event
+
 
     @classmethod
     def handler_import(cls, *args) -> bool:
