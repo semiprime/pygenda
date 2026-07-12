@@ -42,7 +42,7 @@ _ = locale.gettext # type:ignore[attr-defined]
 from .pygenda_config import Config
 from .pygenda_calendar import Calendar
 from .pygenda_widgets import WidgetDate
-from .pygenda_util import guess_date_ord_from_locale,guess_date_sep_from_locale,guess_time_sep_from_locale, guess_date_fmt_text_from_locale, datetime_to_date
+from .pygenda_util import guess_date_ord_from_locale,guess_date_sep_from_locale,guess_time_sep_from_locale, guess_date_fmt_text_from_locale, datetime_to_date, test_anniversary
 from .pygenda_version import __version__
 
 # Dialog classes - imported in _init_dialogs()
@@ -1028,9 +1028,12 @@ class GUI:
             flags=Gtk.DialogFlags.MODAL|Gtk.DialogFlags.DESTROY_WITH_PARENT,
             buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CLOSE, Gtk.STOCK_DELETE, Gtk.ResponseType.APPLY))
         if 'RRULE' in en:
-            # repeating entry - clarify what is being deleted
-            # !! We should really ask if user wants to delete all/single etc.
-            l_template = _('Delete all repeats:\n“{:s}”?')
+            if test_anniversary(en) != 0:
+                l_template = _('Delete anniversary:\n“{:s}”?')
+            else:
+                # repeating entry - clarify what is being deleted
+                # !! We should really ask if user wants to delete all/single etc.
+                l_template = _('Delete all repeats:\n“{:s}”?')
         else:
             l_template = _('Delete entry:\n“{:s}”?')
         lab = Gtk.Label(l_template.format(en['SUMMARY'] if 'SUMMARY' in en else ' ')) # narrow space
