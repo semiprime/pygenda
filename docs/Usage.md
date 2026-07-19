@@ -18,6 +18,10 @@ Usage is intended to be intuitive, but a few things are worth noting:
   number), and comboboxes (choose option from dropdown list) can be
   increased with + or >, and decreased with - or <.
 
+* Drop-down lists in dialogs can be popped-out/in by pressing Space.
+  You can go up/down the list (when not popped-out) with shift+up/down.
+  You can also go to specific entries by typing the first letter.
+
 * The Escape key toggles between the most recent two views.
 
 * In Week and Year views, the space key toggles between Today and
@@ -27,7 +31,7 @@ Usage is intended to be intuitive, but a few things are worth noting:
   for this is that on handheld devices, +/- might be require more than one
   key on their own, so adding another key would make zooming awkward.
   If you wish, you can disable this by setting the global/plus_minus_zoom
-  config setting to False (ctrl+plus/minus will work in either case).
+  config option to False (ctrl+plus/minus will work in either case).
 
 * The Zoom soft-button zooms in; shift+Zoom or ctrl+Zoom zooms out.
 
@@ -43,11 +47,12 @@ Usage is intended to be intuitive, but a few things are worth noting:
   for example in French they are a/m/j/h/m.)
 
 * The icons in Year View are configurable via CSS. The default CSS
-  shows a star for yearly events, a purple circle for monthly and weekly
-  events, a yellow disc for other events, and a green "T" for Todos.
-  Writing this CSS can be a bit fiddly, so a script, make_css_yearicons.py,
-  is provided in the tools directory that generates the current icon
-  CSS, and which can be modified to produce customised CSS.
+  shows a star for yearly events and anniversaries, a purple circle
+  for monthly and weekly events, a yellow disc for other events, and a
+  green "T" for Todos.  Writing this CSS can be a bit fiddly, so a
+  script, make_css_yearicons.py, is provided in the tools directory
+  that generates the current icon CSS, and which can be modified to
+  produce customised CSS.
 
 * Hint: To convert To-dos into Events, or vice-versa, cut & paste them.
 
