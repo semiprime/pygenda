@@ -52,6 +52,7 @@ class CalendarConnector:
     displayname = None # type:str
     displayclass = None # type:str
     flags = 0
+    uid = ""
 
     READONLY = 1
     TYPE_EVENT = 2
@@ -142,6 +143,11 @@ class Calendar:
             conn = CTMAP[caltype](sect, flags)
             if conn.cal.errors:
                 print('Warning: Non-conformant ical data, '+sect, file=stderr)
+            # Check connector UID does not already exist
+            for existing in cls.calConnectors:
+                if existing.uid == conn.uid:
+                    print('Error: Calendar with UID "{:s}" already exists'.format(conn.uid), file=stderr)
+                    exit(-1)
 
             # Set display name (might already be set by constructor)
             dn = Config.get(sect, 'display_name')
@@ -1154,6 +1160,7 @@ class CalendarConnectorICalFile(CalendarConnector):
             self.cal.add('PRODID', '-//Semiprime//Pygenda//EN')
             self.cal.add('VERSION', '2.0')
         self._backup_saved_time = float('-inf') # so first change creates backup
+        self.uid = ':'.join(('icalfile',str(filename)))
 
 
     def _save_file(self) -> None:
@@ -1261,6 +1268,7 @@ class CalendarConnectorCalDAV(CalendarConnector):
                 vtodo = td.icalendar_instance.walk('VTODO')[0]
                 vtodo.__conn_entry = td # Sneakily add td, for rapid access
                 self.cal.add_component(vtodo)
+        self.uid = ':'.join(('CalDav',url,self.calendar.name))
 
 
     def add_entry(self, entry:Union[iEvent,iTodo]) -> Union[iEvent,iTodo]:
@@ -1372,6 +1380,7 @@ class CalendarConnectorEvolution(CalendarConnector):
         for comp in comps:
             ical_comp = iCalendar.from_ical(comp.as_ical_string())
             self.cal.add_component(ical_comp)
+        self.uid = ':'.join(('Evolution',uid,'e' if self.stores_events() else 't'))
 
 
     def add_entry(self, entry:Union[iEvent,iTodo]) -> Union[iEvent,iTodo]:

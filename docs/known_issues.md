@@ -185,9 +185,10 @@ Medium
 * There's no portrait mode. This would be particularly useful on "transformer"
   phones like the Astro Slide.
 
-* If a single instance of Pygenda opens one iCal file twice (e.g. once for
-  events, once for todos) there is potential for data loss when saving.
-  (This can also happen if different programs open the same iCal file.)
+* If two instances of Pygenda open one iCal file, there is potential
+  for data loss when saving. (There is some protection (UID) against
+  one instance of Pygenda opening the same file twice, but this can
+  be circumvented.)
   Not sure about the best way to handle this situation. Might be solved
   if Pygenda can detect changes in the file and re-read it.
 
