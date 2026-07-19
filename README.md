@@ -184,6 +184,16 @@ Contributing
 ------------
 See: [Contributing.md](docs/Contributing.md)
 
+GenAI
+-----
+I (Matt Lewis, currently the only person to contribute any code) have
+not used any Generative AI/LLMs in writing, designing, reviewing or
+testing Pygenda.
+
+Other people have contributed to translations, and by testing and
+giving feedback. I am not aware of any other contributors using
+GenAI/LLMs.
+
 Alternatives
 ------------
 If you want to compare the "competition", the Gemian people also have
