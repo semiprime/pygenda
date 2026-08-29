@@ -87,7 +87,7 @@ class CalendarConnector:
         print('Warning: Update entry not implemented', file=stderr)
 
     def delete_entry(self, entry:Union[iEvent,iTodo]) -> None:
-        # Delete entry component to the calendar data and remove from store.
+        # Delete entry component from the calendar data and remove from store.
         print('Warning: Delete entry not implemented', file=stderr)
 
 
@@ -1208,7 +1208,7 @@ class CalendarConnectorICalFile(CalendarConnector):
 
 
     def delete_entry(self, entry:Union[iEvent,iTodo]) -> None:
-        # Delete entry component to the file data and write file.
+        # Delete entry component from the file data and write file.
         self.cal.subcomponents.remove(entry)
         self._save_file()
 
@@ -1825,7 +1825,7 @@ class RepeatIter_simpledelta:
         return self
 
     def __next__(self) -> dt_date:
-        # Return date/dattime for next occurrence in range.
+        # Return date/datetime for next occurrence in range.
         # Excluded dates are taken into account.
         # Raises StopIteration at end of occurrence list.
         if self.dt is None or dt_lte(self.rinfo.stop_exc,self.dt):
