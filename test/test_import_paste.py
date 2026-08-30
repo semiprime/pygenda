@@ -213,10 +213,10 @@ class TestImportPaste(unittest.TestCase):
         self._do_import(ev)
 
         # Test imported entry
-        l = Calendar.occurrence_list(date(2020,1,1), date(2021,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_ST)
-        imported = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(2020,1,1), date(2021,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_ST)
+        imported = occs[0].en
         self.check_stamps(ev, imported)
         self.assertEqual(imported['SUMMARY'], SHORT_DESC)
         self.assertEqual(imported['DTSTART'].dt, DT_ST)
@@ -237,10 +237,10 @@ class TestImportPaste(unittest.TestCase):
         self._do_import(ev)
 
         # Test imported entry
-        l = Calendar.occurrence_list(date(2021,1,1), date(2022,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_ST)
-        imported = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(2021,1,1), date(2022,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_ST)
+        imported = occs[0].en
         self.check_stamps(ev, imported)
         self.assertEqual(imported['SUMMARY'], SHORT_DESC)
         self.assertEqual(imported['DTSTART'].dt, DT_ST)
@@ -262,10 +262,10 @@ class TestImportPaste(unittest.TestCase):
         self._do_import(ev)
 
         # Test imported entry
-        l = Calendar.occurrence_list(date(2021,1,1), date(2022,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_ST)
-        imported = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(2021,1,1), date(2022,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_ST)
+        imported = occs[0].en
         self.check_stamps(ev, imported)
         self.assertEqual(imported['SUMMARY'], SHORT_DESC)
         self.assertEqual(imported['DTSTART'].dt, DT_ST)
@@ -289,10 +289,10 @@ class TestImportPaste(unittest.TestCase):
         self._do_import(ev)
 
         # Test imported entry
-        l = Calendar.occurrence_list(date(1981,1,1), date(1982,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_ST)
-        imported = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(1981,1,1), date(1982,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_ST)
+        imported = occs[0].en
         self.check_stamps(ev, imported)
         self.assertEqual(imported['SUMMARY'], SHORT_DESC)
         self.assertEqual(imported['DTSTART'].dt, DT_ST)
@@ -317,10 +317,10 @@ class TestImportPaste(unittest.TestCase):
         self._do_import(ev)
 
         # Test imported entry
-        l = Calendar.occurrence_list(date(2023,1,1), date(2024,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_ST)
-        imported = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(2023,1,1), date(2024,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_ST)
+        imported = occs[0].en
         self.check_stamps(ev, imported)
         self.assertEqual(imported['SUMMARY'], SHORT_DESC)
         self.assertEqual(imported['DTSTART'].dt, DT_ST)
@@ -346,10 +346,10 @@ class TestImportPaste(unittest.TestCase):
         self._do_import(ev)
 
         # Test imported entry
-        l = Calendar.occurrence_list(date(2024,1,1), date(2025,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_ST)
-        imported = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(2024,1,1), date(2025,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_ST)
+        imported = occs[0].en
         self.check_stamps(ev, imported)
         self.assertEqual(imported['SUMMARY'], SHORT_DESC)
         self.assertEqual(imported['DTSTART'].dt, DT_ST)
@@ -375,10 +375,10 @@ class TestImportPaste(unittest.TestCase):
         self._do_import(ev)
 
         # Test imported entry
-        l = Calendar.occurrence_list(date(2014,1,1), date(2015,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_ST)
-        imported = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(2014,1,1), date(2015,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_ST)
+        imported = occs[0].en
         self.check_stamps(ev, imported)
         self.assertEqual(imported['SUMMARY'], SHORT_DESC)
         self.assertEqual(imported['DTSTART'].dt, DT_ST)
@@ -405,10 +405,10 @@ and non-ascii characters like ë & ☉
         self._do_import(ev)
 
         # Test imported entry
-        l = Calendar.occurrence_list(date(2023,1,1), date(2024,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_ST)
-        imported = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(2023,1,1), date(2024,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_ST)
+        imported = occs[0].en
         self.check_stamps(ev, imported)
         self.assertEqual(imported['SUMMARY'], SHORT_DESC)
         self.assertEqual(imported['DTSTART'].dt, DT_ST)
@@ -432,10 +432,10 @@ and non-ascii characters like ë & ☉
         self._do_import(ev)
 
         # Test imported entry
-        l = Calendar.occurrence_list(date(2026,1,1), date(2027,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_ST)
-        imported = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(2026,1,1), date(2027,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_ST)
+        imported = occs[0].en
         self.check_stamps(ev, imported)
         self.assertEqual(imported['SUMMARY'], SHORT_DESC)
         self.assertEqual(imported['DTSTART'].dt, DT_ST)
@@ -458,26 +458,26 @@ and non-ascii characters like ë & ☉
         self._do_import(ev)
 
         # Test imported entry
-        l = Calendar.occurrence_list(date(1980,1,1), date(1989,1,1))
-        self.assertEqual(len(l), 0)
-        l = Calendar.occurrence_list(date(1989,1,1), date(2010,1,1))
-        self.assertEqual(len(l), 21)
-        l = Calendar.occurrence_list(date(1989,1,1), date(1990,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_ST)
-        imported = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(1980,1,1), date(1989,1,1))
+        self.assertEqual(len(occs), 0)
+        occs = Calendar.occurrence_list(date(1989,1,1), date(2010,1,1))
+        self.assertEqual(len(occs), 21)
+        occs = Calendar.occurrence_list(date(1989,1,1), date(1990,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_ST)
+        imported = occs[0].en
         self.check_stamps(ev, imported)
         self.assertEqual(imported['SUMMARY'], SHORT_DESC)
         self.assertEqual(imported['DTSTART'].dt, DT_ST)
         self.assertEqual(imported['RRULE']['FREQ'][0], 'YEARLY')
 
-        l = Calendar.occurrence_list(date(1991,1,1), date(1992,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_ST.replace(year=1991))
+        occs = Calendar.occurrence_list(date(1991,1,1), date(1992,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_ST.replace(year=1991))
 
-        l = Calendar.occurrence_list(date(2005,1,1), date(2006,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_ST.replace(year=2005))
+        occs = Calendar.occurrence_list(date(2005,1,1), date(2006,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_ST.replace(year=2005))
 
         # Test version saved to disk is also OK
         ev_saved = self._get_saved_version(imported)
@@ -501,10 +501,10 @@ and non-ascii characters like ë & ☉
         self._do_import(ev)
 
         # Test imported entry
-        l = Calendar.occurrence_list(date(2025,1,1), date(2026,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_ST)
-        imported = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(2025,1,1), date(2026,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_ST)
+        imported = occs[0].en
         self.check_stamps(ev, imported)
         self.assertEqual(imported['SUMMARY'], SHORT_DESC)
         self.assertEqual(imported['DTSTART'].dt, DT_ST)
@@ -643,14 +643,14 @@ and non-ascii characters like ë & ☉
         self._do_paste_event(ev, DT_TARG)
 
         # Test no entry exists where event was pasted from
-        l = Calendar.occurrence_list(date(2020,1,1), date(2021,1,1))
-        self.assertEqual(len(l), 0)
+        occs = Calendar.occurrence_list(date(2020,1,1), date(2021,1,1))
+        self.assertEqual(len(occs), 0)
 
         # Test pasted entry
-        l = Calendar.occurrence_list(date(2023,1,1), date(2024,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_TARG)
-        pasted = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(2023,1,1), date(2024,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_TARG)
+        pasted = occs[0].en
         self.check_stamps(ev, pasted, new_copy=True)
         self.assertEqual(pasted['SUMMARY'], SHORT_DESC)
         self.assertEqual(pasted['DTSTART'].dt, DT_TARG)
@@ -673,14 +673,14 @@ and non-ascii characters like ë & ☉
         DT_WANT = datetime(2024,1,1,12,35)
 
         # Test no entry exists where event was pasted from
-        l = Calendar.occurrence_list(date(1993,1,1), date(1994,1,1))
-        self.assertEqual(len(l), 0)
+        occs = Calendar.occurrence_list(date(1993,1,1), date(1994,1,1))
+        self.assertEqual(len(occs), 0)
 
         # Test pasted entry
-        l = Calendar.occurrence_list(date(2024,1,1), date(2025,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_WANT)
-        pasted = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(2024,1,1), date(2025,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_WANT)
+        pasted = occs[0].en
         self.check_stamps(ev, pasted, new_copy=True)
         self.assertEqual(pasted['SUMMARY'], SHORT_DESC)
         self.assertEqual(pasted['DTSTART'].dt, DT_WANT)
@@ -705,14 +705,14 @@ and non-ascii characters like ë & ☉
         DT_WANT_END = datetime(2000,1,1,0,30)
 
         # Test no entry exists where event was pasted from
-        l = Calendar.occurrence_list(date(2010,1,1), date(2011,1,1))
-        self.assertEqual(len(l), 0)
+        occs = Calendar.occurrence_list(date(2010,1,1), date(2011,1,1))
+        self.assertEqual(len(occs), 0)
 
         # Test pasted entry
-        l = Calendar.occurrence_list(date(1999,1,1), date(2000,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_WANT_ST)
-        pasted = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(1999,1,1), date(2000,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_WANT_ST)
+        pasted = occs[0].en
         self.check_stamps(ev, pasted, new_copy=True)
         self.assertEqual(pasted['SUMMARY'], SHORT_DESC)
         self.assertEqual(pasted['DTSTART'].dt, DT_WANT_ST)
@@ -738,14 +738,14 @@ and non-ascii characters like ë & ☉
         DT_WANT_END = date(2015,2,5)
 
         # Test no entry exists where event was pasted from
-        l = Calendar.occurrence_list(date(2014,1,1), date(2015,1,1))
-        self.assertEqual(len(l), 0)
+        occs = Calendar.occurrence_list(date(2014,1,1), date(2015,1,1))
+        self.assertEqual(len(occs), 0)
 
         # Test pasted entry
-        l = Calendar.occurrence_list(date(2015,1,1), date(2015,2,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_TARG)
-        pasted = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(2015,1,1), date(2015,2,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_TARG)
+        pasted = occs[0].en
         self.check_stamps(ev, pasted, new_copy=True)
         self.assertEqual(pasted['SUMMARY'], SHORT_DESC)
         self.assertEqual(pasted['DTSTART'].dt, DT_TARG)
@@ -771,10 +771,10 @@ and non-ascii characters like ë & ☉
         self._do_paste_event(ev, DT_TARG)
 
         # Test pasted entry
-        l = Calendar.occurrence_list(DT_TARG, DT_TARG+timedelta(days=1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1].time(), DT_ST.time())
-        pasted = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(DT_TARG, DT_TARG+timedelta(days=1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt.time(), DT_ST.time())
+        pasted = occs[0].en
         self.check_stamps(ev, pasted, new_copy=True)
         self.assertEqual(pasted['SUMMARY'], SHORT_DESC)
         self.assertEqual(pasted['DTSTART'].dt.time(), DT_ST.time())
@@ -785,14 +785,14 @@ and non-ascii characters like ë & ☉
         self._do_paste_event(ev, DT_TARG2)
 
         # Should be two events in the year now
-        l = Calendar.occurrence_list(date(2023,1,1), date(2024,1,1))
-        self.assertEqual(len(l), 2)
+        occs = Calendar.occurrence_list(date(2023,1,1), date(2024,1,1))
+        self.assertEqual(len(occs), 2)
 
         # Test second pasted entry
-        l = Calendar.occurrence_list(DT_TARG2, DT_TARG2+timedelta(days=1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1].time(), DT_ST.time())
-        pasted2 = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(DT_TARG2, DT_TARG2+timedelta(days=1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt.time(), DT_ST.time())
+        pasted2 = occs[0].en
         self.check_stamps(ev, pasted2, new_copy=True)
         self.assertNotEqual(pasted['UID'], pasted2['UID'])
         self.assertEqual(pasted2['SUMMARY'], SHORT_DESC)
@@ -837,10 +837,10 @@ and non-ascii characters like ë & ☉
         self._do_paste_event(ev, DT_TARG)
 
         # Test pasted entry
-        l = Calendar.occurrence_list(DT_TARG, DT_TARG+timedelta(days=1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1].time(), DT_ST.time())
-        pasted = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(DT_TARG, DT_TARG+timedelta(days=1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt.time(), DT_ST.time())
+        pasted = occs[0].en
         self.check_stamps(ev, pasted, new_copy=True)
         self.assertEqual(pasted['SUMMARY'], SHORT_DESC)
         self.assertEqual(pasted['DTSTART'].dt.time(), DT_ST.time())
@@ -880,14 +880,14 @@ and non-ascii characters like ë & ☉
         self._do_paste_event(ev, DT_TARG)
 
         # Test no entry exists where event was pasted from
-        l = Calendar.occurrence_list(date(2025,10,1), date(2025,11,1))
-        self.assertEqual(len(l), 0)
+        occs = Calendar.occurrence_list(date(2025,10,1), date(2025,11,1))
+        self.assertEqual(len(occs), 0)
 
         # Test pasted entry
-        l = Calendar.occurrence_list(date(2025,11,1), date(2025,12,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_TARG)
-        pasted = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(2025,11,1), date(2025,12,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_TARG)
+        pasted = occs[0].en
         self.check_stamps(ev, pasted, new_copy=True)
         self.assertEqual(pasted['SUMMARY'], SHORT_DESC)
         self.assertEqual(pasted['DTSTART'].dt, DT_TARG)
@@ -916,14 +916,14 @@ and non-ascii characters like é & â
         self._do_paste_event(ev, DT_TARG)
 
         # Test no entry exists where event was pasted from
-        l = Calendar.occurrence_list(date(2032,1,1), date(2033,1,1))
-        self.assertEqual(len(l), 0)
+        occs = Calendar.occurrence_list(date(2032,1,1), date(2033,1,1))
+        self.assertEqual(len(occs), 0)
 
         # Test pasted entry
-        l = Calendar.occurrence_list(date(2124,1,1), date(2125,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_WANT_ST)
-        pasted = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(2124,1,1), date(2125,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_WANT_ST)
+        pasted = occs[0].en
         self.check_stamps(ev, pasted, new_copy=True)
         self.assertEqual(pasted['SUMMARY'], SHORT_DESC)
         self.assertEqual(pasted['DTSTART'].dt, DT_WANT_ST)
@@ -948,14 +948,14 @@ and non-ascii characters like é & â
         self._do_paste_event(ev, DT_TARG)
 
         # Test no entry exists where event was pasted from
-        l = Calendar.occurrence_list(date(2026,1,1), date(2026,1,10))
-        self.assertEqual(len(l), 0)
+        occs = Calendar.occurrence_list(date(2026,1,1), date(2026,1,10))
+        self.assertEqual(len(occs), 0)
 
         # Test pasted entry
-        l = Calendar.occurrence_list(date(2026,1,1), date(2027,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_TARG)
-        pasted = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(2026,1,1), date(2027,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_TARG)
+        pasted = occs[0].en
         self.check_stamps(ev, pasted, new_copy=True)
         self.assertEqual(pasted['SUMMARY'], SHORT_DESC)
         self.assertEqual(pasted['DTSTART'].dt, DT_TARG)
@@ -983,15 +983,15 @@ and non-ascii characters like é & â
         self._do_paste_event(ev, DT_TARG)
 
         # Test no entry exists where event was pasted from
-        l = Calendar.occurrence_list(date(2030,1,1), date(2030,7,22))
-        self.assertEqual(len(l), 0)
+        occs = Calendar.occurrence_list(date(2030,1,1), date(2030,7,22))
+        self.assertEqual(len(occs), 0)
 
         # Test pasted entry
-        l = Calendar.occurrence_list(date(2030,1,1), date(2031,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1].date(), DT_TARG)
-        self.assertEqual(l[0][1].time(), DT_ST.time())
-        pasted = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(2030,1,1), date(2031,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt.date(), DT_TARG)
+        self.assertEqual(occs[0].dt.time(), DT_ST.time())
+        pasted = occs[0].en
         self.check_stamps(ev, pasted, new_copy=True)
         self.assertEqual(pasted['SUMMARY'], SHORT_DESC)
         self.assertEqual(pasted['DTSTART'].dt.date(), DT_TARG)
@@ -1030,15 +1030,15 @@ and non-ascii characters like é & â
         self._do_paste_event(ev, DT_TARG)
 
         # Test no entry exists where event was pasted from
-        l = Calendar.occurrence_list(date(2030,7,21), date(2031,1,1))
-        self.assertEqual(len(l), 0)
+        occs = Calendar.occurrence_list(date(2030,7,21), date(2031,1,1))
+        self.assertEqual(len(occs), 0)
 
         # Test pasted entry
-        l = Calendar.occurrence_list(date(2030,1,1), date(2031,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1].date(), DT_TARG)
-        self.assertEqual(l[0][1].time(), DT_ST.time())
-        pasted = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(2030,1,1), date(2031,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt.date(), DT_TARG)
+        self.assertEqual(occs[0].dt.time(), DT_ST.time())
+        pasted = occs[0].en
         self.check_stamps(ev, pasted, new_copy=True)
         self.assertEqual(pasted['SUMMARY'], SHORT_DESC)
         self.assertEqual(pasted['DTSTART'].dt.date(), DT_TARG)
@@ -1203,10 +1203,10 @@ This description has some newlines and unicode emoji.
         self._do_paste_event(td, DT_TARG)
 
         # Test pasted entry
-        l = Calendar.occurrence_list(date(2029,1,1), date(2030,1,1))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][1], DT_TARG)
-        pasted = l[0][0] # occurrences, so entry/datetime pair
+        occs = Calendar.occurrence_list(date(2029,1,1), date(2030,1,1))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].dt, DT_TARG)
+        pasted = occs[0].en
         self.check_stamps(td, pasted, new_copy=True, same_type=False)
         self.assertEqual(pasted['SUMMARY'], SHORT_DESC)
         self.assertEqual(pasted['DTSTART'].dt, DT_TARG)

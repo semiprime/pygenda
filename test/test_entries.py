@@ -113,13 +113,13 @@ class TestEntries(unittest.TestCase):
         ev = Calendar.new_entry(EntryInfo(desc='event 02', start_dt=date(1991,11,18)))
         self.check_entry_timestamps_new(ev)
         self.check_entry_basic_properties(ev, 'event 02', date(1991,11,18))
-        l = Calendar.occurrence_list(date(1991,11,18), date(1991,11,19))
-        self.assertEqual(len(l), 1)
-        self.assertEqual(l[0][0], ev) # l is list of occurrences (ev/dt pairs)
+        occs = Calendar.occurrence_list(date(1991,11,18), date(1991,11,19))
+        self.assertEqual(len(occs), 1)
+        self.assertEqual(occs[0].en, ev)
 
         Calendar.delete_entry(ev)
-        l = Calendar.occurrence_list(date(1991,11,18), date(1991,11,19))
-        self.assertEqual(len(l), 0)
+        occs = Calendar.occurrence_list(date(1991,11,18), date(1991,11,19))
+        self.assertEqual(len(occs), 0)
 
 
     #@unittest.skip
@@ -477,11 +477,11 @@ class TestEntries(unittest.TestCase):
 
         if dtst is not None:
             # Get occurence list for one day and check en is in it (once only)
-            l = Calendar.occurrence_list(dtst, dtst+timedelta(days=1))
-            self.assertEqual(len(l), expected_count)
+            occs = Calendar.occurrence_list(dtst, dtst+timedelta(days=1))
+            self.assertEqual(len(occs), expected_count)
             found_en = 0
-            for e in l:
-                if e[0]==en:
+            for o in occs:
+                if o.en==en:
                     found_en += 1
             self.assertEqual(found_en, 1)
 
