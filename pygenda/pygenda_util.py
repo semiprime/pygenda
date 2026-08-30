@@ -21,7 +21,7 @@
 
 
 from calendar import day_abbr,month_abbr
-from icalendar import cal as iCal
+from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
 from icalendar.prop import vBoolean
 from datetime import date, time, datetime, timedelta, tzinfo, timezone
 from dateutil import tz as du_tz
@@ -30,6 +30,14 @@ import locale
 from typing import Tuple, Any, Union, Optional
 
 from .pygenda_config import Config
+
+
+# Class for an "occurrence": an event/date pair
+# Useful when handling repeating entries, as it specifies which occurrence
+class Occurrence:
+    def __init__(self, entry:Union[iEvent,iTodo], datetime:date):
+        self.en = entry
+        self.dt = datetime
 
 
 def datetime_to_date(dt:date) -> date:
@@ -82,17 +90,17 @@ def date_to_datetime(dt:date, tz:Union[tzinfo,bool]=None) -> datetime:
     return dt_ret
 
 
-def start_end_dts_occ(occ:Tuple[iCal.Event,date]) -> Tuple[date,date]:
-    # Return start & end time of an occurrence (an (event,date[time]) pair)
-    start = occ[1]
-    if 'DTEND' in occ[0]:
-        root_dt = occ[0]['DTSTART'].dt
+def start_end_dts_occ(occ:Occurrence) -> Tuple[date,date]:
+    # Return start & end date(time) of an Occurrence object
+    start = occ.dt
+    if 'DTEND' in occ.en:
+        root_dt = occ.en['DTSTART'].dt
         if isinstance(start, datetime):
             root_dt = date_to_datetime(root_dt,start.tzinfo)
         d = start - root_dt
-        end = occ[0]['DTEND'].dt + d
-    elif 'DURATION' in occ[0]:
-        end = start + occ[0]['DURATION'].dt
+        end = occ.en['DTEND'].dt + d
+    elif 'DURATION' in occ.en:
+        end = start + occ.en['DURATION'].dt
     else:
         end = None
     return start,end

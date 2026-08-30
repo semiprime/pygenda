@@ -26,7 +26,7 @@ import calendar
 from datetime import date as dt_date, datetime as dt_datetime, timedelta
 from locale import gettext as _ # type:ignore[attr-defined]
 from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
-from typing import Tuple, Union
+from typing import Tuple, Union, List
 
 # pygenda components
 from .pygenda_view import View, View_DayUnit_Base
@@ -34,7 +34,7 @@ from .pygenda_gui import GUI
 from .pygenda_dialog_event import EventDialogController
 from .pygenda_config import Config
 from .pygenda_calendar import Calendar
-from .pygenda_util import start_end_dts_occ, test_anniversary
+from .pygenda_util import Occurrence, start_end_dts_occ, test_anniversary
 
 
 # Singleton class for Year View
@@ -54,7 +54,7 @@ class View_Year(View_DayUnit_Base):
     _target_col = None
     _year_viewed = -1 # Indicates next redraw will draw year
     _last_cursor = None
-    _visible_occurrences = None # type:list
+    _visible_occurrences = None # type:List[Occurrence]
     _show_datecontent_pending = False
     _date_content_count = 0
     _scroll_to_cursor_required = False
@@ -327,7 +327,7 @@ class View_Year(View_DayUnit_Base):
         cls._visible_occurrences = Calendar.occurrence_list(dt, dt+timedelta(days=1))
         r = 0
         for occ in cls._visible_occurrences:
-            en = occ[0]
+            en = occ.en
             if not cls.show_todos and isinstance(en, iTodo):
                 continue
             occ_dt_sta,occ_dt_end = start_end_dts_occ(occ)
@@ -433,7 +433,7 @@ class View_Year(View_DayUnit_Base):
         # Called from cursor_edit_entry() & delete_request().
         if cls._date_content_count == 0:
             return None
-        return cls._visible_occurrences[View._cursor_idx_in_date][0]
+        return cls._visible_occurrences[View._cursor_idx_in_date].en
 
 
     @staticmethod
@@ -479,16 +479,16 @@ class View_Year(View_DayUnit_Base):
         date = dt_date(year=yr,month=1,day=1)
         oneday = timedelta(days=1)
         single_list = Calendar.occurrence_list(date, dt_date(year=yr+1,month=1,day=1), include_single=True, include_repeated=False, in_grid=True)
-        occ_dates_single = [cls._local_date(o[1]) for o in single_list if isinstance(o[0],iEvent)]
+        occ_dates_single = [cls._local_date(o.dt) for o in single_list if isinstance(o.en,iEvent)]
         occ_dates_single_iter = iter(occ_dates_single)
         occ_dates_single_next = next(occ_dates_single_iter,None)
         if cls.show_todos:
-            occ_dates_todo = [cls._local_date(o[1]) for o in single_list if isinstance(o[0],iTodo)]
+            occ_dates_todo = [cls._local_date(o.dt) for o in single_list if isinstance(o.en,iTodo)]
             occ_dates_todo_iter = iter(occ_dates_todo)
             occ_dates_todo_next = next(occ_dates_todo_iter,None)
         reps_list = Calendar.occurrence_list(date, dt_date(year=yr+1,month=1,day=1), include_single=False, include_repeated=True, in_grid=True)
         # Now simplify this list to keep the info we need...
-        reps_list = [(cls._rep_id(o[0]),cls._local_date(o[1])) for o in reps_list if 'FREQ' in o[0]['RRULE']]
+        reps_list = [(cls._rep_id(o.en),cls._local_date(o.dt)) for o in reps_list if 'FREQ' in o.en['RRULE']]
         reps_list_iter = iter(reps_list)
         reps_list_next_fr,reps_list_next_dt = next(reps_list_iter, (None,None))
 

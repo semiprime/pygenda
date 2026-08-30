@@ -41,7 +41,7 @@ from string import punctuation as str_punctuation
 
 # Pygenda components
 from .pygenda_config import Config
-from .pygenda_util import dt_lt, dt_lte, datetime_to_date, date_to_datetime, get_local_tz, dt_add_delta, utc_now_stamp
+from .pygenda_util import Occurrence, dt_lt, dt_lte, datetime_to_date, date_to_datetime, get_local_tz, dt_add_delta, utc_now_stamp
 from .pygenda_entryinfo import EntryInfo
 
 
@@ -1003,11 +1003,9 @@ class Calendar:
 
 
     @classmethod
-    def occurrence_list(cls, start:dt_date, stop:dt_date, include_single:bool=True, include_repeated:bool=True, in_grid:bool=False) -> list:
-        # Return list of occurrences in range start <= . < stop.
+    def occurrence_list(cls, start:dt_date, stop:dt_date, include_single:bool=True, include_repeated:bool=True, in_grid:bool=False) -> List[Occurrence]:
+        # Return list of Occurrence objects in range start <= . < stop.
         # Designed to be called by View classes to get events in range.
-        # An "occurrence" is a pair: (event,datetime)
-        #  for repeating entries, datetime may not be the DTSTART entry
         # Needs to also return events that last/end over range??
         ret_list = []
         if include_single:
@@ -1029,7 +1027,7 @@ class Calendar:
                 if dt_lte(stop, e_st):
                     break
                 if not in_grid or cls.calConnectors[e._cal_idx].show_in_grid():
-                    ret_list.append((e,e_st))
+                    ret_list.append(Occurrence(e,e_st))
                 ii += 1
         if include_repeated:
             cls._update_entry_rep_list()
@@ -1040,7 +1038,7 @@ class Calendar:
 
 
     @classmethod
-    def ongoing_list(cls, dt:dt_date, include_single:bool=True, include_repeated:bool=True) -> list:
+    def ongoing_list(cls, dt:dt_date, include_single:bool=True, include_repeated:bool=True) -> List[Occurrence]:
         # Return list of events that are ongoing at datetime 'dt'
         ret_list = []
         if include_single:
@@ -1055,7 +1053,7 @@ class Calendar:
                 else: # 'DURATION' in e
                     e_end = dt_add_delta(e_st, e['DURATION'].dt)
                 if dt_lt(dt, e_end):
-                    ret_list.append((e,e_st))
+                    ret_list.append(Occurrence(e,e_st))
         return ret_list
 
 
@@ -1892,8 +1890,8 @@ class RepeatIter_byweekdayinmonth(RepeatIter_simpledelta):
         return ret
 
 
-def merge_repeating_entries_sort(target:list, ev:iEvent, start:dt_date, stop:dt_date) -> None:
-    # Given a sorted list of occurrences, 'target', and a single
+def merge_repeating_entries_sort(target:List[Occurrence], ev:iEvent, start:dt_date, stop:dt_date) -> None:
+    # Given a sorted list of Occurrences, 'target', and a single
     # repeating event 'ev', splice the repeats of ev from 'start'
     # to 'stop' into 'target', keeping it sorted.
     # !! A potential spot for optimisation?
@@ -1909,13 +1907,13 @@ def merge_repeating_entries_sort(target:list, ev:iEvent, start:dt_date, stop:dt_
     end_i = len(target)
     end_j = len(ev_reps)
     while i<end_i and j<end_j:
-        if dt_lt(ev_reps[j],target[i][1]):
-            target.insert(i,(ev,ev_reps[j]))
+        if dt_lt(ev_reps[j],target[i].dt):
+            target.insert(i,Occurrence(ev,ev_reps[j]))
             j += 1
             end_i +=1
         i += 1
     if j<end_j:
-        target.extend([(ev,dt) for dt in ev_reps[j:]])
+        target.extend([Occurrence(ev,dt) for dt in ev_reps[j:]])
 
 
 def first_occ(rrstr:str, dtstart:dt_date) -> dt_date:

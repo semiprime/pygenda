@@ -3,7 +3,7 @@
 # pygenda_view_week.py
 # Provides the "Week View" for Pygenda.
 #
-# Copyright (C) 2022-2025 Matthew Lewis
+# Copyright (C) 2022-2026 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -283,7 +283,7 @@ class View_Week(View_DayUnit_Base):
                 while j < len(ongoing):
                     occo = ongoing[j]
                     occ_dt_sta,occ_dt_end = start_end_dts_occ(occo)
-                    cls._add_day_entry_row(occo[0], occ_dt_sta, occ_dt_end, i, show_loc=False, is_ongoing=True)
+                    cls._add_day_entry_row(occo.en, occ_dt_sta, occ_dt_end, i, show_loc=False, is_ongoing=True)
                     # If this occurrence ends here, remove it from 'ongoing'
                     if dt_lte(occ_dt_end, rollover_dt):
                         ongoing.pop(j)
@@ -299,10 +299,10 @@ class View_Week(View_DayUnit_Base):
                         # into next day so break this loop
                         break
                     # First, see if we've hit the cursor target entry
-                    if cls._target_entry is not None and cls._target_entry is occ[0] and dt==View._cursor_date:
+                    if cls._target_entry is not None and cls._target_entry is occ.en and dt==View._cursor_date:
                         View._cursor_idx_in_date = cls._day_ent_count[i]
                         cls._target_entry = None
-                    cls._add_day_entry_row(occ[0], occ_dt_sta, occ_dt_end, i, cls._show_location)
+                    cls._add_day_entry_row(occ.en, occ_dt_sta, occ_dt_end, i, cls._show_location)
                     if cls._show_ongoing:
                       # Add to 'ongoing' list if occurrence goes into next day
                         if occ_dt_end and dt_lt(rollover_dt, occ_dt_end):
