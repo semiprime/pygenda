@@ -3,7 +3,7 @@
 # pygenda_util.py
 # Miscellaneous utility functions for Pygenda.
 #
-# Copyright (C) 2022-2025 Matthew Lewis
+# Copyright (C) 2022-2026 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -80,19 +80,6 @@ def date_to_datetime(dt:date, tz:Union[tzinfo,bool]=None) -> datetime:
     if tz and dt_ret.tzinfo is None:
         dt_ret = dt_ret.replace(tzinfo=_local_tz if tz is True else tz) # type:ignore[arg-type]
     return dt_ret
-
-
-def start_end_dts_event(event:iCal.Event) -> Tuple[date,date]:
-    # Return start & end time of an event.
-    # End time calculated from duration if needed; is None if no end/duration.
-    start = event['DTSTART'].dt
-    if 'DTEND' in event:
-        end = event['DTEND'].dt
-    elif 'DURATION' in event:
-        end = start + event['DURATION'].dt
-    else:
-        end = None
-    return start,end
 
 
 def start_end_dts_occ(occ:Tuple[iCal.Event,date]) -> Tuple[date,date]:
