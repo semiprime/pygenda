@@ -339,13 +339,13 @@ class View_Year(View_DayUnit_Base):
             elif isinstance(en, iTodo):
                 View.add_todo_styles(row, en)
             # Create entry mark (bullet or time) & add to row
-            mark_lab, sty_class = cls.entry_markerlab_class(en, occ.dt)
+            mark_lab, sty_class = cls.entry_markerlab_class(occ)
             row.add(mark_lab)
             if sty_class is not None:
                 ctx.add_class(sty_class)
             # Create entry content label & add to row
             occ_dt_end = end_dt_occ(occ)
-            cont_label = cls.entry_text_label(en, occ.dt, occ_dt_end, add_location=cls._show_location, loc_max_chars=cls._loc_max_chars)
+            cont_label = cls.entry_text_label(occ, occ_dt_end, add_location=cls._show_location, loc_max_chars=cls._loc_max_chars)
             cont_label.set_hexpand(True) # Also sets hexpand_set to True
             ctx = cont_label.get_style_context()
             ctx.add_class('itemtext')

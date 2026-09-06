@@ -32,7 +32,7 @@ from typing import Optional, Union, Tuple
 from .pygenda_gui import GUI
 from .pygenda_config import Config
 from .pygenda_dialog_event import EventDialogController
-from .pygenda_util import datetime_to_time, datetime_to_date, date_to_datetime, format_time, format_compact_date, format_compact_time, format_compact_datetime, dt_lte, get_local_tz, tzinfo_display_name, test_anniversary
+from .pygenda_util import Occurrence, datetime_to_time, datetime_to_date, date_to_datetime, format_time, format_compact_date, format_compact_time, format_compact_datetime, dt_lte, get_local_tz, tzinfo_display_name, test_anniversary
 from .pygenda_calendar import Calendar, previous_next_occurrence
 from .pygenda_entryinfo import EntryInfo
 
@@ -203,7 +203,7 @@ class View:
         }
 
     @staticmethod
-    def entry_text_label(en:Union[iCal.Event,iCal.Todo], dt_st:dt_date, dt_end:dt_date, add_location:bool=False, loc_max_chars:int=0) -> Gtk.Label:
+    def entry_text_label(occ:Occurrence, dt_end:dt_date, add_location:bool=False, loc_max_chars:int=0) -> Gtk.Label:
         # Returns a GtkLabel with entry summary + icons as content.
         # Used by Week & Year views to display entries.
         lab = Gtk.Label()
@@ -211,12 +211,12 @@ class View:
         lab.set_line_wrap_mode(PWrapMode.WORD_CHAR)
         lab.set_xalign(0)
         lab.set_yalign(0)
-        endtm = View.entry_endtime(dt_st,dt_end,True)
-        icons = View.entry_icons(en,True)
+        endtm = View.entry_endtime(occ.dt, dt_end, True)
+        icons = View.entry_icons(occ.en, True)
 
-        d_txt = en['SUMMARY'] if 'SUMMARY' in en else ''
-        if add_location and 'LOCATION' in en:
-            loc = en['LOCATION']
+        d_txt = occ.en['SUMMARY'] if 'SUMMARY' in occ.en else ''
+        if add_location and 'LOCATION' in occ.en:
+            loc = occ.en['LOCATION']
             if loc_max_chars>0 and len(loc)>loc_max_chars:
                 loc = loc[:loc_max_chars] + '…'
             l_txt = ''.join((' (@',loc,')'))
@@ -224,17 +224,17 @@ class View:
             l_txt = ''
 
         z_txt = ''
-        if isinstance(dt_st,dt_datetime) and dt_st.tzinfo is not None and dt_st.utcoffset()!=dt_st.astimezone(get_local_tz()).utcoffset():
-            z_nm = tzinfo_display_name(en['DTSTART'])
+        if isinstance(occ.dt, dt_datetime) and occ.dt.tzinfo is not None and occ.dt.utcoffset()!=occ.dt.astimezone(get_local_tz()).utcoffset():
+            z_nm = tzinfo_display_name(occ.en['DTSTART'])
             if z_nm:
-                z_tm = format_time(dt_st)
+                z_tm = format_time(occ.dt)
                 z_txt = ''.join(('(',z_tm,' ',z_nm,') '))
 
         anniv_txt = ''
-        if 'X-PYGENDA-ANNIVERSARY-SHOW' in en and test_anniversary(en)!=0:
-            show = en['X-PYGENDA-ANNIVERSARY-SHOW'].upper()
-            styr = en['DTSTART'].dt.year
-            count = dt_st.year-styr
+        if 'X-PYGENDA-ANNIVERSARY-SHOW' in occ.en and test_anniversary(occ.en)!=0:
+            show = occ.en['X-PYGENDA-ANNIVERSARY-SHOW'].upper()
+            styr = occ.en['DTSTART'].dt.year
+            count = occ.dt.year-styr
             try:
                 if count==1:
                     anniv_txt = View.ANNIV_FMT_1YR[show].format(st=styr)
@@ -500,7 +500,7 @@ class View_DayUnit_Base(View):
     _BULLET_ANNIVERSARY = '🕯︎' # candle
 
     @classmethod
-    def entry_markerlab_class(cls, en:Union[iCal.Event,iCal.Todo], dt_st:dt_date, is_ongoing:bool=False) -> Tuple[Gtk.Label,Optional[str]]:
+    def entry_markerlab_class(cls, occ:Occurrence, is_ongoing:bool=False) -> Tuple[Gtk.Label,Optional[str]]:
         # Returns marker label (bullet or time) and style class for entry.
         # Used by Week and Year views when displaying entries.
         lab = Gtk.Label()
@@ -509,17 +509,17 @@ class View_DayUnit_Base(View):
         if is_ongoing:
             mark = cls._BULLET_ONGOING
             cl = 'multiday_ongoing' # type:Optional[str]
-        elif test_anniversary(en) != 0:
+        elif test_anniversary(occ.en) != 0:
             mark = cls._BULLET_ANNIVERSARY
             cl = 'anniversary'
-        elif datetime_to_time(dt_st)!=False:
-            mark = format_time(dt_st, True)
+        elif datetime_to_time(occ.dt)!=False:
+            mark = format_time(occ.dt, True)
             cl = 'timed'
-        elif type(en) is iCal.Todo:
+        elif type(occ.en) is iCal.Todo:
             mark = cls._BULLET_TODO
             cl = 'todo'
-        elif 'DTEND' in en:
-            if dt_lte(en['DTEND'].dt, en['DTSTART'].dt+timedelta(days=1)):
+        elif 'DTEND' in occ.en:
+            if dt_lte(occ.en['DTEND'].dt, occ.en['DTSTART'].dt+timedelta(days=1)):
                 mark = cls._BULLET_ALLDAY
                 cl = 'allday'
             else:

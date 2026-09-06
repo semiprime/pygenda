@@ -32,7 +32,7 @@ from typing import Optional, Union
 from .pygenda_view import View, View_DayUnit_Base
 from .pygenda_calendar import Calendar
 from .pygenda_config import Config
-from .pygenda_util import start_of_week, day_in_week, month_abbr, end_dt_occ, dt_lt, dt_lte
+from .pygenda_util import Occurrence, start_of_week, day_in_week, month_abbr, end_dt_occ, dt_lt, dt_lte
 from .pygenda_gui import GUI
 from .pygenda_dialog_event import EventDialogController
 
@@ -283,7 +283,7 @@ class View_Week(View_DayUnit_Base):
                 while j < len(ongoing):
                     occo = ongoing[j]
                     occ_dt_end = end_dt_occ(occo)
-                    cls._add_day_entry_row(occo.en, occo.dt, occ_dt_end, i, show_loc=False, is_ongoing=True)
+                    cls._add_day_entry_row(occo, occ_dt_end, i, show_loc=False, is_ongoing=True)
                     # If this occurrence ends here, remove it from 'ongoing'
                     if dt_lte(occ_dt_end, rollover_dt):
                         ongoing.pop(j)
@@ -302,7 +302,7 @@ class View_Week(View_DayUnit_Base):
                         View._cursor_idx_in_date = cls._day_ent_count[i]
                         cls._target_entry = None
                     occ_dt_end = end_dt_occ(occ)
-                    cls._add_day_entry_row(occ.en, occ.dt, occ_dt_end, i, cls._show_location)
+                    cls._add_day_entry_row(occ, occ_dt_end, i, cls._show_location)
                     if cls._show_ongoing:
                       # Add to 'ongoing' list if occurrence goes into next day
                         if occ_dt_end and dt_lt(rollover_dt, occ_dt_end):
@@ -322,31 +322,31 @@ class View_Week(View_DayUnit_Base):
 
 
     @classmethod
-    def _add_day_entry_row(cls, en:Union[iEvent,iTodo], dt_st:dt_date, dt_end:dt_date, dayidx:int, show_loc:bool, is_ongoing:bool=False) -> None:
-        # Add Gtk labels for entry 'en', occurrence at time/date from 'dt_st'
-        # to 'dt_end', in day 'dayidx' (e.g. 0=Monday if week starts Monday).
+    def _add_day_entry_row(cls, occ:Occurrence, dt_end:dt_date, dayidx:int, show_loc:bool, is_ongoing:bool=False) -> None:
+        # Add Gtk labels for Occurrence 'occ' ending at 'dt_end'
+        # to day 'dayidx' (e.g. 0=Monday if week starts Monday).
         # Used when displaying week contents.
         row = Gtk.Box()
         ctx = row.get_style_context()
         ctx.add_class('weekview_item')
-        ctx.add_class(Calendar.calendar_displayclass(en))
-        if isinstance(en, iEvent):
-            View.add_event_styles(row, en)
-        elif isinstance(en, iTodo):
-            View.add_todo_styles(row, en)
+        ctx.add_class(Calendar.calendar_displayclass(occ.en))
+        if isinstance(occ.en, iEvent):
+            View.add_event_styles(row, occ.en)
+        elif isinstance(occ.en, iTodo):
+            View.add_todo_styles(row, occ.en)
         # Create entry mark (bullet or time) & add to row
-        mark_lab, sty_class = cls.entry_markerlab_class(en, dt_st, is_ongoing)
+        mark_lab, sty_class = cls.entry_markerlab_class(occ, is_ongoing)
         row.add(mark_lab)
         if sty_class is not None:
             ctx.add_class(sty_class)
         # Create entry content label & add to row
-        cont_label = cls.entry_text_label(en, dt_st, dt_end, add_location=show_loc, loc_max_chars=cls._loc_max_chars)
+        cont_label = cls.entry_text_label(occ, dt_end, add_location=show_loc, loc_max_chars=cls._loc_max_chars)
         cont_label.set_hexpand(True) # Also sets hexpand_set to True
         ctx = cont_label.get_style_context()
         ctx.add_class('itemtext')
         row.add(cont_label)
         cls._day_rows[dayidx].add(row)
-        cls._day_entries[dayidx].append(en)
+        cls._day_entries[dayidx].append(occ.en)
         cls._day_ent_count[dayidx] += 1
 
 
