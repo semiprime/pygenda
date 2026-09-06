@@ -32,7 +32,7 @@ from typing import Optional, Union
 from .pygenda_view import View, View_DayUnit_Base
 from .pygenda_calendar import Calendar
 from .pygenda_config import Config
-from .pygenda_util import start_of_week, day_in_week, month_abbr, start_end_dts_occ, dt_lt, dt_lte
+from .pygenda_util import start_of_week, day_in_week, month_abbr, end_dt_occ, dt_lt, dt_lte
 from .pygenda_gui import GUI
 from .pygenda_dialog_event import EventDialogController
 
@@ -282,8 +282,8 @@ class View_Week(View_DayUnit_Base):
                 j = 0
                 while j < len(ongoing):
                     occo = ongoing[j]
-                    occ_dt_sta,occ_dt_end = start_end_dts_occ(occo)
-                    cls._add_day_entry_row(occo.en, occ_dt_sta, occ_dt_end, i, show_loc=False, is_ongoing=True)
+                    occ_dt_end = end_dt_occ(occo)
+                    cls._add_day_entry_row(occo.en, occo.dt, occ_dt_end, i, show_loc=False, is_ongoing=True)
                     # If this occurrence ends here, remove it from 'ongoing'
                     if dt_lte(occ_dt_end, rollover_dt):
                         ongoing.pop(j)
@@ -294,15 +294,15 @@ class View_Week(View_DayUnit_Base):
                 if occ is None:
                     break
                 if cls.show_todos or not isinstance(occ[0], iTodo):
-                    occ_dt_sta,occ_dt_end = start_end_dts_occ(occ)
-                    if dt_lte(dt_nxt, occ_dt_sta):
+                    if dt_lte(dt_nxt, occ.dt):
                         # into next day so break this loop
                         break
                     # First, see if we've hit the cursor target entry
                     if cls._target_entry is not None and cls._target_entry is occ.en and dt==View._cursor_date:
                         View._cursor_idx_in_date = cls._day_ent_count[i]
                         cls._target_entry = None
-                    cls._add_day_entry_row(occ.en, occ_dt_sta, occ_dt_end, i, cls._show_location)
+                    occ_dt_end = end_dt_occ(occ)
+                    cls._add_day_entry_row(occ.en, occ.dt, occ_dt_end, i, cls._show_location)
                     if cls._show_ongoing:
                       # Add to 'ongoing' list if occurrence goes into next day
                         if occ_dt_end and dt_lt(rollover_dt, occ_dt_end):

@@ -90,20 +90,21 @@ def date_to_datetime(dt:date, tz:Union[tzinfo,bool]=None) -> datetime:
     return dt_ret
 
 
-def start_end_dts_occ(occ:Occurrence) -> Tuple[date,date]:
-    # Return start & end date(time) of an Occurrence object
+def end_dt_occ(occ:Occurrence) -> Optional[date]:
+    # Return end date(time) of an Occurrence object.
+    # Calculated from duration if needed; is None if no end/duration.
     start = occ.dt
     if 'DTEND' in occ.en:
         root_dt = occ.en['DTSTART'].dt
         if isinstance(start, datetime):
             root_dt = date_to_datetime(root_dt,start.tzinfo)
         d = start - root_dt
-        end = occ.en['DTEND'].dt + d
+        end = occ.en['DTEND'].dt + d # type:Optional[date]
     elif 'DURATION' in occ.en:
         end = start + occ.en['DURATION'].dt
     else:
         end = None
-    return start,end
+    return end
 
 
 def format_time(dt, aslocal:bool=False) -> str:

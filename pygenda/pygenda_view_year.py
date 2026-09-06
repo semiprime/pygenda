@@ -34,7 +34,7 @@ from .pygenda_gui import GUI
 from .pygenda_dialog_event import EventDialogController
 from .pygenda_config import Config
 from .pygenda_calendar import Calendar
-from .pygenda_util import Occurrence, start_end_dts_occ, test_anniversary
+from .pygenda_util import Occurrence, end_dt_occ, test_anniversary
 
 
 # Singleton class for Year View
@@ -330,7 +330,6 @@ class View_Year(View_DayUnit_Base):
             en = occ.en
             if not cls.show_todos and isinstance(en, iTodo):
                 continue
-            occ_dt_sta,occ_dt_end = start_end_dts_occ(occ)
             row = Gtk.Box()
             ctx = row.get_style_context()
             ctx.add_class('yearview_item')
@@ -340,12 +339,13 @@ class View_Year(View_DayUnit_Base):
             elif isinstance(en, iTodo):
                 View.add_todo_styles(row, en)
             # Create entry mark (bullet or time) & add to row
-            mark_lab, sty_class = cls.entry_markerlab_class(en, occ_dt_sta)
+            mark_lab, sty_class = cls.entry_markerlab_class(en, occ.dt)
             row.add(mark_lab)
             if sty_class is not None:
                 ctx.add_class(sty_class)
             # Create entry content label & add to row
-            cont_label = cls.entry_text_label(en, occ_dt_sta, occ_dt_end, add_location=cls._show_location, loc_max_chars=cls._loc_max_chars)
+            occ_dt_end = end_dt_occ(occ)
+            cont_label = cls.entry_text_label(en, occ.dt, occ_dt_end, add_location=cls._show_location, loc_max_chars=cls._loc_max_chars)
             cont_label.set_hexpand(True) # Also sets hexpand_set to True
             ctx = cont_label.get_style_context()
             ctx.add_class('itemtext')
