@@ -551,6 +551,10 @@ checkbutton check {
 	min-width:17px;
 }
 
+combobox > box > button > box {
+	padding:0 0.25ex;
+}
+
 /* Make focus more visible (useful for keyboard navigation) */
 radio, check, buttonbox > button, .dialogbutton, combobox button, spinbutton, switch, date_entry, time_entry, duration_entry {
 	border-width:1px;
