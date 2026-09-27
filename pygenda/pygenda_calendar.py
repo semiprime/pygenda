@@ -885,6 +885,21 @@ class Calendar:
 
 
     @classmethod
+    def add_exdate(cls, occ:Occurrence) -> None:
+        # Add Occurrence 'occ' as an EXDATE to entry & save.
+        # Raises an exception if dt is invalid or entry does not accept exdates.
+        if cls.calendar_readonly(occ.en):
+            raise ValueError('Tried to add exdate to entry in read-only calendar')
+        if 'RRULE' not in occ.en:
+            raise ValueError('Tried to add exdate to entry without repeats')
+        if not _occurrence_occurs(occ):
+            raise ValueError('Tried to add exdate to entry without occurrence on that date')
+        occ.en.add('EXDATE', occ.dt, parameters=None if isinstance(occ.dt,dt_datetime) else {'VALUE':'DATE'})
+        cls._update_timestamps(occ.en, is_new=False)
+        cls.calConnectors[occ.en._cal_idx].update_entry(occ.en) # Write to store
+
+
+    @classmethod
     def _update_entry_norep_list(cls) -> None:
         # Re-build _entry_norep_list_sorted, if it has been cleared (==None)
         if cls._entry_norep_list_sorted is None:
@@ -2035,6 +2050,40 @@ def _in_datelist(dt:dt_datetime, lst:list, is_timed:bool) -> bool:
         return False
     else:
         return datetime_to_date(dt) in lst
+
+
+def _occurrence_occurs(occ:Occurrence) -> bool:
+    # Given a repeating entry occ.en, return True if occ.dt is an occurrence.
+    # Assumes that occ.en has an RRULE.
+    if 'EXDATE' in occ.en:
+        exdate_list = Calendar.caldatetime_tree_to_dt_list(occ.en['EXDATE'])
+        if occ.dt in exdate_list:
+            return False
+    rr, _, rr_timed = _rrule_from_entry(occ.en)
+    if isinstance(occ.dt, dt_datetime):
+        if not rr_timed:
+            # occ.dt has time, but rrule does not give timed occurrences.
+            # Hence they can't match
+            return False
+        dtst = occ.en['DTSTART'].dt
+        if not isinstance(dtst ,dt_datetime) or dtst.tzinfo != occ.dt.tzinfo:
+            # If timezones are different, we consider it a different occurrence
+            return False
+        # rr.after() requires a dt with a tzinfo
+        nxt = rr.after(date_to_datetime(occ.dt, True), inc=True)
+        if occ.dt.tzinfo is None:
+            # We need to restore the original (lack of) timezone
+            nxt = nxt.replace(tzinfo = None)
+    else:
+        # occ.dt is a date
+        if rr_timed:
+            # occ.dt is date, but rrule gives timed occurrences.
+            # Hence they can't match.
+            return False
+        # rr.after() only works with datetimes
+        dtt = date_to_datetime(occ.dt)
+        nxt = rr.after(dtt, inc=True).date()
+    return nxt == occ.dt # type:ignore[no-any-return]
 
 
 def previous_next_occurrence(en:Union[iEvent,iTodo], start:dt_date, limit_tries:bool=True) -> Tuple[Optional[dt_date], Optional[dt_date]]:
