@@ -23,6 +23,7 @@
 
 import unittest
 from datetime import date, datetime, timedelta
+from dateutil import tz
 from os import remove as os_remove
 from os.path import dirname, realpath
 from icalendar import Event as iEvent, Todo as iTodo
@@ -36,6 +37,7 @@ sys.path.append('..')
 from pygenda.pygenda_calendar import Calendar
 from pygenda.pygenda_entryinfo import EntryInfo
 from pygenda.pygenda_config import Config
+from pygenda.pygenda_util import Occurrence
 
 
 class TestEntries(unittest.TestCase):
@@ -231,6 +233,313 @@ class TestEntries(unittest.TestCase):
         self.check_entry_basic_properties(ev6, desc[6], stdt[6])
         self.check_entry_timestamps_new(ev7)
         self.check_entry_basic_properties(ev7, desc[7], stdt[7])
+
+
+    #@unittest.skip
+    def test_event_06_add_exdate(self) -> None:
+        # Test add_exdate() function
+        DESC_EV_DATE = 'event 06 date'
+        ST_D = date(2004,9,14)
+        ei_d = EntryInfo(desc=DESC_EV_DATE, start_dt=ST_D)
+        ev_d = Calendar.new_entry(ei_d)
+        self.check_entry_timestamps_new(ev_d)
+        self.check_entry_basic_properties(ev_d, DESC_EV_DATE, ST_D)
+
+        sleep(1) # Sleep to check modtime > created time
+
+        # Test adding exdate to non-repeating event raises ValueError
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_d, ST_D))
+        # Check entry not modified, that is has timestamps like new
+        self.check_entry_timestamps_new(ev_d, uid_new=False)
+
+        # Add repeat
+        ei_d.set_repeat_info('MONTHLY')
+        Calendar.update_entry(ev_d, ei_d)
+        self.check_entry_timestamps_mod(ev_d)
+        self.check_entry_basic_properties(ev_d, DESC_EV_DATE, ST_D)
+        self.assertIn('RRULE', ev_d)
+        self.assertEqual(ev_d['RRULE']['FREQ'][0], 'MONTHLY')
+        self.assertNotIn('EXDATE', ev_d)
+
+        # Try to add invalid exdates
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_d, date(2004,9,13)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_d, date(2004,9,15)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_d, date(2004,10,13)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_d, date(2004,10,15)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_d, date(2300,4,15)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_d, datetime(2004,9,14)))
+        tz_UTC = tz.gettz('UTC')
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_d, datetime(2004,9,14, tzinfo=tz_UTC)))
+        tz_PA = tz.gettz('Europe/Paris')
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_d, datetime(2004,9,14, tzinfo=tz_PA)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_d, datetime(2004,9,14,12)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_d, datetime(2004,10,14)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_d, datetime(2004,10,14,23,59)))
+
+        # Test occs contain date we're about to add to exdate
+        occs = Calendar.occurrence_list(date(2004,10,1),date(2004,11,1))
+        self.assertEqual(len(occs), 1)
+
+        # Add exdate
+        Calendar.add_exdate( Occurrence(ev_d, date(2004,10,14)) )
+        self.check_entry_timestamps_mod(ev_d)
+        self.check_entry_basic_properties(ev_d, DESC_EV_DATE, ST_D)
+        self.assertIn('RRULE', ev_d)
+        self.assertEqual(ev_d['RRULE']['FREQ'][0], 'MONTHLY')
+        self.assertIn('EXDATE', ev_d)
+        self.assertEqual(len(ev_d['EXDATE'].dts), 1)
+        self.assertEqual(ev_d['EXDATE'].dts[0].dt, date(2004,10,14))
+
+        # Test occs no longer contain exdate
+        occs = Calendar.occurrence_list(date(2004,10,1),date(2004,11,1))
+        self.assertEqual(len(occs), 0)
+
+        # Try to add same exdate again
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_d, date(2004,10,14)))
+
+        # Add a second exdate
+        occs = Calendar.occurrence_list(date(2030,2,1),date(2030,3,1))
+        self.assertEqual(len(occs), 1)
+        Calendar.add_exdate( Occurrence(ev_d, date(2030,2,14)) )
+        self.check_entry_timestamps_mod(ev_d)
+        self.check_entry_basic_properties(ev_d, DESC_EV_DATE, ST_D)
+        self.assertIn('RRULE', ev_d)
+        self.assertEqual(ev_d['RRULE']['FREQ'][0], 'MONTHLY')
+        self.assertIn('EXDATE', ev_d)
+        self.assertEqual(len(ev_d['EXDATE']), 2)
+        self.assertEqual(len(ev_d['EXDATE'][0].dts), 1)
+        self.assertEqual(len(ev_d['EXDATE'][1].dts), 1)
+        self.assertEqual(ev_d['EXDATE'][0].dts[0].dt, date(2004,10,14))
+        self.assertEqual(ev_d['EXDATE'][1].dts[0].dt, date(2030,2,14))
+
+        # Test occs no longer contain exdate
+        occs = Calendar.occurrence_list(date(2030,2,1),date(2030,3,1))
+        self.assertEqual(len(occs), 0)
+
+        # Try to add same exdates again
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_d, date(2004,10,14)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_d, date(2030,2,14)))
+
+        # Add a third exdate
+        occs = Calendar.occurrence_list(date(2010,9,1),date(2010,10,1))
+        self.assertEqual(len(occs), 1)
+        Calendar.add_exdate( Occurrence(ev_d, date(2010,9,14)) )
+        self.check_entry_timestamps_mod(ev_d)
+        self.check_entry_basic_properties(ev_d, DESC_EV_DATE, ST_D)
+        self.assertIn('RRULE', ev_d)
+        self.assertEqual(ev_d['RRULE']['FREQ'][0], 'MONTHLY')
+        self.assertIn('EXDATE', ev_d)
+        self.assertEqual(len(ev_d['EXDATE']), 3)
+        self.assertEqual(len(ev_d['EXDATE'][0].dts), 1)
+        self.assertEqual(len(ev_d['EXDATE'][1].dts), 1)
+        self.assertEqual(len(ev_d['EXDATE'][2].dts), 1)
+        self.assertEqual(ev_d['EXDATE'][0].dts[0].dt, date(2004,10,14))
+        self.assertEqual(ev_d['EXDATE'][1].dts[0].dt, date(2030,2,14))
+        self.assertEqual(ev_d['EXDATE'][2].dts[0].dt, date(2010,9,14))
+
+        # Test occs no longer contain exdate
+        occs = Calendar.occurrence_list(date(2010,9,1),date(2010,10,1))
+        self.assertEqual(len(occs), 0)
+
+        # Try to add same exdates again
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_d, date(2004,10,14)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_d, date(2030,2,14)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_d, date(2010,9,14)))
+
+        #
+        # Timed event
+        #
+        DESC_EV_TIME = 'event 06 time'
+        ST_T = datetime(1999,4,3,12,55)
+        ei_t = EntryInfo(desc=DESC_EV_TIME, start_dt=ST_T)
+        ev_t = Calendar.new_entry(ei_t)
+        self.check_entry_timestamps_new(ev_t)
+        self.check_entry_basic_properties(ev_t, DESC_EV_TIME, ST_T)
+
+        sleep(1) # Sleep to check modtime > created time
+
+        # Test adding exdate to non-repeating event raises ValueError
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_t, ST_T))
+        # Check entry not modified, that is has timestamps like new
+        self.check_entry_timestamps_new(ev_t, uid_new=False)
+
+        # Add repeat
+        ei_t.set_repeat_info('WEEKLY')
+        Calendar.update_entry(ev_t, ei_t)
+        self.check_entry_timestamps_mod(ev_t)
+        self.check_entry_basic_properties(ev_t, DESC_EV_TIME, ST_T)
+        self.assertIn('RRULE', ev_t)
+        self.assertEqual(ev_t['RRULE']['FREQ'][0], 'WEEKLY')
+        self.assertNotIn('EXDATE', ev_t)
+
+        # Try to add invalid exdates
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_t, date(1999,4,3)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_t, datetime(1999,3,27,12,55)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_t, datetime(1999,4,2,12,55)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_t, datetime(1999,4,4,12,55)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_t, datetime(1999,4,3,12,54)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_t, datetime(1999,4,3,12,56)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_t, ST_T.replace(tzinfo=tz_UTC)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_t, ST_T.replace(tzinfo=tz_PA)))
+
+        # Test occs contain date we're about to add to exdate
+        occs = Calendar.occurrence_list(date(1999,4,10),date(1999,4,11))
+        self.assertEqual(len(occs), 1)
+
+        # Add exdate(time)
+        Calendar.add_exdate( Occurrence(ev_t, datetime(1999,4,10,12,55)) )
+        self.check_entry_timestamps_mod(ev_t)
+        self.check_entry_basic_properties(ev_t, DESC_EV_TIME, ST_T)
+        self.assertIn('RRULE', ev_t)
+        self.assertEqual(ev_t['RRULE']['FREQ'][0], 'WEEKLY')
+        self.assertIn('EXDATE', ev_t)
+        self.assertEqual(len(ev_t['EXDATE'].dts), 1)
+        self.assertEqual(ev_t['EXDATE'].dts[0].dt, datetime(1999,4,10,12,55))
+
+        # Test occs no longer contain exdate
+        occs = Calendar.occurrence_list(date(1999,4,10),date(1999,4,11))
+        self.assertEqual(len(occs), 0)
+
+        # Try to add same exdate again
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_t, datetime(1999,4,10,12,55)))
+
+        # Add a second exdate(time)
+        occs = Calendar.occurrence_list(date(2048,2,23),date(2048,3,1))
+        self.assertEqual(len(occs), 1)
+        Calendar.add_exdate( Occurrence(ev_t, datetime(2048,2,29,12,55)) )
+        self.check_entry_timestamps_mod(ev_t)
+        self.check_entry_basic_properties(ev_t, DESC_EV_TIME, ST_T)
+        self.assertIn('RRULE', ev_t)
+        self.assertEqual(ev_t['RRULE']['FREQ'][0], 'WEEKLY')
+        self.assertIn('EXDATE', ev_t)
+        self.assertEqual(len(ev_t['EXDATE']), 2)
+        self.assertEqual(len(ev_t['EXDATE'][0].dts), 1)
+        self.assertEqual(len(ev_t['EXDATE'][1].dts), 1)
+        self.assertEqual(ev_t['EXDATE'][0].dts[0].dt, datetime(1999,4,10,12,55))
+        self.assertEqual(ev_t['EXDATE'][1].dts[0].dt, datetime(2048,2,29,12,55))
+
+        # Test occs no longer contain exdate
+        occs = Calendar.occurrence_list(date(2048,2,23),date(2048,3,1))
+        self.assertEqual(len(occs), 0)
+
+        # Try to add same exdates again
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_t, datetime(1999,4,10,12,55)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_t, datetime(2048,2,29,12,55)))
+
+        # Add a third exdate(time)
+        occs = Calendar.occurrence_list(date(2026,8,8),date(2026,8,9))
+        self.assertEqual(len(occs), 1)
+        Calendar.add_exdate( Occurrence(ev_t, datetime(2026,8,8,12,55)) )
+        self.check_entry_timestamps_mod(ev_t)
+        self.check_entry_basic_properties(ev_t, DESC_EV_TIME, ST_T)
+        self.assertIn('RRULE', ev_t)
+        self.assertEqual(ev_t['RRULE']['FREQ'][0], 'WEEKLY')
+        self.assertIn('EXDATE', ev_t)
+        self.assertEqual(len(ev_t['EXDATE']), 3)
+        self.assertEqual(len(ev_t['EXDATE'][0].dts), 1)
+        self.assertEqual(len(ev_t['EXDATE'][1].dts), 1)
+        self.assertEqual(len(ev_t['EXDATE'][2].dts), 1)
+        self.assertEqual(ev_t['EXDATE'][0].dts[0].dt, datetime(1999,4,10,12,55))
+        self.assertEqual(ev_t['EXDATE'][1].dts[0].dt, datetime(2048,2,29,12,55))
+        self.assertEqual(ev_t['EXDATE'][2].dts[0].dt, datetime(2026,8,8,12,55))
+
+        # Test occs no longer contain exdate
+        occs = Calendar.occurrence_list(date(2026,8,8),date(2026,8,9))
+        self.assertEqual(len(occs), 0)
+
+        # Try to add same exdates again
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_t, datetime(1999,4,10,12,55)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_t, datetime(2048,2,29,12,55)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_t, datetime(2026,8,8,12,55)))
+
+        #
+        # Timed event with timezone
+        #
+        DESC_EV_TIMEZ = 'event 06 time zoned'
+        tz_AN = tz.gettz('America/Anchorage')
+        ST_TZ = datetime(2013,8,13,11,30, tzinfo=tz_AN)
+        ei_tz = EntryInfo(desc=DESC_EV_TIMEZ, start_dt=ST_TZ)
+        ev_tz = Calendar.new_entry(ei_tz)
+        self.check_entry_timestamps_new(ev_tz)
+        self.check_entry_basic_properties(ev_tz, DESC_EV_TIMEZ, ST_TZ)
+
+        sleep(1) # Sleep to check modtime > created time
+
+        # Test adding exdate to non-repeating event raises ValueError
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_tz, ST_TZ))
+        # Check entry not modified, that is has timestamps like new
+        self.check_entry_timestamps_new(ev_tz, uid_new=False)
+
+        # Add repeat
+        ei_tz.set_repeat_info('MONTHLY')
+        Calendar.update_entry(ev_tz, ei_tz)
+        self.check_entry_timestamps_mod(ev_tz)
+        self.check_entry_basic_properties(ev_tz, DESC_EV_TIMEZ, ST_TZ)
+        self.assertIn('RRULE', ev_tz)
+        self.assertEqual(ev_tz['RRULE']['FREQ'][0], 'MONTHLY')
+        self.assertNotIn('EXDATE', ev_tz)
+
+        # Try to add invalid exdates
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_tz, date(2013,8,12)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_tz, date(2013,8,13)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_tz, date(2013,8,14)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_tz, datetime(2013,8,13,11,30)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_tz, datetime(2013,8,13,0,30)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_tz, datetime(2013,8,13,1,30)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_tz, datetime(2013,8,13,2,30)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_t, ST_TZ.replace(tzinfo=tz_UTC)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_t, ST_TZ.replace(tzinfo=tz_PA)))
+        tz_SY = tz.gettz('Australia/Sydney')
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_tz, datetime(2013,8,13,11,30, tzinfo=tz_SY)))
+        # Same absolute time in a different TZ:
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_tz, datetime(2013,8,14,5,30, tzinfo=tz_SY)))
+
+        # Test occs contain date we're about to add to exdate
+        occs = Calendar.occurrence_list(date(2013,9,12),date(2013,9,15))
+        occ_len_before = len(occs)
+        self.assertTrue(occ_len_before >= 1)
+
+        # Add exdate(time)
+        Calendar.add_exdate( Occurrence(ev_tz, datetime(2013,9,13,11,30, tzinfo=tz_AN)) )
+        self.check_entry_timestamps_mod(ev_tz)
+        self.check_entry_basic_properties(ev_tz, DESC_EV_TIMEZ, ST_TZ)
+        self.assertIn('RRULE', ev_tz)
+        self.assertEqual(ev_tz['RRULE']['FREQ'][0], 'MONTHLY')
+        self.assertIn('EXDATE', ev_tz)
+        self.assertEqual(len(ev_tz['EXDATE'].dts), 1)
+        self.assertEqual(ev_tz['EXDATE'].dts[0].dt, datetime(2013,9,13,11,30, tzinfo=tz_AN))
+
+        # Test occs no longer contain exdate
+        occs = Calendar.occurrence_list(date(2013,9,12),date(2013,9,15))
+        self.assertEqual(len(occs), occ_len_before-1)
+
+        # Try to add same exdate again
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_tz, datetime(2013,9,13,11,30, tzinfo=tz_AN)))
+
+        # Add a second exdate(time)
+        occs = Calendar.occurrence_list(date(2040,1,12),date(2040,1,15))
+        occ_len_before = len(occs)
+        self.assertTrue(occ_len_before >= 1)
+
+        Calendar.add_exdate( Occurrence(ev_tz, datetime(2040,1,13,11,30, tzinfo=tz_AN)) )
+        self.check_entry_timestamps_mod(ev_tz)
+        self.check_entry_basic_properties(ev_tz, DESC_EV_TIMEZ, ST_TZ)
+        self.assertIn('RRULE', ev_tz)
+        self.assertEqual(ev_tz['RRULE']['FREQ'][0], 'MONTHLY')
+        self.assertIn('EXDATE', ev_tz)
+        self.assertEqual(len(ev_tz['EXDATE']), 2)
+        self.assertEqual(len(ev_tz['EXDATE'][0].dts), 1)
+        self.assertEqual(len(ev_tz['EXDATE'][1].dts), 1)
+        self.assertEqual(ev_tz['EXDATE'][0].dts[0].dt, datetime(2013,9,13,11,30, tzinfo=tz_AN))
+        self.assertEqual(ev_tz['EXDATE'][1].dts[0].dt, datetime(2040,1,13,11,30, tzinfo=tz_AN))
+
+        # Test occs no longer contain exdate
+        occs = Calendar.occurrence_list(date(2040,1,12),date(2040,1,15))
+        self.assertEqual(len(occs), occ_len_before-1)
+
+        # Try to add same exdates again
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_tz, datetime(2013,9,13,11,30, tzinfo=tz_AN)))
+        self.assertRaises(ValueError, Calendar.add_exdate, Occurrence(ev_tz, datetime(2040,1,13,11,30, tzinfo=tz_AN)))
 
 
     #@unittest.skip
@@ -477,6 +786,9 @@ class TestEntries(unittest.TestCase):
 
         if dtst is not None:
             # Get occurence list for one day and check en is in it (once only)
+            if isinstance(dtst, datetime):
+                # To call occurrence_list() we need a date object
+                dtst = dtst.date()
             occs = Calendar.occurrence_list(dtst, dtst+timedelta(days=1))
             self.assertEqual(len(occs), expected_count)
             found_en = 0
