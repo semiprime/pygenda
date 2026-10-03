@@ -428,11 +428,11 @@ class View_Year(View_DayUnit_Base):
 
 
     @classmethod
-    def get_cursor_entry(cls) -> Optional[iCal.Event]:
-        # Returns entry at cursor position, or None if cursor not on entry
+    def get_cursor_occurrence(cls) -> Optional[Occurrence]:
+        # Return Occurrence at cursor position, or None if cursor not on entry
         if cls._date_content_count == 0:
             return None
-        return cls._visible_occurrences[View._cursor_idx_in_date].en
+        return cls._visible_occurrences[View._cursor_idx_in_date]
 
 
     @staticmethod

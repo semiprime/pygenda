@@ -431,12 +431,12 @@ class View_Week(View_DayUnit_Base):
 
 
     @classmethod
-    def get_cursor_entry(cls) -> Optional[iCal.Event]:
-        # Returns entry at cursor position, or None if cursor not on entry
+    def get_cursor_occurrence(cls) -> Optional[Occurrence]:
+        # Return Occurrence at cursor position, or None if cursor not on entry
         dy = day_in_week(View._cursor_date)
         if cls._day_ent_count[dy]==0:
             return None
-        return cls._day_occs[dy][View._cursor_idx_in_date].en
+        return cls._day_occs[dy][View._cursor_idx_in_date]
 
 
     @classmethod

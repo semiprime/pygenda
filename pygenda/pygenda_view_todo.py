@@ -3,7 +3,7 @@
 # pygenda_view_todo.py
 # Provides the "To-Do View" for Pygenda.
 #
-# Copyright (C) 2022-2025 Matthew Lewis
+# Copyright (C) 2022-2026 Matthew Lewis
 #
 # This file is part of Pygenda.
 #
@@ -174,8 +174,7 @@ class View_Todo(View):
 
     @classmethod
     def get_cursor_entry(cls) -> Optional[iTodo]:
-        # Returns entry at cursor position, or None if cursor not on entry.
-        # Called from cursor_edit_entry() & delete_request().
+        # Return entry at cursor position, or None if cursor not on entry
         if len(cls._list_items[cls._cursor_list]) == 0:
             return None
         return cls._list_items[cls._cursor_list][cls._cursor_idx_in_list]

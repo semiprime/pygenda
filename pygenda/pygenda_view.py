@@ -148,6 +148,21 @@ class View:
 
 
     @classmethod
+    def get_cursor_occurrence(cls) -> Optional[Occurrence]:
+        # Return Occurrence at cursor position, or None if cursor not on entry.
+        # Default: None. Derived classes will provided their implementations.
+        return None
+
+
+    @classmethod
+    def get_cursor_entry(cls) -> Union[iCal.Event,iCal.Todo,None]:
+        # Return entry at cursor position, or None if cursor not on entry.
+        # Default: use get_cursor_occurrence
+        occ = cls.get_cursor_occurrence()
+        return None if occ is None else occ.en
+
+
+    @classmethod
     def cursor_date(cls) -> Optional[dt_date]:
         # Returns date (maybe datetime in the future) with cursor.
         # Default implementation: cursor not on date.
@@ -427,13 +442,6 @@ class View_DayUnit_Base(View):
         elif GUI.create_events:
             date = cls.cursor_date()
             EventDialogController.new_event(date=date)
-
-
-    @classmethod
-    def get_cursor_entry(cls) -> Optional[iCal.Event]:
-        # Returns entry at cursor position, or None if cursor not on entry.
-        # Default: None. Derived classes will provided their implementations.
-        return None
 
 
     @classmethod
