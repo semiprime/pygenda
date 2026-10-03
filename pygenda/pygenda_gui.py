@@ -936,7 +936,13 @@ class GUI:
         # Callback to implement "delete" from GUI, e.g. backspace key pressed
         en = cls.views[cls._view_idx].get_cursor_entry()
         if en is not None:
-            cls.dialog_deleteentry(en)
+            if 'RRULE' in en:
+                if test_anniversary(en) != 0:
+                    cls.dialog_deleteanniversary(en)
+                else:
+                    cls.dialog_deleterepeatingentry(en)
+            else:
+                cls.dialog_deleteentry(en)
         return True # don't propagate event
 
 
@@ -1025,33 +1031,41 @@ class GUI:
 
 
     @classmethod
-    def dialog_deleteentry(cls, en:iEvent) -> None:
+    def dialog_deleteentry(cls, en:Union[iEvent,iTodo]) -> None:
+        cls._do_dialog_deleteentry(en, _('Delete entry:\n“{:s}”?'))
+
+
+    @classmethod
+    def dialog_deleteanniversary(cls, en:iEvent) -> None:
+        cls._do_dialog_deleteentry(en, _('Delete anniversary:\n“{:s}”?'))
+
+
+    @classmethod
+    def _do_dialog_deleteentry(cls, en:Union[iEvent,iTodo], query:str) -> None:
         # Dialog to implement "delete" from GUI, e.g. backspace key
         dialog = Gtk.Dialog(title=_('Delete Entry'), parent=cls._window,
             flags=Gtk.DialogFlags.MODAL|Gtk.DialogFlags.DESTROY_WITH_PARENT,
             buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CLOSE, Gtk.STOCK_DELETE, Gtk.ResponseType.APPLY))
-        if 'RRULE' in en:
-            if test_anniversary(en) != 0:
-                l_template = _('Delete anniversary:\n“{:s}”?')
-            else:
-                # repeating entry - clarify what is being deleted
-                # !! We should really ask if user wants to delete all/single etc.
-                l_template = _('Delete all repeats:\n“{:s}”?')
-        else:
-            l_template = _('Delete entry:\n“{:s}”?')
-        lab = Gtk.Label(l_template.format(en['SUMMARY'] if 'SUMMARY' in en else ' ')) # narrow space
-        if (not dialog or not lab): # Sanity check
+        lab = Gtk.Label(query.format(en['SUMMARY'] if 'SUMMARY' in en else ' ')) # narrow space
+        if (not dialog or not lab):
             raise NameError('Dialog Delete creation failure')
         dialog.set_resizable(False)
         lab.set_justify(Gtk.Justification.CENTER)
         dialog.get_content_area().add(lab)
-        dialog.set_default_response(Gtk.ResponseType.APPLY)#Enter action
+        dialog.set_default_response(Gtk.ResponseType.APPLY) # Enter action
         dialog.show_all()
         response = dialog.run()
         dialog.destroy()
         if response == Gtk.ResponseType.APPLY:
             Calendar.delete_entry(en)
             cls.view_redraw(en_changes=True)
+
+
+    @classmethod
+    def dialog_deleterepeatingentry(cls, en:iEvent) -> None:
+        # Delete repeating entry - clarify what is being deleted
+        # !! We should really ask if user wants to delete all/single etc.
+        cls._do_dialog_deleteentry(en, _('Delete all repeats:\n“{:s}”?'))
 
 
     @classmethod
