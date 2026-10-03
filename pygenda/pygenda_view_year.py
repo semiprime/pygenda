@@ -26,7 +26,7 @@ import calendar
 from datetime import date as dt_date, datetime as dt_datetime, timedelta
 from locale import gettext as _ # type:ignore[attr-defined]
 from icalendar import cal as iCal, Event as iEvent, Todo as iTodo
-from typing import Tuple, Union, List
+from typing import Tuple, Union, List, Optional
 
 # pygenda components
 from .pygenda_view import View, View_DayUnit_Base
@@ -428,9 +428,8 @@ class View_Year(View_DayUnit_Base):
 
 
     @classmethod
-    def get_cursor_entry(cls) -> iCal.Event:
-        # Returns entry at cursor position, or None if cursor not on entry.
-        # Called from cursor_edit_entry() & delete_request().
+    def get_cursor_entry(cls) -> Optional[iCal.Event]:
+        # Returns entry at cursor position, or None if cursor not on entry
         if cls._date_content_count == 0:
             return None
         return cls._visible_occurrences[View._cursor_idx_in_date].en
