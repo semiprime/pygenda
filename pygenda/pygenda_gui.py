@@ -1049,9 +1049,11 @@ class GUI:
         lab = Gtk.Label(query.format(en['SUMMARY'] if 'SUMMARY' in en else ' ')) # narrow space
         if (not dialog or not lab):
             raise NameError('Dialog Delete creation failure')
+        dlg_content = dialog.get_content_area()
+        dlg_content.get_style_context().add_class('sparse')
         dialog.set_resizable(False)
         lab.set_justify(Gtk.Justification.CENTER)
-        dialog.get_content_area().add(lab)
+        dlg_content.add(lab)
         dialog.set_default_response(Gtk.ResponseType.APPLY) # Enter action
         dialog.show_all()
         response = dialog.run()

@@ -693,6 +693,9 @@ entry {
 	padding:0.3ex;
 }
 
+.sparse > label, .sparse > combobox {
+	margin:0.6ex;
+}
 
 /* List box - make row more highlighted when focused than when selected */
 list row:selected {
