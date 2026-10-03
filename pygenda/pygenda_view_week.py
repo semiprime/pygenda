@@ -50,7 +50,7 @@ class View_Week(View_DayUnit_Base):
     })
 
     _day_ent_count = [0]*7 # entry count for each day
-    _day_entries = ([], [], [], [], [], [], []) # type:tuple
+    _day_occs = ([], [], [], [], [], [], []) # type:tuple
     _week_viewed = None # type:Optional[dt_date]
     _last_cursor = None
     _scroll_to_cursor_in_day = None
@@ -256,7 +256,7 @@ class View_Week(View_DayUnit_Base):
         # Called on view redraw.
         cls._last_cursor = None
         dt = start_of_week(View._cursor_date)
-        cls._day_entries = ([], [], [], [], [], [], []) # reset stored events
+        cls._day_occs = ([], [], [], [], [], [], []) # reset stored Occurrences
         cls._day_ent_count = [0]*7
         sorted_occurrences = Calendar.occurrence_list(dt, dt+timedelta(days=7))
         itr = iter(sorted_occurrences)
@@ -346,7 +346,7 @@ class View_Week(View_DayUnit_Base):
         ctx.add_class('itemtext')
         row.add(cont_label)
         cls._day_rows[dayidx].add(row)
-        cls._day_entries[dayidx].append(occ.en)
+        cls._day_occs[dayidx].append(occ)
         cls._day_ent_count[dayidx] += 1
 
 
@@ -436,7 +436,7 @@ class View_Week(View_DayUnit_Base):
         dy = day_in_week(View._cursor_date)
         if cls._day_ent_count[dy]==0:
             return None
-        return cls._day_entries[dy][View._cursor_idx_in_date]
+        return cls._day_occs[dy][View._cursor_idx_in_date].en
 
 
     @classmethod
