@@ -431,12 +431,15 @@ class View_Week(View_DayUnit_Base):
 
 
     @classmethod
-    def get_cursor_occurrence(cls) -> Optional[Occurrence]:
+    def get_cursor_occurrence(cls, orig_tz:bool=False) -> Optional[Occurrence]:
         # Return Occurrence at cursor position, or None if cursor not on entry
         dy = day_in_week(View._cursor_date)
         if cls._day_ent_count[dy]==0:
             return None
-        return cls._day_occs[dy][View._cursor_idx_in_date]
+        occ = cls._day_occs[dy][View._cursor_idx_in_date]
+        if orig_tz:
+            occ = occ.with_orig_tz()
+        return occ
 
 
     @classmethod

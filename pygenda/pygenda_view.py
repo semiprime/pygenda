@@ -148,7 +148,7 @@ class View:
 
 
     @classmethod
-    def get_cursor_occurrence(cls) -> Optional[Occurrence]:
+    def get_cursor_occurrence(cls, orig_tz:bool=False) -> Optional[Occurrence]:
         # Return Occurrence at cursor position, or None if cursor not on entry.
         # Default: None. Derived classes will provided their implementations.
         return None
