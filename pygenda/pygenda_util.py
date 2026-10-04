@@ -39,6 +39,21 @@ class Occurrence:
         self.en = entry
         self.dt = datetime
 
+    def with_orig_tz(self) -> 'Occurrence':
+        # Returns Occurrence with tzinfo as in entry start time
+        if not isinstance(self.dt, datetime):
+            return self
+        start_dt = self.en['DTSTART'].dt
+        if not isinstance(start_dt, datetime) or start_dt.tzinfo is None:
+            ret_dt = self.dt.astimezone(get_local_tz())
+            ret_dt = ret_dt.replace(tzinfo=None)
+        else:
+            # Both start & occurrence dates are datetimes, start has tzinfo
+            if self.dt.tzinfo == start_dt.tzinfo:
+                return self
+            ret_dt = self.dt.astimezone(start_dt.tzinfo)
+        return Occurrence(self.en, ret_dt)
+
 
 def datetime_to_date(dt:date) -> date:
     # Extract date from datetime object (which might be a date)
