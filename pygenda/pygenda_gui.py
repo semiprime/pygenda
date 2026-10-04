@@ -42,7 +42,7 @@ _ = locale.gettext # type:ignore[attr-defined]
 from .pygenda_config import Config
 from .pygenda_calendar import Calendar
 from .pygenda_widgets import WidgetDate
-from .pygenda_util import guess_date_ord_from_locale,guess_date_sep_from_locale,guess_time_sep_from_locale, guess_date_fmt_text_from_locale, datetime_to_date, test_anniversary
+from .pygenda_util import Occurrence, guess_date_ord_from_locale,guess_date_sep_from_locale,guess_time_sep_from_locale, guess_date_fmt_text_from_locale, datetime_to_date, test_anniversary
 from .pygenda_version import __version__
 
 # Dialog classes - imported in _init_dialogs()
@@ -934,14 +934,19 @@ class GUI:
     @classmethod
     def delete_request(cls, *args) -> bool:
         # Callback to implement "delete" from GUI, e.g. backspace key pressed
-        en = cls.views[cls._view_idx].get_cursor_entry()
-        if en is not None:
-            if 'RRULE' in en:
-                if test_anniversary(en) != 0:
-                    cls.dialog_deleteanniversary(en)
+        occ = cls.views[cls._view_idx].get_cursor_occurrence(orig_tz=True)
+        if occ is not None:
+            if 'RRULE' in occ.en:
+                if test_anniversary(occ.en) != 0:
+                    cls.dialog_deleteanniversary(occ.en)
                 else:
-                    cls.dialog_deleterepeatingentry(en)
+                    cls.dialog_deleterepeatingentry(occ)
             else:
+                cls.dialog_deleteentry(occ.en)
+        else:
+            # No cursor occ, try to get an entry
+            en = cls.views[cls._view_idx].get_cursor_entry()
+            if en is not None:
                 cls.dialog_deleteentry(en)
         return True # don't propagate event
 
@@ -1064,10 +1069,39 @@ class GUI:
 
 
     @classmethod
-    def dialog_deleterepeatingentry(cls, en:iEvent) -> None:
-        # Delete repeating entry - clarify what is being deleted
-        # !! We should really ask if user wants to delete all/single etc.
-        cls._do_dialog_deleteentry(en, _('Delete all repeats:\n“{:s}”?'))
+    def dialog_deleterepeatingentry(cls, occ:Occurrence) -> None:
+        # Dialog to implement "delete this entry or all" for repeating entries
+        dialog = Gtk.Dialog(title=_('Delete Entry'), parent=cls._window,
+            flags=Gtk.DialogFlags.MODAL|Gtk.DialogFlags.DESTROY_WITH_PARENT,
+            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CLOSE, Gtk.STOCK_DELETE, Gtk.ResponseType.APPLY))
+        lab = Gtk.Label(_("Delete which occurrences of\n“{:s}”?").format(occ.en['SUMMARY'] if 'SUMMARY' in occ.en else ' ')) # narrow space
+        lab_occ = Gtk.Label(_("Selected occurrence: {:s}").format(occ.dt.strftime(cls.date_formatting_text)))
+        cb = Gtk.ComboBoxText()
+        if (not dialog or not lab or not lab_occ or not cb):
+            raise NameError('Dialog Delete Repeating creation failure')
+        dialog.set_resizable(False)
+        lab.set_justify(Gtk.Justification.CENTER)
+        dlg_content = dialog.get_content_area()
+        dlg_content.get_style_context().add_class('sparse')
+        dlg_content.add(lab)
+        dlg_content.add(lab_occ)
+        cb.set_halign(Gtk.Align.CENTER)
+        cb.append('one', _("Delete only this occurrence"))
+        cb.append('all', _("Delete all occurrences"))
+        cb.set_active(0)
+        cb.connect('key-press-event', cls._combobox_keypress, Gtk.ResponseType.APPLY)
+        dlg_content.add(cb)
+        dialog.set_default_response(Gtk.ResponseType.APPLY)
+        dialog.show_all()
+        response = dialog.run()
+        option = cb.get_active_id()
+        dialog.destroy()
+        if response == Gtk.ResponseType.APPLY:
+            if option == 'all':
+                Calendar.delete_entry(occ.en)
+            elif option == 'one':
+                Calendar.add_exdate(occ)
+            cls.view_redraw(en_changes=True)
 
 
     @classmethod
