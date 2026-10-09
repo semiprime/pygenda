@@ -44,19 +44,19 @@ Video and screenshots
 ---------------------
 Video: https://www.youtube.com/watch?v=uvQqFmlZ6nM (v0.2.7, April 2023)
 
-Screenshots from a PC running Xfce and rescaled – your results may vary.
+Screenshots from a PC running Xfce – other platforms will vary a bit.
 
 Week View:
 
-![Screenshot – Week View](docs/screenshots/week_view.png?raw=true)
+<img src="docs/screenshots/week_view.png?raw=true" alt="Screenshot – Week View" style="width:55%; min-width:688px; height:auto;">
 
 Year View:
 
-![Screenshot – Year View](docs/screenshots/year_view.png?raw=true)
+<img src="docs/screenshots/year_view.png?raw=true" alt="Screenshot – Year View" style="width:55%; min-width:688px; height:auto;">
 
 Todo View:
 
-![Screenshot – Todo View](docs/screenshots/todo_view.png?raw=true)
+<img src="docs/screenshots/todo_view.png?raw=true" alt="Screenshot – Todo View" style="width:55%; min-width:688px; height:auto;">
 
 Source code
 -----------
