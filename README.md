@@ -48,15 +48,15 @@ Screenshots from a PC running Xfce – other platforms will vary a bit.
 
 Week View:
 
-<img src="docs/screenshots/week_view.png?raw=true" alt="Screenshot – Week View" style="width:55%; min-width:688px; height:auto;">
+<img src="docs/screenshots/week_view.png?raw=true" alt="Screenshot – Week View" width="688" style="min-width:55%; height:auto;">
 
 Year View:
 
-<img src="docs/screenshots/year_view.png?raw=true" alt="Screenshot – Year View" style="width:55%; min-width:688px; height:auto;">
+<img src="docs/screenshots/year_view.png?raw=true" alt="Screenshot – Year View" width="688" style="min-width:55%; height:auto;">
 
 Todo View:
 
-<img src="docs/screenshots/todo_view.png?raw=true" alt="Screenshot – Todo View" style="width:55%; min-width:688px; height:auto;">
+<img src="docs/screenshots/todo_view.png?raw=true" alt="Screenshot – Todo View" width="688" style="min-width:55%; height:auto;">
 
 Source code
 -----------
