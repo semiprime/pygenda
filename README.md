@@ -58,6 +58,10 @@ Todo View:
 
 <img src="docs/screenshots/todo_view.png?raw=true" alt="Screenshot – Todo View" width="688" style="min-width:55%; height:auto;">
 
+Display is configurable using config options and user CSS. Below is an example of the Week View with soft buttons on the left, and CSS for dark mode and colour-coded calendars. In this example, entries are shown on different coloured backgrounds if they are in "Personal" or "Work" calendars, while holidays and other diary events are displayed without a background. Information about how to set up similar CSS is in the [docs/config-examples/ directory](docs/config-examples/README.md).
+
+<img src="docs/screenshots/week_view_config_example.png?raw=true" alt="Screenshot – Week View, dark mode" width="688" style="min-width:55%; height:auto;">
+
 Source code
 -----------
 Source code is available at:
