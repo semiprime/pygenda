@@ -57,8 +57,7 @@ Major
 * Cutting repeating events is not implemented. (Not sure how to do UI -
   probably need to bring up a dialog "Cut just this occurrence, or all
   repeats?". That then raises question about behaviour when copying
-  repeating events, where currently just one occurrence is copied. See
-  also deleting repeated events - currently all repeats are deleted.)
+  repeating events, where currently just one occurrence is copied.)
 
 * Creating/updating new entries in large calendars is unusably slow.
   (In tests, with iCal file, file writing is slow; with CalDAV server
@@ -78,10 +77,10 @@ Medium
 
 * How do we share events? Do we need an "Export" function?
 
-* How to handle setting the status of a repeating event? (E.g., a
-  reasonable use-case would be to cancel just one occurrence of a
-  repeating event. Need to use RECURRENCE-ID in icalendar, see
-  https://icalendar.org/iCalendar-RFC-5545/3-8-4-4-recurrence-id.html)
+* Currently missing capacity to edit a single instance of a repeating
+  event, e.g. to exceptionally cancel one occurrence, or to change the
+  time of one occurrence. Need to use RECURRENCE-ID in icalendar, see
+  https://icalendar.org/iCalendar-RFC-5545/3-8-4-4-recurrence-id.html
 
 * Need InfoPrints (a.k.a. toast notifications) for some situations
 
@@ -97,8 +96,10 @@ Medium
   source for each todo list. There is currently no support for this
   (except manually placing items in each calendar).
 
-* When deleting a repeated event, all are deleted. Should offer option
-  of deleting this one (better, also offer delete all from, all before...)
+* When deleting (also cutting?) a repeated event, should offer option
+  of deleting all before, all from the selected occurrence. Should
+  also check that the delete option chosen is not deleting all
+  remaining occurrences.
 
 * No goto next/previous entry (for those without endless appointments)
 
