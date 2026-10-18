@@ -31,8 +31,8 @@ its current state – including on device/UI combinations that I cannot
 test. Feedback can be sent to pygenda@semiprime.com.
 
 This guide has been tested on a Wileyfox Swift ('crackling') device
-running PostmarketOS 25.12 with Phosh 0.51.0-r2 (pre-built postmarketOS
-image, id 20260525-2012, with python3-3.12.13-r0 and gtk+3.0-3.24.51-r0).
+running Nura/PostmarketOS 26.06 with Phosh 0.55.0-r2 (pre-built Nura
+image, id 20261016-2301) with python3 3.14.8-r0 and gtk+3.0 3.24.52-r0.
 
 Known issues
 ------------
@@ -197,7 +197,7 @@ described above, you can create a soft link to the pygenda.desktop file
 from the user's ~/.local/share/applications directory:
 
     cd ~/.local/share/applications
-    ln -s ~/.local/lib/python3.12/site-packages/pygenda/app/pygenda.desktop
+    ln -s ~/.local/lib/python3.14/site-packages/pygenda/app/pygenda.desktop
 
 Evolution Data Server
 ---------------------
