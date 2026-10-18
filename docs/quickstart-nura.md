@@ -1,9 +1,9 @@
-Pygenda "Quick Start" Guide for PostmarketOS
-============================================
+Pygenda "Quick Start" Guide for Nura (postmarketOS)
+===================================================
 This guide will lead you through installation and basic configuration
-of the most recent release of Pygenda on PostmarketOS (a Linux-based
-operating system for mobile devices such as phones). It is intended
-for users who want to test Pygenda.
+of the most recent release of Pygenda on Nura (a Linux-based operating
+system for mobile devices such as phones, formerly known as postmarketOS).
+It is intended for users who want to test Pygenda.
 
 If you want to contribute to or modify Pygenda, then you probably want
 to get the latest version from Codeberg or GitHub (which are usually a
@@ -15,7 +15,7 @@ a Gemini PDA, a Chromebook, or a PinePhone with its keyboard attachment.
 In theory a Nokia N900 would be great, but I suspect it will be too
 slow – please let me know if you try.
 
-Unfortunately, I've only been able to test Pygenda on a postmarketOS
+Unfortunately, I've only been able to test Pygenda on a Nura
 device without a keyboard. On that device, basic display of entries
 and navigation worked. However, while entry was possible, it was not
 very usable. I'm not sure how much this was due to the lack of a
@@ -23,9 +23,9 @@ keyboard (which meant that a virtual keyboard kept obscuring the UI),
 how much was due to my choice of UI environment (I chose Phosh, mainly
 because it was small; a more desktop-like UI might be more appropriate
 for Pygenda), how much was due to my old phone not being a great
-platform for pmOS, and how much of it was due to Pygenda.
+platform for Nura, and how much of it was due to Pygenda.
 
-Because of this, currently Pygenda on postmarketOS should be considered
+Because of this, currently Pygenda on Nura should be considered
 **experimental**. This guide is to encourage testing (and feedback) on
 its current state – including on device/UI combinations that I cannot
 test. Feedback can be sent to pygenda@semiprime.com.
@@ -36,7 +36,7 @@ image, id 20260525-2012, with python3-3.12.13-r0 and gtk+3.0-3.24.51-r0).
 
 Known issues
 ------------
-Known issues specific to postmarketOS (observed on Phosh) include:
+Known issues specific to Nura (observed on Phosh) include:
 
 * Translations are not loaded for strings in .ui files (i.e. most of the UI).
 * The menubar behaves badly when using the touchscreen: submenus sometimes do not appear (seems to happen in other GTK3 apps too, but not GTK4?).
@@ -82,7 +82,7 @@ The `--break-system-packages` option sounds scary (probably deliberately).
 It simply tells pip3 to proceed even though we're in an environment
 where packages are managed by apk. In some cases this can cause
 problems, but in this case it is safe because there is no Pygenda
-package in pmOS that you might interfere with, you are not installing
+package in Nura that you might interfere with, you are not installing
 any other Python modules (the `--no-deps` option makes sure of this),
 and Pygenda is not being installed in the system files.
 
@@ -204,7 +204,7 @@ Evolution Data Server
 The default setting stores calendar data in a file. This is OK for
 testing and requires no setup. However, for real use you should store
 the data in a server. An Evolution Data Server (EDS) is the natural
-choice on PostmarketOS.
+choice on Nura.
 
 Another option: you can store data in a CalDAV server. This is probably
 not advisable unless you have a specific requirement. If you are using

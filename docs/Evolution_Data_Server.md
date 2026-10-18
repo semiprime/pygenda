@@ -27,9 +27,8 @@ Use your package manager to install the following:
 * GObject introspection for the ECal
 
 The latter two may be installed as part of Evolution Data Server
-(e.g. on Alpine/postmarketOS), or not (e.g. on Debian, where the
-packages are `gir1.2-edataserver-1.2` and `gir1.2-ecal-2.0`
-respectively).
+(e.g. on Alpine/Nura), or not (e.g. on Debian, where the packages are
+`gir1.2-edataserver-1.2` and `gir1.2-ecal-2.0` respectively).
 
 The default EDS configuration will probably be fine (using "system"
 calendar and task list). See below if you want to add other calendar

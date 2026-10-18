@@ -22,8 +22,8 @@ This is a small C library to improve cutting/copying behaviour.
 Specifically it allows Pygenda entries to be copied+pasted as text
 into applications that expect text, and as calendar entries into
 applications that expect calendar entries. Tested on Gemian,
-postmarketOS and Slackware, and probably works on other Linux
-distributions. It might need tweaking for Windows/MacOS/BSD/other.
+Nura and Slackware, and probably works on other Linux distributions.
+It might need tweaking for Windows/MacOS/BSD/other.
 
 In order to be as universally compatible as possible, the clipboard
 library is not included in the default wheel package. However, you can
@@ -40,7 +40,7 @@ To build and copy to the correct location in the source tree:
 
 Build dependencies are: a C compiler, make, CMake (or you could build
 by calling your compiler directly), development files for your libc
-(e.g. `libc-dev`, or `musl-dev` on postmarketOS) and GTK3 development
+(e.g. `libc-dev`, or `musl-dev` on Nura) and GTK3 development
 files (if these are not already installed, it's probably package
 `libgtk-3-dev` or `gtk+3.0-dev` in your package manager).
 

@@ -30,7 +30,7 @@ guides (only a few devices, so far):
 
 * [**Gemini PDA**](docs/quickstart-geminipda.md) running Gemian
 * [**Cosmo Communicator**](docs/quickstart-cosmocommunicator.md) running Gemian
-* [**PostmarketOS**](docs/quickstart-postmarketOS.md)
+* [**Nura (formerly postmarketOS)**](docs/quickstart-nura.md)
 * [**Debian-like systems**](docs/quickstart-debianlike.md) e.g. Raspberry Pi OS (but see above for Gemian)
 
 More technical information is given below and in linked documents for
