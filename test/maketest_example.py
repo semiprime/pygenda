@@ -246,7 +246,7 @@ def print_historical_anniversaries():
     print_vevent('Shakespeare\'s birthday (maybe)', '1564-04-23', repeat='YEARLY', daycount=1, anniv='BOTH')
     print_vevent('Beethoven\'s birthday', '1770-12-16', repeat='YEARLY', daycount=1, anniv='BOTH')
     print_vevent('Jane Austen\'s birthday', '1775-12-16', repeat='YEARLY', daycount=1, anniv='BOTH')
-    print_vevent('Charles Babbage\'s birthday', '1891-12-26', repeat='YEARLY', daycount=1, anniv='BOTH')
+    print_vevent('Charles Babbage\'s birthday', '1791-12-26', repeat='YEARLY', daycount=1, anniv='BOTH')
     print_vevent('Charles Darwin\'s birthday', '1809-02-12', repeat='YEARLY', daycount=1, anniv='BOTH')
     print_vevent('Ada Lovelace\'s birthday', '1815-12-10', repeat='YEARLY', daycount=1, anniv='BOTH')
     print_vevent('13th Amendment of US Constitution ratified (abolished slavery)', '1865-12-06', repeat='YEARLY', anniv='BOTH')
