@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68.0.0", "setuptools_scm>=6.3.1"]
+requires = ["setuptools>=77.0.3", "setuptools-scm>=8"]
 
 
 [project]
@@ -8,7 +8,8 @@ version = "0.3.10-dev0"
 authors = [
     { name="Matthew Lewis", email="pygenda@semiprime.com" },
 ]
-# license = "GPLv3 only"
+license = "GPL-3.0-only"
+license-files = [ "COPYING" ]
 description = "An agenda application inspired by Agenda programs on Psion PDAs."
 readme = "description.md"
 keywords = [ "calendar", "agenda", "todolist", "diary", "pda", "psion", "geminipda", "cosmocommunicator", "linux-mobile" ]
@@ -26,7 +27,6 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Handhelds/PDA's",
     "Environment :: X11 Applications :: GTK",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Topic :: Office/Business :: Scheduling",
@@ -34,10 +34,8 @@ classifiers = [
 
 
 [tool.setuptools]
-packages = ["pygenda"]
-
-[tool.setuptools.exclude-package-data]
-pygenda = ["mypy.ini", "*.pot", "*.po"]
+package-dir = { "pygenda" = "pygenda" }
+exclude-package-data = { "*" = ["mypy.ini", "*.pot", "*.po"] }
 
 [tool.setuptools_scm]
 
