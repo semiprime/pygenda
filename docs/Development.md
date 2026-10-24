@@ -16,6 +16,11 @@ Rather than copying the application files, this creates a link to the
 source directory, so any changes you make in the source are instantly
 available in the "installed" version.
 
+Hint: If pip3 complains about not being able to find dependency
+'girepository-2.0' when installing PyGObject, then you probably have
+girepository-1.0 installed. You can specify a PyGObject compatible
+with girepository-1.0 using `pip3 install PyGObject\<3.51`.
+
 Clipboard library
 -----------------
 This is a small C library to improve cutting/copying behaviour.
