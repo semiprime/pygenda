@@ -109,7 +109,8 @@ Checklist for releases
 * Check darkmode, backgrounds & calendar colours CSS examples still work
 * Check mouse clicks/touchscreen taps/swipes work (all views)
 * Check start_week_day!=Monday still works (all views)
-* Increase version number in pygenda_version.py & pyproject.toml
+* Increase version number in pygenda_version.py & pyproject.toml, and
+  update changelog.md
 
 Checking repeats
 ----------------

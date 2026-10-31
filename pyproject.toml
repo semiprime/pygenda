@@ -42,3 +42,4 @@ exclude-package-data = { "*" = ["mypy.ini", "*.pot", "*.po"] }
 [project.urls]
 "Homepage (Codeberg)" = "https://codeberg.org/semiprime/pygenda"
 "Homepage (GitHub)" = "https://github.com/semiprime/pygenda"
+"Changelog" = "https://codeberg.org/semiprime/pygenda/src/branch/main/docs/changelog.md"
