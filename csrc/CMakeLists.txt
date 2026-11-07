@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.0...4.2)
 
 project(pygenda_clipboard C)
 
@@ -27,5 +27,5 @@ endif()
 
 add_custom_target(cp DEPENDS pygenda_clipboard
     COMMENT "Copying library to pygenda directory..."
-    COMMAND cp $<TARGET_FILE:pygenda_clipboard> ../pygenda/
+    COMMAND cp $<TARGET_FILE:pygenda_clipboard> ${CMAKE_SOURCE_DIR}/../pygenda/
 )
