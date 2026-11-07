@@ -24,30 +24,8 @@ with girepository-1.0 using `pip3 install PyGObject\<3.51`.
 Clipboard library
 -----------------
 This is a small C library to improve cutting/copying behaviour.
-Specifically it allows Pygenda entries to be copied+pasted as text
-into applications that expect text, and as calendar entries into
-applications that expect calendar entries. Tested on Gemian,
-Nura and Slackware, and probably works on other Linux distributions.
-It might need tweaking for Windows/MacOS/BSD/other.
-
-In order to be as universally compatible as possible, the clipboard
-library is not included in the default wheel package. However, you can
-build the library yourself, and if you are packaging Pygenda (e.g. for
-a specific OS or a Flatpak) it is recommended that you include an
-appropriate version of libpygenda_clipboard.so for improved functionality.
-
-To build and copy to the correct location in the source tree:
-
-    cd csrc
-    cmake .
-    make
-    make cp
-
-Build dependencies are: a C compiler, make, CMake (or you could build
-by calling your compiler directly), development files for your libc
-(e.g. `libc-dev`, or `musl-dev` on Nura) and GTK3 development
-files (if these are not already installed, it's probably package
-`libgtk-3-dev` or `gtk+3.0-dev` in your package manager).
+Source code is in the `csrc/` directory. For details and build
+instructions, see [the README.md file in csrc/](../csrc/README.md).
 
 Translating strings
 -------------------
