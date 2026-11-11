@@ -254,11 +254,6 @@ Minor
 
 Cosmetic
 --------
-* If the first event edited after starting Pygenda has multiple exception
-  dates, then it makes room for these in the Event dialog Repeats tab.
-  This means that the Event dialog is made wide, and stays that way
-  until Pygenda is restarted.
-
 * In Event dialog, "Repeat on" combobox can change width when date is
   changed (due to expanding to contain longer strings - it stops once
   maximum width has been reached).

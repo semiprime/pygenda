@@ -1278,12 +1278,17 @@ class EventDialogController:
         # Construct string and set text for label widget displaying
         # exception dates. Takes dates from cls.exception_list.
         list_txt = ''
-        first = True
+        i = 0
+        n = len(cls.exception_list)
+        LIST_MAX = 3
         for dt in cls.exception_list:
-            if not first:
+            if i==LIST_MAX-1 and n>LIST_MAX:
+                list_txt += _(" + {:d} more").format(n-i)
+                break
+            if i:
                 list_txt += ', '
             list_txt += dt.strftime(GUI.date_formatting_numeric)
-            first = False
+            i += 1
         if not list_txt:
             list_txt = _('None')
         cls._lab_rep_exceptions.set_text(list_txt)
