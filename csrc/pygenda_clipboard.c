@@ -4,7 +4,7 @@
 // Allows Pygenda entries to be copied to the clipboard.
 // Note: Pasting is done in the Python code (pygenda_gui.py).
 //
-// Copyright (C) 2022,2023 Matthew Lewis
+// Copyright (C) 2022-2026 Matthew Lewis
 //
 // This file is part of Pygenda.
 //
@@ -54,10 +54,12 @@ char *selectionStr[LEN_SELECTION_DATA];
 void cb_get_fn(GtkClipboard* clipboard, GtkSelectionData* selection_data, guint type_idx, gpointer ptr) {
 	switch(type_idx) {
 	case DATA_TXT_PLAIN:
-		gtk_selection_data_set_text(selection_data, selectionStr[DATA_TXT_PLAIN], -1);
+		if (selectionStr[DATA_TXT_PLAIN])
+			gtk_selection_data_set_text(selection_data, selectionStr[DATA_TXT_PLAIN], -1);
 		break;
 	case DATA_TXT_CALENDAR:
-		gtk_selection_data_set(selection_data, gdk_atom_intern("text/calendar", FALSE), 8, (guchar*)selectionStr[type_idx], strlen(selectionStr[type_idx]));
+		if (selectionStr[type_idx])
+			gtk_selection_data_set(selection_data, gdk_atom_intern("text/calendar", FALSE), 8, (guchar*)selectionStr[type_idx], strlen(selectionStr[type_idx]));
 		break;
 	}
 }
@@ -76,14 +78,26 @@ void cb_clear_fn(GtkClipboard* clipboard, gpointer ptr) {
 void set_cb(char *txt, char* txtcal) {
 	// Set callbacks for clipboard
 	GtkClipboard *cb = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+
+	// If cb is NULL then next fn prints critical error & halts
 	gtk_clipboard_set_with_data(cb, target_array, LEN_TARGET_ARRAY, cb_get_fn, cb_clear_fn, NULL);
+
 	// cb_clear_fn() should have been called so pointers should be null here
 
-	// Take copies of strings that we own here
-	selectionStr[DATA_TXT_PLAIN] = malloc(strlen(txt)+1);
-	strcpy(selectionStr[DATA_TXT_PLAIN],txt);
-	selectionStr[DATA_TXT_CALENDAR] = malloc(strlen(txtcal)+1);
-	strcpy(selectionStr[DATA_TXT_CALENDAR],txtcal);
+	// Take copies of strings that we own
+	if (txt)
+		{
+		selectionStr[DATA_TXT_PLAIN] = malloc(strlen(txt)+1);
+		if (selectionStr[DATA_TXT_PLAIN])
+			strcpy(selectionStr[DATA_TXT_PLAIN],txt);
+		}
+
+	if (txtcal)
+		{
+		selectionStr[DATA_TXT_CALENDAR] = malloc(strlen(txtcal)+1);
+		if (selectionStr[DATA_TXT_CALENDAR])
+			strcpy(selectionStr[DATA_TXT_CALENDAR],txtcal);
+		}
 
 	//gtk_clipboard_store(cb); // This doesn't seem to work??
 }
