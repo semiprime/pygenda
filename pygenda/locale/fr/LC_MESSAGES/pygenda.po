@@ -663,7 +663,7 @@ msgid ""
 msgstr ""
 "<span weight=\"bold\">Attention :</span> Pygenda n’active <span style="
 "\"italic\" weight=\"bold\">pas</span> les alarmes.\n"
-"Pour activer des alarmes, il faut un programme séparé pour s’en charger.\n"
+"Il faut un programme séparé pour activer des alarmes.\n"
 "(Pour désactiver cet avertissement, voir la documentation.)"
 
 #: ui/dialog_event.ui:913
